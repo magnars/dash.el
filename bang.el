@@ -54,7 +54,7 @@ or with `!compare-fn' if that's non-nil."
     (while list
       (add-to-list 'result (car list) nil !compare-fn)
       (setq list (cdr list)))
-    (reverse result)))
+    (nreverse result)))
 
 (defun !intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.
@@ -65,7 +65,7 @@ or with `!compare-fn' if that's non-nil."
       (when (!contains-p list2 (car list))
         (setq result (cons (car list) result)))
       (setq list (cdr list)))
-    (reverse result)))
+    (nreverse result)))
 
 (defun !difference (list list2)
   "Return a new list with only the members of LIST that are not in LIST2.
@@ -76,7 +76,7 @@ or with `!compare-fn' if that's non-nil."
       (unless (!contains-p list2 (car list))
         (setq result (cons (car list) result)))
       (setq list (cdr list)))
-    (reverse result)))
+    (nreverse result)))
 
 (defun !contains-p (list element)
   "Return whether LIST contains ELEMENT.

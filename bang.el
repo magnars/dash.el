@@ -46,37 +46,35 @@ It should only be set using dynamic scope with a let, like:
 (defun !mapcat (fn list)
   (!concat (!map fn list)))
 
+(defmacro !--iterate-with-result (&rest forms)
+  `(let (result)
+     (while list
+       (let ((it (car list))) ,@forms)
+       (setq list (cdr list)))
+     (nreverse result)))
+
 (defun !uniq (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (let (result)
-    (while list
-      (add-to-list 'result (car list) nil !compare-fn)
-      (setq list (cdr list)))
-    (nreverse result)))
+  (!--iterate-with-result
+   (add-to-list 'result it nil !compare-fn)))
 
 (defun !intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (let (result)
-    (while list
-      (when (!contains-p list2 (car list))
-        (setq result (cons (car list) result)))
-      (setq list (cdr list)))
-    (nreverse result)))
+  (!--iterate-with-result
+   (when (!contains-p list2 it)
+     (setq result (cons it result)))))
 
 (defun !difference (list list2)
   "Return a new list with only the members of LIST that are not in LIST2.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (let (result)
-    (while list
-      (unless (!contains-p list2 (car list))
-        (setq result (cons (car list) result)))
-      (setq list (cdr list)))
-    (nreverse result)))
+  (!--iterate-with-result
+   (unless (!contains-p list2 it)
+     (setq result (cons it result)))))
 
 (defun !contains-p (list element)
   "Return whether LIST contains ELEMENT.

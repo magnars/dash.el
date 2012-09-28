@@ -27,8 +27,14 @@
 
   (should (equal (!reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) "1-2-3"))
   (should (equal (!reduce (format "%s-%s" acc it) '(1 2 3)) "1-2-3"))
-  (should (equal (!reduce (format "%s-%s" acc it) '()) "nil-nil"))
-)
+  (should (equal (!reduce (format "%s-%s" acc it) '()) "nil-nil")))
+
+(ert-deftest concat ()
+  "`!concat' returns the concatenation of the elements in the supplied lists"
+  (should (equal (!concat) nil))
+  (should (equal (!concat '(1)) '(1)))
+  (should (equal (!concat '(1) '(2)) '(1 2)))
+  (should (equal (!concat '(1) '(2 3) '(4)) '(1 2 3 4))))
 
 (ert-deftest difference ()
   "`!difference' returns a new list of only elements in list1 that are not in list2."

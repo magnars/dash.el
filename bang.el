@@ -59,8 +59,8 @@
         (list form-or-fn)
       `(let (acc it) ,form-or-fn))))
 
-(defun !concat (list)
-  (apply 'concatenate 'list list))
+(defun !concat (&rest lists)
+  (apply 'append (append lists '(nil))))
 
 (defalias '!select '!filter)
 (defalias '!reject 'remove-if)
@@ -68,7 +68,7 @@
 (defalias '!partial 'apply-partially)
 
 (defun !mapcat (fn list)
-  (!concat (!map fn list)))
+  (apply !concat (!map fn list)))
 
 (defun !uniq (list)
   "Return a new list with all duplicates removed.

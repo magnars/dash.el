@@ -32,19 +32,6 @@
 It should only be set using dynamic scope with a let, like:
 (let ((!compare-fn =)) (!union numbers1 numbers2 numbers3)")
 
-(defun !concat (list)
-  (apply 'concatenate 'list list))
-
-(defalias '!map 'mapcar)
-
-(defalias '!select 'remove-if-not)
-(defalias '!reject 'remove-if)
-
-(defalias '!partial 'apply-partially)
-
-(defun !mapcat (fn list)
-  (!concat (!map fn list)))
-
 (defmacro !filter (form-or-fn list)
   `(let ((!--list ,list)
          (!--result '()))
@@ -54,6 +41,23 @@ It should only be set using dynamic scope with a let, like:
            (setq !--result (cons it !--result))))
        (setq !--list (cdr !--list)))
      (nreverse !--result)))
+
+(defmacro !map (form-or-fn list)
+  (if (functionp form-or-fn)
+      `(mapcar #',form-or-fn ,list)
+    `(mapcar #'(lambda (it) ,form-or-fn) ,list)))
+
+
+(defun !concat (list)
+  (apply 'concatenate 'list list))
+
+(defalias '!select 'remove-if-not)
+(defalias '!reject 'remove-if)
+
+(defalias '!partial 'apply-partially)
+
+(defun !mapcat (fn list)
+  (!concat (!map fn list)))
 
 (defun !uniq (list)
   "Return a new list with all duplicates removed.

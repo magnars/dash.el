@@ -102,21 +102,21 @@ Thus function FN should return a collection."
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!filter (not (!contains-p !--result it)) list))
+  (!filter (not (!contains? !--result it)) list))
 
 (defun !intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!filter (!contains-p list2 it) list))
+  (!filter (!contains? list2 it) list))
 
 (defun !difference (list list2)
   "Return a new list with only the members of LIST that are not in LIST2.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!filter (not (!contains-p list2 it)) list))
+  (!filter (not (!contains? list2 it)) list))
 
-(defun !contains-p (list element)
+(defun !contains? (list element)
   "Return whether LIST contains ELEMENT.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."

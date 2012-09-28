@@ -72,10 +72,10 @@
   (should (equal (!uniq '()) '()))
   (should (equal (!uniq '(1 2 2 4)) '(1 2 4))))
 
-(ert-deftest contains-p ()
-  "`!contains-p' returns t if the list contains the element."
-  (should (!contains-p '(1 2 3) 1))
-  (should (!contains-p '(1 2 3) 2))
-  (should (not (!contains-p '() '())))
-  (should (not (!contains-p '() 1)))
-  (should (not (!contains-p '(1 2 4) 3))))
+(ert-deftest contains? ()
+  "`!contains?' returns t if the list contains the element."
+  (should (!contains? '(1 2 3) 1))
+  (should (!contains? '(1 2 3) 2))
+  (should (not (!contains? '() '())))
+  (should (not (!contains? '() 1)))
+  (should (not (!contains? '(1 2 4) 3))))

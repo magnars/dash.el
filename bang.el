@@ -25,8 +25,6 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl))
-
 (defun !--call-with-it (form-or-fn)
   (if (functionp form-or-fn)
       (list form-or-fn 'it)
@@ -75,8 +73,8 @@
 (defmacro !partial (fn &rest args)
   `(apply-partially ',fn ,@args))
 
-(defun !mapcat (fn list)
-  (apply !concat (!map fn list)))
+(defmacro !mapcat (fn list)
+  `(apply '!concat (!map ,fn ,list)))
 
 (defun !uniq (list)
   "Return a new list with all duplicates removed.

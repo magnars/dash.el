@@ -4,8 +4,6 @@ The startings of a modern list api for Emacs.
 
 We're looking to Clojure for naming and signatures.
 
-Right now it relies on `cl` which should be one of the very first things we fix.
-
 ## Warning
 
 This is so much a work in progress that you should definitely not be using it yet.

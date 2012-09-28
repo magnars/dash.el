@@ -43,6 +43,12 @@
   (should (equal (!concat '(1) '(2)) '(1 2)))
   (should (equal (!concat '(1) '(2 3) '(4)) '(1 2 3 4))))
 
+(ert-deftest mapcat ()
+  "`!mapcat' applies the function to all elements of the list and then concatenates the result"
+  (should (equal (!mapcat list '(1 2 3)) '(1 2 3)))
+  (should (equal (!mapcat (lambda (item) (list 0 item)) '(1 2 3)) '(0 1 0 2 0 3)))
+  (should (equal (!mapcat (list 0 it) '(1 2 3)) '(0 1 0 2 0 3))))
+
 (ert-deftest partial ()
   "`!partial' returns a function like fn where the first arguments are filled in"
   (should (equal (funcall (!partial + 5) 3) 8))

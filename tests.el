@@ -16,6 +16,20 @@
   (should (equal (!map (* it it) '(1 2 3 4)) '(1 4 9 16)))
   (should (equal (!map square '(1 2 3 4)) '(1 4 9 16))))
 
+(ert-deftest reduce ()
+  "`!reduce' takes a list and applies the function over them to create one result"
+  (should (equal (!reduce + '()) 0))
+  (should (equal (!reduce + '(1)) 1))
+  (should (equal (!reduce + '(1 2)) 3))
+  (should (equal (!reduce-from + 7 '()) 7))
+  (should (equal (!reduce-from + 7 '(1)) 8))
+  (should (equal (!reduce-from + 7 '(1 2)) 10))
+
+  (should (equal (!reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) "1-2-3"))
+  (should (equal (!reduce (format "%s-%s" acc it) '(1 2 3)) "1-2-3"))
+  (should (equal (!reduce (format "%s-%s" acc it) '()) "nil-nil"))
+)
+
 (ert-deftest difference ()
   "`!difference' returns a new list of only elements in list1 that are not in list2."
   (should (equal (!difference '() '()) '()))

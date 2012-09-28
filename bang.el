@@ -27,11 +27,6 @@
 
 (eval-when-compile (require 'cl))
 
-(defvar !compare-fn nil
-  "Tests for equality use this function or `equal' if this is nil.
-It should only be set using dynamic scope with a let, like:
-(let ((!compare-fn =)) (!union numbers1 numbers2 numbers3)")
-
 (defmacro !filter (form-or-fn list)
   `(let ((!--list ,list)
          (!--result '()))
@@ -47,11 +42,27 @@ It should only be set using dynamic scope with a let, like:
       `(mapcar #',form-or-fn ,list)
     `(mapcar #'(lambda (it) ,form-or-fn) ,list)))
 
+(defmacro !reduce-from (form-or-fn initial-value list)
+  `(let ((!--list ,list)
+         (!--acc ,initial-value))
+     (while !--list
+       (let ((it (car !--list))
+             (acc !--acc))
+         (setq !--acc ,(if (functionp form-or-fn) (list form-or-fn 'acc 'it) (list 'progn form-or-fn)))
+         (setq !--list (cdr !--list))))
+     !--acc))
+
+(defmacro !reduce (form-or-fn list)
+  (if (eval list)
+      `(!reduce-from ,form-or-fn ,(car (eval list)) ',(cdr (eval list)))
+    (if (functionp form-or-fn)
+        (list form-or-fn)
+      `(let (acc it) ,form-or-fn))))
 
 (defun !concat (list)
   (apply 'concatenate 'list list))
 
-(defalias '!select 'remove-if-not)
+(defalias '!select '!filter)
 (defalias '!reject 'remove-if)
 
 (defalias '!partial 'apply-partially)
@@ -91,6 +102,11 @@ or with `!compare-fn' if that's non-nil."
                   (not (funcall !compare-fn element (car lst))))
         (setq lst (cdr lst)))
       lst))))
+
+(defvar !compare-fn nil
+  "Tests for equality use this function or `equal' if this is nil.
+It should only be set using dynamic scope with a let, like:
+(let ((!compare-fn =)) (!union numbers1 numbers2 numbers3)")
 
 (provide 'bang)
 ;;; bang.el ends here

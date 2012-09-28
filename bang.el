@@ -46,35 +46,32 @@ It should only be set using dynamic scope with a let, like:
 (defun !mapcat (fn list)
   (!concat (!map fn list)))
 
-(defmacro !--iterate-with-result (&rest forms)
-  `(let (result)
+(defmacro !-filter (list &rest forms)
+  `(let (!--result)
      (while list
-       (let ((it (car list))) ,@forms)
+       (let ((it (car list)))
+         (when (progn ,@forms)
+           (setq !--result (cons it !--result))))
        (setq list (cdr list)))
-     (nreverse result)))
+     (nreverse !--result)))
 
 (defun !uniq (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!--iterate-with-result
-   (add-to-list 'result it nil !compare-fn)))
+  (!-filter list (not (!contains-p !--result it))))
 
 (defun !intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!--iterate-with-result
-   (when (!contains-p list2 it)
-     (setq result (cons it result)))))
+  (!-filter list (!contains-p list2 it)))
 
 (defun !difference (list list2)
   "Return a new list with only the members of LIST that are not in LIST2.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!--iterate-with-result
-   (unless (!contains-p list2 it)
-     (setq result (cons it result)))))
+  (!-filter list (not (!contains-p list2 it))))
 
 (defun !contains-p (list element)
   "Return whether LIST contains ELEMENT.

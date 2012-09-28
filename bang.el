@@ -37,7 +37,6 @@ It should only be set using dynamic scope with a let, like:
 
 (defalias '!map 'mapcar)
 
-(defalias '!filter 'remove-if-not)
 (defalias '!select 'remove-if-not)
 (defalias '!reject 'remove-if)
 
@@ -46,11 +45,11 @@ It should only be set using dynamic scope with a let, like:
 (defun !mapcat (fn list)
   (!concat (!map fn list)))
 
-(defmacro !-filter (list &rest forms)
+(defmacro !filter (form-or-fn list)
   `(let (!--result)
      (while list
        (let ((it (car list)))
-         (when (progn ,@forms)
+         (when ,(if (functionp form-or-fn) (list form-or-fn 'it) (list 'progn form-or-fn))
            (setq !--result (cons it !--result))))
        (setq list (cdr list)))
      (nreverse !--result)))
@@ -59,19 +58,19 @@ It should only be set using dynamic scope with a let, like:
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!-filter list (not (!contains-p !--result it))))
+  (!filter (not (!contains-p !--result it)) list))
 
 (defun !intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!-filter list (!contains-p list2 it)))
+  (!filter (!contains-p list2 it) list))
 
 (defun !difference (list list2)
   "Return a new list with only the members of LIST that are not in LIST2.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!-filter list (not (!contains-p list2 it))))
+  (!filter (not (!contains-p list2 it)) list))
 
 (defun !contains-p (list element)
   "Return whether LIST contains ELEMENT.

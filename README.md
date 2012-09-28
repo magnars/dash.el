@@ -10,6 +10,22 @@ Right now it relies on `cl` which should be one of the very first things we fix.
 
 This is so much a work in progress that you should definitely not be using it yet.
 
+## Anaphoric functions
+
+While `!filter` takes a function to filter the list by, you can also pass
+it a forms - which will then be executed with `it` exposed as the list item.
+Here's an example:
+
+    (!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; normal version
+
+    (!filter (= 0 (% it 2)) '(1 2 3 4)) ;; anaphoric version
+
+of course the original can also be written like
+
+    (!filter 'even? '(1 2 3 4))
+
+which demonstrates the usefulness of both versions.
+
 ## License
 
 Copyright (C) 2012 Magnar Sveen, Joel McCracken

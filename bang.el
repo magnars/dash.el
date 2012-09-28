@@ -30,22 +30,18 @@
       (list form-or-fn 'it)
     form-or-fn))
 
-(defmacro !filter (form-or-fn list)
-  `(let ((!--list ,list)
-         (!--result '()))
-     (while !--list
-       (let ((it (car !--list)))
-         (when ,(!--call-with-it form-or-fn)
-           (setq !--result (cons it !--result))))
-       (setq !--list (cdr !--list)))
-     (nreverse !--result)))
-
 (defmacro !map (form-or-fn list)
+  "Returns a new list consisting of the result of applying
+FORM-OR-FN to the items in list."
   (if (functionp form-or-fn)
       `(mapcar #',form-or-fn ,list)
     `(mapcar #'(lambda (it) ,form-or-fn) ,list)))
 
 (defmacro !reduce-from (form-or-fn initial-value list)
+  "Returns the result of applying FORM-OR-FN to INITIAL-VALUE and
+the first item in LIST, then applying FORM-OR-FN to that result
+and the 2nd item, etc. If INITIAL-VALUE contains no items,
+returns INITIAL-VALUE and FORM-OR-FN is not called."
   `(let ((!--list ,list)
          (!--acc ,initial-value))
      (while !--list
@@ -56,24 +52,50 @@
      !--acc))
 
 (defmacro !reduce (form-or-fn list)
+  "Returns the result of applying FORM-OR-FN to the first 2 items in LIST,
+then applying FORM-OR-FN to that result and the 3rd item, etc. If
+LIST contains no items, FORM-OR-FN must accept no arguments as
+well, and reduce returns the result of calling FORM-OR-FN with no
+arguments. If LIST has only 1 item, it is returned and FORM-OR-FN
+is not called."
   (if (eval list)
       `(!reduce-from ,form-or-fn ,(car (eval list)) ',(cdr (eval list)))
     (if (functionp form-or-fn)
         (list form-or-fn)
       `(let (acc it) ,form-or-fn))))
 
-(defun !concat (&rest lists)
-  (apply 'append (append lists '(nil))))
+(defmacro !filter (form-or-fn list)
+  "Returns a new list of the items in LIST for which FORM-OR-FN returns a non-nil value."
+  `(let ((!--list ,list)
+         (!--result '()))
+     (while !--list
+       (let ((it (car !--list)))
+         (when ,(!--call-with-it form-or-fn)
+           (setq !--result (cons it !--result))))
+       (setq !--list (cdr !--list)))
+     (nreverse !--result)))
 
-(defalias '!select '!filter)
-
-(defmacro !reject (form-or-fn list)
+(defmacro !remove (form-or-fn list)
+  "Returns a new list of the items in LIST for which FORM-OR-FN returns nil."
   `(!filter (not ,(!--call-with-it form-or-fn)) ,list))
 
+(defalias '!select '!filter)
+(defalias '!reject '!remove)
+
+(defun !concat (&rest lists)
+  "Returns a new list with the concatenation of the elements in
+the supplied LISTS."
+  (apply 'append (append lists '(nil))))
+
 (defmacro !partial (fn &rest args)
+  "Takes a function FN and fewer than the normal arguments to FN, and
+  returns a fn that takes a variable number of additional ARGS. When
+  called, the returned function calls FN with args + additional args."
   `(apply-partially ',fn ,@args))
 
 (defmacro !mapcat (fn list)
+  "Returns the result of applying concat to the result of applying map to FN and LIST.
+Thus function FN should return a collection."
   `(apply '!concat (!map ,fn ,list)))
 
 (defun !uniq (list)

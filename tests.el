@@ -30,10 +30,11 @@
   (should (equal (!filter even? '(1 2 3 4)) '(2 4)))
   (should (equal (!select even? '(1 2 3 4)) '(2 4))))
 
-(ert-deftest reject ()
-  "`!reject' returns a new list of only those elements where the predicate was nil."
-  (should (equal (!reject (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) '(1 3)))
-  (should (equal (!reject (= 0 (% it 2)) '(1 2 3 4)) '(1 3)))
+(ert-deftest remove ()
+  "`!remove' returns a new list of only those elements where the predicate was nil."
+  (should (equal (!remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) '(1 3)))
+  (should (equal (!remove (= 0 (% it 2)) '(1 2 3 4)) '(1 3)))
+  (should (equal (!remove even? '(1 2 3 4)) '(1 3)))
   (should (equal (!reject even? '(1 2 3 4)) '(1 3))))
 
 (ert-deftest concat ()

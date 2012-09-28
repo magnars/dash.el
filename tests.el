@@ -4,12 +4,6 @@
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))
 
-(ert-deftest filter ()
-  "`!filter' returns a new list of only those elements where the predicate was non-nil."
-  (should (equal (!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) '(2 4)))
-  (should (equal (!filter (= 0 (% it 2)) '(1 2 3 4)) '(2 4)))
-  (should (equal (!filter even? '(1 2 3 4)) '(2 4))))
-
 (ert-deftest map ()
   "`!map' returns a new list with the results of calling the function on each element."
   (should (equal (!map (lambda (num) (* num num)) '(1 2 3 4)) '(1 4 9 16)))
@@ -28,6 +22,19 @@
   (should (equal (!reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) "1-2-3"))
   (should (equal (!reduce (format "%s-%s" acc it) '(1 2 3)) "1-2-3"))
   (should (equal (!reduce (format "%s-%s" acc it) '()) "nil-nil")))
+
+(ert-deftest filter ()
+  "`!filter' returns a new list of only those elements where the predicate was non-nil."
+  (should (equal (!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) '(2 4)))
+  (should (equal (!filter (= 0 (% it 2)) '(1 2 3 4)) '(2 4)))
+  (should (equal (!filter even? '(1 2 3 4)) '(2 4)))
+  (should (equal (!select even? '(1 2 3 4)) '(2 4))))
+
+(ert-deftest reject ()
+  "`!reject' returns a new list of only those elements where the predicate was nil."
+  (should (equal (!reject (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) '(1 3)))
+  (should (equal (!reject (= 0 (% it 2)) '(1 2 3 4)) '(1 3)))
+  (should (equal (!reject even? '(1 2 3 4)) '(1 3))))
 
 (ert-deftest concat ()
   "`!concat' returns the concatenation of the elements in the supplied lists"

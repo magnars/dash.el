@@ -27,12 +27,17 @@
 
 (eval-when-compile (require 'cl))
 
+(defun !--call-with-it (form-or-fn)
+  (if (functionp form-or-fn)
+      (list form-or-fn 'it)
+    form-or-fn))
+
 (defmacro !filter (form-or-fn list)
   `(let ((!--list ,list)
          (!--result '()))
      (while !--list
        (let ((it (car !--list)))
-         (when ,(if (functionp form-or-fn) (list form-or-fn 'it) (list 'progn form-or-fn))
+         (when ,(!--call-with-it form-or-fn)
            (setq !--result (cons it !--result))))
        (setq !--list (cdr !--list)))
      (nreverse !--result)))
@@ -48,7 +53,7 @@
      (while !--list
        (let ((it (car !--list))
              (acc !--acc))
-         (setq !--acc ,(if (functionp form-or-fn) (list form-or-fn 'acc 'it) (list 'progn form-or-fn)))
+         (setq !--acc ,(if (functionp form-or-fn) (list form-or-fn 'acc 'it) form-or-fn))
          (setq !--list (cdr !--list))))
      !--acc))
 
@@ -63,7 +68,9 @@
   (apply 'append (append lists '(nil))))
 
 (defalias '!select '!filter)
-(defalias '!reject 'remove-if)
+
+(defmacro !reject (form-or-fn list)
+  `(!filter (not ,(!--call-with-it form-or-fn)) ,list))
 
 (defalias '!partial 'apply-partially)
 

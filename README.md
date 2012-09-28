@@ -13,7 +13,7 @@ This is so much a work in progress that you should definitely not be using it ye
 ## Anaphoric functions
 
 While `!filter` takes a function to filter the list by, you can also pass
-it a forms - which will then be executed with `it` exposed as the list item.
+it a form - which will then be executed with `it` exposed as the list item.
 Here's an example:
 
     (!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; normal version
@@ -22,7 +22,9 @@ Here's an example:
 
 of course the original can also be written like
 
-    (!filter 'even? '(1 2 3 4))
+    (defun even? (num) (= 0 (% num 2)))
+
+    (!filter even? '(1 2 3 4))
 
 which demonstrates the usefulness of both versions.
 

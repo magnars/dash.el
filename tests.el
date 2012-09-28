@@ -1,6 +1,14 @@
 (require 'ert)
 (require 'bang)
 
+(defun even? (num) (= 0 (% num 2)))
+
+(ert-deftest filter ()
+  "`!filter' returns a new list of only those elements where the predicate was non-nil."
+  (should (equal (!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) '(2 4)))
+  (should (equal (!filter (= 0 (% it 2)) '(1 2 3 4)) '(2 4)))
+  (should (equal (!filter even? '(1 2 3 4)) '(2 4))))
+
 (ert-deftest difference ()
   "`!difference' returns a new list of only elements in list1 that are not in list2."
   (should (equal (!difference '() '()) '()))

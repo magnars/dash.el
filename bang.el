@@ -46,12 +46,13 @@ It should only be set using dynamic scope with a let, like:
   (!concat (!map fn list)))
 
 (defmacro !filter (form-or-fn list)
-  `(let (!--result)
-     (while list
-       (let ((it (car list)))
+  `(let ((!--list ,list)
+         (!--result '()))
+     (while !--list
+       (let ((it (car !--list)))
          (when ,(if (functionp form-or-fn) (list form-or-fn 'it) (list 'progn form-or-fn))
            (setq !--result (cons it !--result))))
-       (setq list (cdr list)))
+       (setq !--list (cdr !--list)))
      (nreverse !--result)))
 
 (defun !uniq (list)

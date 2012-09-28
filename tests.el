@@ -43,6 +43,11 @@
   (should (equal (!concat '(1) '(2)) '(1 2)))
   (should (equal (!concat '(1) '(2 3) '(4)) '(1 2 3 4))))
 
+(ert-deftest partial ()
+  "`!partial' returns a function like fn where the first arguments are filled in"
+  (should (equal (funcall (!partial + 5) 3) 8))
+  (should (equal (funcall (!partial + 5 2) 3) 10)))
+
 (ert-deftest difference ()
   "`!difference' returns a new list of only elements in list1 that are not in list2."
   (should (equal (!difference '() '()) '()))

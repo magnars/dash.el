@@ -72,7 +72,8 @@
 (defmacro !reject (form-or-fn list)
   `(!filter (not ,(!--call-with-it form-or-fn)) ,list))
 
-(defalias '!partial 'apply-partially)
+(defmacro !partial (fn &rest args)
+  `(apply-partially ',fn ,@args))
 
 (defun !mapcat (fn list)
   (apply !concat (!map fn list)))

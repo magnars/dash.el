@@ -1,4 +1,4 @@
-;;; bang.el --- A modern list library for Emacs -*- lexical-binding: t -*-
+;;; bang.el --- A modern list library for Emacs
 
 ;; Copyright (C) 2012 Magnar Sveen, Joel McCracken
 
@@ -33,8 +33,8 @@
 (defun !reduce-from (fn initial-value list)
   "Returns the result of applying FN to INITIAL-VALUE and the
 first item in LIST, then applying FN to that result and the 2nd
-item, etc. If INITIAL-VALUE contains no items, returns
-INITIAL-VALUE and FN is not called."
+item, etc. If LIST contains no items, returns INITIAL-VALUE and
+FN is not called."
   (let ((acc initial-value))
      (while list
        (setq acc (funcall fn acc (car list)))
@@ -42,7 +42,18 @@ INITIAL-VALUE and FN is not called."
      acc))
 
 (defmacro !!reduce-from (form initial-value list)
-  `(!reduce-from (lambda (acc it) ,form) ,initial-value ,list))
+  "Anaphoric form of `!reduce'. Returns the result of applying
+FORM to INITIAL-VALUE and the first item in LIST, then applying
+FORM to that result and the 2nd item, etc. If INITIAL-VALUE
+contains no items, returns INITIAL-VALUE and FORM is not called."
+  `(let ((!--list ,list)
+         (!--acc ,initial-value))
+     (while !--list
+       (let ((it (car !--list))
+             (acc !--acc))
+         (setq !--acc ,form))
+       (setq !--list (cdr !--list)))
+     !--acc))
 
 (defun !reduce (fn list)
   "Returns the result of applying FN to the first 2 items in LIST,
@@ -55,7 +66,15 @@ LIST has only 1 item, it is returned and FN is not called."
     (funcall fn)))
 
 (defmacro !!reduce (form list)
-  `(!reduce (lambda (&optional acc it) ,form) ,list))
+  "Returns the result of applying FORM to the first 2 items in LIST,
+then applying FORM to that result and the 3rd item, etc. If
+LIST contains no items, FORM must accept no arguments as
+well, and reduce returns the result of calling FORM with no
+arguments. If LIST has only 1 item, it is returned and FORM
+is not called."
+  (if (eval list)
+      `(!!reduce-from ,form ,(car (eval list)) ',(cdr (eval list)))
+    `(let (acc it) ,form)))
 
 (defun !filter (fn list)
   "Returns a new list of the items in LIST for which FN returns a non-nil value."
@@ -67,13 +86,22 @@ LIST has only 1 item, it is returned and FN is not called."
     (nreverse result)))
 
 (defmacro !!filter (form list)
-  `(!filter (lambda (it) ,form) ,list))
+  "Returns a new list of the items in LIST for which FORM returns a non-nil value."
+  `(let ((!--list ,list)
+         (!--result '()))
+     (while !--list
+       (let ((it (car !--list)))
+         (when ,form
+           (setq !--result (cons it !--result))))
+       (setq !--list (cdr !--list)))
+     (nreverse !--result)))
 
 (defun !remove (fn list)
   "Returns a new list of the items in LIST for which FN returns nil."
   (!!filter (not (funcall fn it)) list))
 
 (defmacro !!remove (form list)
+  "Returns a new list of the items in LIST for which FORM returns nil."
   `(!!filter (not ,form) ,list))
 
 (defun !concat (&rest lists)
@@ -87,7 +115,9 @@ Thus function FN should return a collection."
   (apply '!concat (!map fn list)))
 
 (defmacro !!mapcat (form list)
-  `(!mapcat (lambda (it) ,form) ,list))
+  "Returns the result of applying concat to the result of applying map to FORM and LIST.
+Thus function FORM should return a collection."
+  `(apply '!concat (!!map ,form ,list)))
 
 (defalias '!partial 'apply-partially)
 
@@ -95,12 +125,7 @@ Thus function FN should return a collection."
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (let ((result '()))
-    (while list
-      (when (not (!contains? result (car list)))
-        (setq result (cons (car list) result)))
-      (setq list (cdr list)))
-    (nreverse result)))
+  (!!filter (not (!contains? !--result it)) list))
 
 (defun !intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.

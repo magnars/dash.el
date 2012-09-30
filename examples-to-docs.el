@@ -56,7 +56,7 @@
       (newline)
       (insert (mapconcat 'function-summary functions "\n"))
       (newline)
-      (insert "```cl")
+      (insert "```")
       (newline 2)
       (insert "There are also anaphoric versions of these
 functions where that makes sense, prefixed with two bangs

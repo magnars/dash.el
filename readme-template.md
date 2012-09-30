@@ -10,9 +10,7 @@ This is so much a work in progress that you should definitely not be using it ye
 
 ## Functions
 
-```cl
 [[ function-list ]]
-```
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two bangs instead of one.

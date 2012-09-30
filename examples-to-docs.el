@@ -1,3 +1,5 @@
+(require 'bang)
+
 (defvar functions '())
 
 (defun example-to-string (example)
@@ -39,10 +41,27 @@
             docstring
             (mapconcat 'identity (three-first examples) "\n"))))
 
+(defun split-name (s)
+  "Split name into list of words"
+  (split-string
+   (let ((case-fold-search nil))
+     (downcase
+      (replace-regexp-in-string "\\([a-z]\\)\\([A-Z]\\)" "\\1 \\2" s)))
+   "[^A-Za-z0-9]+"))
+
+(defun dashed-words (s)
+  "Convert string S to snake-case string."
+  (mapconcat 'identity (mapcar
+                        '(lambda (word) (downcase word))
+                        (!!remove (equal it "") (split-name s))) "-"))
+
+(defun github-id (command-name signature)
+  (dashed-words (format "%s %s" command-name signature)))
+
 (defun function-summary (function)
   (let ((command-name (car function))
         (signature (cadr function)))
-    (format "%s %s" command-name signature)))
+    (format "* [%s](#%s) `%s`" command-name (github-id command-name signature) signature)))
 
 (defun simplify-quotes ()
   (goto-char (point-min))

@@ -10,20 +10,18 @@ This is so much a work in progress that you should definitely not be using it ye
 
 ## Functions
 
-```cl
-!map (fn list)
-!reduce-from (fn initial-value list)
-!reduce (fn list)
-!filter (fn list)
-!remove (fn list)
-!concat (&rest lists)
-!mapcat (fn list)
-!partial (fn &rest args)
-!difference (list list2)
-!intersection (list list2)
-!uniq (list)
-!contains? (list element)
-```
+* [!map](#map-fn-list) `(fn list)`
+* [!reduce-from](#reduce-from-fn-initial-value-list) `(fn initial-value list)`
+* [!reduce](#reduce-fn-list) `(fn list)`
+* [!filter](#filter-fn-list) `(fn list)`
+* [!remove](#remove-fn-list) `(fn list)`
+* [!concat](#concat-rest-lists) `(&rest lists)`
+* [!mapcat](#mapcat-fn-list) `(fn list)`
+* [!partial](#partial-fn-rest-args) `(fn &rest args)`
+* [!difference](#difference-list-list2) `(list list2)`
+* [!intersection](#intersection-list-list2) `(list list2)`
+* [!uniq](#uniq-list) `(list)`
+* [!contains?](#contains-list-element) `(list element)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two bangs instead of one.

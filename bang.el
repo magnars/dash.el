@@ -26,12 +26,12 @@
 ;;; Code:
 
 (defun !map (fn list)
-  "Returns a new list consisting of the result of applying FN to the items in list."
+  "Returns a new list consisting of the result of applying FN to the items in LIST."
   (mapcar fn list))
 
 (defmacro !!map (form list)
   "Anaphoric form of `!map'."
-  `(!map (lambda (it) ,form) ,list))
+  `(mapcar (lambda (it) ,form) ,list))
 
 (defun !reduce-from (fn initial-value list)
   "Returns the result of applying FN to INITIAL-VALUE and the

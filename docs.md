@@ -1,6 +1,6 @@
 ## !map `(fn list)`
 
-Returns a new list consisting of the result of applying FN to the items in list.
+Returns a new list consisting of the result of applying FN to the items in LIST.
 
 ```cl
 (!map (lambda (num) (* num num)) (quote (1 2 3 4))) ;; => (quote (1 4 9 16))

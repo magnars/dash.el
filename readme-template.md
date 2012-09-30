@@ -8,6 +8,15 @@ We're looking to Clojure for naming and signatures.
 
 This is so much a work in progress that you should definitely not be using it yet.
 
+## Functions
+
+```cl
+[[ function-list ]]
+```
+
+There are also anaphoric versions of these functions where that makes sense,
+prefixed with two bangs instead of one.
+
 ## Anaphoric functions
 
 While `!filter` takes a function to filter the list by, you can also use the
@@ -29,16 +38,6 @@ of course the original can also be written like
 ```
 
 which demonstrates the usefulness of both versions.
-
-## Available functions
-
-```cl
-[[ function-list ]]
-```
-
-There are also anaphoric versions of these
-functions where that makes sense, prefixed with two bangs
-instead of one.
 
 ## Documentation and examples
 

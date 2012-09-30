@@ -26,7 +26,28 @@ of course the original can also be written like
 
 which demonstrates the usefulness of both versions.
 
-## Documentation
+## Available functions
+
+```cl
+!map (fn list)
+!reduce-from (fn initial-value list)
+!reduce (fn list)
+!filter (fn list)
+!remove (fn list)
+!concat (&rest lists)
+!mapcat (fn list)
+!partial (fn &rest args)
+!difference (list list2)
+!intersection (list list2)
+!uniq (list)
+!contains? (list element)
+```cl
+
+There are also anaphoric versions of these
+functions where that makes sense, prefixed with two bangs
+instead of one.
+
+## Documentation and examples
 
 ### !map `(fn list)`
 

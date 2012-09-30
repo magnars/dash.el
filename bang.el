@@ -25,8 +25,6 @@
 
 ;;; Code:
 
-(defalias '!map 'mapcar)
-
 (defun !map (fn list)
   "Returns a new list consisting of the result of applying FN to the items in list."
   (mapcar fn list))

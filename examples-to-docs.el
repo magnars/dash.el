@@ -19,10 +19,13 @@
     (car (cddr (symbol-function ',cmd))) ;; docstring
     (examples-to-strings ',examples)))) ;; examples
 
+(defun quote-docstring (docstring)
+  (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" docstring))
+
 (defun function-to-md (function)
   (let ((command-name (car function))
         (signature (cadr function))
-        (docstring (cadr (cdr function)))
+        (docstring (quote-docstring (cadr (cdr function))))
         (examples (mapconcat 'identity (cadr (cddr function)) "\n")))
     (format "## %s `%s`\n\n%s\n\n```cl\n%s\n```\n" command-name signature docstring examples)))
 

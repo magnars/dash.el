@@ -57,6 +57,8 @@ Returns a new list of the items in LIST for which FN returns nil.
 (!remove (lambda (num) (= 0 (% num 2))) (quote (1 2 3 4))) ;; => (quote (1 3))
 (!remove (quote even?) (quote (1 2 3 4))) ;; => (quote (1 3))
 (!!remove (= 0 (% it 2)) (quote (1 2 3 4))) ;; => (quote (1 3))
+(let ((mod 2)) (!remove (lambda (num) (= 0 (% num mod))) (quote (1 2 3 4)))) ;; => (quote (1 3))
+(let ((mod 2)) (!!remove (= 0 (% it mod)) (quote (1 2 3 4)))) ;; => (quote (1 3))
 ```
 
 ## !concat `(&rest lists)`
@@ -97,8 +99,8 @@ additional args.
 ## !difference `(list list2)`
 
 Return a new list with only the members of LIST that are not in LIST2.
-The test for equality is done with `equal',
-or with `!compare-fn' if that's non-nil.
+The test for equality is done with `equal`,
+or with `!compare-fn` if that's non-nil.
 
 ```cl
 (!difference (quote nil) (quote nil)) ;; => (quote nil)
@@ -109,8 +111,8 @@ or with `!compare-fn' if that's non-nil.
 ## !intersection `(list list2)`
 
 Return a new list containing only the elements that are members of both LIST and LIST2.
-The test for equality is done with `equal',
-or with `!compare-fn' if that's non-nil.
+The test for equality is done with `equal`,
+or with `!compare-fn` if that's non-nil.
 
 ```cl
 (!intersection (quote nil) (quote nil)) ;; => (quote nil)
@@ -121,8 +123,8 @@ or with `!compare-fn' if that's non-nil.
 ## !uniq `(list)`
 
 Return a new list with all duplicates removed.
-The test for equality is done with `equal',
-or with `!compare-fn' if that's non-nil.
+The test for equality is done with `equal`,
+or with `!compare-fn` if that's non-nil.
 
 ```cl
 (!uniq (quote nil)) ;; => (quote nil)
@@ -132,8 +134,8 @@ or with `!compare-fn' if that's non-nil.
 ## !contains? `(list element)`
 
 Return whether LIST contains ELEMENT.
-The test for equality is done with `equal',
-or with `!compare-fn' if that's non-nil.
+The test for equality is done with `equal`,
+or with `!compare-fn` if that's non-nil.
 
 ```cl
 (!contains? (quote (1 2 3)) 1) ;; => t

@@ -16,9 +16,8 @@ item, etc. If `list` contains no items, returns `initial-value` and
 `fn` is not called.
 
 ```cl
-(!reduce-from (quote +) 7 (quote nil)) ;; => 7
-(!reduce-from (quote +) 7 (quote (1))) ;; => 8
 (!reduce-from (quote +) 7 (quote (1 2))) ;; => 10
+(!reduce-from (lambda (memo item) (+ memo item)) 7 (quote (1 2))) ;; => 10
 (!!reduce-from (+ acc it) 7 (quote (1 2 3))) ;; => 13
 ```
 
@@ -31,12 +30,9 @@ reduce returns the result of calling `fn` with no arguments. If
 `list` has only 1 item, it is returned and `fn` is not called.
 
 ```cl
-(!reduce (quote +) (quote nil)) ;; => 0
-(!reduce (quote +) (quote (1))) ;; => 1
 (!reduce (quote +) (quote (1 2))) ;; => 3
 (!reduce (lambda (memo item) (format %s-%s memo item)) (quote (1 2 3))) ;; => 1-2-3
 (!!reduce (format %s-%s acc it) (quote (1 2 3))) ;; => 1-2-3
-(!!reduce (format %s-%s acc it) (quote nil)) ;; => nil-nil
 ```
 
 ## !filter `(fn list)`
@@ -57,8 +53,6 @@ Returns a new list of the items in `list` for which `fn` returns nil.
 (!remove (lambda (num) (= 0 (% num 2))) (quote (1 2 3 4))) ;; => (quote (1 3))
 (!remove (quote even?) (quote (1 2 3 4))) ;; => (quote (1 3))
 (!!remove (= 0 (% it 2)) (quote (1 2 3 4))) ;; => (quote (1 3))
-(let ((mod 2)) (!remove (lambda (num) (= 0 (% num mod))) (quote (1 2 3 4)))) ;; => (quote (1 3))
-(let ((mod 2)) (!!remove (= 0 (% it mod)) (quote (1 2 3 4)))) ;; => (quote (1 3))
 ```
 
 ## !concat `(&rest lists)`
@@ -67,7 +61,6 @@ Returns a new list with the concatenation of the elements in
 the supplied `lists`.
 
 ```cl
-(!concat) ;; => nil
 (!concat (quote (1))) ;; => (quote (1))
 (!concat (quote (1)) (quote (2))) ;; => (quote (1 2))
 (!concat (quote (1)) (quote (2 3)) (quote (4))) ;; => (quote (1 2 3 4))
@@ -140,7 +133,5 @@ or with `!compare-fn` if that's non-nil.
 ```cl
 (!contains? (quote (1 2 3)) 1) ;; => t
 (!contains? (quote (1 2 3)) 2) ;; => t
-(!contains? (quote nil) (quote nil)) ;; => nil
-(!contains? (quote nil) 1) ;; => nil
-(!contains? (quote (1 2 4)) 3) ;; => nil
+(!contains? (quote (1 2 3)) 4) ;; => nil
 ```

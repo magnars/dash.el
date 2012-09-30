@@ -32,9 +32,23 @@
   (let ((command-name (car function))
         (signature (cadr function))
         (docstring (quote-docstring (cadr (cdr function))))
-        (examples (mapconcat 'identity (cadr (cddr function)) "\n")))
-    (format "## %s `%s`\n\n%s\n\n```cl\n%s\n```\n" command-name signature docstring examples)))
+        (examples (cadr (cddr function))))
+    (format "## %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
+            command-name
+            signature
+            docstring
+            (mapconcat 'identity (three-first examples) "\n"))))
 
 (defun create-docs-file ()
   (with-temp-file "./docs.md"
     (insert (mapconcat 'function-to-md (nreverse functions) "\n"))))
+
+(defun three-first (list)
+  (let (first)
+    (when (car list)
+      (setq first (cons (car list) first))
+      (when (cadr list)
+        (setq first (cons (cadr list) first))
+        (when (car (cddr list))
+          (setq first (cons (car (cddr list)) first)))))
+    (nreverse first)))

@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t -*-
+
 (require 'bang)
 
 (defun even? (num) (= 0 (% num 2)))
@@ -30,7 +32,9 @@
 (defexamples !remove
   (!remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) => '(1 3)
   (!remove 'even? '(1 2 3 4)) => '(1 3)
-  (!!remove (= 0 (% it 2)) '(1 2 3 4)) => '(1 3))
+  (!!remove (= 0 (% it 2)) '(1 2 3 4)) => '(1 3)
+  (let ((mod 2)) (!remove (lambda (num) (= 0 (% num mod))) '(1 2 3 4))) => '(1 3)
+  (let ((mod 2)) (!!remove (= 0 (% it mod)) '(1 2 3 4))) => '(1 3))
 
 (defexamples !concat
   (!concat) => nil

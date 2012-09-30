@@ -41,7 +41,7 @@ reduce returns the result of calling `fn` with no arguments. If
 
 ## !filter `(fn list)`
 
-Returns a new list of the items in `list` for which `fn` returns a non`-`nil value.
+Returns a new list of the items in `list` for which `fn` returns a non-nil value.
 
 ```cl
 (!filter (lambda (num) (= 0 (% num 2))) (quote (1 2 3 4))) ;; => (quote (2 4))
@@ -100,7 +100,7 @@ additional args.
 
 Return a new list with only the members of `list` that are not in LIST2.
 The test for equality is done with `equal`,
-or with `!compare`-`fn` if that's non`-`nil.
+or with `!compare-fn` if that's non-nil.
 
 ```cl
 (!difference (quote nil) (quote nil)) ;; => (quote nil)
@@ -112,7 +112,7 @@ or with `!compare`-`fn` if that's non`-`nil.
 
 Return a new list containing only the elements that are members of both `list` and LIST2.
 The test for equality is done with `equal`,
-or with `!compare`-`fn` if that's non`-`nil.
+or with `!compare-fn` if that's non-nil.
 
 ```cl
 (!intersection (quote nil) (quote nil)) ;; => (quote nil)
@@ -124,7 +124,7 @@ or with `!compare`-`fn` if that's non`-`nil.
 
 Return a new list with all duplicates removed.
 The test for equality is done with `equal`,
-or with `!compare`-`fn` if that's non`-`nil.
+or with `!compare-fn` if that's non-nil.
 
 ```cl
 (!uniq (quote nil)) ;; => (quote nil)
@@ -135,7 +135,7 @@ or with `!compare`-`fn` if that's non`-`nil.
 
 Return whether `list` contains `element`.
 The test for equality is done with `equal`,
-or with `!compare`-`fn` if that's non`-`nil.
+or with `!compare-fn` if that's non-nil.
 
 ```cl
 (!contains? (quote (1 2 3)) 1) ;; => t

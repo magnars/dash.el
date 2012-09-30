@@ -14,15 +14,19 @@ While `!filter` takes a function to filter the list by, you can also use the
 anaphoric form with double bangs - which will then be executed with `it` exposed
 as the list item. Here's an example:
 
-    (!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; normal version
+```cl
+(!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; normal version
 
-    (!!filter (= 0 (% it 2)) '(1 2 3 4)) ;; anaphoric version
+(!!filter (= 0 (% it 2)) '(1 2 3 4)) ;; anaphoric version
+```
 
 of course the original can also be written like
 
-    (defun even? (num) (= 0 (% num 2)))
+```cl
+(defun even? (num) (= 0 (% num 2)))
 
-    (!filter even? '(1 2 3 4))
+(!filter even? '(1 2 3 4))
+```
 
 which demonstrates the usefulness of both versions.
 
@@ -41,7 +45,7 @@ which demonstrates the usefulness of both versions.
 !intersection (list list2)
 !uniq (list)
 !contains? (list element)
-```cl
+```
 
 There are also anaphoric versions of these
 functions where that makes sense, prefixed with two bangs

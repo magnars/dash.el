@@ -37,7 +37,10 @@
   "Returns the result of applying FN to INITIAL-VALUE and the
 first item in LIST, then applying FN to that result and the 2nd
 item, etc. If LIST contains no items, returns INITIAL-VALUE and
-FN is not called."
+FN is not called.
+
+In the anaphoric form `!!reduce-from', the accumulated value is
+exposed as `acc`."
   (let ((acc initial-value))
     (while list
       (setq acc (funcall fn acc (car list)))
@@ -60,7 +63,10 @@ FN is not called."
 then applying FN to that result and the 3rd item, etc. If LIST
 contains no items, FN must accept no arguments as well, and
 reduce returns the result of calling FN with no arguments. If
-LIST has only 1 item, it is returned and FN is not called."
+LIST has only 1 item, it is returned and FN is not called.
+
+In the anaphoric form `!!reduce', the accumulated value is
+exposed as `acc`."
   (if list
       (!reduce-from fn (car list) (cdr list))
     (funcall fn)))
@@ -116,7 +122,7 @@ Thus function FN should return a collection."
 (defun !partial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,
 and returns a fn that takes a variable number of additional ARGS.
-When called, the returned function calls FN with args +
+When called, the returned function calls FN with ARGS +
 additional args."
   (apply 'apply-partially fn args))
 

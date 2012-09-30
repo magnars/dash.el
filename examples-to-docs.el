@@ -24,7 +24,7 @@
 
 (defun quote-docstring (docstring)
   (let (case-fold-search)
-    (setq docstring (replace-regexp-in-string "\\b\\([A-Z][A-Z-]*\\)\\b" 'quote-and-downcase docstring t))
+    (setq docstring (replace-regexp-in-string "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b" 'quote-and-downcase docstring t))
     (setq docstring (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" docstring t)))
   docstring)
 

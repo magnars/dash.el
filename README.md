@@ -146,7 +146,7 @@ additional args.
 
 ### !difference `(list list2)`
 
-Return a new list with only the members of `list` that are not in LIST2.
+Return a new list with only the members of `list` that are not in `list2`.
 The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 
@@ -158,7 +158,7 @@ or with `!compare-fn` if that's non-nil.
 
 ### !intersection `(list list2)`
 
-Return a new list containing only the elements that are members of both `list` and LIST2.
+Return a new list containing only the elements that are members of both `list` and `list2`.
 The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 

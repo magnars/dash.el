@@ -210,9 +210,8 @@ the tests are always running and the docs are always in sync:
 
     cp pre-commit.sh .git/hooks/pre-commit
 
-Oh, and don't edit `README.md` directly, it is generated.
-Change `readme-prefix.md` and `readme-postfix.md` instead,
-or if need be, the `examples-to-docs.el` logic.
+Oh, and don't edit `README.md` directly, it is auto-generated.
+Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## License
 

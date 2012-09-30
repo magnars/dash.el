@@ -70,6 +70,9 @@ first item in `list`, then applying `fn` to that result and the 2nd
 item, etc. If `list` contains no items, returns `initial-value` and
 `fn` is not called.
 
+In the anaphoric form `!!reduce-from`, the accumulated value is
+exposed as `acc`.
+
 ```cl
 (!reduce-from '+ 7 '(1 2)) ;; => 10
 (!reduce-from (lambda (memo item) (+ memo item)) 7 '(1 2)) ;; => 10
@@ -83,6 +86,9 @@ then applying `fn` to that result and the 3rd item, etc. If `list`
 contains no items, `fn` must accept no arguments as well, and
 reduce returns the result of calling `fn` with no arguments. If
 `list` has only 1 item, it is returned and `fn` is not called.
+
+In the anaphoric form `!!reduce`, the accumulated value is
+exposed as `acc`.
 
 ```cl
 (!reduce '+ '(1 2)) ;; => 3
@@ -136,7 +142,7 @@ Thus function `fn` should return a collection.
 
 Takes a function `fn` and fewer than the normal arguments to `fn`,
 and returns a fn that takes a variable number of additional `args`.
-When called, the returned function calls `fn` with args +
+When called, the returned function calls `fn` with `args` +
 additional args.
 
 ```cl

@@ -65,9 +65,9 @@
   (!intersection '(1 2 3) '(4 5 6)) => '()
   (!intersection '(1 2 3 4) '(3 4 5 6)) => '(3 4))
 
-(defexamples !uniq
-  (!uniq '()) => '()
-  (!uniq '(1 2 2 4)) => '(1 2 4))
+(defexamples !distinct
+  (!distinct '()) => '()
+  (!distinct '(1 2 2 4)) => '(1 2 4))
 
 (defexamples !contains?
   (!contains? '(1 2 3) 1) => t

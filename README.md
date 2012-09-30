@@ -20,7 +20,7 @@ This is so much a work in progress that you should definitely not be using it ye
 * [!partial](#partial-fn-rest-args) `(fn &rest args)`
 * [!difference](#difference-list-list2) `(list list2)`
 * [!intersection](#intersection-list-list2) `(list list2)`
-* [!uniq](#uniq-list) `(list)`
+* [!distinct](#distinct-list) `(list)`
 * [!contains?](#contains-list-element) `(list element)`
 
 There are also anaphoric versions of these functions where that makes sense,
@@ -171,15 +171,15 @@ or with `!compare-fn` if that's non-nil.
 (!intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
 ```
 
-### !uniq `(list)`
+### !distinct `(list)`
 
 Return a new list with all duplicates removed.
 The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 
 ```cl
-(!uniq 'nil) ;; => 'nil
-(!uniq '(1 2 2 4)) ;; => '(1 2 4)
+(!distinct 'nil) ;; => 'nil
+(!distinct '(1 2 2 4)) ;; => '(1 2 4)
 ```
 
 ### !contains? `(list element)`

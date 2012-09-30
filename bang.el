@@ -126,7 +126,7 @@ When called, the returned function calls FN with ARGS +
 additional args."
   (apply 'apply-partially fn args))
 
-(defun !uniq (list)
+(defun !distinct (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."

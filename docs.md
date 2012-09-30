@@ -1,6 +1,6 @@
 ## !map `(fn list)`
 
-Returns a new list consisting of the result of applying FN to the items in LIST.
+Returns a new list consisting of the result of applying `fn` to the items in `list`.
 
 ```cl
 (!map (lambda (num) (* num num)) (quote (1 2 3 4))) ;; => (quote (1 4 9 16))
@@ -10,10 +10,10 @@ Returns a new list consisting of the result of applying FN to the items in LIST.
 
 ## !reduce-from `(fn initial-value list)`
 
-Returns the result of applying FN to INITIAL-VALUE and the
-first item in LIST, then applying FN to that result and the 2nd
-item, etc. If LIST contains no items, returns INITIAL-VALUE and
-FN is not called.
+Returns the result of applying `fn` to `initial-value` and the
+first item in `list`, then applying `fn` to that result and the 2nd
+item, etc. If `list` contains no items, returns `initial-value` and
+`fn` is not called.
 
 ```cl
 (!reduce-from (quote +) 7 (quote nil)) ;; => 7
@@ -24,11 +24,11 @@ FN is not called.
 
 ## !reduce `(fn list)`
 
-Returns the result of applying FN to the first 2 items in LIST,
-then applying FN to that result and the 3rd item, etc. If LIST
-contains no items, FN must accept no arguments as well, and
-reduce returns the result of calling FN with no arguments. If
-LIST has only 1 item, it is returned and FN is not called.
+Returns the result of applying `fn` to the first 2 items in `list`,
+then applying `fn` to that result and the 3rd item, etc. If `list`
+contains no items, `fn` must accept no arguments as well, and
+reduce returns the result of calling `fn` with no arguments. If
+`list` has only 1 item, it is returned and `fn` is not called.
 
 ```cl
 (!reduce (quote +) (quote nil)) ;; => 0
@@ -41,7 +41,7 @@ LIST has only 1 item, it is returned and FN is not called.
 
 ## !filter `(fn list)`
 
-Returns a new list of the items in LIST for which FN returns a non-nil value.
+Returns a new list of the items in `list` for which `fn` returns a non`-`nil value.
 
 ```cl
 (!filter (lambda (num) (= 0 (% num 2))) (quote (1 2 3 4))) ;; => (quote (2 4))
@@ -51,7 +51,7 @@ Returns a new list of the items in LIST for which FN returns a non-nil value.
 
 ## !remove `(fn list)`
 
-Returns a new list of the items in LIST for which FN returns nil.
+Returns a new list of the items in `list` for which `fn` returns nil.
 
 ```cl
 (!remove (lambda (num) (= 0 (% num 2))) (quote (1 2 3 4))) ;; => (quote (1 3))
@@ -64,7 +64,7 @@ Returns a new list of the items in LIST for which FN returns nil.
 ## !concat `(&rest lists)`
 
 Returns a new list with the concatenation of the elements in
-the supplied LISTS.
+the supplied `lists`.
 
 ```cl
 (!concat) ;; => nil
@@ -75,8 +75,8 @@ the supplied LISTS.
 
 ## !mapcat `(fn list)`
 
-Returns the result of applying concat to the result of applying map to FN and LIST.
-Thus function FN should return a collection.
+Returns the result of applying concat to the result of applying map to `fn` and `list`.
+Thus function `fn` should return a collection.
 
 ```cl
 (!mapcat (quote list) (quote (1 2 3))) ;; => (quote (1 2 3))
@@ -86,9 +86,9 @@ Thus function FN should return a collection.
 
 ## !partial `(fn &rest args)`
 
-Takes a function FN and fewer than the normal arguments to FN,
-and returns a fn that takes a variable number of additional ARGS.
-When called, the returned function calls FN with args +
+Takes a function `fn` and fewer than the normal arguments to `fn`,
+and returns a fn that takes a variable number of additional `args`.
+When called, the returned function calls `fn` with args +
 additional args.
 
 ```cl
@@ -98,9 +98,9 @@ additional args.
 
 ## !difference `(list list2)`
 
-Return a new list with only the members of LIST that are not in LIST2.
+Return a new list with only the members of `list` that are not in LIST2.
 The test for equality is done with `equal`,
-or with `!compare-fn` if that's non-nil.
+or with `!compare`-`fn` if that's non`-`nil.
 
 ```cl
 (!difference (quote nil) (quote nil)) ;; => (quote nil)
@@ -110,9 +110,9 @@ or with `!compare-fn` if that's non-nil.
 
 ## !intersection `(list list2)`
 
-Return a new list containing only the elements that are members of both LIST and LIST2.
+Return a new list containing only the elements that are members of both `list` and LIST2.
 The test for equality is done with `equal`,
-or with `!compare-fn` if that's non-nil.
+or with `!compare`-`fn` if that's non`-`nil.
 
 ```cl
 (!intersection (quote nil) (quote nil)) ;; => (quote nil)
@@ -124,7 +124,7 @@ or with `!compare-fn` if that's non-nil.
 
 Return a new list with all duplicates removed.
 The test for equality is done with `equal`,
-or with `!compare-fn` if that's non-nil.
+or with `!compare`-`fn` if that's non`-`nil.
 
 ```cl
 (!uniq (quote nil)) ;; => (quote nil)
@@ -133,9 +133,9 @@ or with `!compare-fn` if that's non-nil.
 
 ## !contains? `(list element)`
 
-Return whether LIST contains ELEMENT.
+Return whether `list` contains `element`.
 The test for equality is done with `equal`,
-or with `!compare-fn` if that's non-nil.
+or with `!compare`-`fn` if that's non`-`nil.
 
 ```cl
 (!contains? (quote (1 2 3)) 1) ;; => t

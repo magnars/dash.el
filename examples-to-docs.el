@@ -19,8 +19,14 @@
     (car (cddr (symbol-function ',cmd))) ;; docstring
     (examples-to-strings ',examples)))) ;; examples
 
+(defun quote-and-downcase (string)
+  (format "`%s`" (downcase string)))
+
 (defun quote-docstring (docstring)
-  (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" docstring))
+  (let (case-fold-search)
+    (setq docstring (replace-regexp-in-string "\\b\\([A-Z-]+\\)\\b" 'quote-and-downcase docstring t))
+    (setq docstring (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" docstring t)))
+  docstring)
 
 (defun function-to-md (function)
   (let ((command-name (car function))

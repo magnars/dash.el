@@ -33,15 +33,22 @@
         (signature (cadr function))
         (docstring (quote-docstring (cadr (cdr function))))
         (examples (cadr (cddr function))))
-    (format "## %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
+    (format "### %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
             command-name
             signature
             docstring
             (mapconcat 'identity (three-first examples) "\n"))))
 
 (defun create-docs-file ()
-  (with-temp-file "./docs.md"
-    (insert (mapconcat 'function-to-md (nreverse functions) "\n"))))
+  (with-temp-file "./README.md"
+    (insert-file-contents-literally "./readme-prefix.md")
+    (goto-char (point-max))
+    (newline)
+    (insert "## Documentation")
+    (newline 2)
+    (insert (mapconcat 'function-to-md (nreverse functions) "\n"))
+    (newline)
+    (insert-file-contents-literally "./readme-postfix.md")))
 
 (defun three-first (list)
   (let (first)

@@ -27,7 +27,12 @@
 
 (defalias '!map 'mapcar)
 
+(defun !map (fn list)
+  "Returns a new list consisting of the result of applying FN to the items in list."
+  (mapcar fn list))
+
 (defmacro !!map (form list)
+  "Anaphoric form of `!map'."
   `(!map (lambda (it) ,form) ,list))
 
 (defun !reduce-from (fn initial-value list)
@@ -36,16 +41,13 @@ first item in LIST, then applying FN to that result and the 2nd
 item, etc. If LIST contains no items, returns INITIAL-VALUE and
 FN is not called."
   (let ((acc initial-value))
-     (while list
-       (setq acc (funcall fn acc (car list)))
-       (setq list (cdr list)))
-     acc))
+    (while list
+      (setq acc (funcall fn acc (car list)))
+      (setq list (cdr list)))
+    acc))
 
 (defmacro !!reduce-from (form initial-value list)
-  "Anaphoric form of `!reduce'. Returns the result of applying
-FORM to INITIAL-VALUE and the first item in LIST, then applying
-FORM to that result and the 2nd item, etc. If INITIAL-VALUE
-contains no items, returns INITIAL-VALUE and FORM is not called."
+  "Anaphoric form of `!reduce-from'."
   `(let ((!--list ,list)
          (!--acc ,initial-value))
      (while !--list
@@ -66,12 +68,7 @@ LIST has only 1 item, it is returned and FN is not called."
     (funcall fn)))
 
 (defmacro !!reduce (form list)
-  "Returns the result of applying FORM to the first 2 items in LIST,
-then applying FORM to that result and the 3rd item, etc. If
-LIST contains no items, FORM must accept no arguments as
-well, and reduce returns the result of calling FORM with no
-arguments. If LIST has only 1 item, it is returned and FORM
-is not called."
+  "Anaphoric form of `!reduce'."
   (if (eval list)
       `(!!reduce-from ,form ,(car (eval list)) ',(cdr (eval list)))
     `(let (acc it) ,form)))
@@ -86,7 +83,7 @@ is not called."
     (nreverse result)))
 
 (defmacro !!filter (form list)
-  "Returns a new list of the items in LIST for which FORM returns a non-nil value."
+  "Anaphoric form of `!filter'."
   `(let ((!--list ,list)
          (!--result '()))
      (while !--list
@@ -101,7 +98,7 @@ is not called."
   (!!filter (not (funcall fn it)) list))
 
 (defmacro !!remove (form list)
-  "Returns a new list of the items in LIST for which FORM returns nil."
+  "Anaphoric form of `!remove'."
   `(!!filter (not ,form) ,list))
 
 (defun !concat (&rest lists)
@@ -115,11 +112,15 @@ Thus function FN should return a collection."
   (apply '!concat (!map fn list)))
 
 (defmacro !!mapcat (form list)
-  "Returns the result of applying concat to the result of applying map to FORM and LIST.
-Thus function FORM should return a collection."
+  "Anaphoric form of `!mapcat'."
   `(apply '!concat (!!map ,form ,list)))
 
-(defalias '!partial 'apply-partially)
+(defun !partial (fn &rest args)
+  "Takes a function FN and fewer than the normal arguments to FN,
+and returns a fn that takes a variable number of additional ARGS.
+When called, the returned function calls FN with args +
+additional args."
+  (apply 'apply-partially fn args))
 
 (defun !uniq (list)
   "Return a new list with all duplicates removed.
@@ -143,16 +144,18 @@ or with `!compare-fn' if that's non-nil."
   "Return whether LIST contains ELEMENT.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (cond
-   ((null !compare-fn)    (member element list))
-   ((eq !compare-fn 'eq)  (memq element list))
-   ((eq !compare-fn 'eql) (memql element list))
-   (t
-    (let ((lst list))
-      (while (and lst
-                  (not (funcall !compare-fn element (car lst))))
-        (setq lst (cdr lst)))
-      lst))))
+  (not
+   (null
+    (cond
+     ((null !compare-fn)    (member element list))
+     ((eq !compare-fn 'eq)  (memq element list))
+     ((eq !compare-fn 'eql) (memql element list))
+     (t
+      (let ((lst list))
+        (while (and lst
+                    (not (funcall !compare-fn element (car lst))))
+          (setq lst (cdr lst)))
+        lst))))))
 
 (defvar !compare-fn nil
   "Tests for equality use this function or `equal' if this is nil.

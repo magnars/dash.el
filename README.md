@@ -58,9 +58,9 @@ instead of one.
 Returns a new list consisting of the result of applying `fn` to the items in `list`.
 
 ```cl
-(!map (lambda (num) (* num num)) (quote (1 2 3 4))) ;; => (quote (1 4 9 16))
-(!map (quote square) (quote (1 2 3 4))) ;; => (quote (1 4 9 16))
-(!!map (* it it) (quote (1 2 3 4))) ;; => (quote (1 4 9 16))
+(!map (lambda (num) (* num num)) '(1 2 3 4)) ;; => '(1 4 9 16)
+(!map 'square '(1 2 3 4)) ;; => '(1 4 9 16)
+(!!map (* it it) '(1 2 3 4)) ;; => '(1 4 9 16)
 ```
 
 ### !reduce-from `(fn initial-value list)`
@@ -71,9 +71,9 @@ item, etc. If `list` contains no items, returns `initial-value` and
 `fn` is not called.
 
 ```cl
-(!reduce-from (quote +) 7 (quote (1 2))) ;; => 10
-(!reduce-from (lambda (memo item) (+ memo item)) 7 (quote (1 2))) ;; => 10
-(!!reduce-from (+ acc it) 7 (quote (1 2 3))) ;; => 13
+(!reduce-from '+ 7 '(1 2)) ;; => 10
+(!reduce-from (lambda (memo item) (+ memo item)) 7 '(1 2)) ;; => 10
+(!!reduce-from (+ acc it) 7 '(1 2 3)) ;; => 13
 ```
 
 ### !reduce `(fn list)`
@@ -85,9 +85,9 @@ reduce returns the result of calling `fn` with no arguments. If
 `list` has only 1 item, it is returned and `fn` is not called.
 
 ```cl
-(!reduce (quote +) (quote (1 2))) ;; => 3
-(!reduce (lambda (memo item) (format %s-%s memo item)) (quote (1 2 3))) ;; => 1-2-3
-(!!reduce (format %s-%s acc it) (quote (1 2 3))) ;; => 1-2-3
+(!reduce '+ '(1 2)) ;; => 3
+(!reduce (lambda (memo item) (format %s-%s memo item)) '(1 2 3)) ;; => 1-2-3
+(!!reduce (format %s-%s acc it) '(1 2 3)) ;; => 1-2-3
 ```
 
 ### !filter `(fn list)`
@@ -95,9 +95,9 @@ reduce returns the result of calling `fn` with no arguments. If
 Returns a new list of the items in `list` for which `fn` returns a non-nil value.
 
 ```cl
-(!filter (lambda (num) (= 0 (% num 2))) (quote (1 2 3 4))) ;; => (quote (2 4))
-(!filter (quote even?) (quote (1 2 3 4))) ;; => (quote (2 4))
-(!!filter (= 0 (% it 2)) (quote (1 2 3 4))) ;; => (quote (2 4))
+(!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(2 4)
+(!filter 'even? '(1 2 3 4)) ;; => '(2 4)
+(!!filter (= 0 (% it 2)) '(1 2 3 4)) ;; => '(2 4)
 ```
 
 ### !remove `(fn list)`
@@ -105,9 +105,9 @@ Returns a new list of the items in `list` for which `fn` returns a non-nil value
 Returns a new list of the items in `list` for which `fn` returns nil.
 
 ```cl
-(!remove (lambda (num) (= 0 (% num 2))) (quote (1 2 3 4))) ;; => (quote (1 3))
-(!remove (quote even?) (quote (1 2 3 4))) ;; => (quote (1 3))
-(!!remove (= 0 (% it 2)) (quote (1 2 3 4))) ;; => (quote (1 3))
+(!remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
+(!remove 'even? '(1 2 3 4)) ;; => '(1 3)
+(!!remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
 ```
 
 ### !concat `(&rest lists)`
@@ -116,9 +116,9 @@ Returns a new list with the concatenation of the elements in
 the supplied `lists`.
 
 ```cl
-(!concat (quote (1))) ;; => (quote (1))
-(!concat (quote (1)) (quote (2))) ;; => (quote (1 2))
-(!concat (quote (1)) (quote (2 3)) (quote (4))) ;; => (quote (1 2 3 4))
+(!concat '(1)) ;; => '(1)
+(!concat '(1) '(2)) ;; => '(1 2)
+(!concat '(1) '(2 3) '(4)) ;; => '(1 2 3 4)
 ```
 
 ### !mapcat `(fn list)`
@@ -127,9 +127,9 @@ Returns the result of applying concat to the result of applying map to `fn` and 
 Thus function `fn` should return a collection.
 
 ```cl
-(!mapcat (quote list) (quote (1 2 3))) ;; => (quote (1 2 3))
-(!mapcat (lambda (item) (list 0 item)) (quote (1 2 3))) ;; => (quote (0 1 0 2 0 3))
-(!!mapcat (list 0 it) (quote (1 2 3))) ;; => (quote (0 1 0 2 0 3))
+(!mapcat 'list '(1 2 3)) ;; => '(1 2 3)
+(!mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+(!!mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 ```
 
 ### !partial `(fn &rest args)`
@@ -140,8 +140,8 @@ When called, the returned function calls `fn` with args +
 additional args.
 
 ```cl
-(funcall (!partial (quote +) 5) 3) ;; => 8
-(funcall (!partial (quote +) 5 2) 3) ;; => 10
+(funcall (!partial '+ 5) 3) ;; => 8
+(funcall (!partial '+ 5 2) 3) ;; => 10
 ```
 
 ### !difference `(list list2)`
@@ -151,9 +151,9 @@ The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 
 ```cl
-(!difference (quote nil) (quote nil)) ;; => (quote nil)
-(!difference (quote (1 2 3)) (quote (4 5 6))) ;; => (quote (1 2 3))
-(!difference (quote (1 2 3 4)) (quote (3 4 5 6))) ;; => (quote (1 2))
+(!difference 'nil 'nil) ;; => 'nil
+(!difference '(1 2 3) '(4 5 6)) ;; => '(1 2 3)
+(!difference '(1 2 3 4) '(3 4 5 6)) ;; => '(1 2)
 ```
 
 ### !intersection `(list list2)`
@@ -163,9 +163,9 @@ The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 
 ```cl
-(!intersection (quote nil) (quote nil)) ;; => (quote nil)
-(!intersection (quote (1 2 3)) (quote (4 5 6))) ;; => (quote nil)
-(!intersection (quote (1 2 3 4)) (quote (3 4 5 6))) ;; => (quote (3 4))
+(!intersection 'nil 'nil) ;; => 'nil
+(!intersection '(1 2 3) '(4 5 6)) ;; => 'nil
+(!intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
 ```
 
 ### !uniq `(list)`
@@ -175,8 +175,8 @@ The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 
 ```cl
-(!uniq (quote nil)) ;; => (quote nil)
-(!uniq (quote (1 2 2 4))) ;; => (quote (1 2 4))
+(!uniq 'nil) ;; => 'nil
+(!uniq '(1 2 2 4)) ;; => '(1 2 4)
 ```
 
 ### !contains? `(list element)`
@@ -186,9 +186,9 @@ The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 
 ```cl
-(!contains? (quote (1 2 3)) 1) ;; => t
-(!contains? (quote (1 2 3)) 2) ;; => t
-(!contains? (quote (1 2 3)) 4) ;; => nil
+(!contains? '(1 2 3) 1) ;; => t
+(!contains? '(1 2 3) 2) ;; => t
+(!contains? '(1 2 3) 4) ;; => nil
 ```
 
 ## License

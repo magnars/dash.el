@@ -44,6 +44,17 @@
         (signature (cadr function)))
     (format "%s %s" command-name signature)))
 
+(defun simplify-quotes ()
+  (goto-char (point-min))
+  (while (search-forward "(quote " nil t)
+    (forward-char -7)
+    (let ((p (point)))
+      (forward-sexp 1)
+      (delete-char -1)
+      (goto-char p)
+      (delete-char 7)
+      (insert "'"))))
+
 (defun create-docs-file ()
   (let ((functions (nreverse functions)))
     (with-temp-file "./README.md"
@@ -66,7 +77,8 @@ instead of one.")
       (newline 2)
       (insert (mapconcat 'function-to-md functions "\n"))
       (newline)
-      (insert-file-contents-literally "./readme-postfix.md"))))
+      (insert-file-contents-literally "./readme-postfix.md")
+      (simplify-quotes))))
 
 (defun three-first (list)
   (let (first)

@@ -197,6 +197,21 @@ or with `!compare-fn` if that's non-nil.
 (!contains? '(1 2 3) 4) ;; => nil
 ```
 
+## Development
+
+Run the tests with
+
+    ./run-tests.sh
+
+Create the docs with
+
+    ./create-docs.sh
+
+I highly recommend that you install these as a pre-commit hook, so that
+the tests are always running and the docs are always in sync:
+
+    cp pre-commit.sh .git/hooks/pre-commit
+
 ## License
 
 Copyright (C) 2012 Magnar Sveen, Joel McCracken

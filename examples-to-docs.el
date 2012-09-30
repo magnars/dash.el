@@ -55,29 +55,22 @@
       (delete-char 7)
       (insert "'"))))
 
+(defun goto-and-remove (s)
+  (goto-char (point-min))
+  (search-forward s)
+  (delete-char (- (length s))))
+
 (defun create-docs-file ()
   (let ((functions (nreverse functions)))
     (with-temp-file "./README.md"
-      (insert-file-contents-literally "./readme-prefix.md")
-      (goto-char (point-max))
-      (newline)
-      (insert "## Available functions")
-      (newline 2)
-      (insert "```cl")
-      (newline)
+      (insert-file-contents-literally "./readme-template.md")
+
+      (goto-and-remove "[[ function-list ]]")
       (insert (mapconcat 'function-summary functions "\n"))
-      (newline)
-      (insert "```")
-      (newline 2)
-      (insert "There are also anaphoric versions of these
-functions where that makes sense, prefixed with two bangs
-instead of one.")
-      (newline 2)
-      (insert "## Documentation and examples")
-      (newline 2)
+
+      (goto-and-remove "[[ function-docs ]]")
       (insert (mapconcat 'function-to-md functions "\n"))
-      (newline)
-      (insert-file-contents-literally "./readme-postfix.md")
+
       (simplify-quotes))))
 
 (defun three-first (list)

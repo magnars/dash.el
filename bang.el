@@ -33,20 +33,6 @@
   "Anaphoric form of `!map'."
   `(mapcar (lambda (it) ,form) ,list))
 
-(defun !reduce-from (fn initial-value list)
-  "Returns the result of applying FN to INITIAL-VALUE and the
-first item in LIST, then applying FN to that result and the 2nd
-item, etc. If LIST contains no items, returns INITIAL-VALUE and
-FN is not called.
-
-In the anaphoric form `!!reduce-from', the accumulated value is
-exposed as `acc`."
-  (let ((acc initial-value))
-    (while list
-      (setq acc (funcall fn acc (car list)))
-      (setq list (cdr list)))
-    acc))
-
 (defmacro !!reduce-from (form initial-value list)
   "Anaphoric form of `!reduce-from'."
   `(let ((!--list ,list)
@@ -57,6 +43,22 @@ exposed as `acc`."
          (setq !--acc ,form))
        (setq !--list (cdr !--list)))
      !--acc))
+
+(defun !reduce-from (fn initial-value list)
+  "Returns the result of applying FN to INITIAL-VALUE and the
+first item in LIST, then applying FN to that result and the 2nd
+item, etc. If LIST contains no items, returns INITIAL-VALUE and
+FN is not called.
+
+In the anaphoric form `!!reduce-from', the accumulated value is
+exposed as `acc`."
+  (!!reduce-from (funcall fn acc it) initial-value list))
+
+(defmacro !!reduce (form list)
+  "Anaphoric form of `!reduce'."
+  (if (eval list)
+      `(!!reduce-from ,form ,(car (eval list)) ',(cdr (eval list)))
+    `(let (acc it) ,form)))
 
 (defun !reduce (fn list)
   "Returns the result of applying FN to the first 2 items in LIST,
@@ -71,21 +73,6 @@ exposed as `acc`."
       (!reduce-from fn (car list) (cdr list))
     (funcall fn)))
 
-(defmacro !!reduce (form list)
-  "Anaphoric form of `!reduce'."
-  (if (eval list)
-      `(!!reduce-from ,form ,(car (eval list)) ',(cdr (eval list)))
-    `(let (acc it) ,form)))
-
-(defun !filter (fn list)
-  "Returns a new list of the items in LIST for which FN returns a non-nil value."
-  (let ((result '()))
-    (while list
-      (when (funcall fn (car list))
-        (setq result (cons (car list) result)))
-      (setq list (cdr list)))
-    (nreverse result)))
-
 (defmacro !!filter (form list)
   "Anaphoric form of `!filter'."
   `(let ((!--list ,list)
@@ -97,27 +84,31 @@ exposed as `acc`."
        (setq !--list (cdr !--list)))
      (nreverse !--result)))
 
-(defun !remove (fn list)
-  "Returns a new list of the items in LIST for which FN returns nil."
-  (!!filter (not (funcall fn it)) list))
+(defun !filter (fn list)
+  "Returns a new list of the items in LIST for which FN returns a non-nil value."
+  (!!filter (funcall fn it) list))
 
 (defmacro !!remove (form list)
   "Anaphoric form of `!remove'."
   `(!!filter (not ,form) ,list))
+
+(defun !remove (fn list)
+  "Returns a new list of the items in LIST for which FN returns nil."
+  (!!remove (funcall fn it) list))
 
 (defun !concat (&rest lists)
   "Returns a new list with the concatenation of the elements in
 the supplied LISTS."
   (apply 'append (append lists '(nil))))
 
-(defun !mapcat (fn list)
-  "Returns the result of applying concat to the result of applying map to FN and LIST.
-Thus function FN should return a collection."
-  (apply '!concat (!map fn list)))
-
 (defmacro !!mapcat (form list)
   "Anaphoric form of `!mapcat'."
   `(apply '!concat (!!map ,form ,list)))
+
+(defun !mapcat (fn list)
+  "Returns the result of applying concat to the result of applying map to FN and LIST.
+Thus function FN should return a collection."
+  (!!mapcat (funcall fn it) list))
 
 (defun !partial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,

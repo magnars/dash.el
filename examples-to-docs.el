@@ -5,7 +5,7 @@
 (defun example-to-string (example)
   (let ((actual (car example))
         (expected (cadr (cdr example))))
-    (format "%s ;; => %s" actual expected)))
+    (replace-regexp-in-string "\\\\\\?" "?" (format "%S ;; => %S" actual expected))))
 
 (defun examples-to-strings (examples)
   (let (result)

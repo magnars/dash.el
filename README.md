@@ -89,8 +89,8 @@ exposed as `acc`.
 
 ```cl
 (!reduce '+ '(1 2)) ;; => 3
-(!reduce (lambda (memo item) (format %s-%s memo item)) '(1 2 3)) ;; => 1-2-3
-(!!reduce (format %s-%s acc it) '(1 2 3)) ;; => 1-2-3
+(!reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) ;; => "1-2-3"
+(!!reduce (format "%s-%s" acc it) '(1 2 3)) ;; => "1-2-3"
 ```
 
 ### !filter `(fn list)`

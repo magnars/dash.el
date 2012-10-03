@@ -96,6 +96,22 @@ exposed as `acc`."
   "Returns a new list of the items in LIST for which FN returns nil."
   (!!remove (funcall fn it) list))
 
+(defmacro !!keep (form list)
+  "Anaphoric form of `!keep'."
+  `(let ((!--list ,list)
+         (!--result '()))
+     (while !--list
+       (let* ((it (car !--list))
+              (mapped ,form))
+         (when mapped
+           (setq !--result (cons mapped !--result))))
+       (setq !--list (cdr !--list)))
+     (nreverse !--result)))
+
+(defun !keep (fn list)
+  "Returns a new list of the non-nil results of applying FN to the items in LIST."
+  (!!keep (funcall fn it) list))
+
 (defun !concat (&rest lists)
   "Returns a new list with the concatenation of the elements in
 the supplied LISTS."

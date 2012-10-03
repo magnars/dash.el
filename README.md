@@ -15,6 +15,7 @@ This is so much a work in progress that you should definitely not be using it ye
 * [!reduce](#reduce-fn-list) `(fn list)`
 * [!filter](#filter-fn-list) `(fn list)`
 * [!remove](#remove-fn-list) `(fn list)`
+* [!keep](#keep-fn-list) `(fn list)`
 * [!concat](#concat-rest-lists) `(&rest lists)`
 * [!mapcat](#mapcat-fn-list) `(fn list)`
 * [!partial](#partial-fn-rest-args) `(fn &rest args)`
@@ -111,6 +112,16 @@ Returns a new list of the items in `list` for which `fn` returns nil.
 (!remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
 (!remove 'even? '(1 2 3 4)) ;; => '(1 3)
 (!!remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
+```
+
+### !keep `(fn list)`
+
+Returns a new list of the non-nil results of applying `fn` to the items in `list`.
+
+```cl
+(!keep 'cdr '((1 2 3) (4 5) (6))) ;; => '((2 3) (5))
+(!keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) ;; => '(40 50 60)
+(!!keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => '(40 50 60)
 ```
 
 ### !concat `(&rest lists)`

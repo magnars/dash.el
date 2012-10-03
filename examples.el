@@ -40,6 +40,11 @@
   (let ((mod 2)) (!remove (lambda (num) (= 0 (% num mod))) '(1 2 3 4))) => '(1 3)
   (let ((mod 2)) (!!remove (= 0 (% it mod)) '(1 2 3 4))) => '(1 3))
 
+(defexamples !keep
+  (!keep 'cdr '((1 2 3) (4 5) (6))) => '((2 3) (5))
+  (!keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) => '(40 50 60)
+  (!!keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) => '(40 50 60))
+
 (defexamples !concat
   (!concat '(1)) => '(1)
   (!concat '(1) '(2)) => '(1 2)

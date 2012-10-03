@@ -65,6 +65,9 @@
 
 (defun simplify-quotes ()
   (goto-char (point-min))
+  (while (search-forward "(quote nil)" nil t)
+    (replace-match "'()"))
+  (goto-char (point-min))
   (while (search-forward "(quote " nil t)
     (forward-char -7)
     (let ((p (point)))

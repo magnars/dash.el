@@ -154,7 +154,7 @@ The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 
 ```cl
-(!difference 'nil 'nil) ;; => 'nil
+(!difference '() '()) ;; => '()
 (!difference '(1 2 3) '(4 5 6)) ;; => '(1 2 3)
 (!difference '(1 2 3 4) '(3 4 5 6)) ;; => '(1 2)
 ```
@@ -166,8 +166,8 @@ The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 
 ```cl
-(!intersection 'nil 'nil) ;; => 'nil
-(!intersection '(1 2 3) '(4 5 6)) ;; => 'nil
+(!intersection '() '()) ;; => '()
+(!intersection '(1 2 3) '(4 5 6)) ;; => '()
 (!intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
 ```
 
@@ -178,7 +178,7 @@ The test for equality is done with `equal`,
 or with `!compare-fn` if that's non-nil.
 
 ```cl
-(!distinct 'nil) ;; => 'nil
+(!distinct '()) ;; => '()
 (!distinct '(1 2 2 4)) ;; => '(1 2 4)
 ```
 

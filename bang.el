@@ -168,6 +168,34 @@ or with `!compare-fn' if that's non-nil."
           (setq lst (cdr lst)))
         lst))))))
 
+(defmacro !!some (form list)
+  "Anaphoric form of `!some'."
+  `(let ((!--list ,list)
+         (!--any nil))
+     (while (and !--list (not !--any))
+       (let ((it (car !--list)))
+         (setq !--any ,form))
+       (setq !--list (cdr !--list)))
+     !--any))
+
+(defun !some (fn list)
+  "Returns the first non-nil value of (FN x) for any x in LIST, else nil."
+  (!!some (funcall fn it) list))
+
+(defmacro !!every? (form list)
+  "Anaphoric form of `!every?'."
+  `(let ((!--list ,list)
+         (!--all t))
+     (while (and !--all !--list)
+       (let ((it (car !--list)))
+         (setq !--all ,form))
+       (setq !--list (cdr !--list)))
+     (not (null !--all))))
+
+(defun !every? (fn list)
+  "Returns t if (FN x) is non-nil for every x in LIST, else nil."
+  (!!every? (funcall fn it) list))
+
 (defvar !compare-fn nil
   "Tests for equality use this function or `equal' if this is nil.
 It should only be set using dynamic scope with a let, like:

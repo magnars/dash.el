@@ -80,3 +80,13 @@
   (!contains? '(1 2 3) 4) => nil
   (!contains? '() 1) => nil
   (!contains? '() '()) => nil)
+
+(defexamples !some
+  (!some 'even? '(1 2 3)) => t
+  (!some 'even? '(1 3 5)) => nil
+  (!!some (= 0 (% it 2)) '(1 2 3)) => t)
+
+(defexamples !every?
+  (!every? 'even? '(1 2 3)) => nil
+  (!every? 'even? '(2 4 6)) => t
+  (!!every? (= 0 (% it 2)) '(2 4 6)) => t)

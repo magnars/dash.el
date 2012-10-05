@@ -23,6 +23,8 @@ This is so much a work in progress that you should definitely not be using it ye
 * [!intersection](#intersection-list-list2) `(list list2)`
 * [!distinct](#distinct-list) `(list)`
 * [!contains?](#contains-list-element) `(list element)`
+* [!some](#some-fn-list) `(fn list)`
+* [!every?](#every-fn-list) `(fn list)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two bangs instead of one.
@@ -203,6 +205,26 @@ or with `!compare-fn` if that's non-nil.
 (!contains? '(1 2 3) 1) ;; => t
 (!contains? '(1 2 3) 2) ;; => t
 (!contains? '(1 2 3) 4) ;; => nil
+```
+
+### !some `(fn list)`
+
+Returns the first non-nil value of (`fn` x) for any x in `list`, else nil.
+
+```cl
+(!some 'even? '(1 2 3)) ;; => t
+(!some 'even? '(1 3 5)) ;; => nil
+(!!some (= 0 (% it 2)) '(1 2 3)) ;; => t
+```
+
+### !every? `(fn list)`
+
+Returns t if (`fn` x) is non-nil for every x in `list`, else nil.
+
+```cl
+(!every? 'even? '(1 2 3)) ;; => nil
+(!every? 'even? '(2 4 6)) ;; => t
+(!!every? (= 0 (% it 2)) '(2 4 6)) ;; => t
 ```
 
 

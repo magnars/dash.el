@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t -*-
+;; -*- lexical-binding: t; eval: (font-lock-add-keywords nil '(("defexamples\\| => " (0 'font-lock-keyword-face)))); -*-
 
 ;; Only the first three examples per function are shown in the docs,
 ;; so make those good.

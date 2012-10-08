@@ -25,6 +25,7 @@ This is so much a work in progress that you should definitely not be using it ye
 * [!contains?](#contains-list-element) `(list element)`
 * [!some](#some-fn-list) `(fn list)`
 * [!every?](#every-fn-list) `(fn list)`
+* [!each](#each-list-fn) `(list fn)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two bangs instead of one.
@@ -225,6 +226,16 @@ Returns t if (`fn` x) is non-nil for every x in `list`, else nil.
 (!every? 'even? '(1 2 3)) ;; => nil
 (!every? 'even? '(2 4 6)) ;; => t
 (!!every? (= 0 (% it 2)) '(2 4 6)) ;; => t
+```
+
+### !each `(list fn)`
+
+Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
+
+```cl
+(let (s) (!each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
+(let (s) (!each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
+(let (s) (!!each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
 ```
 
 

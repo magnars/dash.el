@@ -90,3 +90,8 @@
   (!every? 'even? '(1 2 3)) => nil
   (!every? 'even? '(2 4 6)) => t
   (!!every? (= 0 (% it 2)) '(2 4 6)) => t)
+
+(defexamples !each
+  (let (s) (!each '(1 2 3) (lambda (item) (setq s (cons item s))))) => nil
+  (let (s) (!each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(3 2 1)
+  (let (s) (!!each '(1 2 3) (setq s (cons it s))) s) => '(3 2 1))

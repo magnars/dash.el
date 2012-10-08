@@ -196,6 +196,18 @@ or with `!compare-fn' if that's non-nil."
   "Returns t if (FN x) is non-nil for every x in LIST, else nil."
   (!!every? (funcall fn it) list))
 
+(defmacro !!each (list form)
+  "Anaphoric form of `!each'."
+  `(let ((!--list ,list))
+     (while !--list
+       (let ((it (car !--list)))
+         ,form)
+       (setq !--list (cdr !--list)))))
+
+(defun !each (list fn)
+  "Calls FN with every item in LIST. Returns nil, used for side-effects only."
+  (!!each list (funcall fn it)))
+
 (defvar !compare-fn nil
   "Tests for equality use this function or `equal' if this is nil.
 It should only be set using dynamic scope with a let, like:

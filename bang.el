@@ -178,18 +178,28 @@ or with `!compare-fn' if that's non-nil."
           (setq lst (cdr lst)))
         lst))))))
 
+(defmacro !!first (form list)
+  "Anaphoric form of `!first'."
+  `(let ((!--list ,list)
+         (!--needle nil))
+     (while (and !--list (not !--needle))
+       (let ((it (car !--list)))
+         (when ,form (setq !--needle it)))
+       (setq !--list (cdr !--list)))
+     !--needle))
+
+(defun !first (fn list)
+  "Returns the first x in LIST where (FN x) is non-nil, else nil.
+
+To get the first item in the list no questions asked, use `car'."
+  (!!first (funcall fn it) list))
+
 (defun !--truthy? (val)
   (not (null val)))
 
 (defmacro !!any? (form list)
   "Anaphoric form of `!any?'."
-  `(let ((!--list ,list)
-         (!--any nil))
-     (while (and !--list (not !--any))
-       (let ((it (car !--list)))
-         (setq !--any ,form))
-       (setq !--list (cdr !--list)))
-     (!--truthy? !--any)))
+  `(!--truthy? (!!first ,form ,list)))
 
 (defun !any? (fn list)
   "Returns t if (FN x) is non-nil for any x in LIST, else nil.

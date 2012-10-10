@@ -16,6 +16,7 @@ This is so much a work in progress that you should definitely not be using it ye
 * [!keep](#keep-fn-list) `(fn list)`
 * [!concat](#concat-rest-lists) `(&rest lists)`
 * [!mapcat](#mapcat-fn-list) `(fn list)`
+* [!first](#first-fn-list) `(fn list)`
 * [!partial](#partial-fn-rest-args) `(fn &rest args)`
 * [!difference](#difference-list-list2) `(list list2)`
 * [!intersection](#intersection-list-list2) `(list list2)`
@@ -149,6 +150,18 @@ Thus function `fn` should return a collection.
 (!mapcat 'list '(1 2 3)) ;; => '(1 2 3)
 (!mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 (!!mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+```
+
+### !first `(fn list)`
+
+Returns the first x in `list` where (`fn` x) is non-nil, else nil.
+
+To get the first item in the list no questions asked, use `car`.
+
+```cl
+(!first 'even? '(1 2 3)) ;; => 2
+(!first 'even? '(1 3 5)) ;; => nil
+(!!first (> it 2) '(1 2 3)) ;; => 3
 ```
 
 ### !partial `(fn &rest args)`

@@ -56,6 +56,11 @@
   (!mapcat (lambda (item) (list 0 item)) '(1 2 3)) => '(0 1 0 2 0 3)
   (!!mapcat (list 0 it) '(1 2 3)) => '(0 1 0 2 0 3))
 
+(defexamples !first
+  (!first 'even? '(1 2 3)) => 2
+  (!first 'even? '(1 3 5)) => nil
+  (!!first (> it 2) '(1 2 3)) => 3)
+
 (defexamples !partial
   (funcall (!partial '+ 5) 3) => 8
   (funcall (!partial '+ 5 2) 3) => 10)

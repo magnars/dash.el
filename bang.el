@@ -85,16 +85,26 @@ exposed as `acc`."
      (nreverse !--result)))
 
 (defun !filter (fn list)
-  "Returns a new list of the items in LIST for which FN returns a non-nil value."
+  "Returns a new list of the items in LIST for which FN returns a non-nil value.
+
+Alias: `!select'"
   (!!filter (funcall fn it) list))
+
+(defalias '!select '!filter)
+(defalias '!!select '!!filter)
 
 (defmacro !!remove (form list)
   "Anaphoric form of `!remove'."
   `(!!filter (not ,form) ,list))
 
 (defun !remove (fn list)
-  "Returns a new list of the items in LIST for which FN returns nil."
+  "Returns a new list of the items in LIST for which FN returns nil.
+
+Alias: `!reject'"
   (!!remove (funcall fn it) list))
+
+(defalias '!reject '!remove)
+(defalias '!!reject '!!remove)
 
 (defmacro !!keep (form list)
   "Anaphoric form of `!keep'."
@@ -168,33 +178,46 @@ or with `!compare-fn' if that's non-nil."
           (setq lst (cdr lst)))
         lst))))))
 
-(defmacro !!some (form list)
-  "Anaphoric form of `!some'."
+(defun !--truthy? (val)
+  (not (null val)))
+
+(defmacro !!any? (form list)
+  "Anaphoric form of `!any?'."
   `(let ((!--list ,list)
          (!--any nil))
      (while (and !--list (not !--any))
        (let ((it (car !--list)))
          (setq !--any ,form))
        (setq !--list (cdr !--list)))
-     !--any))
+     (!--truthy? !--any)))
 
-(defun !some (fn list)
-  "Returns the first non-nil value of (FN x) for any x in LIST, else nil."
-  (!!some (funcall fn it) list))
+(defun !any? (fn list)
+  "Returns t if (FN x) is non-nil for any x in LIST, else nil.
 
-(defmacro !!every? (form list)
-  "Anaphoric form of `!every?'."
+Alias: `!some?'"
+  (!!any? (funcall fn it) list))
+
+(defalias '!some? '!any?)
+(defalias '!!some? '!!any?)
+
+(defmacro !!all? (form list)
+  "Anaphoric form of `!all?'."
   `(let ((!--list ,list)
          (!--all t))
      (while (and !--all !--list)
        (let ((it (car !--list)))
          (setq !--all ,form))
        (setq !--list (cdr !--list)))
-     (not (null !--all))))
+     (!--truthy? !--all)))
 
-(defun !every? (fn list)
-  "Returns t if (FN x) is non-nil for every x in LIST, else nil."
-  (!!every? (funcall fn it) list))
+(defun !all? (fn list)
+  "Returns t if (FN x) is non-nil for all x in LIST, else nil.
+
+Alias: `!every?'"
+  (!!all? (funcall fn it) list))
+
+(defalias '!every? '!all?)
+(defalias '!!every? '!!all?)
 
 (defmacro !!each (list form)
   "Anaphoric form of `!each'."

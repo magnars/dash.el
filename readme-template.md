@@ -1,8 +1,6 @@
 # bang.el [![Build Status](https://secure.travis-ci.org/magnars/bang.el.png)](http://travis-ci.org/magnars/bang.el)
 
-The startings of a modern list api for Emacs. Does not require 'cl.
-
-We're looking to Clojure for naming and signatures.
+The startings of a modern list api for Emacs that does not require 'cl.
 
 ## Warning
 

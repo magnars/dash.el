@@ -1,8 +1,6 @@
 # bang.el [![Build Status](https://secure.travis-ci.org/magnars/bang.el.png)](http://travis-ci.org/magnars/bang.el)
 
-The startings of a modern list api for Emacs. Does not require 'cl.
-
-We're looking to Clojure for naming and signatures.
+The startings of a modern list api for Emacs that does not require 'cl.
 
 ## Warning
 
@@ -23,8 +21,8 @@ This is so much a work in progress that you should definitely not be using it ye
 * [!intersection](#intersection-list-list2) `(list list2)`
 * [!distinct](#distinct-list) `(list)`
 * [!contains?](#contains-list-element) `(list element)`
-* [!some](#some-fn-list) `(fn list)`
-* [!every?](#every-fn-list) `(fn list)`
+* [!any?](#any-fn-list) `(fn list)`
+* [!all?](#all-fn-list) `(fn list)`
 * [!each](#each-list-fn) `(list fn)`
 
 There are also anaphoric versions of these functions where that makes sense,
@@ -101,6 +99,8 @@ exposed as `acc`.
 
 Returns a new list of the items in `list` for which `fn` returns a non-nil value.
 
+Alias: `!select`
+
 ```cl
 (!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(2 4)
 (!filter 'even? '(1 2 3 4)) ;; => '(2 4)
@@ -110,6 +110,8 @@ Returns a new list of the items in `list` for which `fn` returns a non-nil value
 ### !remove `(fn list)`
 
 Returns a new list of the items in `list` for which `fn` returns nil.
+
+Alias: `!reject`
 
 ```cl
 (!remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
@@ -208,24 +210,28 @@ or with `!compare-fn` if that's non-nil.
 (!contains? '(1 2 3) 4) ;; => nil
 ```
 
-### !some `(fn list)`
+### !any? `(fn list)`
 
-Returns the first non-nil value of (`fn` x) for any x in `list`, else nil.
+Returns t if (`fn` x) is non-nil for any x in `list`, else nil.
+
+Alias: `!some?`
 
 ```cl
-(!some 'even? '(1 2 3)) ;; => t
-(!some 'even? '(1 3 5)) ;; => nil
-(!!some (= 0 (% it 2)) '(1 2 3)) ;; => t
+(!any? 'even? '(1 2 3)) ;; => t
+(!any? 'even? '(1 3 5)) ;; => nil
+(!!any? (= 0 (% it 2)) '(1 2 3)) ;; => t
 ```
 
-### !every? `(fn list)`
+### !all? `(fn list)`
 
-Returns t if (`fn` x) is non-nil for every x in `list`, else nil.
+Returns t if (`fn` x) is non-nil for all x in `list`, else nil.
+
+Alias: `!every?`
 
 ```cl
-(!every? 'even? '(1 2 3)) ;; => nil
-(!every? 'even? '(2 4 6)) ;; => t
-(!!every? (= 0 (% it 2)) '(2 4 6)) ;; => t
+(!all? 'even? '(1 2 3)) ;; => nil
+(!all? 'even? '(2 4 6)) ;; => t
+(!!all? (= 0 (% it 2)) '(2 4 6)) ;; => t
 ```
 
 ### !each `(list fn)`

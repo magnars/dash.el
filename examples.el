@@ -7,11 +7,13 @@
 
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))
+(defun three-letters () '("A" "B" "C"))
 
 (defexamples !map
   (!map (lambda (num) (* num num)) '(1 2 3 4)) => '(1 4 9 16)
   (!map 'square '(1 2 3 4)) => '(1 4 9 16)
-  (!!map (* it it) '(1 2 3 4)) => '(1 4 9 16))
+  (!!map (* it it) '(1 2 3 4)) => '(1 4 9 16)
+  (!!map (concat it it) (three-letters)) => '("AA" "BB" "CC"))
 
 (defexamples !reduce-from
   (!reduce-from '+ 7 '(1 2)) => 10
@@ -99,4 +101,6 @@
 (defexamples !each
   (let (s) (!each '(1 2 3) (lambda (item) (setq s (cons item s))))) => nil
   (let (s) (!each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(3 2 1)
-  (let (s) (!!each '(1 2 3) (setq s (cons it s))) s) => '(3 2 1))
+  (let (s) (!!each '(1 2 3) (setq s (cons it s))) s) => '(3 2 1)
+  (let (s) (!!each (reverse (three-letters)) (setq s (cons it s))) s) => '("A" "B" "C")
+)

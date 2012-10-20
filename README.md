@@ -1,6 +1,6 @@
 # bang.el [![Build Status](https://secure.travis-ci.org/magnars/bang.el.png)](http://travis-ci.org/magnars/bang.el)
 
-The startings of a modern list api for Emacs that does not require 'cl.
+The startings of a modern list api for Emacs. No 'cl required.
 
 ## Installation
 
@@ -50,7 +50,7 @@ of course the original can also be written like
 ```cl
 (defun even? (num) (= 0 (% num 2)))
 
-(!filter even? '(1 2 3 4))
+(!filter 'even? '(1 2 3 4))
 ```
 
 which demonstrates the usefulness of both versions.

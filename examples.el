@@ -71,6 +71,19 @@
   (funcall (!rpartial '- 5) 8) => 3
   (funcall (!rpartial '- 5 2) 10) => 3)
 
+(defexamples !->
+  (!-> "Abc") => "Abc"
+  (!-> "Abc" (concat "def")) => "Abcdef"
+  (!-> "Abc" (concat "def") (concat "ghi")) => "Abcdefghi"
+  (!-> 5 square) => 25
+  (!-> 5 (+ 3) square) => 64)
+
+(defexamples !->>
+  (!->> "Abc" (concat "def")) => "defAbc"
+  (!->> "Abc" (concat "def") (concat "ghi")) => "ghidefAbc"
+  (!->> 5 (- 8)) => 3
+  (!->> 5 (- 3) square) => 4)
+
 (defexamples !difference
   (!difference '() '()) => '()
   (!difference '(1 2 3) '(4 5 6)) => '(1 2 3)

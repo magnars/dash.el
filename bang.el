@@ -154,6 +154,29 @@ args first and then ARGS."
   `(closure (t) (&rest args)
             (apply ',fn (append args ',args))))
 
+(defmacro !-> (x &optional form &rest more)
+  "Threads the expr through the forms. Inserts X as the second
+item in the first form, making a list of it if it is not a list
+already. If there are more forms, inserts the first form as the
+second item in second form, etc."
+  (cond
+   ((null form) x)
+   ((null more) (if (listp form)
+                    `(,(car form) ,x ,@(cdr form))
+                  (list form x)))
+   (:else `(!-> (!-> ,x ,form) ,@more))))
+
+(defmacro !->> (x form &rest more)
+  "Threads the expr through the forms. Inserts X as the last item
+in the first form, making a list of it if it is not a list
+already. If there are more forms, inserts the first form as the
+last item in second form, etc."
+  (if (null more)
+      (if (listp form)
+          `(,(car form) ,@(cdr form) ,x)
+        (list form x))
+    `(!->> (!->> ,x ,form) ,@more)))
+
 (defun !distinct (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',

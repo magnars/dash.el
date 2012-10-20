@@ -2,6 +2,14 @@
 
 The startings of a modern list api for Emacs that does not require 'cl.
 
+## Installation
+
+It's available on [marmalade](http://marmalade-repo.org/):
+
+    M-x package-install bang
+
+Or you can just dump `bang.el` in your load path somewhere.
+
 ## Functions
 
 [[ function-list ]]

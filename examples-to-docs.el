@@ -20,12 +20,22 @@
       (setq examples (cddr (cdr examples))))
     (nreverse result)))
 
+(defun docs--signature (cmd)
+  (if (eq 'macro (car cmd))
+      (car (cddr cmd))
+    (cadr cmd)))
+
+(defun docs--docstring (cmd)
+  (if (eq 'macro (car cmd))
+      (cadr (cddr cmd))
+    (car (cddr cmd))))
+
 (defmacro defexamples (cmd &rest examples)
   `(add-to-list 'functions (list
-                            ',cmd ;; command name
-                            (cadr (symbol-function ',cmd)) ;; signature
-                            (car (cddr (symbol-function ',cmd))) ;; docstring
-                            (examples-to-strings ',examples)))) ;; examples
+                            ',cmd
+                            (docs--signature (symbol-function ',cmd))
+                            (docs--docstring (symbol-function ',cmd))
+                            (examples-to-strings ',examples))))
 
 (defun quote-and-downcase (string)
   (format "`%s`" (downcase string)))

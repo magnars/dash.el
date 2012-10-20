@@ -4,7 +4,7 @@ The startings of a modern list api for Emacs. No 'cl required.
 
 ## Installation
 
-It's available on [marmalade](http://marmalade-repo.org/):
+It's available on [marmalade](http://marmalade-repo.org/) and [Melpa](http://melpa.milkbox.net/):
 
     M-x package-install bang
 
@@ -23,6 +23,8 @@ Or you can just dump `bang.el` in your load path somewhere.
 * [!first](#first-fn-list) `(fn list)`
 * [!partial](#partial-fn-rest-args) `(fn &rest args)`
 * [!rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
+* [!->](#x-optional-form-rest-more) `(x &optional form &rest more)`
+* [!->>](#x-form-rest-more) `(x form &rest more)`
 * [!difference](#difference-list-list2) `(list list2)`
 * [!intersection](#intersection-list-list2) `(list list2)`
 * [!distinct](#distinct-list) `(list)`
@@ -188,9 +190,37 @@ and returns a fn that takes a variable number of additional `args`.
 When called, the returned function calls `fn` with the additional
 args first and then `args`.
 
+Requires Emacs 24 or higher.
+
 ```cl
 (funcall (!rpartial '- 5) 8) ;; => 3
 (funcall (!rpartial '- 5 2) 10) ;; => 3
+```
+
+### !-> `(x &optional form &rest more)`
+
+Threads the expr through the forms. Inserts `x` as the second
+item in the first form, making a list of it if it is not a list
+already. If there are more forms, inserts the first form as the
+second item in second form, etc.
+
+```cl
+(!-> "Abc") ;; => "Abc"
+(!-> "Abc" (concat "def")) ;; => "Abcdef"
+(!-> "Abc" (concat "def") (concat "ghi")) ;; => "Abcdefghi"
+```
+
+### !->> `(x form &rest more)`
+
+Threads the expr through the forms. Inserts `x` as the last item
+in the first form, making a list of it if it is not a list
+already. If there are more forms, inserts the first form as the
+last item in second form, etc.
+
+```cl
+(!->> "Abc" (concat "def")) ;; => "defAbc"
+(!->> "Abc" (concat "def") (concat "ghi")) ;; => "ghidefAbc"
+(!->> 5 (- 8)) ;; => 3
 ```
 
 ### !difference `(list list2)`

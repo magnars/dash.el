@@ -2,10 +2,6 @@
 
 The startings of a modern list api for Emacs that does not require 'cl.
 
-## Warning
-
-This is so much a work in progress that you should definitely not be using it yet.
-
 ## Functions
 
 * [!map](#map-fn-list) `(fn list)`
@@ -278,10 +274,9 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## License
 
-Copyright (C) 2012 Magnar Sveen, Joel McCracken
+Copyright (C) 2012 Magnar Sveen
 
 Authors: Magnar Sveen <magnars@gmail.com>
-         Joel McCracken
 Keywords: lists
 
 This program is free software; you can redistribute it and/or modify

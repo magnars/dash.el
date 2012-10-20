@@ -1,9 +1,9 @@
 ;;; bang.el --- A modern list library for Emacs
 
-;; Copyright (C) 2012 Magnar Sveen, Joel McCracken
+;; Copyright (C) 2012 Magnar Sveen
 
 ;; Authors: Magnar Sveen <magnars@gmail.com>
-;;          Joel McCracken
+;; Version: 0.1.0
 ;; Keywords: lists
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,8 @@
 ;;; Commentary:
 
 ;; The startings of a modern list api for Emacs.
+;;
+;; See documentation on https://github.com/magnars/bang.el#functions
 
 ;;; Code:
 

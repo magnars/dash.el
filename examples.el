@@ -67,9 +67,10 @@
   (funcall (!partial '- 5) 3) => 2
   (funcall (!partial '+ 5 2) 3) => 10)
 
-(defexamples !rpartial
-  (funcall (!rpartial '- 5) 8) => 3
-  (funcall (!rpartial '- 5 2) 10) => 3)
+(unless (version< emacs-version "24")
+  (defexamples !rpartial
+    (funcall (!rpartial '- 5) 8) => 3
+    (funcall (!rpartial '- 5 2) 10) => 3))
 
 (defexamples !->
   (!-> "Abc") => "Abc"
@@ -120,4 +121,4 @@
   (let (s) (!each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(3 2 1)
   (let (s) (!!each '(1 2 3) (setq s (cons it s))) s) => '(3 2 1)
   (let (s) (!!each (reverse (three-letters)) (setq s (cons it s))) s) => '("A" "B" "C")
-)
+  )

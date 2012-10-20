@@ -7,6 +7,6 @@ before_install:
           emacs-snapshot-el emacs-snapshot-gtk emacs-snapshot;
     fi
 env:
-  - EMACS=emacs
+  - EMACS=emacs-snapshot
 script:
   ./run-travis-ci.sh

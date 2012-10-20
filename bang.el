@@ -141,9 +141,18 @@ Thus function FN should return a collection."
 (defun !partial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,
 and returns a fn that takes a variable number of additional ARGS.
-When called, the returned function calls FN with ARGS +
-additional args."
-  (apply 'apply-partially fn args))
+When called, the returned function calls FN with ARGS first and
+then additional args."
+  `(closure (t) (&rest args)
+            (apply ',fn ,@(mapcar (lambda (arg) `',arg) args) args)))
+
+(defun !rpartial (fn &rest args)
+  "Takes a function FN and fewer than the normal arguments to FN,
+and returns a fn that takes a variable number of additional ARGS.
+When called, the returned function calls FN with the additional
+args first and then ARGS."
+  `(closure (t) (&rest args)
+            (apply ',fn (append args ',args))))
 
 (defun !distinct (list)
   "Return a new list with all duplicates removed.

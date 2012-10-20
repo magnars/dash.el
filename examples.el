@@ -64,8 +64,12 @@
   (!!first (> it 2) '(1 2 3)) => 3)
 
 (defexamples !partial
-  (funcall (!partial '+ 5) 3) => 8
+  (funcall (!partial '- 5) 3) => 2
   (funcall (!partial '+ 5 2) 3) => 10)
+
+(defexamples !rpartial
+  (funcall (!rpartial '- 5) 8) => 3
+  (funcall (!rpartial '- 5 2) 10) => 3)
 
 (defexamples !difference
   (!difference '() '()) => '()

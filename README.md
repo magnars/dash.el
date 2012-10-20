@@ -22,6 +22,7 @@ Or you can just dump `bang.el` in your load path somewhere.
 * [!mapcat](#mapcat-fn-list) `(fn list)`
 * [!first](#first-fn-list) `(fn list)`
 * [!partial](#partial-fn-rest-args) `(fn &rest args)`
+* [!rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
 * [!difference](#difference-list-list2) `(list list2)`
 * [!intersection](#intersection-list-list2) `(list list2)`
 * [!distinct](#distinct-list) `(list)`
@@ -172,12 +173,24 @@ To get the first item in the list no questions asked, use `car`.
 
 Takes a function `fn` and fewer than the normal arguments to `fn`,
 and returns a fn that takes a variable number of additional `args`.
-When called, the returned function calls `fn` with `args` +
-additional args.
+When called, the returned function calls `fn` with `args` first and
+then additional args.
 
 ```cl
-(funcall (!partial '+ 5) 3) ;; => 8
+(funcall (!partial '- 5) 3) ;; => 2
 (funcall (!partial '+ 5 2) 3) ;; => 10
+```
+
+### !rpartial `(fn &rest args)`
+
+Takes a function `fn` and fewer than the normal arguments to `fn`,
+and returns a fn that takes a variable number of additional `args`.
+When called, the returned function calls `fn` with the additional
+args first and then `args`.
+
+```cl
+(funcall (!rpartial '- 5) 8) ;; => 3
+(funcall (!rpartial '- 5 2) 10) ;; => 3
 ```
 
 ### !difference `(list list2)`

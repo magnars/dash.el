@@ -37,14 +37,16 @@
 
 (defmacro !!reduce-from (form initial-value list)
   "Anaphoric form of `!reduce-from'."
-  `(let ((!--list ,list)
-         (!--acc ,initial-value))
-     (while !--list
-       (let ((it (car !--list))
-             (acc !--acc))
-         (setq !--acc ,form))
-       (setq !--list (cdr !--list)))
-     !--acc))
+  (let ((l (make-symbol "list"))
+        (a (make-symbol "acc")))
+    `(let ((,l ,list)
+           (,a ,initial-value))
+       (while ,l
+         (let ((it (car ,l))
+               (acc ,a))
+           (setq ,a ,form))
+         (setq ,l (cdr ,l)))
+       ,a)))
 
 (defun !reduce-from (fn initial-value list)
   "Returns the result of applying FN to INITIAL-VALUE and the
@@ -77,14 +79,16 @@ exposed as `acc`."
 
 (defmacro !!filter (form list)
   "Anaphoric form of `!filter'."
-  `(let ((!--list ,list)
-         (!--result '()))
-     (while !--list
-       (let ((it (car !--list)))
-         (when ,form
-           (setq !--result (cons it !--result))))
-       (setq !--list (cdr !--list)))
-     (nreverse !--result)))
+  (let ((l (make-symbol "list"))
+        (r (make-symbol "result")))
+    `(let ((,l ,list)
+           (,r '()))
+       (while ,l
+         (let ((it (car ,l)))
+           (when ,form
+             (setq ,r (cons it ,r))))
+         (setq ,l (cdr ,l)))
+       (nreverse ,r))))
 
 (defun !filter (fn list)
   "Returns a new list of the items in LIST for which FN returns a non-nil value.
@@ -110,15 +114,17 @@ Alias: `!reject'"
 
 (defmacro !!keep (form list)
   "Anaphoric form of `!keep'."
-  `(let ((!--list ,list)
-         (!--result '()))
-     (while !--list
-       (let* ((it (car !--list))
-              (mapped ,form))
-         (when mapped
-           (setq !--result (cons mapped !--result))))
-       (setq !--list (cdr !--list)))
-     (nreverse !--result)))
+  (let ((l (make-symbol "list"))
+        (r (make-symbol "result")))
+    `(let ((,l ,list)
+           (,r '()))
+       (while ,l
+         (let* ((it (car ,l))
+                (mapped ,form))
+           (when mapped
+             (setq ,r (cons mapped ,r))))
+         (setq ,l (cdr ,l)))
+       (nreverse ,r))))
 
 (defun !keep (fn list)
   "Returns a new list of the non-nil results of applying FN to the items in LIST."
@@ -182,7 +188,13 @@ last item in second form, etc."
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
 or with `!compare-fn' if that's non-nil."
-  (!!filter (not (!contains? !--result it)) list))
+  (let ((result '()))
+    (while list
+      (let ((it (car list)))
+        (when (not (!contains? result it))
+          (setq result (cons it result))))
+      (setq list (cdr list)))
+    (nreverse result)))
 
 (defun !intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.
@@ -215,13 +227,15 @@ or with `!compare-fn' if that's non-nil."
 
 (defmacro !!first (form list)
   "Anaphoric form of `!first'."
-  `(let ((!--list ,list)
-         (!--needle nil))
-     (while (and !--list (not !--needle))
-       (let ((it (car !--list)))
-         (when ,form (setq !--needle it)))
-       (setq !--list (cdr !--list)))
-     !--needle))
+  (let ((l (make-symbol "list"))
+        (n (make-symbol "needle")))
+    `(let ((,l ,list)
+           (,n nil))
+       (while (and ,l (not ,n))
+         (let ((it (car ,l)))
+           (when ,form (setq ,n it)))
+         (setq ,l (cdr ,l)))
+       ,n)))
 
 (defun !first (fn list)
   "Returns the first x in LIST where (FN x) is non-nil, else nil.
@@ -247,13 +261,15 @@ Alias: `!some?'"
 
 (defmacro !!all? (form list)
   "Anaphoric form of `!all?'."
-  `(let ((!--list ,list)
-         (!--all t))
-     (while (and !--all !--list)
-       (let ((it (car !--list)))
-         (setq !--all ,form))
-       (setq !--list (cdr !--list)))
-     (!--truthy? !--all)))
+  (let ((l (make-symbol "list"))
+        (a (make-symbol "all")))
+    `(let ((,l ,list)
+           (,a t))
+       (while (and ,a ,l)
+         (let ((it (car ,l)))
+           (setq ,a ,form))
+         (setq ,l (cdr ,l)))
+       (!--truthy? ,a))))
 
 (defun !all? (fn list)
   "Returns t if (FN x) is non-nil for all x in LIST, else nil.
@@ -266,11 +282,12 @@ Alias: `!every?'"
 
 (defmacro !!each (list form)
   "Anaphoric form of `!each'."
-  `(let ((!--list ,list))
-     (while !--list
-       (let ((it (car !--list)))
-         ,form)
-       (setq !--list (cdr !--list)))))
+  (let ((l (make-symbol "list")))
+    `(let ((,l ,list))
+       (while ,l
+         (let ((it (car ,l)))
+           ,form)
+         (setq ,l (cdr ,l))))))
 
 (defun !each (list fn)
   "Calls FN with every item in LIST. Returns nil, used for side-effects only."

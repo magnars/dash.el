@@ -20,6 +20,7 @@ Or you can just dump `bang.el` in your load path somewhere.
 * [!keep](#keep-fn-list) `(fn list)`
 * [!concat](#concat-rest-lists) `(&rest lists)`
 * [!mapcat](#mapcat-fn-list) `(fn list)`
+* [!interpose](#interpose-sep-list) `(sep list)`
 * [!first](#first-fn-list) `(fn list)`
 * [!partial](#partial-fn-rest-args) `(fn &rest args)`
 * [!rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
@@ -157,6 +158,16 @@ Thus function `fn` should return a collection.
 (!mapcat 'list '(1 2 3)) ;; => '(1 2 3)
 (!mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 (!!mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+```
+
+### !interpose `(sep list)`
+
+Returns a new list of all elements in `list` separated by `sep`.
+
+```cl
+(!interpose "-" '()) ;; => '()
+(!interpose "-" '("a")) ;; => '("a")
+(!interpose "-" '("a" "b" "c")) ;; => '("a" "-" "b" "-" "c")
 ```
 
 ### !first `(fn list)`

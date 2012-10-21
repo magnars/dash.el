@@ -58,6 +58,11 @@
   (!mapcat (lambda (item) (list 0 item)) '(1 2 3)) => '(0 1 0 2 0 3)
   (!!mapcat (list 0 it) '(1 2 3)) => '(0 1 0 2 0 3))
 
+(defexamples !interpose
+  (!interpose "-" '()) => '()
+  (!interpose "-" '("a")) => '("a")
+  (!interpose "-" '("a" "b" "c")) => '("a" "-" "b" "-" "c"))
+
 (defexamples !first
   (!first 'even? '(1 2 3)) => 2
   (!first 'even? '(1 3 5)) => nil

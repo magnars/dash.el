@@ -144,6 +144,17 @@ the supplied LISTS."
 Thus function FN should return a collection."
   (!!mapcat (funcall fn it) list))
 
+(defun !interpose (sep list)
+  "Returns a new list of all elements in LIST separated by SEP."
+  (let (result)
+    (when list
+      (setq result (cons (car list) result))
+      (setq list (cdr list)))
+    (while list
+      (setq result (cons (car list) (cons sep result)))
+      (setq list (cdr list)))
+    (nreverse result)))
+
 (defun !partial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,
 and returns a fn that takes a variable number of additional ARGS.

@@ -63,6 +63,11 @@
   (!interpose "-" '("a")) => '("a")
   (!interpose "-" '("a" "b" "c")) => '("a" "-" "b" "-" "c"))
 
+(defexamples !replace-where
+  (!replace-where 'even? 'square '(1 2 3 4)) => '(1 4 3 16)
+  (!replace-where (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) => '(1 2 0 4)
+  (!!replace-where (> it 2) (* it it) '(1 2 3 4)) => '(1 2 9 16))
+
 (defexamples !first
   (!first 'even? '(1 2 3)) => 2
   (!first 'even? '(1 3 5)) => nil

@@ -155,6 +155,26 @@ Thus function FN should return a collection."
       (setq list (cdr list)))
     (nreverse result)))
 
+(defmacro !!replace-where (pred rep list)
+  "Returns a new list where the elements in LIST that does not match the PRED function
+are unchanged, and where the elements in LIST that do match the PRED function are mapped
+through the REP function."
+  (let ((l (make-symbol "list"))
+        (r (make-symbol "result")))
+    `(let ((,l ,list)
+           (,r '()))
+       (while ,l
+         (let ((it (car ,l)))
+           (setq ,r (cons (if ,pred ,rep it) ,r)))
+         (setq ,l (cdr ,l)))
+       (nreverse ,r))))
+
+(defun !replace-where (pred rep list)
+  "Returns a new list where the elements in LIST that does not match the PRED function
+are unchanged, and where the elements in LIST that do match the PRED function are mapped
+through the REP function."
+  (!!replace-where (funcall pred it) (funcall rep it) list))
+
 (defun !partial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,
 and returns a fn that takes a variable number of additional ARGS.

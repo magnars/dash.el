@@ -21,6 +21,7 @@ Or you can just dump `bang.el` in your load path somewhere.
 * [!concat](#concat-rest-lists) `(&rest lists)`
 * [!mapcat](#mapcat-fn-list) `(fn list)`
 * [!interpose](#interpose-sep-list) `(sep list)`
+* [!replace-where](#replace-where-pred-rep-list) `(pred rep list)`
 * [!first](#first-fn-list) `(fn list)`
 * [!partial](#partial-fn-rest-args) `(fn &rest args)`
 * [!rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
@@ -168,6 +169,18 @@ Returns a new list of all elements in `list` separated by `sep`.
 (!interpose "-" '()) ;; => '()
 (!interpose "-" '("a")) ;; => '("a")
 (!interpose "-" '("a" "b" "c")) ;; => '("a" "-" "b" "-" "c")
+```
+
+### !replace-where `(pred rep list)`
+
+Returns a new list where the elements in `list` that does not match the `pred` function
+are unchanged, and where the elements in `list` that do match the `pred` function are mapped
+through the `rep` function.
+
+```cl
+(!replace-where 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
+(!replace-where (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) ;; => '(1 2 0 4)
+(!!replace-where (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
 ```
 
 ### !first `(fn list)`

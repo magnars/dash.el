@@ -65,8 +65,9 @@
 
 (defexamples !replace-where
   (!replace-where 'even? 'square '(1 2 3 4)) => '(1 4 3 16)
-  (!replace-where (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) => '(1 2 0 4)
-  (!!replace-where (> it 2) (* it it) '(1 2 3 4)) => '(1 2 9 16))
+  (!!replace-where (> it 2) (* it it) '(1 2 3 4)) => '(1 2 9 16)
+  (!!replace-where (= it 2) 17 '(1 2 3 4)) => '(1 17 3 4)
+  (!replace-where (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) => '(1 2 0 4))
 
 (defexamples !first
   (!first 'even? '(1 2 3)) => 2
@@ -94,6 +95,11 @@
   (!->> "Abc" (concat "def") (concat "ghi")) => "ghidefAbc"
   (!->> 5 (- 8)) => 3
   (!->> 5 (- 3) square) => 4)
+
+(defexamples !!->
+  (!!-> "def" (concat "abc" it "ghi")) => "abcdefghi"
+  (!!-> "def" (concat "abc" it "ghi") (upcase it)) => "ABCDEFGHI"
+  (!!-> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI")
 
 (defexamples !difference
   (!difference '() '()) => '()

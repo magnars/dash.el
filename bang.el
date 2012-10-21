@@ -215,6 +215,17 @@ last item in second form, etc."
         (list form x))
     `(!->> (!->> ,x ,form) ,@more)))
 
+(defmacro !!-> (x form &rest more)
+  "Threads the expr through the forms. Inserts X at the position
+signified by the token `it' in the first form. If there are more
+forms, inserts the first form at the position signified by `it'
+in in second form, etc."
+  (if (null more)
+      (if (listp form)
+          (!!replace-where (eq it 'it) x form)
+        (list form x))
+    `(!!-> (!!-> ,x ,form) ,@more)))
+
 (defun !distinct (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',

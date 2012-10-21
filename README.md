@@ -27,6 +27,7 @@ Or you can just dump `bang.el` in your load path somewhere.
 * [!rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
 * [!->](#x-optional-form-rest-more) `(x &optional form &rest more)`
 * [!->>](#x-form-rest-more) `(x form &rest more)`
+* [!!->](#x-form-rest-more) `(x form &rest more)`
 * [!difference](#difference-list-list2) `(list list2)`
 * [!intersection](#intersection-list-list2) `(list list2)`
 * [!distinct](#distinct-list) `(list)`
@@ -179,8 +180,8 @@ through the `rep` function.
 
 ```cl
 (!replace-where 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
-(!replace-where (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) ;; => '(1 2 0 4)
 (!!replace-where (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
+(!!replace-where (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
 ```
 
 ### !first `(fn list)`
@@ -245,6 +246,19 @@ last item in second form, etc.
 (!->> "Abc" (concat "def")) ;; => "defAbc"
 (!->> "Abc" (concat "def") (concat "ghi")) ;; => "ghidefAbc"
 (!->> 5 (- 8)) ;; => 3
+```
+
+### !!-> `(x form &rest more)`
+
+Threads the expr through the forms. Inserts `x` at the position
+signified by the token `it` in the first form. If there are more
+forms, inserts the first form at the position signified by `it`
+in in second form, etc.
+
+```cl
+(!!-> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
+(!!-> "def" (concat "abc" it "ghi") (upcase it)) ;; => "ABCDEFGHI"
+(!!-> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
 ```
 
 ### !difference `(list list2)`

@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012 Magnar Sveen
 
 ;; Authors: Magnar Sveen <magnars@gmail.com>
-;; Version: 1.0.0
+;; Version: 1.0.1
 ;; Keywords: lists
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -148,6 +148,24 @@ Alias: `-reject'"
   "Returns the result of applying concat to the result of applying map to FN and LIST.
 Thus function FN should return a collection."
   (--mapcat (funcall fn it) list))
+
+(defmacro --first (form list)
+  "Anaphoric form of `-first'."
+  (let ((l (make-symbol "list"))
+        (n (make-symbol "needle")))
+    `(let ((,l ,list)
+           (,n nil))
+       (while (and ,l (not ,n))
+         (let ((it (car ,l)))
+           (when ,form (setq ,n it)))
+         (setq ,l (cdr ,l)))
+       ,n)))
+
+(defun -first (fn list)
+  "Returns the first x in LIST where (FN x) is non-nil, else nil.
+
+To get the first item in the list no questions asked, use `car'."
+  (--first (funcall fn it) list))
 
 (defun ---truthy? (val)
   (not (null val)))
@@ -376,6 +394,11 @@ The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
   (--filter (not (-contains? list2 it)) list))
 
+(defvar -compare-fn nil
+  "Tests for equality use this function or `equal' if this is nil.
+It should only be set using dynamic scope with a let, like:
+(let ((-compare-fn =)) (-union numbers1 numbers2 numbers3)")
+
 (defun -contains? (list element)
   "Return whether LIST contains ELEMENT.
 The test for equality is done with `equal',
@@ -392,29 +415,6 @@ or with `-compare-fn' if that's non-nil."
                     (not (funcall -compare-fn element (car lst))))
           (setq lst (cdr lst)))
         lst))))))
-
-(defmacro --first (form list)
-  "Anaphoric form of `-first'."
-  (let ((l (make-symbol "list"))
-        (n (make-symbol "needle")))
-    `(let ((,l ,list)
-           (,n nil))
-       (while (and ,l (not ,n))
-         (let ((it (car ,l)))
-           (when ,form (setq ,n it)))
-         (setq ,l (cdr ,l)))
-       ,n)))
-
-(defun -first (fn list)
-  "Returns the first x in LIST where (FN x) is non-nil, else nil.
-
-To get the first item in the list no questions asked, use `car'."
-  (--first (funcall fn it) list))
-
-(defvar -compare-fn nil
-  "Tests for equality use this function or `equal' if this is nil.
-It should only be set using dynamic scope with a let, like:
-(let ((-compare-fn =)) (-union numbers1 numbers2 numbers3)")
 
 (provide 'dash)
 ;;; dash.el ends here

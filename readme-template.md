@@ -15,7 +15,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 [[ function-list ]]
 
 There are also anaphoric versions of these functions where that makes sense,
-prefixed with two dashs instead of one.
+prefixed with two dashes instead of one.
 
 ## Anaphoric functions
 

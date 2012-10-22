@@ -159,6 +159,18 @@ Thus function FN should return a collection."
   "Returns a new list of successive items from LIST while (FN item) returns a non-nil value."
   (!!take-while (funcall fn it) list))
 
+(defmacro !!drop-while (form list)
+  "Anaphoric form of `!drop-while'."
+  (let ((l (make-symbol "list")))
+    `(let ((,l ,list))
+       (while (and ,l (let ((it (car ,l))) ,form))
+         (setq ,l (cdr ,l)))
+       ,l)))
+
+(defun !drop-while (fn list)
+  "Returns the tail of LIST starting from the first item for which (FN item) returns nil."
+  (!!drop-while (funcall fn it) list))
+
 (defun !interpose (sep list)
   "Returns a new list of all elements in LIST separated by SEP."
   (let (result)

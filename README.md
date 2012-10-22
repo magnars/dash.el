@@ -20,6 +20,7 @@ Or you can just dump `bang.el` in your load path somewhere.
 * [!keep](#keep-fn-list) `(fn list)`
 * [!concat](#concat-rest-lists) `(&rest lists)`
 * [!mapcat](#mapcat-fn-list) `(fn list)`
+* [!take-while](#take-while-fn-list) `(fn list)`
 * [!interpose](#interpose-sep-list) `(sep list)`
 * [!replace-where](#replace-where-pred-rep-list) `(pred rep list)`
 * [!first](#first-fn-list) `(fn list)`
@@ -160,6 +161,16 @@ Thus function `fn` should return a collection.
 (!mapcat 'list '(1 2 3)) ;; => '(1 2 3)
 (!mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 (!!mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+```
+
+### !take-while `(fn list)`
+
+Returns a new list of successive items from `list` while (`fn` item) returns a non-nil value.
+
+```cl
+(!take-while 'even? '(1 2 3 4)) ;; => '()
+(!take-while 'even? '(2 4 5 6)) ;; => '(2 4)
+(!!take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
 ```
 
 ### !interpose `(sep list)`

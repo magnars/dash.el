@@ -144,6 +144,21 @@ the supplied LISTS."
 Thus function FN should return a collection."
   (!!mapcat (funcall fn it) list))
 
+(defmacro !!take-while (form list)
+  "Anaphoric form of `!take-while'."
+  (let ((l (make-symbol "list"))
+        (r (make-symbol "result")))
+    `(let ((,l ,list)
+           (,r '()))
+       (while (and ,l (let ((it (car ,l))) ,form))
+         (setq ,r (cons (car ,l) ,r))
+         (setq ,l (cdr ,l)))
+       (nreverse ,r))))
+
+(defun !take-while (fn list)
+  "Returns a new list of successive items from LIST while (FN item) returns a non-nil value."
+  (!!take-while (funcall fn it) list))
+
 (defun !interpose (sep list)
   "Returns a new list of all elements in LIST separated by SEP."
   (let (result)

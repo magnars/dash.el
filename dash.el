@@ -149,6 +149,64 @@ Alias: `-reject'"
 Thus function FN should return a collection."
   (--mapcat (funcall fn it) list))
 
+(defun ---truthy? (val)
+  (not (null val)))
+
+(defmacro --any? (form list)
+  "Anaphoric form of `-any?'."
+  `(---truthy? (--first ,form ,list)))
+
+(defun -any? (fn list)
+  "Returns t if (FN x) is non-nil for any x in LIST, else nil.
+
+Alias: `-some?'"
+  (--any? (funcall fn it) list))
+
+(defalias '-some? '-any?)
+(defalias '--some? '--any?)
+
+(defmacro --all? (form list)
+  "Anaphoric form of `-all?'."
+  (let ((l (make-symbol "list"))
+        (a (make-symbol "all")))
+    `(let ((,l ,list)
+           (,a t))
+       (while (and ,a ,l)
+         (let ((it (car ,l)))
+           (setq ,a ,form))
+         (setq ,l (cdr ,l)))
+       (---truthy? ,a))))
+
+(defun -all? (fn list)
+  "Returns t if (FN x) is non-nil for all x in LIST, else nil.
+
+Alias: `-every?'"
+  (--all? (funcall fn it) list))
+
+(defalias '-every? '-all?)
+(defalias '--every? '--all?)
+
+(defmacro --none? (form list)
+  "Anaphoric form `-none?'."
+  `(--all? (not ,form) ,list))
+
+(defun -none? (fn list)
+  "Returns t if (FN x) is nil for all x in LIST, else nil."
+  (--none? (funcall fn it) list))
+
+(defmacro --each (list form)
+  "Anaphoric form of `-each'."
+  (let ((l (make-symbol "list")))
+    `(let ((,l ,list))
+       (while ,l
+         (let ((it (car ,l)))
+           ,form)
+         (setq ,l (cdr ,l))))))
+
+(defun -each (list fn)
+  "Calls FN with every item in LIST. Returns nil, used for side-effects only."
+  (--each list (funcall fn it)))
+
 (defun -take (n list)
   "Returns a new list of the first N items in LIST, or all items if there are fewer than N."
   (let (result)
@@ -352,56 +410,6 @@ or with `-compare-fn' if that's non-nil."
 
 To get the first item in the list no questions asked, use `car'."
   (--first (funcall fn it) list))
-
-(defun ---truthy? (val)
-  (not (null val)))
-
-(defmacro --any? (form list)
-  "Anaphoric form of `-any?'."
-  `(---truthy? (--first ,form ,list)))
-
-(defun -any? (fn list)
-  "Returns t if (FN x) is non-nil for any x in LIST, else nil.
-
-Alias: `-some?'"
-  (--any? (funcall fn it) list))
-
-(defalias '-some? '-any?)
-(defalias '--some? '--any?)
-
-(defmacro --all? (form list)
-  "Anaphoric form of `-all?'."
-  (let ((l (make-symbol "list"))
-        (a (make-symbol "all")))
-    `(let ((,l ,list)
-           (,a t))
-       (while (and ,a ,l)
-         (let ((it (car ,l)))
-           (setq ,a ,form))
-         (setq ,l (cdr ,l)))
-       (---truthy? ,a))))
-
-(defun -all? (fn list)
-  "Returns t if (FN x) is non-nil for all x in LIST, else nil.
-
-Alias: `-every?'"
-  (--all? (funcall fn it) list))
-
-(defalias '-every? '-all?)
-(defalias '--every? '--all?)
-
-(defmacro --each (list form)
-  "Anaphoric form of `-each'."
-  (let ((l (make-symbol "list")))
-    `(let ((,l ,list))
-       (while ,l
-         (let ((it (car ,l)))
-           ,form)
-         (setq ,l (cdr ,l))))))
-
-(defun -each (list fn)
-  "Calls FN with every item in LIST. Returns nil, used for side-effects only."
-  (--each list (funcall fn it)))
 
 (defvar -compare-fn nil
   "Tests for equality use this function or `equal' if this is nil.

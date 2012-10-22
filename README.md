@@ -21,6 +21,10 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-flatten](#flatten-l) `(l)`
 * [-concat](#concat-rest-lists) `(&rest lists)`
 * [-mapcat](#mapcat-fn-list) `(fn list)`
+* [-any?](#any-fn-list) `(fn list)`
+* [-all?](#all-fn-list) `(fn list)`
+* [-none?](#none-fn-list) `(fn list)`
+* [-each](#each-list-fn) `(list fn)`
 * [-take](#take-n-list) `(n list)`
 * [-drop](#drop-n-list) `(n list)`
 * [-take-while](#take-while-fn-list) `(fn list)`
@@ -35,9 +39,6 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-intersection](#intersection-list-list2) `(list list2)`
 * [-distinct](#distinct-list) `(list)`
 * [-contains?](#contains-list-element) `(list element)`
-* [-any?](#any-fn-list) `(fn list)`
-* [-all?](#all-fn-list) `(fn list)`
-* [-each](#each-list-fn) `(list fn)`
 * [-partial](#partial-fn-rest-args) `(fn &rest args)`
 * [-rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
 * [->](#x-optional-form-rest-more) `(x &optional form &rest more)`
@@ -176,6 +177,50 @@ Thus function `fn` should return a collection.
 (-mapcat 'list '(1 2 3)) ;; => '(1 2 3)
 (-mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 (--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+```
+
+### -any? `(fn list)`
+
+Returns t if (`fn` x) is non-nil for any x in `list`, else nil.
+
+Alias: `-some?`
+
+```cl
+(-any? 'even? '(1 2 3)) ;; => t
+(-any? 'even? '(1 3 5)) ;; => nil
+(--any? (= 0 (% it 2)) '(1 2 3)) ;; => t
+```
+
+### -all? `(fn list)`
+
+Returns t if (`fn` x) is non-nil for all x in `list`, else nil.
+
+Alias: `-every?`
+
+```cl
+(-all? 'even? '(1 2 3)) ;; => nil
+(-all? 'even? '(2 4 6)) ;; => t
+(--all? (= 0 (% it 2)) '(2 4 6)) ;; => t
+```
+
+### -none? `(fn list)`
+
+Returns t if (`fn` x) is nil for all x in `list`, else nil.
+
+```cl
+(-none? 'even? '(1 2 3)) ;; => nil
+(-none? 'even? '(1 3 5)) ;; => t
+(--none? (= 0 (% it 2)) '(1 2 3)) ;; => nil
+```
+
+### -each `(list fn)`
+
+Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
+
+```cl
+(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
+(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
+(let (s) (--each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
 ```
 
 ### -take `(n list)`
@@ -324,40 +369,6 @@ or with `-compare-fn` if that's non-nil.
 (-contains? '(1 2 3) 1) ;; => t
 (-contains? '(1 2 3) 2) ;; => t
 (-contains? '(1 2 3) 4) ;; => nil
-```
-
-### -any? `(fn list)`
-
-Returns t if (`fn` x) is non-nil for any x in `list`, else nil.
-
-Alias: `-some?`
-
-```cl
-(-any? 'even? '(1 2 3)) ;; => t
-(-any? 'even? '(1 3 5)) ;; => nil
-(--any? (= 0 (% it 2)) '(1 2 3)) ;; => t
-```
-
-### -all? `(fn list)`
-
-Returns t if (`fn` x) is non-nil for all x in `list`, else nil.
-
-Alias: `-every?`
-
-```cl
-(-all? 'even? '(1 2 3)) ;; => nil
-(-all? 'even? '(2 4 6)) ;; => t
-(--all? (= 0 (% it 2)) '(2 4 6)) ;; => t
-```
-
-### -each `(list fn)`
-
-Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
-
-```cl
-(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
-(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
-(let (s) (--each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
 ```
 
 ### -partial `(fn &rest args)`

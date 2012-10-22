@@ -62,6 +62,27 @@
   (-mapcat (lambda (item) (list 0 item)) '(1 2 3)) => '(0 1 0 2 0 3)
   (--mapcat (list 0 it) '(1 2 3)) => '(0 1 0 2 0 3))
 
+(defexamples -any?
+  (-any? 'even? '(1 2 3)) => t
+  (-any? 'even? '(1 3 5)) => nil
+  (--any? (= 0 (% it 2)) '(1 2 3)) => t)
+
+(defexamples -all?
+  (-all? 'even? '(1 2 3)) => nil
+  (-all? 'even? '(2 4 6)) => t
+  (--all? (= 0 (% it 2)) '(2 4 6)) => t)
+
+(defexamples -none?
+  (-none? 'even? '(1 2 3)) => nil
+  (-none? 'even? '(1 3 5)) => t
+  (--none? (= 0 (% it 2)) '(1 2 3)) => nil)
+
+(defexamples -each
+  (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) => nil
+  (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(3 2 1)
+  (let (s) (--each '(1 2 3) (setq s (cons it s))) s) => '(3 2 1)
+  (let (s) (--each (reverse (three-letters)) (setq s (cons it s))) s) => '("A" "B" "C"))
+
 (defexamples -take
   (-take 3 '(1 2 3 4 5)) => '(1 2 3)
   (-take 17 '(1 2 3 4 5)) => '(1 2 3 4 5))
@@ -131,22 +152,6 @@
   (-contains? '(1 2 3) 4) => nil
   (-contains? '() 1) => nil
   (-contains? '() '()) => nil)
-
-(defexamples -any?
-  (-any? 'even? '(1 2 3)) => t
-  (-any? 'even? '(1 3 5)) => nil
-  (--any? (= 0 (% it 2)) '(1 2 3)) => t)
-
-(defexamples -all?
-  (-all? 'even? '(1 2 3)) => nil
-  (-all? 'even? '(2 4 6)) => t
-  (--all? (= 0 (% it 2)) '(2 4 6)) => t)
-
-(defexamples -each
-  (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) => nil
-  (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(3 2 1)
-  (let (s) (--each '(1 2 3) (setq s (cons it s))) s) => '(3 2 1)
-  (let (s) (--each (reverse (three-letters)) (setq s (cons it s))) s) => '("A" "B" "C"))
 
 (defexamples -partial
   (funcall (-partial '- 5) 3) => 2

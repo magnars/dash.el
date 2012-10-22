@@ -68,6 +68,11 @@
   (!drop-while 'even? '(2 4 5 6)) => '(5 6)
   (!!drop-while (< it 4) '(1 2 3 4 3 2 1)) => '(4 3 2 1))
 
+(defexamples !split-with
+  (!split-with 'even? '(1 2 3 4)) => '(() (1 2 3 4))
+  (!split-with 'even? '(2 4 5 6)) => '((2 4) (5 6))
+  (!!split-with (< it 4) '(1 2 3 4 3 2 1)) => '((1 2 3) (4 3 2 1)))
+
 (defexamples !interpose
   (!interpose "-" '()) => '()
   (!interpose "-" '("a")) => '("a")

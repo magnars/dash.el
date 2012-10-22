@@ -171,6 +171,15 @@ Thus function FN should return a collection."
   "Returns the tail of LIST starting from the first item for which (FN item) returns nil."
   (!!drop-while (funcall fn it) list))
 
+(defmacro !!split-with (form list)
+  "Anaphoric form of `!split-with'."
+  `(list (!!take-while ,form ,list)
+         (!!drop-while ,form ,list)))
+
+(defun !split-with (fn list)
+  "Returns a list of ((!take-while FN LIST) (!drop-while FN LIST))"
+  (!!split-with (funcall fn it) list))
+
 (defun !interpose (sep list)
   "Returns a new list of all elements in LIST separated by SEP."
   (let (result)

@@ -1,32 +1,32 @@
-# bang.el [![Build Status](https://secure.travis-ci.org/magnars/bang.el.png)](http://travis-ci.org/magnars/bang.el)
+# dash.el [![Build Status](https://secure.travis-ci.org/magnars/dash.el.png)](http://travis-ci.org/magnars/dash.el)
 
-The startings of a modern list api for Emacs. No 'cl required.
+A modern list api for Emacs. No 'cl required.
 
 ## Installation
 
 It's available on [marmalade](http://marmalade-repo.org/) and [Melpa](http://melpa.milkbox.net/):
 
-    M-x package-install bang
+    M-x package-install dash
 
-Or you can just dump `bang.el` in your load path somewhere.
+Or you can just dump `dash.el` in your load path somewhere.
 
 ## Functions
 
 [[ function-list ]]
 
 There are also anaphoric versions of these functions where that makes sense,
-prefixed with two bangs instead of one.
+prefixed with two dashs instead of one.
 
 ## Anaphoric functions
 
-While `!filter` takes a function to filter the list by, you can also use the
-anaphoric form with double bangs - which will then be executed with `it` exposed
+While `-filter` takes a function to filter the list by, you can also use the
+anaphoric form with double dashes - which will then be executed with `it` exposed
 as the list item. Here's an example:
 
 ```cl
-(!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; normal version
+(-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; normal version
 
-(!!filter (= 0 (% it 2)) '(1 2 3 4)) ;; anaphoric version
+(--filter (= 0 (% it 2)) '(1 2 3 4)) ;; anaphoric version
 ```
 
 of course the original can also be written like
@@ -34,7 +34,7 @@ of course the original can also be written like
 ```cl
 (defun even? (num) (= 0 (% num 2)))
 
-(!filter 'even? '(1 2 3 4))
+(-filter 'even? '(1 2 3 4))
 ```
 
 which demonstrates the usefulness of both versions.

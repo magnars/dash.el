@@ -1,60 +1,60 @@
-# bang.el [![Build Status](https://secure.travis-ci.org/magnars/bang.el.png)](http://travis-ci.org/magnars/bang.el)
+# dash.el [![Build Status](https://secure.travis-ci.org/magnars/dash.el.png)](http://travis-ci.org/magnars/dash.el)
 
-The startings of a modern list api for Emacs. No 'cl required.
+A modern list api for Emacs. No 'cl required.
 
 ## Installation
 
 It's available on [marmalade](http://marmalade-repo.org/) and [Melpa](http://melpa.milkbox.net/):
 
-    M-x package-install bang
+    M-x package-install dash
 
-Or you can just dump `bang.el` in your load path somewhere.
+Or you can just dump `dash.el` in your load path somewhere.
 
 ## Functions
 
-* [!map](#map-fn-list) `(fn list)`
-* [!reduce-from](#reduce-from-fn-initial-value-list) `(fn initial-value list)`
-* [!reduce](#reduce-fn-list) `(fn list)`
-* [!filter](#filter-fn-list) `(fn list)`
-* [!remove](#remove-fn-list) `(fn list)`
-* [!keep](#keep-fn-list) `(fn list)`
-* [!concat](#concat-rest-lists) `(&rest lists)`
-* [!mapcat](#mapcat-fn-list) `(fn list)`
-* [!take](#take-n-list) `(n list)`
-* [!drop](#drop-n-list) `(n list)`
-* [!take-while](#take-while-fn-list) `(fn list)`
-* [!drop-while](#drop-while-fn-list) `(fn list)`
-* [!split-at](#split-at-n-list) `(n list)`
-* [!split-with](#split-with-fn-list) `(fn list)`
-* [!interpose](#interpose-sep-list) `(sep list)`
-* [!replace-where](#replace-where-pred-rep-list) `(pred rep list)`
-* [!first](#first-fn-list) `(fn list)`
-* [!partial](#partial-fn-rest-args) `(fn &rest args)`
-* [!rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
-* [!->](#x-optional-form-rest-more) `(x &optional form &rest more)`
-* [!->>](#x-form-rest-more) `(x form &rest more)`
-* [!!->](#x-form-rest-more) `(x form &rest more)`
-* [!difference](#difference-list-list2) `(list list2)`
-* [!intersection](#intersection-list-list2) `(list list2)`
-* [!distinct](#distinct-list) `(list)`
-* [!contains?](#contains-list-element) `(list element)`
-* [!any?](#any-fn-list) `(fn list)`
-* [!all?](#all-fn-list) `(fn list)`
-* [!each](#each-list-fn) `(list fn)`
+* [-map](#map-fn-list) `(fn list)`
+* [-reduce-from](#reduce-from-fn-initial-value-list) `(fn initial-value list)`
+* [-reduce](#reduce-fn-list) `(fn list)`
+* [-filter](#filter-fn-list) `(fn list)`
+* [-remove](#remove-fn-list) `(fn list)`
+* [-keep](#keep-fn-list) `(fn list)`
+* [-concat](#concat-rest-lists) `(&rest lists)`
+* [-mapcat](#mapcat-fn-list) `(fn list)`
+* [-take](#take-n-list) `(n list)`
+* [-drop](#drop-n-list) `(n list)`
+* [-take-while](#take-while-fn-list) `(fn list)`
+* [-drop-while](#drop-while-fn-list) `(fn list)`
+* [-split-at](#split-at-n-list) `(n list)`
+* [-split-with](#split-with-fn-list) `(fn list)`
+* [-interpose](#interpose-sep-list) `(sep list)`
+* [-replace-where](#replace-where-pred-rep-list) `(pred rep list)`
+* [-first](#first-fn-list) `(fn list)`
+* [-partial](#partial-fn-rest-args) `(fn &rest args)`
+* [-rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
+* [->](#x-optional-form-rest-more) `(x &optional form &rest more)`
+* [->>](#x-form-rest-more) `(x form &rest more)`
+* [-->](#x-form-rest-more) `(x form &rest more)`
+* [-difference](#difference-list-list2) `(list list2)`
+* [-intersection](#intersection-list-list2) `(list list2)`
+* [-distinct](#distinct-list) `(list)`
+* [-contains?](#contains-list-element) `(list element)`
+* [-any?](#any-fn-list) `(fn list)`
+* [-all?](#all-fn-list) `(fn list)`
+* [-each](#each-list-fn) `(list fn)`
 
 There are also anaphoric versions of these functions where that makes sense,
-prefixed with two bangs instead of one.
+prefixed with two dashs instead of one.
 
 ## Anaphoric functions
 
-While `!filter` takes a function to filter the list by, you can also use the
-anaphoric form with double bangs - which will then be executed with `it` exposed
+While `-filter` takes a function to filter the list by, you can also use the
+anaphoric form with double dashes - which will then be executed with `it` exposed
 as the list item. Here's an example:
 
 ```cl
-(!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; normal version
+(-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; normal version
 
-(!!filter (= 0 (% it 2)) '(1 2 3 4)) ;; anaphoric version
+(--filter (= 0 (% it 2)) '(1 2 3 4)) ;; anaphoric version
 ```
 
 of course the original can also be written like
@@ -62,40 +62,40 @@ of course the original can also be written like
 ```cl
 (defun even? (num) (= 0 (% num 2)))
 
-(!filter 'even? '(1 2 3 4))
+(-filter 'even? '(1 2 3 4))
 ```
 
 which demonstrates the usefulness of both versions.
 
 ## Documentation and examples
 
-### !map `(fn list)`
+### -map `(fn list)`
 
 Returns a new list consisting of the result of applying `fn` to the items in `list`.
 
 ```cl
-(!map (lambda (num) (* num num)) '(1 2 3 4)) ;; => '(1 4 9 16)
-(!map 'square '(1 2 3 4)) ;; => '(1 4 9 16)
-(!!map (* it it) '(1 2 3 4)) ;; => '(1 4 9 16)
+(-map (lambda (num) (* num num)) '(1 2 3 4)) ;; => '(1 4 9 16)
+(-map 'square '(1 2 3 4)) ;; => '(1 4 9 16)
+(--map (* it it) '(1 2 3 4)) ;; => '(1 4 9 16)
 ```
 
-### !reduce-from `(fn initial-value list)`
+### -reduce-from `(fn initial-value list)`
 
 Returns the result of applying `fn` to `initial-value` and the
 first item in `list`, then applying `fn` to that result and the 2nd
 item, etc. If `list` contains no items, returns `initial-value` and
 `fn` is not called.
 
-In the anaphoric form `!!reduce-from`, the accumulated value is
+In the anaphoric form `--reduce-from`, the accumulated value is
 exposed as `acc`.
 
 ```cl
-(!reduce-from '+ 7 '(1 2)) ;; => 10
-(!reduce-from (lambda (memo item) (+ memo item)) 7 '(1 2)) ;; => 10
-(!!reduce-from (+ acc it) 7 '(1 2 3)) ;; => 13
+(-reduce-from '+ 7 '(1 2)) ;; => 10
+(-reduce-from (lambda (memo item) (+ memo item)) 7 '(1 2)) ;; => 10
+(--reduce-from (+ acc it) 7 '(1 2 3)) ;; => 13
 ```
 
-### !reduce `(fn list)`
+### -reduce `(fn list)`
 
 Returns the result of applying `fn` to the first 2 items in `list`,
 then applying `fn` to that result and the 3rd item, etc. If `list`
@@ -103,163 +103,163 @@ contains no items, `fn` must accept no arguments as well, and
 reduce returns the result of calling `fn` with no arguments. If
 `list` has only 1 item, it is returned and `fn` is not called.
 
-In the anaphoric form `!!reduce`, the accumulated value is
+In the anaphoric form `--reduce`, the accumulated value is
 exposed as `acc`.
 
 ```cl
-(!reduce '+ '(1 2)) ;; => 3
-(!reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) ;; => "1-2-3"
-(!!reduce (format "%s-%s" acc it) '(1 2 3)) ;; => "1-2-3"
+(-reduce '+ '(1 2)) ;; => 3
+(-reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) ;; => "1-2-3"
+(--reduce (format "%s-%s" acc it) '(1 2 3)) ;; => "1-2-3"
 ```
 
-### !filter `(fn list)`
+### -filter `(fn list)`
 
 Returns a new list of the items in `list` for which `fn` returns a non-nil value.
 
-Alias: `!select`
+Alias: `-select`
 
 ```cl
-(!filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(2 4)
-(!filter 'even? '(1 2 3 4)) ;; => '(2 4)
-(!!filter (= 0 (% it 2)) '(1 2 3 4)) ;; => '(2 4)
+(-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(2 4)
+(-filter 'even? '(1 2 3 4)) ;; => '(2 4)
+(--filter (= 0 (% it 2)) '(1 2 3 4)) ;; => '(2 4)
 ```
 
-### !remove `(fn list)`
+### -remove `(fn list)`
 
 Returns a new list of the items in `list` for which `fn` returns nil.
 
-Alias: `!reject`
+Alias: `-reject`
 
 ```cl
-(!remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
-(!remove 'even? '(1 2 3 4)) ;; => '(1 3)
-(!!remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
+(-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
+(-remove 'even? '(1 2 3 4)) ;; => '(1 3)
+(--remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
 ```
 
-### !keep `(fn list)`
+### -keep `(fn list)`
 
 Returns a new list of the non-nil results of applying `fn` to the items in `list`.
 
 ```cl
-(!keep 'cdr '((1 2 3) (4 5) (6))) ;; => '((2 3) (5))
-(!keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) ;; => '(40 50 60)
-(!!keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => '(40 50 60)
+(-keep 'cdr '((1 2 3) (4 5) (6))) ;; => '((2 3) (5))
+(-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) ;; => '(40 50 60)
+(--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => '(40 50 60)
 ```
 
-### !concat `(&rest lists)`
+### -concat `(&rest lists)`
 
 Returns a new list with the concatenation of the elements in
 the supplied `lists`.
 
 ```cl
-(!concat '(1)) ;; => '(1)
-(!concat '(1) '(2)) ;; => '(1 2)
-(!concat '(1) '(2 3) '(4)) ;; => '(1 2 3 4)
+(-concat '(1)) ;; => '(1)
+(-concat '(1) '(2)) ;; => '(1 2)
+(-concat '(1) '(2 3) '(4)) ;; => '(1 2 3 4)
 ```
 
-### !mapcat `(fn list)`
+### -mapcat `(fn list)`
 
 Returns the result of applying concat to the result of applying map to `fn` and `list`.
 Thus function `fn` should return a collection.
 
 ```cl
-(!mapcat 'list '(1 2 3)) ;; => '(1 2 3)
-(!mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
-(!!mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+(-mapcat 'list '(1 2 3)) ;; => '(1 2 3)
+(-mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+(--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 ```
 
-### !take `(n list)`
+### -take `(n list)`
 
 Returns a new list of the first `n` items in `list`, or all items if there are fewer than `n`.
 
 ```cl
-(!take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
-(!take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
+(-take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
+(-take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
 ```
 
-### !drop `(n list)`
+### -drop `(n list)`
 
 Returns the tail of `list` without the first `n` items.
 
 ```cl
-(!drop 3 '(1 2 3 4 5)) ;; => '(4 5)
-(!drop 17 '(1 2 3 4 5)) ;; => '()
+(-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
+(-drop 17 '(1 2 3 4 5)) ;; => '()
 ```
 
-### !take-while `(fn list)`
+### -take-while `(fn list)`
 
 Returns a new list of successive items from `list` while (`fn` item) returns a non-nil value.
 
 ```cl
-(!take-while 'even? '(1 2 3 4)) ;; => '()
-(!take-while 'even? '(2 4 5 6)) ;; => '(2 4)
-(!!take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
+(-take-while 'even? '(1 2 3 4)) ;; => '()
+(-take-while 'even? '(2 4 5 6)) ;; => '(2 4)
+(--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
 ```
 
-### !drop-while `(fn list)`
+### -drop-while `(fn list)`
 
 Returns the tail of `list` starting from the first item for which (`fn` item) returns nil.
 
 ```cl
-(!drop-while 'even? '(1 2 3 4)) ;; => '(1 2 3 4)
-(!drop-while 'even? '(2 4 5 6)) ;; => '(5 6)
-(!!drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(4 3 2 1)
+(-drop-while 'even? '(1 2 3 4)) ;; => '(1 2 3 4)
+(-drop-while 'even? '(2 4 5 6)) ;; => '(5 6)
+(--drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(4 3 2 1)
 ```
 
-### !split-at `(n list)`
+### -split-at `(n list)`
 
-Returns a list of ((!take `n` `list`) (!drop `n` `list`))
+Returns a list of ((-take `n` `list`) (-drop `n` `list`))
 
 ```cl
-(!split-at 3 '(1 2 3 4 5)) ;; => '((1 2 3) (4 5))
-(!split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
+(-split-at 3 '(1 2 3 4 5)) ;; => '((1 2 3) (4 5))
+(-split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
 ```
 
-### !split-with `(fn list)`
+### -split-with `(fn list)`
 
-Returns a list of ((!take-while `fn` `list`) (!drop-while `fn` `list`))
+Returns a list of ((-take-while `fn` `list`) (-drop-while `fn` `list`))
 
 ```cl
-(!split-with 'even? '(1 2 3 4)) ;; => '(nil (1 2 3 4))
-(!split-with 'even? '(2 4 5 6)) ;; => '((2 4) (5 6))
-(!!split-with (< it 4) '(1 2 3 4 3 2 1)) ;; => '((1 2 3) (4 3 2 1))
+(-split-with 'even? '(1 2 3 4)) ;; => '(nil (1 2 3 4))
+(-split-with 'even? '(2 4 5 6)) ;; => '((2 4) (5 6))
+(--split-with (< it 4) '(1 2 3 4 3 2 1)) ;; => '((1 2 3) (4 3 2 1))
 ```
 
-### !interpose `(sep list)`
+### -interpose `(sep list)`
 
 Returns a new list of all elements in `list` separated by `sep`.
 
 ```cl
-(!interpose "-" '()) ;; => '()
-(!interpose "-" '("a")) ;; => '("a")
-(!interpose "-" '("a" "b" "c")) ;; => '("a" "-" "b" "-" "c")
+(-interpose "-" '()) ;; => '()
+(-interpose "-" '("a")) ;; => '("a")
+(-interpose "-" '("a" "b" "c")) ;; => '("a" "-" "b" "-" "c")
 ```
 
-### !replace-where `(pred rep list)`
+### -replace-where `(pred rep list)`
 
 Returns a new list where the elements in `list` that does not match the `pred` function
 are unchanged, and where the elements in `list` that do match the `pred` function are mapped
 through the `rep` function.
 
 ```cl
-(!replace-where 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
-(!!replace-where (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
-(!!replace-where (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
+(-replace-where 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
+(--replace-where (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
+(--replace-where (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
 ```
 
-### !first `(fn list)`
+### -first `(fn list)`
 
 Returns the first x in `list` where (`fn` x) is non-nil, else nil.
 
 To get the first item in the list no questions asked, use `car`.
 
 ```cl
-(!first 'even? '(1 2 3)) ;; => 2
-(!first 'even? '(1 3 5)) ;; => nil
-(!!first (> it 2) '(1 2 3)) ;; => 3
+(-first 'even? '(1 2 3)) ;; => 2
+(-first 'even? '(1 3 5)) ;; => nil
+(--first (> it 2) '(1 2 3)) ;; => 3
 ```
 
-### !partial `(fn &rest args)`
+### -partial `(fn &rest args)`
 
 Takes a function `fn` and fewer than the normal arguments to `fn`,
 and returns a fn that takes a variable number of additional `args`.
@@ -267,11 +267,11 @@ When called, the returned function calls `fn` with `args` first and
 then additional args.
 
 ```cl
-(funcall (!partial '- 5) 3) ;; => 2
-(funcall (!partial '+ 5 2) 3) ;; => 10
+(funcall (-partial '- 5) 3) ;; => 2
+(funcall (-partial '+ 5 2) 3) ;; => 10
 ```
 
-### !rpartial `(fn &rest args)`
+### -rpartial `(fn &rest args)`
 
 Takes a function `fn` and fewer than the normal arguments to `fn`,
 and returns a fn that takes a variable number of additional `args`.
@@ -281,11 +281,11 @@ args first and then `args`.
 Requires Emacs 24 or higher.
 
 ```cl
-(funcall (!rpartial '- 5) 8) ;; => 3
-(funcall (!rpartial '- 5 2) 10) ;; => 3
+(funcall (-rpartial '- 5) 8) ;; => 3
+(funcall (-rpartial '- 5 2) 10) ;; => 3
 ```
 
-### !-> `(x &optional form &rest more)`
+### -> `(x &optional form &rest more)`
 
 Threads the expr through the forms. Inserts `x` as the second
 item in the first form, making a list of it if it is not a list
@@ -293,12 +293,12 @@ already. If there are more forms, inserts the first form as the
 second item in second form, etc.
 
 ```cl
-(!-> "Abc") ;; => "Abc"
-(!-> "Abc" (concat "def")) ;; => "Abcdef"
-(!-> "Abc" (concat "def") (concat "ghi")) ;; => "Abcdefghi"
+(-> "Abc") ;; => "Abc"
+(-> "Abc" (concat "def")) ;; => "Abcdef"
+(-> "Abc" (concat "def") (concat "ghi")) ;; => "Abcdefghi"
 ```
 
-### !->> `(x form &rest more)`
+### ->> `(x form &rest more)`
 
 Threads the expr through the forms. Inserts `x` as the last item
 in the first form, making a list of it if it is not a list
@@ -306,12 +306,12 @@ already. If there are more forms, inserts the first form as the
 last item in second form, etc.
 
 ```cl
-(!->> "Abc" (concat "def")) ;; => "defAbc"
-(!->> "Abc" (concat "def") (concat "ghi")) ;; => "ghidefAbc"
-(!->> 5 (- 8)) ;; => 3
+(->> "Abc" (concat "def")) ;; => "defAbc"
+(->> "Abc" (concat "def") (concat "ghi")) ;; => "ghidefAbc"
+(->> 5 (- 8)) ;; => 3
 ```
 
-### !!-> `(x form &rest more)`
+### --> `(x form &rest more)`
 
 Threads the expr through the forms. Inserts `x` at the position
 signified by the token `it` in the first form. If there are more
@@ -319,90 +319,90 @@ forms, inserts the first form at the position signified by `it`
 in in second form, etc.
 
 ```cl
-(!!-> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
-(!!-> "def" (concat "abc" it "ghi") (upcase it)) ;; => "ABCDEFGHI"
-(!!-> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
+(--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
+(--> "def" (concat "abc" it "ghi") (upcase it)) ;; => "ABCDEFGHI"
+(--> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
 ```
 
-### !difference `(list list2)`
+### -difference `(list list2)`
 
 Return a new list with only the members of `list` that are not in `list2`.
 The test for equality is done with `equal`,
-or with `!compare-fn` if that's non-nil.
+or with `-compare-fn` if that's non-nil.
 
 ```cl
-(!difference '() '()) ;; => '()
-(!difference '(1 2 3) '(4 5 6)) ;; => '(1 2 3)
-(!difference '(1 2 3 4) '(3 4 5 6)) ;; => '(1 2)
+(-difference '() '()) ;; => '()
+(-difference '(1 2 3) '(4 5 6)) ;; => '(1 2 3)
+(-difference '(1 2 3 4) '(3 4 5 6)) ;; => '(1 2)
 ```
 
-### !intersection `(list list2)`
+### -intersection `(list list2)`
 
 Return a new list containing only the elements that are members of both `list` and `list2`.
 The test for equality is done with `equal`,
-or with `!compare-fn` if that's non-nil.
+or with `-compare-fn` if that's non-nil.
 
 ```cl
-(!intersection '() '()) ;; => '()
-(!intersection '(1 2 3) '(4 5 6)) ;; => '()
-(!intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
+(-intersection '() '()) ;; => '()
+(-intersection '(1 2 3) '(4 5 6)) ;; => '()
+(-intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
 ```
 
-### !distinct `(list)`
+### -distinct `(list)`
 
 Return a new list with all duplicates removed.
 The test for equality is done with `equal`,
-or with `!compare-fn` if that's non-nil.
+or with `-compare-fn` if that's non-nil.
 
 ```cl
-(!distinct '()) ;; => '()
-(!distinct '(1 2 2 4)) ;; => '(1 2 4)
+(-distinct '()) ;; => '()
+(-distinct '(1 2 2 4)) ;; => '(1 2 4)
 ```
 
-### !contains? `(list element)`
+### -contains? `(list element)`
 
 Return whether `list` contains `element`.
 The test for equality is done with `equal`,
-or with `!compare-fn` if that's non-nil.
+or with `-compare-fn` if that's non-nil.
 
 ```cl
-(!contains? '(1 2 3) 1) ;; => t
-(!contains? '(1 2 3) 2) ;; => t
-(!contains? '(1 2 3) 4) ;; => nil
+(-contains? '(1 2 3) 1) ;; => t
+(-contains? '(1 2 3) 2) ;; => t
+(-contains? '(1 2 3) 4) ;; => nil
 ```
 
-### !any? `(fn list)`
+### -any? `(fn list)`
 
 Returns t if (`fn` x) is non-nil for any x in `list`, else nil.
 
-Alias: `!some?`
+Alias: `-some?`
 
 ```cl
-(!any? 'even? '(1 2 3)) ;; => t
-(!any? 'even? '(1 3 5)) ;; => nil
-(!!any? (= 0 (% it 2)) '(1 2 3)) ;; => t
+(-any? 'even? '(1 2 3)) ;; => t
+(-any? 'even? '(1 3 5)) ;; => nil
+(--any? (= 0 (% it 2)) '(1 2 3)) ;; => t
 ```
 
-### !all? `(fn list)`
+### -all? `(fn list)`
 
 Returns t if (`fn` x) is non-nil for all x in `list`, else nil.
 
-Alias: `!every?`
+Alias: `-every?`
 
 ```cl
-(!all? 'even? '(1 2 3)) ;; => nil
-(!all? 'even? '(2 4 6)) ;; => t
-(!!all? (= 0 (% it 2)) '(2 4 6)) ;; => t
+(-all? 'even? '(1 2 3)) ;; => nil
+(-all? 'even? '(2 4 6)) ;; => t
+(--all? (= 0 (% it 2)) '(2 4 6)) ;; => t
 ```
 
-### !each `(list fn)`
+### -each `(list fn)`
 
 Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
 
 ```cl
-(let (s) (!each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
-(let (s) (!each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
-(let (s) (!!each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
+(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
+(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
+(let (s) (--each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
 ```
 
 

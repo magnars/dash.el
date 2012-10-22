@@ -278,7 +278,7 @@ Alias: `-every?'"
 (defun -interleave (&rest lists)
   "Returns a new list of the first item in each list, then the second etc."
   (let (result)
-    (while (--all? (not (null it)) lists)
+    (while (-none? 'null lists)
       (--each lists (setq result (cons (car it) result)))
       (setq lists (-map 'cdr lists)))
     (nreverse result)))

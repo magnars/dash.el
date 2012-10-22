@@ -50,9 +50,9 @@ prefixed with two dashs instead of one.
 
 ## Anaphoric functions
 
-While `-filter` takes a function to filter the list by, you can also use the
-anaphoric form with double dashes - which will then be executed with `it` exposed
-as the list item. Here's an example:
+While `-map` takes a function to map over the list, you can also use
+the anaphoric form with double dashes - which will then be executed
+with `it` exposed as the list item. Here's an example:
 
 ```cl
 (-map (lambda (n) (* n n)) '(1 2 3 4)) ;; normal version

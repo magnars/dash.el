@@ -133,11 +133,11 @@ Alias: `!reject'"
 (defun !concat (&rest lists)
   "Returns a new list with the concatenation of the elements in
 the supplied LISTS."
-  (apply 'append (append lists '(nil))))
+  (apply 'append lists))
 
 (defmacro !!mapcat (form list)
   "Anaphoric form of `!mapcat'."
-  `(apply '!concat (!!map ,form ,list)))
+  `(apply 'append (!!map ,form ,list)))
 
 (defun !mapcat (fn list)
   "Returns the result of applying concat to the result of applying map to FN and LIST.

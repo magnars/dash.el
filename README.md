@@ -12,38 +12,38 @@ Or you can just dump `dash.el` in your load path somewhere.
 
 ## Functions
 
-* [-map](#map-fn-list) `(fn list)`
-* [-reduce-from](#reduce-from-fn-initial-value-list) `(fn initial-value list)`
-* [-reduce](#reduce-fn-list) `(fn list)`
-* [-filter](#filter-fn-list) `(fn list)`
-* [-remove](#remove-fn-list) `(fn list)`
-* [-keep](#keep-fn-list) `(fn list)`
-* [-flatten](#flatten-l) `(l)`
-* [-concat](#concat-rest-lists) `(&rest lists)`
-* [-mapcat](#mapcat-fn-list) `(fn list)`
-* [-any?](#any-fn-list) `(fn list)`
-* [-all?](#all-fn-list) `(fn list)`
-* [-none?](#none-fn-list) `(fn list)`
-* [-each](#each-list-fn) `(list fn)`
-* [-take](#take-n-list) `(n list)`
-* [-drop](#drop-n-list) `(n list)`
-* [-take-while](#take-while-fn-list) `(fn list)`
-* [-drop-while](#drop-while-fn-list) `(fn list)`
-* [-split-at](#split-at-n-list) `(n list)`
-* [-split-with](#split-with-fn-list) `(fn list)`
-* [-interpose](#interpose-sep-list) `(sep list)`
-* [-interleave](#interleave-rest-lists) `(&rest lists)`
-* [-replace-where](#replace-where-pred-rep-list) `(pred rep list)`
-* [-first](#first-fn-list) `(fn list)`
-* [-difference](#difference-list-list2) `(list list2)`
-* [-intersection](#intersection-list-list2) `(list list2)`
-* [-distinct](#distinct-list) `(list)`
-* [-contains?](#contains-list-element) `(list element)`
-* [-partial](#partial-fn-rest-args) `(fn &rest args)`
-* [-rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
-* [->](#x-optional-form-rest-more) `(x &optional form &rest more)`
-* [->>](#x-form-rest-more) `(x form &rest more)`
-* [-->](#x-form-rest-more) `(x form &rest more)`
+* [-map](#-map-fn-list) `(fn list)`
+* [-reduce-from](#-reduce-from-fn-initial-value-list) `(fn initial-value list)`
+* [-reduce](#-reduce-fn-list) `(fn list)`
+* [-filter](#-filter-fn-list) `(fn list)`
+* [-remove](#-remove-fn-list) `(fn list)`
+* [-keep](#-keep-fn-list) `(fn list)`
+* [-flatten](#-flatten-l) `(l)`
+* [-concat](#-concat-rest-lists) `(&rest lists)`
+* [-mapcat](#-mapcat-fn-list) `(fn list)`
+* [-any?](#-any-fn-list) `(fn list)`
+* [-all?](#-all-fn-list) `(fn list)`
+* [-none?](#-none-fn-list) `(fn list)`
+* [-each](#-each-list-fn) `(list fn)`
+* [-take](#-take-n-list) `(n list)`
+* [-drop](#-drop-n-list) `(n list)`
+* [-take-while](#-take-while-fn-list) `(fn list)`
+* [-drop-while](#-drop-while-fn-list) `(fn list)`
+* [-split-at](#-split-at-n-list) `(n list)`
+* [-split-with](#-split-with-fn-list) `(fn list)`
+* [-interpose](#-interpose-sep-list) `(sep list)`
+* [-interleave](#-interleave-rest-lists) `(&rest lists)`
+* [-replace-where](#-replace-where-pred-rep-list) `(pred rep list)`
+* [-first](#-first-fn-list) `(fn list)`
+* [-difference](#-difference-list-list) `(list list2)`
+* [-intersection](#-intersection-list-list) `(list list2)`
+* [-distinct](#-distinct-list) `(list)`
+* [-contains?](#-contains-list-element) `(list element)`
+* [-partial](#-partial-fn-rest-args) `(fn &rest args)`
+* [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
+* [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
+* [->>](#--x-form-rest-more) `(x form &rest more)`
+* [-->](#---x-form-rest-more) `(x form &rest more)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two dashs instead of one.

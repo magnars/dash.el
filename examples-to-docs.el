@@ -57,22 +57,18 @@
             docstring
             (mapconcat 'identity (three-first examples) "\n"))))
 
-(defun split-name (s)
-  "Split name into list of words"
-  (split-string
-   (let ((case-fold-search nil))
-     (downcase
-      (replace-regexp-in-string "\\([a-z]\\)\\([A-Z]\\)" "\\1 \\2" s)))
-   "[^A-Za-z0-9]+" t))
-
-(defun dashed-words (s)
-  "Convert string S to snake-case string."
-  (mapconcat 'identity (mapcar
-                        '(lambda (word) (downcase word))
-                        (split-name s)) "-"))
+(defun docs--chop-suffix (suffix s)
+  "Remove SUFFIX if it is at end of S."
+  (let ((pos (- (length suffix))))
+    (if (and (>= (length s) (length suffix))
+             (string= suffix (substring s pos)))
+        (substring s 0 pos)
+      s)))
 
 (defun github-id (command-name signature)
-  (dashed-words (format "%s %s" command-name signature)))
+  (docs--chop-suffix
+   "-"
+   (replace-regexp-in-string "[^a-zA-Z-]+" "-" (format "%S %S" command-name signature))))
 
 (defun function-summary (function)
   (let ((command-name (car function))

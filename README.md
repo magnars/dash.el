@@ -20,6 +20,7 @@ Or you can just dump `bang.el` in your load path somewhere.
 * [!keep](#keep-fn-list) `(fn list)`
 * [!concat](#concat-rest-lists) `(&rest lists)`
 * [!mapcat](#mapcat-fn-list) `(fn list)`
+* [!take](#take-n-list) `(n list)`
 * [!take-while](#take-while-fn-list) `(fn list)`
 * [!drop-while](#drop-while-fn-list) `(fn list)`
 * [!split-with](#split-with-fn-list) `(fn list)`
@@ -163,6 +164,15 @@ Thus function `fn` should return a collection.
 (!mapcat 'list '(1 2 3)) ;; => '(1 2 3)
 (!mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 (!!mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+```
+
+### !take `(n list)`
+
+Returns a new list of the first `n` items in `list`, or all items if there are fewer than `n`.
+
+```cl
+(!take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
+(!take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
 ```
 
 ### !take-while `(fn list)`

@@ -58,6 +58,10 @@
   (!mapcat (lambda (item) (list 0 item)) '(1 2 3)) => '(0 1 0 2 0 3)
   (!!mapcat (list 0 it) '(1 2 3)) => '(0 1 0 2 0 3))
 
+(defexamples !take
+  (!take 3 '(1 2 3 4 5)) => '(1 2 3)
+  (!take 17 '(1 2 3 4 5)) => '(1 2 3 4 5))
+
 (defexamples !take-while
   (!take-while 'even? '(1 2 3 4)) => '()
   (!take-while 'even? '(2 4 5 6)) => '(2 4)

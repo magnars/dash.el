@@ -144,6 +144,15 @@ the supplied LISTS."
 Thus function FN should return a collection."
   (!!mapcat (funcall fn it) list))
 
+(defun !take (n list)
+  "Returns a new list of the first N items in LIST, or all items if there are fewer than N."
+  (let (result)
+    (while (and list (> n 0))
+      (setq result (cons (car list) result))
+      (setq list (cdr list))
+      (setq n (1- n)))
+    (nreverse result)))
+
 (defmacro !!take-while (form list)
   "Anaphoric form of `!take-while'."
   (let ((l (make-symbol "list"))

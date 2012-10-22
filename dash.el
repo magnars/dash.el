@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2012 Magnar Sveen
 
-;; Authors: Magnar Sveen <magnars@gmail.com>
+;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Version: 1.0.1
 ;; Keywords: lists
 

@@ -105,33 +105,6 @@
   (-first 'even? '(1 3 5)) => nil
   (--first (> it 2) '(1 2 3)) => 3)
 
-(defexamples -partial
-  (funcall (-partial '- 5) 3) => 2
-  (funcall (-partial '+ 5 2) 3) => 10)
-
-(unless (version< emacs-version "24")
-  (defexamples -rpartial
-    (funcall (-rpartial '- 5) 8) => 3
-    (funcall (-rpartial '- 5 2) 10) => 3))
-
-(defexamples ->
-  (-> "Abc") => "Abc"
-  (-> "Abc" (concat "def")) => "Abcdef"
-  (-> "Abc" (concat "def") (concat "ghi")) => "Abcdefghi"
-  (-> 5 square) => 25
-  (-> 5 (+ 3) square) => 64)
-
-(defexamples ->>
-  (->> "Abc" (concat "def")) => "defAbc"
-  (->> "Abc" (concat "def") (concat "ghi")) => "ghidefAbc"
-  (->> 5 (- 8)) => 3
-  (->> 5 (- 3) square) => 4)
-
-(defexamples -->
-  (--> "def" (concat "abc" it "ghi")) => "abcdefghi"
-  (--> "def" (concat "abc" it "ghi") (upcase it)) => "ABCDEFGHI"
-  (--> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI")
-
 (defexamples -difference
   (-difference '() '()) => '()
   (-difference '(1 2 3) '(4 5 6)) => '(1 2 3)
@@ -167,5 +140,31 @@
   (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) => nil
   (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(3 2 1)
   (let (s) (--each '(1 2 3) (setq s (cons it s))) s) => '(3 2 1)
-  (let (s) (--each (reverse (three-letters)) (setq s (cons it s))) s) => '("A" "B" "C")
-  )
+  (let (s) (--each (reverse (three-letters)) (setq s (cons it s))) s) => '("A" "B" "C"))
+
+(defexamples -partial
+  (funcall (-partial '- 5) 3) => 2
+  (funcall (-partial '+ 5 2) 3) => 10)
+
+(unless (version< emacs-version "24")
+  (defexamples -rpartial
+    (funcall (-rpartial '- 5) 8) => 3
+    (funcall (-rpartial '- 5 2) 10) => 3))
+
+(defexamples ->
+  (-> "Abc") => "Abc"
+  (-> "Abc" (concat "def")) => "Abcdef"
+  (-> "Abc" (concat "def") (concat "ghi")) => "Abcdefghi"
+  (-> 5 square) => 25
+  (-> 5 (+ 3) square) => 64)
+
+(defexamples ->>
+  (->> "Abc" (concat "def")) => "defAbc"
+  (->> "Abc" (concat "def") (concat "ghi")) => "ghidefAbc"
+  (->> 5 (- 8)) => 3
+  (->> 5 (- 3) square) => 4)
+
+(defexamples -->
+  (--> "def" (concat "abc" it "ghi")) => "abcdefghi"
+  (--> "def" (concat "abc" it "ghi") (upcase it)) => "ABCDEFGHI"
+  (--> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI")

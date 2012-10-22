@@ -30,11 +30,6 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-interpose](#interpose-sep-list) `(sep list)`
 * [-replace-where](#replace-where-pred-rep-list) `(pred rep list)`
 * [-first](#first-fn-list) `(fn list)`
-* [-partial](#partial-fn-rest-args) `(fn &rest args)`
-* [-rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
-* [->](#x-optional-form-rest-more) `(x &optional form &rest more)`
-* [->>](#x-form-rest-more) `(x form &rest more)`
-* [-->](#x-form-rest-more) `(x form &rest more)`
 * [-difference](#difference-list-list2) `(list list2)`
 * [-intersection](#intersection-list-list2) `(list list2)`
 * [-distinct](#distinct-list) `(list)`
@@ -42,6 +37,11 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-any?](#any-fn-list) `(fn list)`
 * [-all?](#all-fn-list) `(fn list)`
 * [-each](#each-list-fn) `(list fn)`
+* [-partial](#partial-fn-rest-args) `(fn &rest args)`
+* [-rpartial](#rpartial-fn-rest-args) `(fn &rest args)`
+* [->](#x-optional-form-rest-more) `(x &optional form &rest more)`
+* [->>](#x-form-rest-more) `(x form &rest more)`
+* [-->](#x-form-rest-more) `(x form &rest more)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two dashs instead of one.
@@ -158,8 +158,7 @@ Takes a nested list `l` and returns its contents as a single, flat list.
 
 ### -concat `(&rest lists)`
 
-Returns a new list with the concatenation of the elements in
-the supplied `lists`.
+Returns a new list with the concatenation of the elements in the supplied `lists`.
 
 ```cl
 (-concat '(1)) ;; => '(1)
@@ -269,71 +268,6 @@ To get the first item in the list no questions asked, use `car`.
 (--first (> it 2) '(1 2 3)) ;; => 3
 ```
 
-### -partial `(fn &rest args)`
-
-Takes a function `fn` and fewer than the normal arguments to `fn`,
-and returns a fn that takes a variable number of additional `args`.
-When called, the returned function calls `fn` with `args` first and
-then additional args.
-
-```cl
-(funcall (-partial '- 5) 3) ;; => 2
-(funcall (-partial '+ 5 2) 3) ;; => 10
-```
-
-### -rpartial `(fn &rest args)`
-
-Takes a function `fn` and fewer than the normal arguments to `fn`,
-and returns a fn that takes a variable number of additional `args`.
-When called, the returned function calls `fn` with the additional
-args first and then `args`.
-
-Requires Emacs 24 or higher.
-
-```cl
-(funcall (-rpartial '- 5) 8) ;; => 3
-(funcall (-rpartial '- 5 2) 10) ;; => 3
-```
-
-### -> `(x &optional form &rest more)`
-
-Threads the expr through the forms. Inserts `x` as the second
-item in the first form, making a list of it if it is not a list
-already. If there are more forms, inserts the first form as the
-second item in second form, etc.
-
-```cl
-(-> "Abc") ;; => "Abc"
-(-> "Abc" (concat "def")) ;; => "Abcdef"
-(-> "Abc" (concat "def") (concat "ghi")) ;; => "Abcdefghi"
-```
-
-### ->> `(x form &rest more)`
-
-Threads the expr through the forms. Inserts `x` as the last item
-in the first form, making a list of it if it is not a list
-already. If there are more forms, inserts the first form as the
-last item in second form, etc.
-
-```cl
-(->> "Abc" (concat "def")) ;; => "defAbc"
-(->> "Abc" (concat "def") (concat "ghi")) ;; => "ghidefAbc"
-(->> 5 (- 8)) ;; => 3
-```
-
-### --> `(x form &rest more)`
-
-Threads the expr through the forms. Inserts `x` at the position
-signified by the token `it` in the first form. If there are more
-forms, inserts the first form at the position signified by `it`
-in in second form, etc.
-
-```cl
-(--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
-(--> "def" (concat "abc" it "ghi") (upcase it)) ;; => "ABCDEFGHI"
-(--> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
-```
-
 ### -difference `(list list2)`
 
 Return a new list with only the members of `list` that are not in `list2`.
@@ -413,6 +347,71 @@ Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
 (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
 (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
 (let (s) (--each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
+```
+
+### -partial `(fn &rest args)`
+
+Takes a function `fn` and fewer than the normal arguments to `fn`,
+and returns a fn that takes a variable number of additional `args`.
+When called, the returned function calls `fn` with `args` first and
+then additional args.
+
+```cl
+(funcall (-partial '- 5) 3) ;; => 2
+(funcall (-partial '+ 5 2) 3) ;; => 10
+```
+
+### -rpartial `(fn &rest args)`
+
+Takes a function `fn` and fewer than the normal arguments to `fn`,
+and returns a fn that takes a variable number of additional `args`.
+When called, the returned function calls `fn` with the additional
+args first and then `args`.
+
+Requires Emacs 24 or higher.
+
+```cl
+(funcall (-rpartial '- 5) 8) ;; => 3
+(funcall (-rpartial '- 5 2) 10) ;; => 3
+```
+
+### -> `(x &optional form &rest more)`
+
+Threads the expr through the forms. Inserts `x` as the second
+item in the first form, making a list of it if it is not a list
+already. If there are more forms, inserts the first form as the
+second item in second form, etc.
+
+```cl
+(-> "Abc") ;; => "Abc"
+(-> "Abc" (concat "def")) ;; => "Abcdef"
+(-> "Abc" (concat "def") (concat "ghi")) ;; => "Abcdefghi"
+```
+
+### ->> `(x form &rest more)`
+
+Threads the expr through the forms. Inserts `x` as the last item
+in the first form, making a list of it if it is not a list
+already. If there are more forms, inserts the first form as the
+last item in second form, etc.
+
+```cl
+(->> "Abc" (concat "def")) ;; => "defAbc"
+(->> "Abc" (concat "def") (concat "ghi")) ;; => "ghidefAbc"
+(->> 5 (- 8)) ;; => 3
+```
+
+### --> `(x form &rest more)`
+
+Threads the expr through the forms. Inserts `x` at the position
+signified by the token `it` in the first form. If there are more
+forms, inserts the first form at the position signified by `it`
+in in second form, etc.
+
+```cl
+(--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
+(--> "def" (concat "abc" it "ghi") (upcase it)) ;; => "ABCDEFGHI"
+(--> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
 ```
 
 

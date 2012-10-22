@@ -137,8 +137,7 @@ Alias: `-reject'"
     (list l)))
 
 (defun -concat (&rest lists)
-  "Returns a new list with the concatenation of the elements in
-the supplied LISTS."
+  "Returns a new list with the concatenation of the elements in the supplied LISTS."
   (apply 'append lists))
 
 (defmacro --mapcat (form list)

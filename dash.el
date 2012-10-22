@@ -217,6 +217,14 @@ Thus function FN should return a collection."
       (setq list (cdr list)))
     (nreverse result)))
 
+(defun -interleave (&rest lists)
+  "Returns a new list of the first item in each list, then the second etc."
+  (let (result)
+    (while (--all? (not (null it)) lists)
+      (--each lists (setq result (cons (car it) result)))
+      (setq lists (-map 'cdr lists)))
+    (nreverse result)))
+
 (defmacro --replace-where (pred rep list)
   "Anaphoric form of `-replace-where'."
   (let ((l (make-symbol "list"))

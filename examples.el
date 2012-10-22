@@ -94,6 +94,12 @@
   (-interpose "-" '("a")) => '("a")
   (-interpose "-" '("a" "b" "c")) => '("a" "-" "b" "-" "c"))
 
+(defexamples -interleave
+  (-interleave '(1 2) '("a" "b")) => '(1 "a" 2 "b")
+  (-interleave '(1 2) '("a" "b") '("A" "B")) => '(1 "a" "A" 2 "b" "B")
+  (-interleave '(1 2 3) '("a" "b")) => '(1 "a" 2 "b")
+  (-interleave '(1 2 3) '("a" "b" "c" "d")) => '(1 "a" 2 "b" 3 "c"))
+
 (defexamples -replace-where
   (-replace-where 'even? 'square '(1 2 3 4)) => '(1 4 3 16)
   (--replace-where (> it 2) (* it it) '(1 2 3 4)) => '(1 2 9 16)

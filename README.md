@@ -28,6 +28,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-split-at](#split-at-n-list) `(n list)`
 * [-split-with](#split-with-fn-list) `(fn list)`
 * [-interpose](#interpose-sep-list) `(sep list)`
+* [-interleave](#interleave-rest-lists) `(&rest lists)`
 * [-replace-where](#replace-where-pred-rep-list) `(pred rep list)`
 * [-first](#first-fn-list) `(fn list)`
 * [-difference](#difference-list-list2) `(list list2)`
@@ -242,6 +243,16 @@ Returns a new list of all elements in `list` separated by `sep`.
 (-interpose "-" '()) ;; => '()
 (-interpose "-" '("a")) ;; => '("a")
 (-interpose "-" '("a" "b" "c")) ;; => '("a" "-" "b" "-" "c")
+```
+
+### -interleave `(&rest lists)`
+
+Returns a new list of the first item in each list, then the second etc.
+
+```cl
+(-interleave '(1 2) '("a" "b")) ;; => '(1 "a" 2 "b")
+(-interleave '(1 2) '("a" "b") '("A" "B")) ;; => '(1 "a" "A" 2 "b" "B")
+(-interleave '(1 2 3) '("a" "b")) ;; => '(1 "a" 2 "b")
 ```
 
 ### -replace-where `(pred rep list)`

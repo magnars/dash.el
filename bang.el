@@ -192,9 +192,7 @@ Thus function FN should return a collection."
     (nreverse result)))
 
 (defmacro !!replace-where (pred rep list)
-  "Returns a new list where the elements in LIST that does not match the PRED function
-are unchanged, and where the elements in LIST that do match the PRED function are mapped
-through the REP function."
+  "Anaphoric form of `!replace-where'."
   (let ((l (make-symbol "list"))
         (r (make-symbol "result")))
     `(let ((,l ,list)

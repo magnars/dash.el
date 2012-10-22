@@ -183,6 +183,11 @@ Alias: `-some?'"
 (defalias '-some? '-any?)
 (defalias '--some? '--any?)
 
+(defalias '-any-p '-any?)
+(defalias '--any-p '--any?)
+(defalias '-some-p '-any?)
+(defalias '--some-p '--any?)
+
 (defmacro --all? (form list)
   "Anaphoric form of `-all?'."
   (let ((l (make-symbol "list"))
@@ -204,6 +209,11 @@ Alias: `-every?'"
 (defalias '-every? '-all?)
 (defalias '--every? '--all?)
 
+(defalias '-all-p '-all?)
+(defalias '--all-p '--all?)
+(defalias '-every-p '-all?)
+(defalias '--every-p '--all?)
+
 (defmacro --none? (form list)
   "Anaphoric form `-none?'."
   `(--all? (not ,form) ,list))
@@ -211,6 +221,9 @@ Alias: `-every?'"
 (defun -none? (fn list)
   "Returns t if (FN x) is nil for all x in LIST, else nil."
   (--none? (funcall fn it) list))
+
+(defalias '-none-p '-none?)
+(defalias '--none-p '--none?)
 
 (defmacro --each (list form)
   "Anaphoric form of `-each'."
@@ -415,6 +428,8 @@ or with `-compare-fn' if that's non-nil."
                     (not (funcall -compare-fn element (car lst))))
           (setq lst (cdr lst)))
         lst))))))
+
+(defalias '-contains-p '-contains?)
 
 (provide 'dash)
 ;;; dash.el ends here

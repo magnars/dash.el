@@ -24,17 +24,17 @@ anaphoric form with double dashes - which will then be executed with `it` expose
 as the list item. Here's an example:
 
 ```cl
-(-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; normal version
+(-map (lambda (n) (* n n)) '(1 2 3 4)) ;; normal version
 
-(--filter (= 0 (% it 2)) '(1 2 3 4)) ;; anaphoric version
+(--map (* it it) '(1 2 3 4)) ;; anaphoric version
 ```
 
 of course the original can also be written like
 
 ```cl
-(defun even? (num) (= 0 (% num 2)))
+(defun square (n) (* n n))
 
-(-filter 'even? '(1 2 3 4))
+(-map 'square '(1 2 3 4))
 ```
 
 which demonstrates the usefulness of both versions.

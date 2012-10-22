@@ -47,6 +47,10 @@
   (-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) => '(40 50 60)
   (--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) => '(40 50 60))
 
+(defexamples -flatten
+  (-flatten '((1))) => '(1)
+  (-flatten '((1 (2 3) (((4 (5))))))) => '(1 2 3 4 5))
+
 (defexamples -concat
   (-concat '(1)) => '(1)
   (-concat '(1) '(2)) => '(1 2)

@@ -130,6 +130,12 @@ Alias: `-reject'"
   "Returns a new list of the non-nil results of applying FN to the items in LIST."
   (--keep (funcall fn it) list))
 
+(defun -flatten (l)
+  "Takes a nested list L and returns its contents as a single, flat list."
+  (if (listp l)
+      (-mapcat '-flatten l)
+    (list l)))
+
 (defun -concat (&rest lists)
   "Returns a new list with the concatenation of the elements in
 the supplied LISTS."

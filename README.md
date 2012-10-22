@@ -18,6 +18,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-filter](#filter-fn-list) `(fn list)`
 * [-remove](#remove-fn-list) `(fn list)`
 * [-keep](#keep-fn-list) `(fn list)`
+* [-flatten](#flatten-l) `(l)`
 * [-concat](#concat-rest-lists) `(&rest lists)`
 * [-mapcat](#mapcat-fn-list) `(fn list)`
 * [-take](#take-n-list) `(n list)`
@@ -144,6 +145,15 @@ Returns a new list of the non-nil results of applying `fn` to the items in `list
 (-keep 'cdr '((1 2 3) (4 5) (6))) ;; => '((2 3) (5))
 (-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) ;; => '(40 50 60)
 (--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => '(40 50 60)
+```
+
+### -flatten `(l)`
+
+Takes a nested list `l` and returns its contents as a single, flat list.
+
+```cl
+(-flatten '((1))) ;; => '(1)
+(-flatten '((1 (2 3) (((4 (5))))))) ;; => '(1 2 3 4 5)
 ```
 
 ### -concat `(&rest lists)`

@@ -21,6 +21,7 @@ Or you can just dump `bang.el` in your load path somewhere.
 * [!concat](#concat-rest-lists) `(&rest lists)`
 * [!mapcat](#mapcat-fn-list) `(fn list)`
 * [!take](#take-n-list) `(n list)`
+* [!drop](#drop-n-list) `(n list)`
 * [!take-while](#take-while-fn-list) `(fn list)`
 * [!drop-while](#drop-while-fn-list) `(fn list)`
 * [!split-with](#split-with-fn-list) `(fn list)`
@@ -173,6 +174,15 @@ Returns a new list of the first `n` items in `list`, or all items if there are f
 ```cl
 (!take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
 (!take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
+```
+
+### !drop `(n list)`
+
+Returns the tail of `list` without the first `n` items.
+
+```cl
+(!drop 3 '(1 2 3 4 5)) ;; => '(4 5)
+(!drop 17 '(1 2 3 4 5)) ;; => '()
 ```
 
 ### !take-while `(fn list)`

@@ -62,6 +62,10 @@
   (!take 3 '(1 2 3 4 5)) => '(1 2 3)
   (!take 17 '(1 2 3 4 5)) => '(1 2 3 4 5))
 
+(defexamples !drop
+  (!drop 3 '(1 2 3 4 5)) => '(4 5)
+  (!drop 17 '(1 2 3 4 5)) => '())
+
 (defexamples !take-while
   (!take-while 'even? '(1 2 3 4)) => '()
   (!take-while 'even? '(2 4 5 6)) => '(2 4)

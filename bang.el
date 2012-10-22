@@ -153,6 +153,13 @@ Thus function FN should return a collection."
       (setq n (1- n)))
     (nreverse result)))
 
+(defun !drop (n list)
+  "Returns the tail of LIST without the first N items."
+  (while (and list (> n 0))
+    (setq list (cdr list))
+    (setq n (1- n)))
+  list)
+
 (defmacro !!take-while (form list)
   "Anaphoric form of `!take-while'."
   (let ((l (make-symbol "list"))

@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012 Magnar Sveen
 
 ;; Authors: Magnar Sveen <magnars@gmail.com>
-;; Version: 0.1.0
+;; Version: 1.0.0
 ;; Keywords: lists
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 ;;; Commentary:
 
-;; The startings of a modern list api for Emacs.
+;; A modern list api for Emacs.
 ;;
 ;; See documentation on https://github.com/magnars/dash.el#functions
 

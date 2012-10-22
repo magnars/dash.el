@@ -24,6 +24,7 @@ Or you can just dump `bang.el` in your load path somewhere.
 * [!drop](#drop-n-list) `(n list)`
 * [!take-while](#take-while-fn-list) `(fn list)`
 * [!drop-while](#drop-while-fn-list) `(fn list)`
+* [!split-at](#split-at-n-list) `(n list)`
 * [!split-with](#split-with-fn-list) `(fn list)`
 * [!interpose](#interpose-sep-list) `(sep list)`
 * [!replace-where](#replace-where-pred-rep-list) `(pred rep list)`
@@ -203,6 +204,15 @@ Returns the tail of `list` starting from the first item for which (`fn` item) re
 (!drop-while 'even? '(1 2 3 4)) ;; => '(1 2 3 4)
 (!drop-while 'even? '(2 4 5 6)) ;; => '(5 6)
 (!!drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(4 3 2 1)
+```
+
+### !split-at `(n list)`
+
+Returns a list of ((!take `n` `list`) (!drop `n` `list`))
+
+```cl
+(!split-at 3 '(1 2 3 4 5)) ;; => '((1 2 3) (4 5))
+(!split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
 ```
 
 ### !split-with `(fn list)`

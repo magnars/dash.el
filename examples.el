@@ -189,3 +189,11 @@
   (--> "def" (concat "abc" it "ghi")) => "abcdefghi"
   (--> "def" (concat "abc" it "ghi") (upcase it)) => "ABCDEFGHI"
   (--> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI")
+
+(defexamples !cons
+  (let (l) (!cons 5 l) l) => '(5)
+  (let ((l '(3))) (!cons 5 l) l) => '(5 3))
+
+(defexamples !cdr
+  (let ((l '(3))) (!cdr l) l) => '()
+  (let ((l '(3 5))) (!cdr l) l) => '(5))

@@ -46,6 +46,8 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [->>](#--x-form-rest-more) `(x form &rest more)`
 * [-->](#---x-form-rest-more) `(x form &rest more)`
+* [!cons](#-cons-car-cdr) `(car cdr)`
+* [!cdr](#-cdr-list) `(list)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two dashes instead of one.
@@ -459,6 +461,24 @@ in in second form, etc.
 (--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
 (--> "def" (concat "abc" it "ghi") (upcase it)) ;; => "ABCDEFGHI"
 (--> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
+```
+
+### !cons `(car cdr)`
+
+Destructive: Sets `cdr` to the cons of `car` and `cdr`.
+
+```cl
+(let (l) (!cons 5 l) l) ;; => '(5)
+(let ((l '(3))) (!cons 5 l) l) ;; => '(5 3)
+```
+
+### !cdr `(list)`
+
+Destructive: Sets `list` to the cdr of `list`.
+
+```cl
+(let ((l '(3))) (!cdr l) l) ;; => '()
+(let ((l '(3 5))) (!cdr l) l) ;; => '(5)
 ```
 
 

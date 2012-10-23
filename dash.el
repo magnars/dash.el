@@ -27,6 +27,14 @@
 
 ;;; Code:
 
+(defmacro !cons (car cdr)
+  "Destructive: Sets CDR to the cons of CAR and CDR."
+  `(setq ,cdr (cons ,car ,cdr)))
+
+(defmacro !cdr (list)
+  "Destructive: Sets LIST to the cdr of LIST."
+  `(setq ,list (cdr ,list)))
+
 (defun -map (fn list)
   "Returns a new list consisting of the result of applying FN to the items in LIST."
   (mapcar fn list))

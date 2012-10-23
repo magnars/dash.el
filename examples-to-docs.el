@@ -1,17 +1,15 @@
+(require 'dash)
+
 (defvar functions '())
 
 (defun example-to-string (example)
   (let ((actual (car example))
         (expected (cadr (cdr example))))
-    (replace-regexp-in-string
-     "\r" "\\r"
-     (replace-regexp-in-string
-      "\t" "\\t"
-      (replace-regexp-in-string
-       "\n" "\\n"
-       (replace-regexp-in-string
-        "\\\\\\?" "?"
-        (format "%S ;; => %S" actual expected)) t t) t t) t t)))
+    (--> (format "%S ;; => %S" actual expected)
+         (replace-regexp-in-string "\\\\\\?" "?" it)
+         (replace-regexp-in-string "\n" "\\n" it t t)
+         (replace-regexp-in-string "\t" "\\t" it t t)
+         (replace-regexp-in-string "\r" "\\r" it t t))))
 
 (defun examples-to-strings (examples)
   (let (result)
@@ -42,9 +40,9 @@
 
 (defun quote-docstring (docstring)
   (let (case-fold-search)
-    (setq docstring (replace-regexp-in-string "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b" 'quote-and-downcase docstring t))
-    (setq docstring (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" docstring t)))
-  docstring)
+    (--> docstring
+         (replace-regexp-in-string "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b" 'quote-and-downcase it t)
+         (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" it t))))
 
 (defun function-to-md (function)
   (let ((command-name (car function))
@@ -55,7 +53,7 @@
             command-name
             signature
             docstring
-            (mapconcat 'identity (three-first examples) "\n"))))
+            (mapconcat 'identity (-take 3 examples) "\n"))))
 
 (defun docs--chop-suffix (suffix s)
   "Remove SUFFIX if it is at end of S."
@@ -106,13 +104,3 @@
       (insert (mapconcat 'function-to-md functions "\n"))
 
       (simplify-quotes))))
-
-(defun three-first (list)
-  (let (first)
-    (when (car list)
-      (setq first (cons (car list) first))
-      (when (cadr list)
-        (setq first (cons (cadr list) first))
-        (when (car (cddr list))
-          (setq first (cons (car (cddr list)) first)))))
-    (nreverse first)))

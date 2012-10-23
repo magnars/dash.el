@@ -167,17 +167,11 @@ Alias: `-reject'"
 Thus function FN should return a collection."
   (--mapcat (funcall fn it) list))
 
-;; can be simplified with an --each that stops at a predicate, --each-while?
 (defmacro --first (form list)
   "Anaphoric form of `-first'."
-  (let ((l (make-symbol "list"))
-        (n (make-symbol "needle")))
-    `(let ((,l ,list)
-           (,n nil))
-       (while (and ,l (not ,n))
-         (let ((it (car ,l)))
-           (when ,form (setq ,n it)))
-         (!cdr ,l))
+  (let ((n (make-symbol "needle")))
+    `(let (,n)
+       (--each-while ,list (not ,n) (when ,form (setq ,n it)))
        ,n)))
 
 (defun -first (fn list)
@@ -209,14 +203,9 @@ Alias: `-some?'"
 
 (defmacro --all? (form list)
   "Anaphoric form of `-all?'."
-  (let ((l (make-symbol "list"))
-        (a (make-symbol "all")))
-    `(let ((,l ,list)
-           (,a t))
-       (while (and ,a ,l)
-         (let ((it (car ,l)))
-           (setq ,a ,form))
-         (!cdr ,l))
+  (let ((a (make-symbol "all")))
+    `(let ((,a t))
+       (--each-while ,list ,a (setq ,a ,form))
        (---truthy? ,a))))
 
 (defun -all? (fn list)
@@ -244,6 +233,7 @@ Alias: `-every?'"
 (defalias '-none-p '-none?)
 (defalias '--none-p '--none?)
 
+;; simplify with a --dotimes
 (defun -take (n list)
   "Returns a new list of the first N items in LIST, or all items if there are fewer than N."
   (let (result)
@@ -262,13 +252,9 @@ Alias: `-every?'"
 
 (defmacro --take-while (form list)
   "Anaphoric form of `-take-while'."
-  (let ((l (make-symbol "list"))
-        (r (make-symbol "result")))
-    `(let ((,l ,list)
-           (,r '()))
-       (while (and ,l (let ((it (car ,l))) ,form))
-         (!cons (car ,l) ,r)
-         (!cdr ,l))
+  (let ((r (make-symbol "result")))
+    `(let (,r)
+       (--each-while ,list ,form (!cons it ,r))
        (nreverse ,r))))
 
 (defun -take-while (fn list)

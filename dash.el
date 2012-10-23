@@ -48,6 +48,22 @@
   "Calls FN with every item in LIST. Returns nil, used for side-effects only."
   (--each list (funcall fn it)))
 
+(defmacro --each-while (list pred form)
+  "Anaphoric form of `-each-while'."
+  (let ((l (make-symbol "list"))
+        (c (make-symbol "continue")))
+    `(let ((,l ,list)
+           (,c t))
+       (while (and ,l ,c)
+         (let ((it (car ,l)))
+           (if ,pred ,form (setq ,c nil)))
+         (!cdr ,l)))))
+
+(defun -each-while (list pred fn)
+  "Calls FN with every item in LIST while (PRED item) is non-nil.
+Returns nil, used for side-effects only."
+  (--each-while list (funcall pred it) (funcall fn it)))
+
 (defun -map (fn list)
   "Returns a new list consisting of the result of applying FN to the items in LIST."
   (mapcar fn list))

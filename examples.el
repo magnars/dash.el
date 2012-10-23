@@ -83,6 +83,10 @@
   (let (s) (--each '(1 2 3) (setq s (cons it s))) s) => '(3 2 1)
   (let (s) (--each (reverse (three-letters)) (setq s (cons it s))) s) => '("A" "B" "C"))
 
+(defexamples -each-while
+  (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) => '(4 2)
+  (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) => '(2 1))
+
 (defexamples -take
   (-take 3 '(1 2 3 4 5)) => '(1 2 3)
   (-take 17 '(1 2 3 4 5)) => '(1 2 3 4 5))

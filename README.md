@@ -25,6 +25,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-all?](#-all-fn-list) `(fn list)`
 * [-none?](#-none-fn-list) `(fn list)`
 * [-each](#-each-list-fn) `(list fn)`
+* [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
 * [-take](#-take-n-list) `(n list)`
 * [-drop](#-drop-n-list) `(n list)`
 * [-take-while](#-take-while-fn-list) `(fn list)`
@@ -225,6 +226,16 @@ Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
 (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
 (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
 (let (s) (--each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
+```
+
+### -each-while `(list pred fn)`
+
+Calls `fn` with every item in `list` while (`pred` item) is non-nil.
+Returns nil, used for side-effects only.
+
+```cl
+(let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(4 2)
+(let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) ;; => '(2 1)
 ```
 
 ### -take `(n list)`

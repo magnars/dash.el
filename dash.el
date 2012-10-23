@@ -35,6 +35,19 @@
   "Destructive: Sets LIST to the cdr of LIST."
   `(setq ,list (cdr ,list)))
 
+(defmacro --each (list form)
+  "Anaphoric form of `-each'."
+  (let ((l (make-symbol "list")))
+    `(let ((,l ,list))
+       (while ,l
+         (let ((it (car ,l)))
+           ,form)
+         (!cdr ,l)))))
+
+(defun -each (list fn)
+  "Calls FN with every item in LIST. Returns nil, used for side-effects only."
+  (--each list (funcall fn it)))
+
 (defun -map (fn list)
   "Returns a new list consisting of the result of applying FN to the items in LIST."
   (mapcar fn list))
@@ -45,16 +58,9 @@
 
 (defmacro --reduce-from (form initial-value list)
   "Anaphoric form of `-reduce-from'."
-  (let ((l (make-symbol "list"))
-        (a (make-symbol "acc")))
-    `(let ((,l ,list)
-           (,a ,initial-value))
-       (while ,l
-         (let ((it (car ,l))
-               (acc ,a))
-           (setq ,a ,form))
-         (setq ,l (cdr ,l)))
-       ,a)))
+  `(let ((acc ,initial-value))
+     (--each ,list (setq acc ,form))
+     acc))
 
 (defun -reduce-from (fn initial-value list)
   "Returns the result of applying FN to INITIAL-VALUE and the
@@ -87,15 +93,9 @@ exposed as `acc`."
 
 (defmacro --filter (form list)
   "Anaphoric form of `-filter'."
-  (let ((l (make-symbol "list"))
-        (r (make-symbol "result")))
-    `(let ((,l ,list)
-           (,r '()))
-       (while ,l
-         (let ((it (car ,l)))
-           (when ,form
-             (setq ,r (cons it ,r))))
-         (setq ,l (cdr ,l)))
+  (let ((r (make-symbol "result")))
+    `(let (,r)
+       (--each ,list (when ,form (!cons it ,r)))
        (nreverse ,r))))
 
 (defun -filter (fn list)
@@ -122,16 +122,10 @@ Alias: `-reject'"
 
 (defmacro --keep (form list)
   "Anaphoric form of `-keep'."
-  (let ((l (make-symbol "list"))
-        (r (make-symbol "result")))
-    `(let ((,l ,list)
-           (,r '()))
-       (while ,l
-         (let* ((it (car ,l))
-                (mapped ,form))
-           (when mapped
-             (setq ,r (cons mapped ,r))))
-         (setq ,l (cdr ,l)))
+  (let ((r (make-symbol "result"))
+        (m (make-symbol "mapped")))
+    `(let (,r)
+       (--each ,list (let ((,m ,form)) (when ,m (!cons ,m ,r))))
        (nreverse ,r))))
 
 (defun -keep (fn list)
@@ -157,6 +151,7 @@ Alias: `-reject'"
 Thus function FN should return a collection."
   (--mapcat (funcall fn it) list))
 
+;; can be simplified with an --each that stops at a predicate, --each-while?
 (defmacro --first (form list)
   "Anaphoric form of `-first'."
   (let ((l (make-symbol "list"))
@@ -166,7 +161,7 @@ Thus function FN should return a collection."
        (while (and ,l (not ,n))
          (let ((it (car ,l)))
            (when ,form (setq ,n it)))
-         (setq ,l (cdr ,l)))
+         (!cdr ,l))
        ,n)))
 
 (defun -first (fn list)
@@ -205,7 +200,7 @@ Alias: `-some?'"
        (while (and ,a ,l)
          (let ((it (car ,l)))
            (setq ,a ,form))
-         (setq ,l (cdr ,l)))
+         (!cdr ,l))
        (---truthy? ,a))))
 
 (defun -all? (fn list)
@@ -233,32 +228,19 @@ Alias: `-every?'"
 (defalias '-none-p '-none?)
 (defalias '--none-p '--none?)
 
-(defmacro --each (list form)
-  "Anaphoric form of `-each'."
-  (let ((l (make-symbol "list")))
-    `(let ((,l ,list))
-       (while ,l
-         (let ((it (car ,l)))
-           ,form)
-         (setq ,l (cdr ,l))))))
-
-(defun -each (list fn)
-  "Calls FN with every item in LIST. Returns nil, used for side-effects only."
-  (--each list (funcall fn it)))
-
 (defun -take (n list)
   "Returns a new list of the first N items in LIST, or all items if there are fewer than N."
   (let (result)
     (while (and list (> n 0))
-      (setq result (cons (car list) result))
-      (setq list (cdr list))
+      (!cons (car list) result)
+      (!cdr list)
       (setq n (1- n)))
     (nreverse result)))
 
 (defun -drop (n list)
   "Returns the tail of LIST without the first N items."
   (while (and list (> n 0))
-    (setq list (cdr list))
+    (!cdr list)
     (setq n (1- n)))
   list)
 
@@ -269,8 +251,8 @@ Alias: `-every?'"
     `(let ((,l ,list)
            (,r '()))
        (while (and ,l (let ((it (car ,l))) ,form))
-         (setq ,r (cons (car ,l) ,r))
-         (setq ,l (cdr ,l)))
+         (!cons (car ,l) ,r)
+         (!cdr ,l))
        (nreverse ,r))))
 
 (defun -take-while (fn list)
@@ -282,7 +264,7 @@ Alias: `-every?'"
   (let ((l (make-symbol "list")))
     `(let ((,l ,list))
        (while (and ,l (let ((it (car ,l))) ,form))
-         (setq ,l (cdr ,l)))
+         (!cdr ,l))
        ,l)))
 
 (defun -drop-while (fn list)
@@ -311,13 +293,13 @@ those items are discarded."
         (sublist nil)
         (len 0))
     (while list
-      (setq sublist (cons (car list) sublist))
+      (!cons (car list) sublist)
       (setq len (1+ len))
       (when (= len n)
-        (setq result (cons (nreverse sublist) result))
+        (!cons (nreverse sublist) result)
         (setq sublist nil)
         (setq len 0))
-      (setq list (cdr list)))
+      (!cdr list))
     (nreverse result)))
 
 (defun -partition-all (n list)
@@ -325,7 +307,7 @@ those items are discarded."
 The last group may contain less than N items."
   (let (result)
     (while list
-      (setq result (cons (-take n list) result))
+      (!cons (-take n list) result)
       (setq list (-drop n list)))
     (nreverse result)))
 
@@ -333,31 +315,26 @@ The last group may contain less than N items."
   "Returns a new list of all elements in LIST separated by SEP."
   (let (result)
     (when list
-      (setq result (cons (car list) result))
-      (setq list (cdr list)))
+      (!cons (car list) result)
+      (!cdr list))
     (while list
       (setq result (cons (car list) (cons sep result)))
-      (setq list (cdr list)))
+      (!cdr list))
     (nreverse result)))
 
 (defun -interleave (&rest lists)
   "Returns a new list of the first item in each list, then the second etc."
   (let (result)
     (while (-none? 'null lists)
-      (--each lists (setq result (cons (car it) result)))
+      (--each lists (!cons (car it) result))
       (setq lists (-map 'cdr lists)))
     (nreverse result)))
 
 (defmacro --replace-where (pred rep list)
   "Anaphoric form of `-replace-where'."
-  (let ((l (make-symbol "list"))
-        (r (make-symbol "result")))
-    `(let ((,l ,list)
-           (,r '()))
-       (while ,l
-         (let ((it (car ,l)))
-           (setq ,r (cons (if ,pred ,rep it) ,r)))
-         (setq ,l (cdr ,l)))
+  (let ((r (make-symbol "result")))
+    `(let (,r)
+       (--each ,list (!cons (if ,pred ,rep it) ,r))
        (nreverse ,r))))
 
 (defun -replace-where (pred rep list)
@@ -421,12 +398,8 @@ in in second form, etc."
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
-  (let ((result '()))
-    (while list
-      (let ((it (car list)))
-        (when (not (-contains? result it))
-          (setq result (cons it result))))
-      (setq list (cdr list)))
+  (let (result)
+    (--each list (when (not (-contains? result it)) (!cons it result)))
     (nreverse result)))
 
 (defun -intersection (list list2)

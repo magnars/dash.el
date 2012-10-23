@@ -26,6 +26,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-none?](#-none-fn-list) `(fn list)`
 * [-each](#-each-list-fn) `(list fn)`
 * [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
+* [-dotimes](#-dotimes-num-fn) `(num fn)`
 * [-take](#-take-n-list) `(n list)`
 * [-drop](#-drop-n-list) `(n list)`
 * [-take-while](#-take-while-fn-list) `(fn list)`
@@ -236,6 +237,15 @@ Returns nil, used for side-effects only.
 ```cl
 (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(4 2)
 (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) ;; => '(2 1)
+```
+
+### -dotimes `(num fn)`
+
+Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 through n-1.
+
+```cl
+(let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) ;; => '(2 1 0)
+(let (s) (--dotimes 5 (!cons it s)) s) ;; => '(4 3 2 1 0)
 ```
 
 ### -take `(n list)`

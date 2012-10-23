@@ -87,6 +87,10 @@
   (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) => '(4 2)
   (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) => '(2 1))
 
+(defexamples -dotimes
+  (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) => '(2 1 0)
+  (let (s) (--dotimes 5 (!cons it s)) s) => '(4 3 2 1 0))
+
 (defexamples -take
   (-take 3 '(1 2 3 4 5)) => '(1 2 3)
   (-take 17 '(1 2 3 4 5)) => '(1 2 3 4 5))

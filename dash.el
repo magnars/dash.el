@@ -64,6 +64,17 @@
 Returns nil, used for side-effects only."
   (--each-while list (funcall pred it) (funcall fn it)))
 
+(defmacro --dotimes (num &rest body)
+  "Repeatedly executes BODY (presumably for side-effects) with `it` bound to integers from 0 through n-1."
+  `(let ((it 0))
+     (while (< it ,num)
+       ,@body
+       (setq it (1+ it)))))
+
+(defun -dotimes (num fn)
+  "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through n-1."
+  (--dotimes num (funcall fn it)))
+
 (defun -map (fn list)
   "Returns a new list consisting of the result of applying FN to the items in LIST."
   (mapcar fn list))

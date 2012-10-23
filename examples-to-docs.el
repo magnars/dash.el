@@ -4,36 +4,29 @@
 
 (defun example-to-string (example)
   (let ((actual (car example))
-        (expected (cadr (cdr example))))
+        (expected (nth 2 example)))
     (--> (format "%S ;; => %S" actual expected)
          (replace-regexp-in-string "\\\\\\?" "?" it)
          (replace-regexp-in-string "\n" "\\n" it t t)
          (replace-regexp-in-string "\t" "\\t" it t t)
          (replace-regexp-in-string "\r" "\\r" it t t))))
 
-(defun examples-to-strings (examples)
-  (let (result)
-    (while examples
-      (setq result (cons (example-to-string examples) result))
-      (setq examples (cddr (cdr examples))))
-    (nreverse result)))
-
 (defun docs--signature (cmd)
   (if (eq 'macro (car cmd))
-      (car (cddr cmd))
-    (cadr cmd)))
+      (nth 2 cmd)
+    (nth 1 cmd)))
 
 (defun docs--docstring (cmd)
   (if (eq 'macro (car cmd))
-      (cadr (cddr cmd))
-    (car (cddr cmd))))
+      (nth 3 cmd)
+    (nth 2 cmd)))
 
 (defmacro defexamples (cmd &rest examples)
   `(add-to-list 'functions (list
                             ',cmd
                             (docs--signature (symbol-function ',cmd))
                             (docs--docstring (symbol-function ',cmd))
-                            (examples-to-strings ',examples))))
+                            (-map 'example-to-string (-partition 3 ',examples)))))
 
 (defun quote-and-downcase (string)
   (format "`%s`" (downcase string)))
@@ -47,8 +40,8 @@
 (defun function-to-md (function)
   (let ((command-name (car function))
         (signature (cadr function))
-        (docstring (quote-docstring (cadr (cdr function))))
-        (examples (cadr (cddr function))))
+        (docstring (quote-docstring (nth 2 function)))
+        (examples (nth 3 function)))
     (format "### %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
             command-name
             signature

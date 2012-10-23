@@ -1,19 +1,13 @@
 (require 'ert)
+(require 'dash)
 
-(defun examples-to-should-1 (examples)
+(defun example-to-should (example)
   (let ((actual (car examples))
-        (expected (cadr (cdr examples))))
+        (expected (nth 2 examples)))
     `(should (equal ,actual ,expected))))
-
-(defun examples-to-should (examples)
-  (let (result)
-    (while examples
-      (setq result (cons (examples-to-should-1 examples) result))
-      (setq examples (cddr (cdr examples))))
-    (nreverse result)))
 
 (defmacro defexamples (cmd &rest examples)
   `(ert-deftest ,cmd ()
-     ,@(examples-to-should examples)))
+     ,@(-map 'example-to-should (-partition 3 examples))))
 
 (provide 'examples-to-tests)

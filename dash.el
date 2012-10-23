@@ -244,21 +244,17 @@ Alias: `-every?'"
 (defalias '-none-p '-none?)
 (defalias '--none-p '--none?)
 
-;; simplify with a --dotimes
 (defun -take (n list)
   "Returns a new list of the first N items in LIST, or all items if there are fewer than N."
   (let (result)
-    (while (and list (> n 0))
-      (!cons (car list) result)
-      (!cdr list)
-      (setq n (1- n)))
+    (--dotimes n (when list
+                   (!cons (car list) result)
+                   (!cdr list)))
     (nreverse result)))
 
 (defun -drop (n list)
   "Returns the tail of LIST without the first N items."
-  (while (and list (> n 0))
-    (!cdr list)
-    (setq n (1- n)))
+  (--dotimes n (!cdr list))
   list)
 
 (defmacro --take-while (form list)

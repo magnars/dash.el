@@ -35,20 +35,20 @@
   "Destructive: Sets LIST to the cdr of LIST."
   `(setq ,list (cdr ,list)))
 
-(defmacro --each (list form)
+(defmacro --each (list &rest body)
   "Anaphoric form of `-each'."
   (let ((l (make-symbol "list")))
     `(let ((,l ,list))
        (while ,l
          (let ((it (car ,l)))
-           ,form)
+           ,@body)
          (!cdr ,l)))))
 
 (defun -each (list fn)
   "Calls FN with every item in LIST. Returns nil, used for side-effects only."
   (--each list (funcall fn it)))
 
-(defmacro --each-while (list pred form)
+(defmacro --each-while (list pred &rest body)
   "Anaphoric form of `-each-while'."
   (let ((l (make-symbol "list"))
         (c (make-symbol "continue")))
@@ -56,7 +56,7 @@
            (,c t))
        (while (and ,l ,c)
          (let ((it (car ,l)))
-           (if ,pred ,form (setq ,c nil)))
+           (if (not ,pred) (setq ,c nil) ,@body))
          (!cdr ,l)))))
 
 (defun -each-while (list pred fn)

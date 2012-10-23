@@ -31,6 +31,8 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-drop-while](#-drop-while-fn-list) `(fn list)`
 * [-split-at](#-split-at-n-list) `(n list)`
 * [-split-with](#-split-with-fn-list) `(fn list)`
+* [-partition](#-partition-n-list) `(n list)`
+* [-partition-all](#-partition-all-n-list) `(n list)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-replace-where](#-replace-where-pred-rep-list) `(pred rep list)`
@@ -278,6 +280,29 @@ Returns a list of ((-take-while `fn` `list`) (-drop-while `fn` `list`))
 (-split-with 'even? '(1 2 3 4)) ;; => '(nil (1 2 3 4))
 (-split-with 'even? '(2 4 5 6)) ;; => '((2 4) (5 6))
 (--split-with (< it 4) '(1 2 3 4 3 2 1)) ;; => '((1 2 3) (4 3 2 1))
+```
+
+### -partition `(n list)`
+
+Returns a new list with the items in `list` grouped into `n-`sized sublists.
+If there are not enough items to make the last group `n-`sized,
+those items are discarded.
+
+```cl
+(-partition 2 '(1 2 3 4 5 6)) ;; => '((1 2) (3 4) (5 6))
+(-partition 2 '(1 2 3 4 5 6 7)) ;; => '((1 2) (3 4) (5 6))
+(-partition 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6))
+```
+
+### -partition-all `(n list)`
+
+Returns a new list with the items in `list` grouped into `n-`sized sublists.
+The last group may contain less than `n` items.
+
+```cl
+(-partition-all 2 '(1 2 3 4 5 6)) ;; => '((1 2) (3 4) (5 6))
+(-partition-all 2 '(1 2 3 4 5 6 7)) ;; => '((1 2) (3 4) (5 6) (7))
+(-partition-all 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6) (7))
 ```
 
 ### -interpose `(sep list)`

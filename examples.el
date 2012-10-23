@@ -110,6 +110,16 @@
   (-split-with 'even? '(2 4 5 6)) => '((2 4) (5 6))
   (--split-with (< it 4) '(1 2 3 4 3 2 1)) => '((1 2 3) (4 3 2 1)))
 
+(defexamples -partition
+  (-partition 2 '(1 2 3 4 5 6)) => '((1 2) (3 4) (5 6))
+  (-partition 2 '(1 2 3 4 5 6 7)) => '((1 2) (3 4) (5 6))
+  (-partition 3 '(1 2 3 4 5 6 7)) => '((1 2 3) (4 5 6)))
+
+(defexamples -partition-all
+  (-partition-all 2 '(1 2 3 4 5 6)) => '((1 2) (3 4) (5 6))
+  (-partition-all 2 '(1 2 3 4 5 6 7)) => '((1 2) (3 4) (5 6) (7))
+  (-partition-all 3 '(1 2 3 4 5 6 7)) => '((1 2 3) (4 5 6) (7)))
+
 (defexamples -interpose
   (-interpose "-" '()) => '()
   (-interpose "-" '("a")) => '("a")

@@ -295,6 +295,32 @@ Alias: `-every?'"
   "Returns a list of ((-take-while FN LIST) (-drop-while FN LIST))"
   (--split-with (funcall fn it) list))
 
+(defun -partition (n list)
+  "Returns a new list with the items in LIST grouped into N-sized sublists.
+If there are not enough items to make the last group N-sized,
+those items are discarded."
+  (let ((result nil)
+        (sublist nil)
+        (len 0))
+    (while list
+      (setq sublist (cons (car list) sublist))
+      (setq len (1+ len))
+      (when (= len n)
+        (setq result (cons (nreverse sublist) result))
+        (setq sublist nil)
+        (setq len 0))
+      (setq list (cdr list)))
+    (nreverse result)))
+
+(defun -partition-all (n list)
+  "Returns a new list with the items in LIST grouped into N-sized sublists.
+The last group may contain less than N items."
+  (let (result)
+    (while list
+      (setq result (cons (-take n list) result))
+      (setq list (-drop n list)))
+    (nreverse result)))
+
 (defun -interpose (sep list)
   "Returns a new list of all elements in LIST separated by SEP."
   (let (result)

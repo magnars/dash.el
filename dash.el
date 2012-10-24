@@ -411,6 +411,10 @@ in in second form, etc."
         (list form x))
     `(--> (--> ,x ,form) ,@more)))
 
+(put '-> 'lisp-indent-function 1)
+(put '->> 'lisp-indent-function 1)
+(put '--> 'lisp-indent-function 1)
+
 (defun -distinct (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',

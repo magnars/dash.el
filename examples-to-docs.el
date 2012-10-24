@@ -6,10 +6,10 @@
   (let ((actual (car example))
         (expected (nth 2 example)))
     (--> (format "%S ;; => %S" actual expected)
-         (replace-regexp-in-string "\\\\\\?" "?" it)
-         (replace-regexp-in-string "\n" "\\n" it t t)
-         (replace-regexp-in-string "\t" "\\t" it t t)
-         (replace-regexp-in-string "\r" "\\r" it t t))))
+      (replace-regexp-in-string "\\\\\\?" "?" it)
+      (replace-regexp-in-string "\n" "\\n" it t t)
+      (replace-regexp-in-string "\t" "\\t" it t t)
+      (replace-regexp-in-string "\r" "\\r" it t t))))
 
 (defun docs--signature (cmd)
   (if (eq 'macro (car cmd))
@@ -34,8 +34,8 @@
 (defun quote-docstring (docstring)
   (let (case-fold-search)
     (--> docstring
-         (replace-regexp-in-string "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b" 'quote-and-downcase it t)
-         (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" it t))))
+      (replace-regexp-in-string "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b" 'quote-and-downcase it t)
+      (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" it t))))
 
 (defun function-to-md (function)
   (let ((command-name (car function))

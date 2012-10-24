@@ -44,6 +44,8 @@
            ,@body)
          (!cdr ,l)))))
 
+(put '--each 'lisp-indent-function 1)
+
 (defun -each (list fn)
   "Calls FN with every item in LIST. Returns nil, used for side-effects only."
   (--each list (funcall fn it)))
@@ -59,6 +61,8 @@
            (if (not ,pred) (setq ,c nil) ,@body))
          (!cdr ,l)))))
 
+(put '--each-while 'lisp-indent-function 2)
+
 (defun -each-while (list pred fn)
   "Calls FN with every item in LIST while (PRED item) is non-nil.
 Returns nil, used for side-effects only."
@@ -70,6 +74,8 @@ Returns nil, used for side-effects only."
      (while (< it ,num)
        ,@body
        (setq it (1+ it)))))
+
+(put '--dotimes 'lisp-indent-function 1)
 
 (defun -dotimes (num fn)
   "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through n-1."
@@ -182,7 +188,8 @@ Thus function FN should return a collection."
   "Anaphoric form of `-first'."
   (let ((n (make-symbol "needle")))
     `(let (,n)
-       (--each-while ,list (not ,n) (when ,form (setq ,n it)))
+       (--each-while ,list (not ,n)
+         (when ,form (setq ,n it)))
        ,n)))
 
 (defun -first (fn list)
@@ -247,9 +254,10 @@ Alias: `-every?'"
 (defun -take (n list)
   "Returns a new list of the first N items in LIST, or all items if there are fewer than N."
   (let (result)
-    (--dotimes n (when list
-                   (!cons (car list) result)
-                   (!cdr list)))
+    (--dotimes n
+      (when list
+        (!cons (car list) result)
+        (!cdr list)))
     (nreverse result)))
 
 (defun -drop (n list)

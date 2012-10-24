@@ -241,7 +241,7 @@ Alias: `-every?'"
 (defalias '--every-p '--all?)
 
 (defmacro --none? (form list)
-  "Anaphoric form `-none?'."
+  "Anaphoric form of `-none?'."
   `(--all? (not ,form) ,list))
 
 (defun -none? (fn list)
@@ -250,6 +250,23 @@ Alias: `-every?'"
 
 (defalias '-none-p '-none?)
 (defalias '--none-p '--none?)
+
+(defmacro --only-some? (form list)
+  "Anaphoric form of `-only-some?'."
+  (let ((y (make-symbol "yes"))
+        (n (make-symbol "no")))
+    `(let (,y ,n)
+       (--each-while ,list (not (and ,y ,n))
+         (if ,form (setq ,y t) (setq ,n t)))
+       (---truthy? (and ,y ,n)))))
+
+(defun -only-some? (pred list)
+  "Returns `t` if there is a mix of items in LIST that matches and does not match PRED.
+Returns `nil` both if all items match the predicate, and if none of the items match the predicate."
+  (--only-some? (funcall pred it) list))
+
+(defalias '-only-some-p '-only-some?)
+(defalias '--only-some-p '--only-some?)
 
 (defun -take (n list)
   "Returns a new list of the first N items in LIST, or all items if there are fewer than N."

@@ -77,6 +77,12 @@
   (-none? 'even? '(1 3 5)) => t
   (--none? (= 0 (% it 2)) '(1 2 3)) => nil)
 
+(defexamples -only-some?
+  (-only-some? 'even? '(1 2 3)) => t
+  (-only-some? 'even? '(1 3 5)) => nil
+  (-only-some? 'even? '(2 4 6)) => nil
+  (--only-some? (> it 2) '(1 2 3)) => t)
+
 (defexamples -each
   (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) => nil
   (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(3 2 1)

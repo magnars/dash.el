@@ -459,5 +459,97 @@ or with `-compare-fn' if that's non-nil."
 
 (defalias '-contains-p '-contains?)
 
+(eval-after-load "lisp-mode"
+  '(progn
+     (let ((new-keywords '(
+                           "--each"
+                           "-each"
+                           "--each-while"
+                           "-each-while"
+                           "--dotimes"
+                           "-dotimes"
+                           "-map"
+                           "--map"
+                           "--reduce-from"
+                           "-reduce-from"
+                           "--reduce"
+                           "-reduce"
+                           "--filter"
+                           "-filter"
+                           "-select"
+                           "--select"
+                           "--remove"
+                           "-remove"
+                           "-reject"
+                           "--reject"
+                           "--keep"
+                           "-keep"
+                           "-flatten"
+                           "-concat"
+                           "--mapcat"
+                           "-mapcat"
+                           "--first"
+                           "-first"
+                           "--any?"
+                           "-any?"
+                           "-some?"
+                           "--some?"
+                           "-any-p"
+                           "--any-p"
+                           "-some-p"
+                           "--some-p"
+                           "--all?"
+                           "-all?"
+                           "-every?"
+                           "--every?"
+                           "-all-p"
+                           "--all-p"
+                           "-every-p"
+                           "--every-p"
+                           "--none?"
+                           "-none?"
+                           "-none-p"
+                           "--none-p"
+                           "-take"
+                           "-drop"
+                           "--take-while"
+                           "-take-while"
+                           "--drop-while"
+                           "-drop-while"
+                           "-split-at"
+                           "--split-with"
+                           "-split-with"
+                           "-partition"
+                           "-partition-all"
+                           "-interpose"
+                           "-interleave"
+                           "--replace-where"
+                           "-replace-where"
+                           "-partial"
+                           "-rpartial"
+                           "->"
+                           "->>"
+                           "-->"
+                           "-distinct"
+                           "-intersection"
+                           "-difference"
+                           "-contains?"
+                           "-contains-p"
+                           ))
+           (special-variables '(
+                                "it"
+                                "acc"
+                                )))
+       (font-lock-add-keywords 'emacs-lisp-mode `((,(concat "\\<" (regexp-opt special-variables 'paren) "\\>")
+                                                   1 font-lock-variable-name-face)) 'append)
+       (font-lock-add-keywords 'emacs-lisp-mode `((,(concat "(\\s-*" (regexp-opt new-keywords 'paren) "\\>")
+                                                   1 font-lock-keyword-face)) 'append))
+     (--each (buffer-list)
+       (with-current-buffer it
+         (when (and (eq major-mode 'emacs-lisp-mode)
+                    (boundp 'font-lock-mode)
+                    font-lock-mode)
+           (font-lock-refresh-defaults))))))
+
 (provide 'dash)
 ;;; dash.el ends here

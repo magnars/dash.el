@@ -131,11 +131,11 @@ exposed as `acc`."
        (--each ,list (when ,form (!cons it ,r)))
        (nreverse ,r))))
 
-(defun -filter (fn list)
-  "Returns a new list of the items in LIST for which FN returns a non-nil value.
+(defun -filter (pred list)
+  "Returns a new list of the items in LIST for which PRED returns a non-nil value.
 
 Alias: `-select'"
-  (--filter (funcall fn it) list))
+  (--filter (funcall pred it) list))
 
 (defalias '-select '-filter)
 (defalias '--select '--filter)
@@ -144,11 +144,11 @@ Alias: `-select'"
   "Anaphoric form of `-remove'."
   `(--filter (not ,form) ,list))
 
-(defun -remove (fn list)
-  "Returns a new list of the items in LIST for which FN returns nil.
+(defun -remove (pred list)
+  "Returns a new list of the items in LIST for which PRED returns nil.
 
 Alias: `-reject'"
-  (--remove (funcall fn it) list))
+  (--remove (funcall pred it) list))
 
 (defalias '-reject '-remove)
 (defalias '--reject '--remove)
@@ -192,11 +192,11 @@ Thus function FN should return a collection."
          (when ,form (setq ,n it)))
        ,n)))
 
-(defun -first (fn list)
-  "Returns the first x in LIST where (FN x) is non-nil, else nil.
+(defun -first (pred list)
+  "Returns the first x in LIST where (PRED x) is non-nil, else nil.
 
 To get the first item in the list no questions asked, use `car'."
-  (--first (funcall fn it) list))
+  (--first (funcall pred it) list))
 
 (defun ---truthy? (val)
   (not (null val)))
@@ -205,11 +205,11 @@ To get the first item in the list no questions asked, use `car'."
   "Anaphoric form of `-any?'."
   `(---truthy? (--first ,form ,list)))
 
-(defun -any? (fn list)
-  "Returns t if (FN x) is non-nil for any x in LIST, else nil.
+(defun -any? (pred list)
+  "Returns t if (PRED x) is non-nil for any x in LIST, else nil.
 
 Alias: `-some?'"
-  (--any? (funcall fn it) list))
+  (--any? (funcall pred it) list))
 
 (defalias '-some? '-any?)
 (defalias '--some? '--any?)
@@ -226,11 +226,11 @@ Alias: `-some?'"
        (--each-while ,list ,a (setq ,a ,form))
        (---truthy? ,a))))
 
-(defun -all? (fn list)
-  "Returns t if (FN x) is non-nil for all x in LIST, else nil.
+(defun -all? (pred list)
+  "Returns t if (PRED x) is non-nil for all x in LIST, else nil.
 
 Alias: `-every?'"
-  (--all? (funcall fn it) list))
+  (--all? (funcall pred it) list))
 
 (defalias '-every? '-all?)
 (defalias '--every? '--all?)
@@ -244,9 +244,9 @@ Alias: `-every?'"
   "Anaphoric form of `-none?'."
   `(--all? (not ,form) ,list))
 
-(defun -none? (fn list)
-  "Returns t if (FN x) is nil for all x in LIST, else nil."
-  (--none? (funcall fn it) list))
+(defun -none? (pred list)
+  "Returns t if (PRED x) is nil for all x in LIST, else nil."
+  (--none? (funcall pred it) list))
 
 (defalias '-none-p '-none?)
 (defalias '--none-p '--none?)
@@ -289,9 +289,9 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
        (--each-while ,list ,form (!cons it ,r))
        (nreverse ,r))))
 
-(defun -take-while (fn list)
-  "Returns a new list of successive items from LIST while (FN item) returns a non-nil value."
-  (--take-while (funcall fn it) list))
+(defun -take-while (pred list)
+  "Returns a new list of successive items from LIST while (PRED item) returns a non-nil value."
+  (--take-while (funcall pred it) list))
 
 (defmacro --drop-while (form list)
   "Anaphoric form of `-drop-while'."
@@ -301,9 +301,9 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
          (!cdr ,l))
        ,l)))
 
-(defun -drop-while (fn list)
-  "Returns the tail of LIST starting from the first item for which (FN item) returns nil."
-  (--drop-while (funcall fn it) list))
+(defun -drop-while (pred list)
+  "Returns the tail of LIST starting from the first item for which (PRED item) returns nil."
+  (--drop-while (funcall pred it) list))
 
 (defun -split-at (n list)
   "Returns a list of ((-take N LIST) (-drop N LIST))"
@@ -315,9 +315,9 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
   `(list (--take-while ,form ,list)
          (--drop-while ,form ,list)))
 
-(defun -split-with (fn list)
-  "Returns a list of ((-take-while FN LIST) (-drop-while FN LIST))"
-  (--split-with (funcall fn it) list))
+(defun -split-with (pred list)
+  "Returns a list of ((-take-while PRED LIST) (-drop-while PRED LIST))"
+  (--split-with (funcall pred it) list))
 
 (defun -partition (n list)
   "Returns a new list with the items in LIST grouped into N-sized sublists.
@@ -527,6 +527,10 @@ or with `-compare-fn' if that's non-nil."
                            "-none?"
                            "-none-p"
                            "--none-p"
+                           "-only-some?"
+                           "--only-some?"
+                           "-only-some-p"
+                           "--only-some-p"
                            "-take"
                            "-drop"
                            "--take-while"

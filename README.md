@@ -15,30 +15,31 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-map](#-map-fn-list) `(fn list)`
 * [-reduce-from](#-reduce-from-fn-initial-value-list) `(fn initial-value list)`
 * [-reduce](#-reduce-fn-list) `(fn list)`
-* [-filter](#-filter-fn-list) `(fn list)`
-* [-remove](#-remove-fn-list) `(fn list)`
+* [-filter](#-filter-pred-list) `(pred list)`
+* [-remove](#-remove-pred-list) `(pred list)`
 * [-keep](#-keep-fn-list) `(fn list)`
 * [-flatten](#-flatten-l) `(l)`
 * [-concat](#-concat-rest-lists) `(&rest lists)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
-* [-any?](#-any-fn-list) `(fn list)`
-* [-all?](#-all-fn-list) `(fn list)`
-* [-none?](#-none-fn-list) `(fn list)`
+* [-any?](#-any-pred-list) `(pred list)`
+* [-all?](#-all-pred-list) `(pred list)`
+* [-none?](#-none-pred-list) `(pred list)`
+* [-only-some?](#-only-some-pred-list) `(pred list)`
 * [-each](#-each-list-fn) `(list fn)`
 * [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
 * [-dotimes](#-dotimes-num-fn) `(num fn)`
 * [-take](#-take-n-list) `(n list)`
 * [-drop](#-drop-n-list) `(n list)`
-* [-take-while](#-take-while-fn-list) `(fn list)`
-* [-drop-while](#-drop-while-fn-list) `(fn list)`
+* [-take-while](#-take-while-pred-list) `(pred list)`
+* [-drop-while](#-drop-while-pred-list) `(pred list)`
 * [-split-at](#-split-at-n-list) `(n list)`
-* [-split-with](#-split-with-fn-list) `(fn list)`
+* [-split-with](#-split-with-pred-list) `(pred list)`
 * [-partition](#-partition-n-list) `(n list)`
 * [-partition-all](#-partition-all-n-list) `(n list)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-replace-where](#-replace-where-pred-rep-list) `(pred rep list)`
-* [-first](#-first-fn-list) `(fn list)`
+* [-first](#-first-pred-list) `(pred list)`
 * [-difference](#-difference-list-list) `(list list2)`
 * [-intersection](#-intersection-list-list) `(list list2)`
 * [-distinct](#-distinct-list) `(list)`
@@ -121,9 +122,9 @@ exposed as `acc`.
 (--reduce (format "%s-%s" acc it) '(1 2 3)) ;; => "1-2-3"
 ```
 
-### -filter `(fn list)`
+### -filter `(pred list)`
 
-Returns a new list of the items in `list` for which `fn` returns a non-nil value.
+Returns a new list of the items in `list` for which `pred` returns a non-nil value.
 
 Alias: `-select`
 
@@ -133,9 +134,9 @@ Alias: `-select`
 (--filter (= 0 (% it 2)) '(1 2 3 4)) ;; => '(2 4)
 ```
 
-### -remove `(fn list)`
+### -remove `(pred list)`
 
-Returns a new list of the items in `list` for which `fn` returns nil.
+Returns a new list of the items in `list` for which `pred` returns nil.
 
 Alias: `-reject`
 
@@ -185,9 +186,9 @@ Thus function `fn` should return a collection.
 (--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 ```
 
-### -any? `(fn list)`
+### -any? `(pred list)`
 
-Returns t if (`fn` x) is non-nil for any x in `list`, else nil.
+Returns t if (`pred` x) is non-nil for any x in `list`, else nil.
 
 Alias: `-some?`
 
@@ -197,9 +198,9 @@ Alias: `-some?`
 (--any? (= 0 (% it 2)) '(1 2 3)) ;; => t
 ```
 
-### -all? `(fn list)`
+### -all? `(pred list)`
 
-Returns t if (`fn` x) is non-nil for all x in `list`, else nil.
+Returns t if (`pred` x) is non-nil for all x in `list`, else nil.
 
 Alias: `-every?`
 
@@ -209,14 +210,25 @@ Alias: `-every?`
 (--all? (= 0 (% it 2)) '(2 4 6)) ;; => t
 ```
 
-### -none? `(fn list)`
+### -none? `(pred list)`
 
-Returns t if (`fn` x) is nil for all x in `list`, else nil.
+Returns t if (`pred` x) is nil for all x in `list`, else nil.
 
 ```cl
 (-none? 'even? '(1 2 3)) ;; => nil
 (-none? 'even? '(1 3 5)) ;; => t
 (--none? (= 0 (% it 2)) '(1 2 3)) ;; => nil
+```
+
+### -only-some? `(pred list)`
+
+Returns `t` if there is a mix of items in `list` that matches and does not match `pred`.
+Returns `nil` both if all items match the predicate, and if none of the items match the predicate.
+
+```cl
+(-only-some? 'even? '(1 2 3)) ;; => t
+(-only-some? 'even? '(1 3 5)) ;; => nil
+(-only-some? 'even? '(2 4 6)) ;; => nil
 ```
 
 ### -each `(list fn)`
@@ -266,9 +278,9 @@ Returns the tail of `list` without the first `n` items.
 (-drop 17 '(1 2 3 4 5)) ;; => '()
 ```
 
-### -take-while `(fn list)`
+### -take-while `(pred list)`
 
-Returns a new list of successive items from `list` while (`fn` item) returns a non-nil value.
+Returns a new list of successive items from `list` while (`pred` item) returns a non-nil value.
 
 ```cl
 (-take-while 'even? '(1 2 3 4)) ;; => '()
@@ -276,9 +288,9 @@ Returns a new list of successive items from `list` while (`fn` item) returns a n
 (--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
 ```
 
-### -drop-while `(fn list)`
+### -drop-while `(pred list)`
 
-Returns the tail of `list` starting from the first item for which (`fn` item) returns nil.
+Returns the tail of `list` starting from the first item for which (`pred` item) returns nil.
 
 ```cl
 (-drop-while 'even? '(1 2 3 4)) ;; => '(1 2 3 4)
@@ -295,9 +307,9 @@ Returns a list of ((-take `n` `list`) (-drop `n` `list`))
 (-split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
 ```
 
-### -split-with `(fn list)`
+### -split-with `(pred list)`
 
-Returns a list of ((-take-while `fn` `list`) (-drop-while `fn` `list`))
+Returns a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`))
 
 ```cl
 (-split-with 'even? '(1 2 3 4)) ;; => '(nil (1 2 3 4))
@@ -360,9 +372,9 @@ through the `rep` function.
 (--replace-where (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
 ```
 
-### -first `(fn list)`
+### -first `(pred list)`
 
-Returns the first x in `list` where (`fn` x) is non-nil, else nil.
+Returns the first x in `list` where (`pred` x) is non-nil, else nil.
 
 To get the first item in the list no questions asked, use `car`.
 

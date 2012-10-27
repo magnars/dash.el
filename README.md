@@ -36,6 +36,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-split-with](#-split-with-pred-list) `(pred list)`
 * [-partition](#-partition-n-list) `(n list)`
 * [-partition-all](#-partition-all-n-list) `(n list)`
+* [-partition-by](#-partition-by-fn-list) `(fn list)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-replace-where](#-replace-where-pred-rep-list) `(pred rep list)`
@@ -338,6 +339,16 @@ The last group may contain less than `n` items.
 (-partition-all 2 '(1 2 3 4 5 6)) ;; => '((1 2) (3 4) (5 6))
 (-partition-all 2 '(1 2 3 4 5 6 7)) ;; => '((1 2) (3 4) (5 6) (7))
 (-partition-all 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6) (7))
+```
+
+### -partition-by `(fn list)`
+
+Applies `fn` to each value in `list`, splitting it each time `fn` returns a new value.
+
+```cl
+(-partition-by 'even? '()) ;; => '()
+(-partition-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => '((1 1) (2 2 2) (3) (4 6 8))
+(--partition-by (< it 3) '(1 2 3 4 3 2 1)) ;; => '((1 2) (3 4 3) (2 1))
 ```
 
 ### -interpose `(sep list)`

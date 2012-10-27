@@ -345,6 +345,36 @@ The last group may contain less than N items."
       (setq list (-drop n list)))
     (nreverse result)))
 
+(defmacro --partition-by (form list)
+  "Anaphoric form of `-partition-by'."
+  (let ((r (make-symbol "result"))
+        (s (make-symbol "sublist"))
+        (v (make-symbol "value"))
+        (n (make-symbol "new-value"))
+        (l (make-symbol "list")))
+    `(let ((,l ,list))
+       (when ,l
+         (let* ((,r nil)
+                (it (car ,l))
+                (,s (list it))
+                (,v ,form)
+                (,l (cdr ,l)))
+           (while ,l
+             (let* ((it (car ,l))
+                    (,n ,form))
+               (unless (equal ,v ,n)
+                 (!cons (nreverse ,s) ,r)
+                 (setq ,s nil)
+                 (setq ,v ,n))
+               (!cons it ,s)
+               (!cdr ,l)))
+           (!cons (nreverse ,s) ,r)
+           (nreverse ,r))))))
+
+(defun -partition-by (fn list)
+  "Applies FN to each value in LIST, splitting it each time FN returns a new value."
+  (--partition-by (funcall fn it) list))
+
 (defun -interpose (sep list)
   "Returns a new list of all elements in LIST separated by SEP."
   (let (result)

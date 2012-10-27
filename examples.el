@@ -134,6 +134,11 @@
   (-partition-all 2 '(1 2 3 4 5 6 7)) => '((1 2) (3 4) (5 6) (7))
   (-partition-all 3 '(1 2 3 4 5 6 7)) => '((1 2 3) (4 5 6) (7)))
 
+(defexamples -partition-by
+  (-partition-by 'even? '()) => '()
+  (-partition-by 'even? '(1 1 2 2 2 3 4 6 8)) => '((1 1) (2 2 2) (3) (4 6 8))
+  (--partition-by (< it 3) '(1 2 3 4 3 2 1)) => '((1 2) (3 4 3) (2 1)))
+
 (defexamples -interpose
   (-interpose "-" '()) => '()
   (-interpose "-" '("a")) => '("a")

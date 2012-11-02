@@ -47,6 +47,12 @@
   (-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) => '(40 50 60)
   (--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) => '(40 50 60))
 
+(defexamples -map-when
+  (-map-when 'even? 'square '(1 2 3 4)) => '(1 4 3 16)
+  (--map-when (> it 2) (* it it) '(1 2 3 4)) => '(1 2 9 16)
+  (--map-when (= it 2) 17 '(1 2 3 4)) => '(1 17 3 4)
+  (-map-when (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) => '(1 2 0 4))
+
 (defexamples -flatten
   (-flatten '((1))) => '(1)
   (-flatten '((1 (2 3) (((4 (5))))))) => '(1 2 3 4 5))
@@ -149,12 +155,6 @@
   (-interleave '(1 2) '("a" "b") '("A" "B")) => '(1 "a" "A" 2 "b" "B")
   (-interleave '(1 2 3) '("a" "b")) => '(1 "a" 2 "b")
   (-interleave '(1 2 3) '("a" "b" "c" "d")) => '(1 "a" 2 "b" 3 "c"))
-
-(defexamples -replace-where
-  (-replace-where 'even? 'square '(1 2 3 4)) => '(1 4 3 16)
-  (--replace-where (> it 2) (* it it) '(1 2 3 4)) => '(1 2 9 16)
-  (--replace-where (= it 2) 17 '(1 2 3 4)) => '(1 17 3 4)
-  (-replace-where (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) => '(1 2 0 4))
 
 (defexamples -first
   (-first 'even? '(1 2 3)) => 2

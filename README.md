@@ -18,6 +18,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-filter](#-filter-pred-list) `(pred list)`
 * [-remove](#-remove-pred-list) `(pred list)`
 * [-keep](#-keep-fn-list) `(fn list)`
+* [-map-when](#-map-when-pred-rep-list) `(pred rep list)`
 * [-flatten](#-flatten-l) `(l)`
 * [-concat](#-concat-rest-lists) `(&rest lists)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
@@ -39,7 +40,6 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-partition-by](#-partition-by-fn-list) `(fn list)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
-* [-replace-where](#-replace-where-pred-rep-list) `(pred rep list)`
 * [-first](#-first-pred-list) `(pred list)`
 * [-difference](#-difference-list-list) `(list list2)`
 * [-intersection](#-intersection-list-list) `(list list2)`
@@ -155,6 +155,18 @@ Returns a new list of the non-nil results of applying `fn` to the items in `list
 (-keep 'cdr '((1 2 3) (4 5) (6))) ;; => '((2 3) (5))
 (-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) ;; => '(40 50 60)
 (--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => '(40 50 60)
+```
+
+### -map-when `(pred rep list)`
+
+Returns a new list where the elements in `list` that does not match the `pred` function
+are unchanged, and where the elements in `list` that do match the `pred` function are mapped
+through the `rep` function.
+
+```cl
+(-map-when 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
+(--map-when (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
+(--map-when (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
 ```
 
 ### -flatten `(l)`
@@ -369,18 +381,6 @@ Returns a new list of the first item in each list, then the second etc.
 (-interleave '(1 2) '("a" "b")) ;; => '(1 "a" 2 "b")
 (-interleave '(1 2) '("a" "b") '("A" "B")) ;; => '(1 "a" "A" 2 "b" "B")
 (-interleave '(1 2 3) '("a" "b")) ;; => '(1 "a" 2 "b")
-```
-
-### -replace-where `(pred rep list)`
-
-Returns a new list where the elements in `list` that does not match the `pred` function
-are unchanged, and where the elements in `list` that do match the `pred` function are mapped
-through the `rep` function.
-
-```cl
-(-replace-where 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
-(--replace-where (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
-(--replace-where (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
 ```
 
 ### -first `(pred list)`

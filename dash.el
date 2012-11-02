@@ -165,6 +165,22 @@ Alias: `-reject'"
   "Returns a new list of the non-nil results of applying FN to the items in LIST."
   (--keep (funcall fn it) list))
 
+(defmacro --map-when (pred rep list)
+  "Anaphoric form of `-map-when'."
+  (let ((r (make-symbol "result")))
+    `(let (,r)
+       (--each ,list (!cons (if ,pred ,rep it) ,r))
+       (nreverse ,r))))
+
+(defun -map-when (pred rep list)
+  "Returns a new list where the elements in LIST that does not match the PRED function
+are unchanged, and where the elements in LIST that do match the PRED function are mapped
+through the REP function."
+  (--map-when (funcall pred it) (funcall rep it) list))
+
+(defalias '--replace-where '--map-when)
+(defalias '-replace-where '-map-when)
+
 (defun -flatten (l)
   "Takes a nested list L and returns its contents as a single, flat list."
   (if (listp l)
@@ -394,19 +410,6 @@ The last group may contain less than N items."
       (setq lists (-map 'cdr lists)))
     (nreverse result)))
 
-(defmacro --replace-where (pred rep list)
-  "Anaphoric form of `-replace-where'."
-  (let ((r (make-symbol "result")))
-    `(let (,r)
-       (--each ,list (!cons (if ,pred ,rep it) ,r))
-       (nreverse ,r))))
-
-(defun -replace-where (pred rep list)
-  "Returns a new list where the elements in LIST that does not match the PRED function
-are unchanged, and where the elements in LIST that do match the PRED function are mapped
-through the REP function."
-  (--replace-where (funcall pred it) (funcall rep it) list))
-
 (defun -partial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,
 and returns a fn that takes a variable number of additional ARGS.
@@ -454,7 +457,7 @@ forms, inserts the first form at the position signified by `it'
 in in second form, etc."
   (if (null more)
       (if (listp form)
-          (--replace-where (eq it 'it) x form)
+          (--map-when (eq it 'it) x form)
         (list form x))
     `(--> (--> ,x ,form) ,@more)))
 
@@ -574,6 +577,8 @@ or with `-compare-fn' if that's non-nil."
                            "-partition-all"
                            "-interpose"
                            "-interleave"
+                           "--map-when"
+                           "-map-when"
                            "--replace-where"
                            "-replace-where"
                            "-partial"

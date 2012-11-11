@@ -39,6 +39,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-partition-all](#-partition-all-n-list) `(n list)`
 * [-partition-by](#-partition-by-fn-list) `(fn list)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
+* [-join](#-join-list-optional-sep) `(list &optional sep)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-first](#-first-pred-list) `(pred list)`
 * [-difference](#-difference-list-list) `(list list2)`
@@ -371,6 +372,15 @@ Returns a new list of all elements in `list` separated by `sep`.
 (-interpose "-" '()) ;; => '()
 (-interpose "-" '("a")) ;; => '("a")
 (-interpose "-" '("a" "b" "c")) ;; => '("a" "-" "b" "-" "c")
+```
+
+### -join `(list &optional sep)`
+
+Returns a string of all elements in `list` separated by `sep`.
+
+```cl
+(-join '("abc" "def")) ;; => "abcdef"
+(-join '("abc" "def") "-") ;; => "abc-def"
 ```
 
 ### -interleave `(&rest lists)`

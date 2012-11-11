@@ -150,6 +150,10 @@
   (-interpose "-" '("a")) => '("a")
   (-interpose "-" '("a" "b" "c")) => '("a" "-" "b" "-" "c"))
 
+(defexamples -join
+  (-join '("abc" "def")) => "abcdef"
+  (-join '("abc" "def") "-") => "abc-def")
+
 (defexamples -interleave
   (-interleave '(1 2) '("a" "b")) => '(1 "a" 2 "b")
   (-interleave '(1 2) '("a" "b") '("A" "B")) => '(1 "a" "A" 2 "b" "B")

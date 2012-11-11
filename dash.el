@@ -402,6 +402,10 @@ The last group may contain less than N items."
       (!cdr list))
     (nreverse result)))
 
+(defun -join (list &optional sep)
+  "Returns a string of all elements in LIST separated by SEP."
+  (mapconcat 'identity list (or sep "")))
+
 (defun -interleave (&rest lists)
   "Returns a new list of the first item in each list, then the second etc."
   (let (result)
@@ -576,6 +580,7 @@ or with `-compare-fn' if that's non-nil."
                            "-partition"
                            "-partition-all"
                            "-interpose"
+                           "-join"
                            "-interleave"
                            "--map-when"
                            "-map-when"

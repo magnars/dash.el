@@ -425,6 +425,8 @@ Return a new list with all duplicates removed.
 The test for equality is done with `equal`,
 or with `-compare-fn` if that's non-nil.
 
+Alias: `-uniq`
+
 ```cl
 (-distinct '()) ;; => '()
 (-distinct '(1 2 2 4)) ;; => '(1 2 4)

@@ -468,10 +468,14 @@ in in second form, etc."
 (defun -distinct (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
-or with `-compare-fn' if that's non-nil."
+or with `-compare-fn' if that's non-nil.
+
+Alias: `-uniq'"
   (let (result)
     (--each list (when (not (-contains? result it)) (!cons it result)))
     (nreverse result)))
+
+(defalias '-uniq '-distinct)
 
 (defun -intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.

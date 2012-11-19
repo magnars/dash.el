@@ -41,6 +41,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-first](#-first-pred-list) `(pred list)`
+* [-union](#-union-list-list) `(list list2)`
 * [-difference](#-difference-list-list) `(list list2)`
 * [-intersection](#-intersection-list-list) `(list list2)`
 * [-distinct](#-distinct-list) `(list)`
@@ -393,6 +394,18 @@ To get the first item in the list no questions asked, use `car`.
 (-first 'even? '(1 2 3)) ;; => 2
 (-first 'even? '(1 3 5)) ;; => nil
 (--first (> it 2) '(1 2 3)) ;; => 3
+```
+
+### -union `(list list2)`
+
+Return a new list containing the elements of `list1` and elements of `list2` that are not in `list1`.
+The test for equality is done with `equal`,
+or with `-compare-fn` if that's non-nil.
+
+```cl
+(-union '(1 2 3) '(3 4 5)) ;; => '(1 2 3 4 5)
+(-union '(1 2 3 4) '()) ;; => '(1 2 3 4)
+(-union '(1 1 2 2) '(3 2 1)) ;; => '(1 1 2 2 3)
 ```
 
 ### -difference `(list list2)`

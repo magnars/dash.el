@@ -41,9 +41,9 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-first](#-first-pred-list) `(pred list)`
-* [-union](#-union-list-list) `(list list2)`
-* [-difference](#-difference-list-list) `(list list2)`
-* [-intersection](#-intersection-list-list) `(list list2)`
+* [-union](#-union-list-list2) `(list list2)`
+* [-difference](#-difference-list-list2) `(list list2)`
+* [-intersection](#-intersection-list-list2) `(list list2)`
 * [-distinct](#-distinct-list) `(list)`
 * [-contains?](#-contains-list-element) `(list element)`
 * [-partial](#-partial-fn-rest-args) `(fn &rest args)`

@@ -59,7 +59,7 @@
 (defun github-id (command-name signature)
   (docs--chop-suffix
    "-"
-   (replace-regexp-in-string "[^a-zA-Z-]+" "-" (format "%S %S" command-name signature))))
+   (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (format "%S %S" command-name signature))))
 
 (defun function-summary (function)
   (let ((command-name (car function))

@@ -43,12 +43,6 @@ which demonstrates the usefulness of both versions.
 
 [[ function-docs ]]
 
-## Contributors
-
- - [Fuco](https://github.com/Fuco1) contributed `-union` and `-separate`.
-
-Thanks!
-
 ## Contribute
 
 Yes, please do. Pure functions in the list manipulation realm only,
@@ -74,6 +68,12 @@ the tests are always running and the docs are always in sync:
 
 Oh, and don't edit `README.md` directly, it is auto-generated.
 Change `readme-template.md` or `examples-to-docs.el` instead.
+
+## Contributors
+
+ - [Fuco](https://github.com/Fuco1) contributed `-union` and `-separate`.
+
+Thanks!
 
 ## License
 

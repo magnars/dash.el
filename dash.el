@@ -335,6 +335,18 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
   "Returns a list of ((-take-while PRED LIST) (-drop-while PRED LIST))"
   (--split-with (funcall pred it) list))
 
+(defmacro --separate (form list)
+  "Anaphoric form of `-separate'."
+  (let ((y (make-symbol "yes"))
+        (n (make-symbol "no")))
+    `(let (,y ,n)
+       (--each ,list (if ,form (!cons it ,y) (!cons it ,n)))
+       (list (nreverse ,y) (nreverse ,n)))))
+
+(defun -separate (pred list)
+  "Returns a list of ((-filter PRED LIST) (-remove PRED LIST))."
+  (--separate (funcall pred it) list))
+
 (defun -partition (n list)
   "Returns a new list with the items in LIST grouped into N-sized sublists.
 If there are not enough items to make the last group N-sized,

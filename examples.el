@@ -130,6 +130,11 @@
   (-split-with 'even? '(2 4 5 6)) => '((2 4) (5 6))
   (--split-with (< it 4) '(1 2 3 4 3 2 1)) => '((1 2 3) (4 3 2 1)))
 
+(defexamples -separate
+  (-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7)) => '((2 4 6) (1 3 5 7))
+  (--separate (< it 5) '(3 7 5 9 3 2 1 4 6)) => '((3 3 2 1 4) (7 5 9 6))
+  (-separate 'cdr '((1 2) (1) (1 2 3) (4))) => '(((1 2) (1 2 3)) ((1) (4))))
+
 (defexamples -partition
   (-partition 2 '(1 2 3 4 5 6)) => '((1 2) (3 4) (5 6))
   (-partition 2 '(1 2 3 4 5 6 7)) => '((1 2) (3 4) (5 6))

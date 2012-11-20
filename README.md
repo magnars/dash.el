@@ -35,6 +35,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-drop-while](#-drop-while-pred-list) `(pred list)`
 * [-split-at](#-split-at-n-list) `(n list)`
 * [-split-with](#-split-with-pred-list) `(pred list)`
+* [-separate](#-separate-pred-list) `(pred list)`
 * [-partition](#-partition-n-list) `(n list)`
 * [-partition-all](#-partition-all-n-list) `(n list)`
 * [-partition-by](#-partition-by-fn-list) `(fn list)`
@@ -329,6 +330,16 @@ Returns a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`))
 (-split-with 'even? '(1 2 3 4)) ;; => '(nil (1 2 3 4))
 (-split-with 'even? '(2 4 5 6)) ;; => '((2 4) (5 6))
 (--split-with (< it 4) '(1 2 3 4 3 2 1)) ;; => '((1 2 3) (4 3 2 1))
+```
+
+### -separate `(pred list)`
+
+Returns a list of ((-filter `pred` `list`) (-remove `pred` `list`)).
+
+```cl
+(-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7)) ;; => '((2 4 6) (1 3 5 7))
+(--separate (< it 5) '(3 7 5 9 3 2 1 4 6)) ;; => '((3 3 2 1 4) (7 5 9 6))
+(-separate 'cdr '((1 2) (1) (1 2 3) (4))) ;; => '(((1 2) (1 2 3)) ((1) (4)))
 ```
 
 ### -partition `(n list)`

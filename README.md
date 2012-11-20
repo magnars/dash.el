@@ -552,7 +552,21 @@ Destructive: Sets `list` to the cdr of `list`.
 ```
 
 
-## Development
+## Contributors
+
+ - [Fuco](https://github.com/Fuco1) contributed `-union` and `-separate`.
+
+Thanks!
+
+## Contribute
+
+Yes, please do. Pure functions in the list manipulation realm only,
+please. There's a suite of tests in `examples.el`, so remember to add
+tests for your function, or I might break it later.
+
+You'll find the repo at:
+
+    https://github.com/magnars/dash.el
 
 Run the tests with
 

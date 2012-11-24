@@ -107,9 +107,11 @@ exposed as `acc`."
 
 (defmacro --reduce (form list)
   "Anaphoric form of `-reduce'."
-  (if (eval list)
-      `(--reduce-from ,form ,(car (eval list)) ',(cdr (eval list)))
-    `(let (acc it) ,form)))
+  (let ((lv (make-symbol "list-value")))
+    `(let ((,lv ,list))
+       (if ,lv
+           (--reduce-from ,form (car ,lv) (cdr ,lv))
+         (let (acc it) ,form)))))
 
 (defun -reduce (fn list)
   "Returns the result of applying FN to the first 2 items in LIST,

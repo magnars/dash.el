@@ -150,6 +150,11 @@
   (-partition-by 'even? '(1 1 2 2 2 3 4 6 8)) => '((1 1) (2 2 2) (3) (4 6 8))
   (--partition-by (< it 3) '(1 2 3 4 3 2 1)) => '((1 2) (3 4 3) (2 1)))
 
+(defexamples -group-by
+  (-group-by 'even? '()) => '()
+  (-group-by 'even? '(1 1 2 2 2 3 4 6 8)) => '((nil . (1 1 3)) (t . (2 2 2 4 6 8)))
+  (--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) => '(("a" . ("a/b" "a/e")) ("c" . ("c/d"))))
+
 (defexamples -interpose
   (-interpose "-" '()) => '()
   (-interpose "-" '("a")) => '("a")

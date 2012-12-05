@@ -72,6 +72,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 ## Contributors
 
  - [Fuco](https://github.com/Fuco1) contributed `-union` and `-separate`.
+ - [Takafumi Arakaki](https://github.com/tkf) contributed `-group-by`.
 
 Thanks!
 

@@ -39,6 +39,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-partition](#-partition-n-list) `(n list)`
 * [-partition-all](#-partition-all-n-list) `(n list)`
 * [-partition-by](#-partition-by-fn-list) `(fn list)`
+* [-group-by](#-group-by-fn-list) `(fn list)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-first](#-first-pred-list) `(pred list)`
@@ -373,6 +374,17 @@ Applies `fn` to each value in `list`, splitting it each time `fn` returns a new 
 (-partition-by 'even? '()) ;; => '()
 (-partition-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => '((1 1) (2 2 2) (3) (4 6 8))
 (--partition-by (< it 3) '(1 2 3 4 3 2 1)) ;; => '((1 2) (3 4 3) (2 1))
+```
+
+### -group-by `(fn list)`
+
+Separate `list` into an alist whose keys are `fn` applied to the
+elements of `list`.  Keys are compared by `equal`.
+
+```cl
+(-group-by 'even? '()) ;; => '()
+(-group-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => '((nil 1 1 3) (t 2 2 2 4 6 8))
+(--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) ;; => '(("a" "a/b" "a/e") ("c" "c/d"))
 ```
 
 ### -interpose `(sep list)`

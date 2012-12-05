@@ -405,6 +405,38 @@ The last group may contain less than N items."
   "Applies FN to each value in LIST, splitting it each time FN returns a new value."
   (--partition-by (funcall fn it) list))
 
+(defmacro --group-by (form list)
+  "Anaphoric form of `-group-by'."
+  (let ((l (make-symbol "list"))
+        (v (make-symbol "value"))
+        (k (make-symbol "key"))
+        (r (make-symbol "result")))
+    `(let ((,l ,list)
+           ,r)
+       ;; Convert `list' to an alist and store it in `r'.
+       (while ,l
+         (let* ((,v (car ,l))
+                (it ,v)
+                (,k ,form)
+                (kv (assoc ,k ,r)))
+           (if kv
+               (setcdr kv (cons ,v (cdr kv)))
+             (push (list ,k ,v) ,r))
+           (setq ,l (cdr ,l))))
+       ;; Reverse lists in each group.
+       (let ((rest ,r))
+         (while rest
+           (let ((kv (car rest)))
+             (setcdr kv (nreverse (cdr kv))))
+           (setq rest (cdr rest))))
+       ;; Reverse order of keys.
+       (nreverse ,r))))
+
+(defun -group-by (fn list)
+  "Separate LIST into an alist whose keys are FN applied to the
+elements of LIST.  Keys are compared by `equal'."
+  (--group-by (funcall fn it) list))
+
 (defun -interpose (sep list)
   "Returns a new list of all elements in LIST separated by SEP."
   (let (result)

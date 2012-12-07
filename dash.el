@@ -473,6 +473,11 @@ Requires Emacs 24 or higher."
   `(closure (t) (&rest args)
             (apply ',fn (append args ',args))))
 
+(defun -applify (fn)
+  "Changes an n-arity function FN to a 1-arity function that
+expects a list with n items as arguments"
+  (apply-partially 'apply fn))
+
 (defmacro -> (x &optional form &rest more)
   "Threads the expr through the forms. Inserts X as the second
 item in the first form, making a list of it if it is not a list

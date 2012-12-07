@@ -206,6 +206,10 @@
     (funcall (-rpartial '- 5) 8) => 3
     (funcall (-rpartial '- 5 2) 10) => 3))
 
+(defexamples -applify
+  (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) => '(3 6 15)
+  (-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5)))))
+
 (defexamples ->
   (-> "Abc") => "Abc"
   (-> "Abc" (concat "def")) => "Abcdef"

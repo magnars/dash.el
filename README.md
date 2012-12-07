@@ -50,6 +50,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-contains?](#-contains-list-element) `(list element)`
 * [-partial](#-partial-fn-rest-args) `(fn &rest args)`
 * [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
+* [-applify](#-applify-fn) `(fn)`
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [->>](#--x-form-rest-more) `(x form &rest more)`
 * [-->](#---x-form-rest-more) `(x form &rest more)`
@@ -504,6 +505,16 @@ Requires Emacs 24 or higher.
 ```cl
 (funcall (-rpartial '- 5) 8) ;; => 3
 (funcall (-rpartial '- 5 2) 10) ;; => 3
+```
+
+### -applify `(fn)`
+
+Changes an n-arity function `fn` to a 1-arity function that
+expects a list with n items as arguments
+
+```cl
+(-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => '(3 6 15)
+(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
 ```
 
 ### -> `(x &optional form &rest more)`

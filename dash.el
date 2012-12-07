@@ -38,10 +38,12 @@
 (defmacro --each (list &rest body)
   "Anaphoric form of `-each'."
   (let ((l (make-symbol "list")))
-    `(let ((,l ,list))
+    `(let ((,l ,list)
+           (it-index 0))
        (while ,l
          (let ((it (car ,l)))
            ,@body)
+         (setq it-index (1+ it-index))
          (!cdr ,l)))))
 
 (put '--each 'lisp-indent-function 1)
@@ -173,6 +175,20 @@ Alias: `-reject'"
     `(let (,r)
        (--each ,list (!cons (if ,pred ,rep it) ,r))
        (nreverse ,r))))
+
+(defmacro --map-indexed (form list)
+  "Anaphoric form of `-map-indexed'."
+  (let ((r (make-symbol "result")))
+    `(let (,r)
+       (--each ,list
+         (!cons ,form ,r))
+       (nreverse ,r))))
+
+(defun -map-indexed (fn list)
+  "Returns a new list consisting of the result of (FN index item) for each item in LIST.
+
+In the anaphoric form `--map-indexed', the index is exposed as `it-index`."
+  (--map-indexed (funcall fn it-index it) list))
 
 (defun -map-when (pred rep list)
   "Returns a new list where the elements in LIST that does not match the PRED function
@@ -658,6 +674,7 @@ or with `-compare-fn' if that's non-nil."
                            ))
            (special-variables '(
                                 "it"
+                                "it-index"
                                 "acc"
                                 )))
        (font-lock-add-keywords 'emacs-lisp-mode `((,(concat "\\<" (regexp-opt special-variables 'paren) "\\>")

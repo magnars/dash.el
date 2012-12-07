@@ -19,6 +19,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-remove](#-remove-pred-list) `(pred list)`
 * [-keep](#-keep-fn-list) `(fn list)`
 * [-map-when](#-map-when-pred-rep-list) `(pred rep list)`
+* [-map-indexed](#-map-indexed-fn-list) `(fn list)`
 * [-flatten](#-flatten-l) `(l)`
 * [-concat](#-concat-rest-lists) `(&rest lists)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
@@ -171,6 +172,17 @@ through the `rep` function.
 (-map-when 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
 (--map-when (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
 (--map-when (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
+```
+
+### -map-indexed `(fn list)`
+
+Returns a new list consisting of the result of (`fn` index item) for each item in `list`.
+
+In the anaphoric form `--map-indexed`, the index is exposed as `it-index`.
+
+```cl
+(-map-indexed (lambda (index item) (- item index)) '(1 2 3 4)) ;; => '(1 1 1 1)
+(--map-indexed (- it it-index) '(1 2 3 4)) ;; => '(1 1 1 1)
 ```
 
 ### -flatten `(l)`

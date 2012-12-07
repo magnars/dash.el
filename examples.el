@@ -53,6 +53,10 @@
   (--map-when (= it 2) 17 '(1 2 3 4)) => '(1 17 3 4)
   (-map-when (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) => '(1 2 0 4))
 
+(defexamples -map-indexed
+  (-map-indexed (lambda (index item) (- item index)) '(1 2 3 4)) => '(1 1 1 1)
+  (--map-indexed (- it it-index) '(1 2 3 4)) => '(1 1 1 1))
+
 (defexamples -flatten
   (-flatten '((1))) => '(1)
   (-flatten '((1 (2 3) (((4 (5))))))) => '(1 2 3 4 5))

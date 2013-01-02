@@ -592,7 +592,7 @@ or with `-compare-fn' if that's non-nil."
 (defun -repeat (n x)
   "Return a list with X repeated N times.
 Returns nil if N is less than 1."
-  (let ((ret nil))
+  (let (ret)
     (--dotimes n (!cons x ret))
     ret))
 

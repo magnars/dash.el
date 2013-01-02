@@ -587,6 +587,13 @@ or with `-compare-fn' if that's non-nil."
           (setq lst (cdr lst)))
         lst))))))
 
+(defun -repeat (n x)
+  "Return a list of N Xs."
+  (let ((ret nil))
+    (loop for i from 0 to (dec n) do
+	  (setq ret (cons x ret)))
+    ret))
+
 (defalias '-contains-p '-contains?)
 
 (eval-after-load "lisp-mode"

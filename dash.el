@@ -589,6 +589,14 @@ or with `-compare-fn' if that's non-nil."
 
 (defalias '-contains-p '-contains?)
 
+(defun -repeat (n x)
+  "Return a list of N Xs.
+Attempts of retrieving a non-positive amount of Xs will return nil."
+  (let ((ret nil))
+    (while (not (minusp (setq n (1- n))))
+      (!cons x ret))
+    ret))
+
 (eval-after-load "lisp-mode"
   '(progn
      (let ((new-keywords '(
@@ -671,6 +679,7 @@ or with `-compare-fn' if that's non-nil."
                            "-difference"
                            "-contains?"
                            "-contains-p"
+                           "-repeat"
                            ))
            (special-variables '(
                                 "it"

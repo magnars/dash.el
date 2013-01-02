@@ -239,3 +239,9 @@
 (defexamples !cdr
   (let ((l '(3))) (!cdr l) l) => '()
   (let ((l '(3 5))) (!cdr l) l) => '(5))
+
+(defexamples -repeat
+  (-repeat 3 :a) => '(:a :a :a)
+  (-repeat 1 :a) => '(:a)
+  (-repeat 0 :a) => nil
+  (-repeat -1 :a) => nil)

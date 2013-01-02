@@ -57,6 +57,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-->](#---x-form-rest-more) `(x form &rest more)`
 * [!cons](#-cons-car-cdr) `(car cdr)`
 * [!cdr](#-cdr-list) `(list)`
+* [-repeat](#-repeat-n-x) `(n x)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two dashes instead of one.
@@ -584,6 +585,17 @@ Destructive: Sets `list` to the cdr of `list`.
 ```cl
 (let ((l '(3))) (!cdr l) l) ;; => '()
 (let ((l '(3 5))) (!cdr l) l) ;; => '(5)
+```
+
+### -repeat `(n x)`
+
+Return a list of `n` Xs.
+Attempts of retrieving a non-positive amount of Xs will return nil.
+
+```cl
+(-repeat 3 :a) ;; => '(:a :a :a)
+(-repeat 1 :a) ;; => '(:a)
+(-repeat 0 :a) ;; => nil
 ```
 
 

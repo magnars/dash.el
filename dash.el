@@ -593,8 +593,7 @@ or with `-compare-fn' if that's non-nil."
   "Return a list with X repeated N times.
 Returns nil if N is less than 1."
   (let ((ret nil))
-    (while (not (minusp (setq n (1- n))))
-      (!cons x ret))
+    (--dotimes n (!cons x ret))
     ret))
 
 (eval-after-load "lisp-mode"

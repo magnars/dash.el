@@ -587,14 +587,15 @@ or with `-compare-fn' if that's non-nil."
           (setq lst (cdr lst)))
         lst))))))
 
-(defun -repeat (n x)
-  "Return a list of N Xs."
-  (let ((ret nil))
-    (loop for i from 0 to (dec n) do
-	  (setq ret (cons x ret)))
-    ret))
-
 (defalias '-contains-p '-contains?)
+
+(defun -repeat (n x)
+  "Return a list of N Xs.
+Attempts of retrieving a non-positive amount of Xs will return nil."
+  (let ((ret nil))
+    (while (not (minusp (setq n (1- n))))
+      (!cons x ret))
+    ret))
 
 (eval-after-load "lisp-mode"
   '(progn
@@ -678,7 +679,7 @@ or with `-compare-fn' if that's non-nil."
                            "-difference"
                            "-contains?"
                            "-contains-p"
-                           ))
+                           "-repeat"))
            (special-variables '(
                                 "it"
                                 "it-index"

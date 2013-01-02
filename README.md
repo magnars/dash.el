@@ -630,6 +630,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Fuco](https://github.com/Fuco1) contributed `-union` and `-separate`.
  - [Takafumi Arakaki](https://github.com/tkf) contributed `-group-by`.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
+ - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.
 
 Thanks!
 

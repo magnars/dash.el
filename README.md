@@ -30,6 +30,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-each](#-each-list-fn) `(list fn)`
 * [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
 * [-dotimes](#-dotimes-num-fn) `(num fn)`
+* [-repeat](#-repeat-n-x) `(n x)`
 * [-take](#-take-n-list) `(n list)`
 * [-drop](#-drop-n-list) `(n list)`
 * [-take-while](#-take-while-pred-list) `(pred list)`
@@ -57,7 +58,6 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-->](#---x-form-rest-more) `(x form &rest more)`
 * [!cons](#-cons-car-cdr) `(car cdr)`
 * [!cdr](#-cdr-list) `(list)`
-* [-repeat](#-repeat-n-x) `(n x)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two dashes instead of one.
@@ -288,6 +288,17 @@ Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 t
 ```cl
 (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) ;; => '(2 1 0)
 (let (s) (--dotimes 5 (!cons it s)) s) ;; => '(4 3 2 1 0)
+```
+
+### -repeat `(n x)`
+
+Return a list with `x` repeated `n` times.
+Returns nil if `n` is less than 1.
+
+```cl
+(-repeat 3 :a) ;; => '(:a :a :a)
+(-repeat 1 :a) ;; => '(:a)
+(-repeat 0 :a) ;; => nil
 ```
 
 ### -take `(n list)`
@@ -585,17 +596,6 @@ Destructive: Sets `list` to the cdr of `list`.
 ```cl
 (let ((l '(3))) (!cdr l) l) ;; => '()
 (let ((l '(3 5))) (!cdr l) l) ;; => '(5)
-```
-
-### -repeat `(n x)`
-
-Return a list of `n` Xs.
-Attempts of retrieving a non-positive amount of Xs will return nil.
-
-```cl
-(-repeat 3 :a) ;; => '(:a :a :a)
-(-repeat 1 :a) ;; => '(:a)
-(-repeat 0 :a) ;; => nil
 ```
 
 

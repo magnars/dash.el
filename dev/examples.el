@@ -107,6 +107,12 @@
   (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) => '(2 1 0)
   (let (s) (--dotimes 5 (!cons it s)) s) => '(4 3 2 1 0))
 
+(defexamples -repeat
+  (-repeat 3 :a) => '(:a :a :a)
+  (-repeat 1 :a) => '(:a)
+  (-repeat 0 :a) => nil
+  (-repeat -1 :a) => nil)
+
 (defexamples -take
   (-take 3 '(1 2 3 4 5)) => '(1 2 3)
   (-take 17 '(1 2 3 4 5)) => '(1 2 3 4 5))
@@ -239,9 +245,3 @@
 (defexamples !cdr
   (let ((l '(3))) (!cdr l) l) => '()
   (let ((l '(3 5))) (!cdr l) l) => '(5))
-
-(defexamples -repeat
-  (-repeat 3 :a) => '(:a :a :a)
-  (-repeat 1 :a) => '(:a)
-  (-repeat 0 :a) => nil
-  (-repeat -1 :a) => nil)

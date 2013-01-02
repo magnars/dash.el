@@ -590,8 +590,8 @@ or with `-compare-fn' if that's non-nil."
 (defalias '-contains-p '-contains?)
 
 (defun -repeat (n x)
-  "Return a list of N Xs.
-Attempts of retrieving a non-positive amount of Xs will return nil."
+  "Return a list with X repeated N times.
+Returns nil if N is less than 1."
   (let ((ret nil))
     (while (not (minusp (setq n (1- n))))
       (!cons x ret))

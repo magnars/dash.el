@@ -679,7 +679,8 @@ Attempts of retrieving a non-positive amount of Xs will return nil."
                            "-difference"
                            "-contains?"
                            "-contains-p"
-                           "-repeat"))
+                           "-repeat"
+                           ))
            (special-variables '(
                                 "it"
                                 "it-index"

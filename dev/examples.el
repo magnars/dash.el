@@ -72,6 +72,11 @@
   (-mapcat (lambda (item) (list 0 item)) '(1 2 3)) => '(0 1 0 2 0 3)
   (--mapcat (list 0 it) '(1 2 3)) => '(0 1 0 2 0 3))
 
+(defexamples -cons*
+  (-cons* 1 2) => '(1 . 2)
+  (-cons* 1 2 3) => '(1 2 . 3)
+  (-cons* 1) => 1)
+
 (defexamples -any?
   (-any? 'even? '(1 2 3)) => t
   (-any? 'even? '(1 3 5)) => nil

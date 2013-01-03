@@ -218,6 +218,24 @@ through the REP function."
 Thus function FN should return a collection."
   (--mapcat (funcall fn it) list))
 
+(defun -cons* (&rest args)
+  "Makes a new list from the elements of ARGS.
+
+The last 2 members of ARGS are used as the final cons of the
+result so if the final member of ARGS is not a list the result is
+a dotted list."
+  (let (res)
+    (--each
+     args
+      (cond
+        ((not res)
+         (setq res it))
+        ((consp res)
+         (setcdr res (cons (cdr res) it)))
+        (t
+         (setq res (cons res it)))))
+    res))
+
 (defmacro --first (form list)
   "Anaphoric form of `-first'."
   (let ((n (make-symbol "needle")))

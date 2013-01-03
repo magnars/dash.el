@@ -23,6 +23,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-flatten](#-flatten-l) `(l)`
 * [-concat](#-concat-rest-lists) `(&rest lists)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
+* [-cons*](#-cons-rest-args) `(&rest args)`
 * [-any?](#-any-pred-list) `(pred list)`
 * [-all?](#-all-pred-list) `(pred list)`
 * [-none?](#-none-pred-list) `(pred list)`
@@ -214,6 +215,20 @@ Thus function `fn` should return a collection.
 (-mapcat 'list '(1 2 3)) ;; => '(1 2 3)
 (-mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 (--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+```
+
+### -cons* `(&rest args)`
+
+Makes a new list from the elements of `args`.
+
+The last 2 members of `args` are used as the final cons of the
+result so if the final member of `args` is not a list the result is
+a dotted list.
+
+```cl
+(-cons* 1 2) ;; => '(1 . 2)
+(-cons* 1 2 3) ;; => '(1 2 . 3)
+(-cons* 1) ;; => 1
 ```
 
 ### -any? `(pred list)`
@@ -631,6 +646,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Takafumi Arakaki](https://github.com/tkf) contributed `-group-by`.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.
+ - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
 
 Thanks!
 

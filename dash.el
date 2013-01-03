@@ -697,6 +697,7 @@ Returns nil if N is less than 1."
                            "-contains?"
                            "-contains-p"
                            "-repeat"
+                           "-cons*"
                            ))
            (special-variables '(
                                 "it"

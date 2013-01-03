@@ -75,6 +75,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Takafumi Arakaki](https://github.com/tkf) contributed `-group-by`.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.
+ - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
 
 Thanks!
 

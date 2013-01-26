@@ -45,6 +45,8 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-group-by](#-group-by-fn-list) `(fn list)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
+* [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
+* [-zip](#-zip-list1-list2) `(list1 list2)`
 * [-first](#-first-pred-list) `(pred list)`
 * [-union](#-union-list-list2) `(list list2)`
 * [-difference](#-difference-list-list2) `(list list2)`
@@ -447,6 +449,32 @@ Returns a new list of the first item in each list, then the second etc.
 (-interleave '(1 2 3) '("a" "b")) ;; => '(1 "a" 2 "b")
 ```
 
+### -zip-with `(fn list1 list2)`
+
+Zip the two lists `list1` and `list2` using a function `fn`.  This
+function is applied pairwise taking as first argument element of
+`list1` and as second argument element of `list2` at corresponding
+position.
+
+```cl
+(-zip-with '+ '(1 2 3) '(4 5 6)) ;; => '(5 7 9)
+(-zip-with 'cons '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
+(--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde")) ;; => '("Batman and Robin" "Jekyll and Hyde")
+```
+
+### -zip `(list1 list2)`
+
+Zip the two lists together.  Return the list where elements
+are cons pairs with car being element from `list1` and cdr being
+element from `list2`.  The length of the returned list is the
+length of the shorter one.
+
+```cl
+(-zip '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
+(-zip '(1 2 3) '(4 5 6 7)) ;; => '((1 . 4) (2 . 5) (3 . 6))
+(-zip '(1 2 3 4) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
+```
+
 ### -first `(pred list)`
 
 Returns the first x in `list` where (`pred` x) is non-nil, else nil.
@@ -642,7 +670,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Contributors
 
- - [Fuco](https://github.com/Fuco1) contributed `-union` and `-separate`.
+ - [Matus Goljer](https://github.com/Fuco1) contributed `-union`, `-separate`, `-zip` and `-zip-with`.
  - [Takafumi Arakaki](https://github.com/tkf) contributed `-group-by`.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.

@@ -181,6 +181,16 @@
   (-interleave '(1 2 3) '("a" "b")) => '(1 "a" 2 "b")
   (-interleave '(1 2 3) '("a" "b" "c" "d")) => '(1 "a" 2 "b" 3 "c"))
 
+(defexamples -zip-with
+  (-zip-with '+ '(1 2 3) '(4 5 6)) => '(5 7 9)
+  (-zip-with 'cons '(1 2 3) '(4 5 6)) => '((1 . 4) (2 . 5) (3 . 6))
+  (--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde")) => '("Batman and Robin" "Jekyll and Hyde"))
+
+(defexamples -zip
+  (-zip '(1 2 3) '(4 5 6)) => '((1 . 4) (2 . 5) (3 . 6))
+  (-zip '(1 2 3) '(4 5 6 7)) => '((1 . 4) (2 . 5) (3 . 6))
+  (-zip '(1 2 3 4) '(4 5 6)) => '((1 . 4) (2 . 5) (3 . 6)))
+
 (defexamples -first
   (-first 'even? '(1 2 3)) => 2
   (-first 'even? '(1 3 5)) => nil

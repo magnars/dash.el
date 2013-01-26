@@ -490,6 +490,46 @@ elements of LIST.  Keys are compared by `equal'."
       (setq lists (-map 'cdr lists)))
     (nreverse result)))
 
+(defmacro --separate (form list)
+  "Anaphoric form of `-separate'."
+  (let ((y (make-symbol "yes"))
+        (n (make-symbol "no")))
+    `(let (,y ,n)
+       (--each ,list (if ,form (!cons it ,y) (!cons it ,n)))
+       (list (nreverse ,y) (nreverse ,n)))))
+
+(defmacro --zip-with (form list1 list2)
+  "Anaphoric form of `-zip-with'.
+
+The elements in list1 is bound as `it`, the elements in list2 as `other`."
+  (let ((r (make-symbol "result"))
+        (l1 (make-symbol "list1"))
+        (l2 (make-symbol "list2")))
+    `(let ((,r nil)
+           (,l1 ,list1)
+           (,l2 ,list2))
+       (while (and ,l1 ,l2)
+         (let ((it (car ,l1))
+               (other (car ,l2)))
+           (!cons ,form ,r)
+           (!cdr ,l1)
+           (!cdr ,l2)))
+       (nreverse ,r))))
+
+(defun -zip-with (fn list1 list2)
+  "Zip the two lists LIST1 and LIST2 using a function FN.  This
+function is applied pairwise taking as first argument element of
+LIST1 and as second argument element of LIST2 at corresponding
+position."
+  (--zip-with (funcall fn it other) list1 list2))
+
+(defun -zip (list1 list2)
+  "Zip the two lists together.  Return the list where elements
+are cons pairs with car being element from LIST1 and cdr being
+element from LIST2.  The length of the returned list is the
+length of the shorter one."
+  (-zip-with 'cons list1 list2))
+
 (defun -partial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,
 and returns a fn that takes a variable number of additional ARGS.
@@ -682,6 +722,9 @@ Returns nil if N is less than 1."
                            "-partition-all"
                            "-interpose"
                            "-interleave"
+                           "--zip-with"
+                           "-zip-with"
+                           "-zip"
                            "--map-when"
                            "-map-when"
                            "--replace-where"
@@ -703,6 +746,7 @@ Returns nil if N is less than 1."
                                 "it"
                                 "it-index"
                                 "acc"
+                                "other"
                                 )))
        (font-lock-add-keywords 'emacs-lisp-mode `((,(concat "\\<" (regexp-opt special-variables 'paren) "\\>")
                                                    1 font-lock-variable-name-face)) 'append)

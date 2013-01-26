@@ -520,7 +520,10 @@ The elements in list1 is bound as `it`, the elements in list2 as `other`."
   "Zip the two lists LIST1 and LIST2 using a function FN.  This
 function is applied pairwise taking as first argument element of
 LIST1 and as second argument element of LIST2 at corresponding
-position."
+position.
+
+The anaphoric form `--zip-with' binds the elements from LIST1 as `it`,
+and the elements from LIST2 as `other`."
   (--zip-with (funcall fn it other) list1 list2))
 
 (defun -zip (list1 list2)

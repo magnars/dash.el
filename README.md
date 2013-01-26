@@ -456,6 +456,9 @@ function is applied pairwise taking as first argument element of
 `list1` and as second argument element of `list2` at corresponding
 position.
 
+The anaphoric form `--zip-with` binds the elements from `list1` as `it`,
+and the elements from `list2` as `other`.
+
 ```cl
 (-zip-with '+ '(1 2 3) '(4 5 6)) ;; => '(5 7 9)
 (-zip-with 'cons '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))

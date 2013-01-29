@@ -490,14 +490,6 @@ elements of LIST.  Keys are compared by `equal'."
       (setq lists (-map 'cdr lists)))
     (nreverse result)))
 
-(defmacro --separate (form list)
-  "Anaphoric form of `-separate'."
-  (let ((y (make-symbol "yes"))
-        (n (make-symbol "no")))
-    `(let (,y ,n)
-       (--each ,list (if ,form (!cons it ,y) (!cons it ,n)))
-       (list (nreverse ,y) (nreverse ,n)))))
-
 (defmacro --zip-with (form list1 list2)
   "Anaphoric form of `-zip-with'.
 

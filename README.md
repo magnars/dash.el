@@ -358,7 +358,7 @@ Returns the tail of `list` starting from the first item for which (`pred` item) 
 
 ### -split-at `(n list)`
 
-Returns a list of ((-take `n` `list`) (-drop `n` `list`))
+Returns a list of ((-take `n` `list`) (-drop `n` `list`)), in no more than one pass through the list.
 
 ```cl
 (-split-at 3 '(1 2 3 4 5)) ;; => '((1 2 3) (4 5))
@@ -367,7 +367,7 @@ Returns a list of ((-take `n` `list`) (-drop `n` `list`))
 
 ### -split-with `(pred list)`
 
-Returns a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`))
+Returns a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`)), in no more than one pass through the list.
 
 ```cl
 (-split-with 'even? '(1 2 3 4)) ;; => '(nil (1 2 3 4))
@@ -377,7 +377,7 @@ Returns a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`))
 
 ### -separate `(pred list)`
 
-Returns a list of ((-filter `pred` `list`) (-remove `pred` `list`)).
+Returns a list of ((-filter `pred` `list`) (-remove `pred` `list`)), in one pass through the list.
 
 ```cl
 (-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7)) ;; => '((2 4 6) (1 3 5 7))

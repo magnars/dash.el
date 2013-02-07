@@ -358,17 +358,32 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
   (--drop-while (funcall pred it) list))
 
 (defun -split-at (n list)
-  "Returns a list of ((-take N LIST) (-drop N LIST))"
-  (list (-take n list)
-        (-drop n list)))
+  "Returns a list of ((-take N LIST) (-drop N LIST)), in no more than one pass through the list."
+  (let (result)
+    (--dotimes n
+      (when list
+        (!cons (car list) result)
+        (!cdr list)))
+    (list (nreverse result) list)))
 
-(defmacro --split-with (form list)
+(defmacro --split-with (pred list)
   "Anaphoric form of `-split-with'."
-  `(list (--take-while ,form ,list)
-         (--drop-while ,form ,list)))
+  (let ((l (make-symbol "list"))
+        (r (make-symbol "result"))
+        (c (make-symbol "continue")))
+    `(let ((,l ,list)
+           (,r nil)
+           (,c t))
+       (while (and ,l ,c)
+         (let ((it (car ,l)))
+           (if (not ,pred)
+               (setq ,c nil)
+             (!cons it ,r)
+             (!cdr ,l))))
+       (list (nreverse ,r) ,l))))
 
 (defun -split-with (pred list)
-  "Returns a list of ((-take-while PRED LIST) (-drop-while PRED LIST))"
+  "Returns a list of ((-take-while PRED LIST) (-drop-while PRED LIST)), in no more than one pass through the list."
   (--split-with (funcall pred it) list))
 
 (defmacro --separate (form list)
@@ -380,7 +395,7 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
        (list (nreverse ,y) (nreverse ,n)))))
 
 (defun -separate (pred list)
-  "Returns a list of ((-filter PRED LIST) (-remove PRED LIST))."
+  "Returns a list of ((-filter PRED LIST) (-remove PRED LIST)), in one pass through the list."
   (--separate (funcall pred it) list))
 
 (defun -partition (n list)

@@ -43,6 +43,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-partition](#-partition-n-list) `(n list)`
 * [-partition-all](#-partition-all-n-list) `(n list)`
 * [-partition-by](#-partition-by-fn-list) `(fn list)`
+* [-partition-by-header](#-partition-by-header-fn-list) `(fn list)`
 * [-group-by](#-group-by-fn-list) `(fn list)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
@@ -420,12 +421,25 @@ The last group may contain less than `n` items.
 
 ### -partition-by `(fn list)`
 
-Applies `fn` to each value in `list`, splitting it each time `fn` returns a new value.
+Applies `fn` to each item in `list`, splitting it each time `fn` returns a new value.
 
 ```cl
 (-partition-by 'even? '()) ;; => '()
 (-partition-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => '((1 1) (2 2 2) (3) (4 6 8))
 (--partition-by (< it 3) '(1 2 3 4 3 2 1)) ;; => '((1 2) (3 4 3) (2 1))
+```
+
+### -partition-by-header `(fn list)`
+
+Applies `fn` to the first item in `list`. That is the header
+  value. Applies `fn` to each item in `list`, splitting it each time
+  `fn` returns the header value, but only after seeing at least one
+  other value (the body).
+
+```cl
+(--partition-by-header (= it 1) '(1 2 3 1 2 1 2 3 4)) ;; => '((1 2 3) (1 2) (1 2 3 4))
+(--partition-by-header (> it 0) '(1 2 0 1 0 1 2 3 0)) ;; => '((1 2 0) (1 0) (1 2 3 0))
+(-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1)) ;; => '((2 1 1 1) (4 1 3 5) (6 6 1))
 ```
 
 ### -group-by `(fn list)`

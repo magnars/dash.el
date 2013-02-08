@@ -462,8 +462,45 @@ The last group may contain less than N items."
            (nreverse ,r))))))
 
 (defun -partition-by (fn list)
-  "Applies FN to each value in LIST, splitting it each time FN returns a new value."
+  "Applies FN to each item in LIST, splitting it each time FN returns a new value."
   (--partition-by (funcall fn it) list))
+
+(defmacro --partition-by-header (form list)
+  "Anaphoric form of `-partition-by-header'."
+  (let ((r (make-symbol "result"))
+        (s (make-symbol "sublist"))
+        (h (make-symbol "header-value"))
+        (b (make-symbol "seen-body?"))
+        (n (make-symbol "new-value"))
+        (l (make-symbol "list")))
+    `(let ((,l ,list))
+       (when ,l
+         (let* ((,r nil)
+                (it (car ,l))
+                (,s (list it))
+                (,h ,form)
+                (,b nil)
+                (,l (cdr ,l)))
+           (while ,l
+             (let* ((it (car ,l))
+                    (,n ,form))
+               (if (equal ,h, n)
+                   (when ,b
+                     (!cons (nreverse ,s) ,r)
+                     (setq ,s nil)
+                     (setq ,b nil))
+                 (setq ,b t))
+               (!cons it ,s)
+               (!cdr ,l)))
+           (!cons (nreverse ,s) ,r)
+           (nreverse ,r))))))
+
+(defun -partition-by-header (fn list)
+  "Applies FN to the first item in LIST. That is the header
+  value. Applies FN to each item in LIST, splitting it each time
+  FN returns the header value, but only after seeing at least one
+  other value (the body)."
+  (--partition-by-header (funcall fn it) list))
 
 (defmacro --group-by (form list)
   "Anaphoric form of `-group-by'."

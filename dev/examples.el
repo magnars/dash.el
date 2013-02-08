@@ -77,6 +77,10 @@
   (-cons* 1 2 3) => '(1 2 . 3)
   (-cons* 1) => 1)
 
+(defexamples -count
+  (-count 'even? '(1 2 3 4 5)) => 2
+  (--count (< it 4) '(1 2 3 4)) => 3)
+
 (defexamples -any?
   (-any? 'even? '(1 2 3)) => t
   (-any? 'even? '(1 3 5)) => nil

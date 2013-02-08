@@ -24,6 +24,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-concat](#-concat-rest-lists) `(&rest lists)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
 * [-cons*](#-cons-rest-args) `(&rest args)`
+* [-count](#-count-pred-list) `(pred list)`
 * [-any?](#-any-pred-list) `(pred list)`
 * [-all?](#-all-pred-list) `(pred list)`
 * [-none?](#-none-pred-list) `(pred list)`
@@ -231,6 +232,15 @@ a dotted list.
 (-cons* 1 2) ;; => '(1 . 2)
 (-cons* 1 2 3) ;; => '(1 2 . 3)
 (-cons* 1) ;; => 1
+```
+
+### -count `(pred list)`
+
+Counts the number of items in `list` where (`pred` item) is non-nil.
+
+```cl
+(-count 'even? '(1 2 3 4 5)) ;; => 2
+(--count (< it 4) '(1 2 3 4)) ;; => 3
 ```
 
 ### -any? `(pred list)`

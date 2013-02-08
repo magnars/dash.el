@@ -250,6 +250,17 @@ a dotted list."
 To get the first item in the list no questions asked, use `car'."
   (--first (funcall pred it) list))
 
+(defmacro --count (pred list)
+  "Anaphoric form of `-count'."
+  (let ((r (make-symbol "result")))
+    `(let ((,r 0))
+       (--each ,list (when ,pred (setq ,r (1+ ,r))))
+       ,r)))
+
+(defun -count (pred list)
+  "Counts the number of items in LIST where (PRED item) is non-nil."
+  (--count (funcall pred it) list))
+
 (defun ---truthy? (val)
   (not (null val)))
 

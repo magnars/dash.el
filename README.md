@@ -50,6 +50,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
 * [-zip](#-zip-list1-list2) `(list1 list2)`
 * [-first](#-first-pred-list) `(pred list)`
+* [-last](#-last-list) `(list)`
 * [-union](#-union-list-list2) `(list list2)`
 * [-difference](#-difference-list-list2) `(list list2)`
 * [-intersection](#-intersection-list-list2) `(list list2)`
@@ -512,6 +513,16 @@ To get the first item in the list no questions asked, use `car`.
 (-first 'even? '(1 2 3)) ;; => 2
 (-first 'even? '(1 3 5)) ;; => nil
 (--first (> it 2) '(1 2 3)) ;; => 3
+```
+
+### -last `(list)`
+
+Returns the last element in `list`.
+
+```cl
+(-last '()) ;; => nil
+(-last '(1)) ;; => 1
+(-last '(1 2 3)) ;; => 3
 ```
 
 ### -union `(list list2)`

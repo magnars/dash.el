@@ -250,6 +250,10 @@ a dotted list."
 To get the first item in the list no questions asked, use `car'."
   (--first (funcall pred it) list))
 
+(defun -last (list)
+  "Returns the last element in LIST."
+  (car (last list)))
+
 (defmacro --count (pred list)
   "Anaphoric form of `-count'."
   (let ((r (make-symbol "result")))

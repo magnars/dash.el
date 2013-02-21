@@ -205,6 +205,11 @@
   (-first 'even? '(1 3 5)) => nil
   (--first (> it 2) '(1 2 3)) => 3)
 
+(defexamples -last
+  (-last '()) => nil
+  (-last '(1)) => 1
+  (-last '(1 2 3)) => 3)
+
 (defexamples -union
   (-union '(1 2 3) '(3 4 5))  => '(1 2 3 4 5)
   (-union '(1 2 3 4) '())  => '(1 2 3 4)

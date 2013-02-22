@@ -13,7 +13,6 @@ before_install:
           emacs24 emacs24-el emacs24-common-non-dfsg;
     fi
 env:
-  - EMACS=emacs
   - EMACS=emacs24
   - EMACS=emacs-snapshot
 script:

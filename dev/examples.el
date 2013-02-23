@@ -122,6 +122,11 @@
   (-repeat 0 :a) => nil
   (-repeat -1 :a) => nil)
 
+(defexamples -slice
+  (-slice '(1 2 3 4 5) 1) => '(2 3 4 5)
+  (-slice '(1 2 3 4 5) 0 3) => '(1 2 3)
+  (-slice '(1 2 3 4 5) 1 -1) => '(2 3 4))
+
 (defexamples -take
   (-take 3 '(1 2 3 4 5)) => '(1 2 3)
   (-take 17 '(1 2 3 4 5)) => '(1 2 3 4 5))

@@ -331,6 +331,28 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
 (defalias '-only-some-p '-only-some?)
 (defalias '--only-some-p '--only-some?)
 
+(defun -slice (list from &optional to)
+  "Return copy of LIST, starting from index FROM to index TO.
+FROM or TO may be negative."
+  (let ((length (length list))
+        (new-list nil)
+        (index 0))
+    ;; to defaults to the end of the list
+    (setq to (or to length))
+    ;; handle negative indices
+    (when (< from 0)
+      (setq from (mod from length)))
+    (when (< to 0)
+      (setq to (mod to length)))
+
+    ;; iterate through the list, keeping the elements we want
+    (while (< index to)
+      (when (>= index from)
+        (!cons (car list) new-list))
+      (!cdr list)
+      (setq index (1+ index)))
+    (nreverse new-list)))
+
 (defun -take (n list)
   "Returns a new list of the first N items in LIST, or all items if there are fewer than N."
   (let (result)

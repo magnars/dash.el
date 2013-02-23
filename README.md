@@ -33,6 +33,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
 * [-dotimes](#-dotimes-num-fn) `(num fn)`
 * [-repeat](#-repeat-n-x) `(n x)`
+* [-slice](#-slice-list-from-optional-to) `(list from &optional to)`
 * [-take](#-take-n-list) `(n list)`
 * [-drop](#-drop-n-list) `(n list)`
 * [-take-while](#-take-while-pred-list) `(pred list)`
@@ -327,6 +328,17 @@ Returns nil if `n` is less than 1.
 (-repeat 3 :a) ;; => '(:a :a :a)
 (-repeat 1 :a) ;; => '(:a)
 (-repeat 0 :a) ;; => nil
+```
+
+### -slice `(list from &optional to)`
+
+Return copy of `list`, starting from index `from` to index `to`.
+`from` or `to` may be negative.
+
+```cl
+(-slice '(1 2 3 4 5) 1) ;; => '(2 3 4 5)
+(-slice '(1 2 3 4 5) 0 3) ;; => '(1 2 3)
+(-slice '(1 2 3 4 5) 1 -1) ;; => '(2 3 4)
 ```
 
 ### -take `(n list)`
@@ -702,6 +714,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.
  - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
+ - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`.
 
 Thanks!
 

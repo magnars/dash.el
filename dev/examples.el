@@ -59,7 +59,8 @@
 
 (defexamples -flatten
   (-flatten '((1))) => '(1)
-  (-flatten '((1 (2 3) (((4 (5))))))) => '(1 2 3 4 5))
+  (-flatten '((1 (2 3) (((4 (5))))))) => '(1 2 3 4 5)
+  (-flatten '(1 2 (3 . 4))) => '(1 2 (3 . 4)))
 
 (defexamples -concat
   (-concat '(1)) => '(1)

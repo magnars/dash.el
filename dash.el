@@ -201,7 +201,7 @@ through the REP function."
 
 (defun -flatten (l)
   "Takes a nested list L and returns its contents as a single, flat list."
-  (if (listp l)
+  (if (and (listp l) (listp (cdr l)))
       (-mapcat '-flatten l)
     (list l)))
 

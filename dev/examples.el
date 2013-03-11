@@ -276,8 +276,7 @@
   (--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) => '(((6 8) 14) ((2 4) (18 8) 4) 2))
 
 (defexamples -clone
-  (-clone '(1 2 3)) => '(1 2 3)
-  (-clone '((1 . "one") (2 . "two") (3 . "three"))) => '((1 . "one") (2 . "two") (3 . "three")))
+  (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) => '(1 2 3))
 
 (defexamples ->
   (-> "Abc") => "Abc"

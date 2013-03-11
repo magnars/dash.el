@@ -59,6 +59,12 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-partial](#-partial-fn-rest-args) `(fn &rest args)`
 * [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
 * [-applify](#-applify-fn) `(fn)`
+* [-tree-map](#-tree-map-fn-tree) `(fn tree)`
+* [-tree-reduce](#-tree-reduce-fn-tree) `(fn tree)`
+* [-tree-reduce-from](#-tree-reduce-from-fn-init-value-tree) `(fn init-value tree)`
+* [-tree-mapreduce](#-tree-mapreduce-fn-folder-tree) `(fn folder tree)`
+* [-tree-mapreduce-from](#-tree-mapreduce-from-fn-folder-init-value-tree) `(fn folder init-value tree)`
+* [-clone](#-clone-list) `(list)`
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [->>](#--x-form-rest-more) `(x form &rest more)`
 * [-->](#---x-form-rest-more) `(x form &rest more)`
@@ -199,6 +205,7 @@ Takes a nested list `l` and returns its contents as a single, flat list.
 ```cl
 (-flatten '((1))) ;; => '(1)
 (-flatten '((1 (2 3) (((4 (5))))))) ;; => '(1 2 3 4 5)
+(-flatten '(1 2 (3 . 4))) ;; => '(1 2 (3 . 4))
 ```
 
 ### -concat `(&rest lists)`
@@ -621,6 +628,98 @@ expects a list with n items as arguments
 ```cl
 (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => '(3 6 15)
 (-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+```
+
+### -tree-map `(fn tree)`
+
+Apply `fn` to each element of `tree` and make a list of the results.
+If elements of `tree` are lists themselves, apply `fn` recursively to
+elements of these nested lists.
+
+```cl
+(-tree-map '1+ '(1 (2 3) (4 (5 6) 7))) ;; => '(2 (3 4) (5 (6 7) 8))
+(-tree-map '(lambda (x) (cons x (expt 2 x))) '(1 (2 3) 4)) ;; => '((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
+(--tree-map (length it) '("<body>" ("<p>" "text" "</p>") "</body>")) ;; => '(6 (3 4 4) 7)
+```
+
+### -tree-reduce `(fn tree)`
+
+Use `fn` to reduce elements of list `tree`.
+If elements of `tree` are lists themselves, apply the reduction recursively.
+
+`fn` is first applied to first element of the list and second
+element, then on this result and third element from the list etc.
+
+See `-reduce` for how exactly are lists of zero or one element handled.
+
+```cl
+(-tree-reduce '+ '(1 (2 3) (4 5))) ;; => 15
+(-tree-reduce 'concat '("strings" (" on" " various") ((" levels")))) ;; => "strings on various levels"
+(--tree-reduce (cond ((stringp it) (concat acc " " it)) (t (concat "<" (symbol-name it) ">" acc "</" (symbol-name it) ">"))) '(("some words" p) ("more" ("bold" b) "words" p))) ;; => "<p>some words</p> <p>more <b>bold</b> words</p>"
+```
+
+### -tree-reduce-from `(fn init-value tree)`
+
+Use `fn` to reduce elements of list `tree`.
+If elements of `tree` are lists themselves, apply the reduction recursively.
+
+`fn` is first applied to `init-value` and first element of the list,
+then on this result and second element from the list etc.
+
+The initial value is ignored on cons pairs as they always contain
+two elements.
+
+```cl
+(-tree-reduce-from '+ 1 '(1 (1 1) ((1)))) ;; => 8
+(--tree-reduce-from (cons it acc) nil '(1 (2 3 (4 5)) (6 7))) ;; => '((7 6) ((5 4) 3 2) 1)
+```
+
+### -tree-mapreduce `(fn folder tree)`
+
+Apply `fn` to each element of `tree`, and make a list of the results.
+If elements of `tree` are lists themselves, apply `fn` recursively to
+elements of these nested lists.
+
+Then reduce the resulting lists using `folder` and initial value
+`init-value`. See `-reduce-from`.
+
+This is the same as calling `-tree-reduce` after `-tree-map`
+but is twice as fast as it only traverse the structure once.
+
+```cl
+(-tree-mapreduce 'list 'append '(1 (2 (3 4) (5 6)) (7 (8 9)))) ;; => '(1 2 3 4 5 6 7 8 9)
+(--tree-mapreduce 1 (+ acc it) '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => 9
+(--tree-mapreduce 0 (max acc (1+ it)) '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => 3
+```
+
+### -tree-mapreduce-from `(fn folder init-value tree)`
+
+Apply `fn` to each element of `tree`, and make a list of the results.
+If elements of `tree` are lists themselves, apply `fn` recursively to
+elements of these nested lists.
+
+Then reduce the resulting lists using `folder` and initial value
+`init-value`. See `-reduce-from`.
+
+This is the same as calling `-tree-reduce-from` after `-tree-map`
+but is twice as fast as it only traverse the structure once.
+
+```cl
+(-tree-mapreduce-from 'identity '* 1 '(1 (2 (3 4) (5 6)) (7 (8 9)))) ;; => 362880
+(--tree-mapreduce-from (int-to-string it) (cons it acc) nil '((1 . 2) (3 . 4))) ;; => '(("4" . "3") ("2" . "1"))
+(--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => '(((6 8) 14) ((2 4) (18 8) 4) 2)
+```
+
+### -clone `(list)`
+
+Create a deep copy of `list`.
+The new list has the same elements and structure but all cons are
+replaced with new ones.  This is useful when you need to clone a
+structure such as plist or alist.
+
+```cl
+(-clone '(1 2 3)) ;; => '(1 2 3)
+(-clone '((1 . "one") (2 . "two") (3 . "three"))) ;; => '((1 . "one") (2 . "two") (3 . "three"))
 ```
 
 ### -> `(x &optional form &rest more)`

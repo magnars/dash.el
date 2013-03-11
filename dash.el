@@ -789,9 +789,7 @@ but is twice as fast as it only traverse the structure once."
   `(-tree-mapreduce (lambda (it) ,form) (lambda (acc it) ,folder) ,tree))
 
 (defun -tree-map (fn tree)
-  "Apply FN to each element of TREE and make a list of the results.
-If elements of TREE are lists themselves, apply FN recursively to
-elements of these nested lists."
+  "Apply FN to each element of TREE while preserving the tree structure."
   (cond
    ((not tree) nil)
    ((-cons-pair? tree)

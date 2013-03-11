@@ -250,6 +250,18 @@ a dotted list."
 To get the first item in the list no questions asked, use `car'."
   (--first (funcall pred it) list))
 
+(defmacro --last (form list)
+  "Anaphoric form of `-last'."
+  (let ((n (make-symbol "needle")))
+    `(let (,n)
+       (--each ,list
+         (when ,form (setq ,n it)))
+       ,n)))
+
+(defun -last (pred list)
+  "Return the last x in LIST where (PRED x) is non-nil, else nil."
+  (--last (funcall pred it) list))
+
 (defmacro --count (pred list)
   "Anaphoric form of `-count'."
   (let ((r (make-symbol "result")))

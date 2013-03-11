@@ -51,6 +51,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
 * [-zip](#-zip-list1-list2) `(list1 list2)`
 * [-first](#-first-pred-list) `(pred list)`
+* [-last](#-last-pred-list) `(pred list)`
 * [-union](#-union-list-list2) `(list list2)`
 * [-difference](#-difference-list-list2) `(list list2)`
 * [-intersection](#-intersection-list-list2) `(list list2)`
@@ -199,6 +200,7 @@ Takes a nested list `l` and returns its contents as a single, flat list.
 ```cl
 (-flatten '((1))) ;; => '(1)
 (-flatten '((1 (2 3) (((4 (5))))))) ;; => '(1 2 3 4 5)
+(-flatten '(1 2 (3 . 4))) ;; => '(1 2 (3 . 4))
 ```
 
 ### -concat `(&rest lists)`
@@ -524,6 +526,16 @@ To get the first item in the list no questions asked, use `car`.
 (-first 'even? '(1 2 3)) ;; => 2
 (-first 'even? '(1 3 5)) ;; => nil
 (--first (> it 2) '(1 2 3)) ;; => 3
+```
+
+### -last `(pred list)`
+
+Return the last x in `list` where (`pred` x) is non-nil, else nil.
+
+```cl
+(-last 'even? '(1 2 3 4 5 6 3 3 3)) ;; => 6
+(-last 'even? '(1 3 7 5 9)) ;; => nil
+(--last (> (length it) 3) '("a" "looong" "word" "and" "short" "one")) ;; => "short"
 ```
 
 ### -union `(list list2)`

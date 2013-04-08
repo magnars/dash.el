@@ -215,7 +215,7 @@ through the REP function."
 
 (defun -mapcat (fn list)
   "Returns the concatenation of the result of mapping FN over LIST.
-Thus function FN should return a collection."
+Thus function FN should return a list."
   (--mapcat (funcall fn it) list))
 
 (defun -cons* (&rest args)

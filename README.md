@@ -215,7 +215,7 @@ Returns a new list with the concatenation of the elements in the supplied `lists
 
 ### -mapcat `(fn list)`
 
-Returns the result of applying concat to the result of applying map to `fn` and `list`.
+Returns the concatenation of the result of mapping `fn` over `list`.
 Thus function `fn` should return a collection.
 
 ```cl

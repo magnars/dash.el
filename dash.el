@@ -214,7 +214,7 @@ through the REP function."
   `(apply 'append (--map ,form ,list)))
 
 (defun -mapcat (fn list)
-  "Returns the result of applying concat to the result of applying map to FN and LIST.
+  "Returns the concatenation of the result of mapping FN over LIST.
 Thus function FN should return a collection."
   (--mapcat (funcall fn it) list))
 

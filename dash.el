@@ -682,6 +682,41 @@ in in second form, etc."
 (put '->> 'lisp-indent-function 1)
 (put '--> 'lisp-indent-function 1)
 
+(defmacro -when-let (var-val &rest body)
+  "If VAL evaluates to non-nil, bind it to VAR and execute body.
+VAR-VAL should be a (var val) pair."
+  (let ((var (car var-val))
+        (val (cadr var-val)))
+    `(let ((,var ,val))
+       (when ,var
+         ,@body))))
+
+(defmacro --when-let (val &rest body)
+  "If VAL evaluates to non-nil, bind it to `it' and execute
+body."
+  `(let ((it ,val))
+     (when it
+       ,@body)))
+
+(defmacro -if-let (var-val then &optional else)
+  "If VAL evaluates to non-nil, bind it to VAR and do THEN,
+otherwise do ELSE.  VAR-VAL should be a (VAR VAL) pair."
+  (let ((var (car var-val))
+        (val (cadr var-val)))
+    `(let ((,var ,val))
+       (if ,var ,then ,else))))
+
+(defmacro --if-let (val then &optional else)
+  "If VAL evaluates to non-nil, bind it to `it' and do THEN,
+otherwise do ELSE."
+  `(let ((it ,val))
+     (if it ,then ,else)))
+
+(put '-when-let 'lisp-indent-function 1)
+(put '--when-let 'lisp-indent-function 1)
+(put '-if-let 'lisp-indent-function 1)
+(put '--if-let 'lisp-indent-function 1)
+
 (defun -distinct (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
@@ -826,6 +861,10 @@ Returns nil if N is less than 1."
                            "->"
                            "->>"
                            "-->"
+                           "-when-let"
+                           "--when-let"
+                           "-if-let"
+                           "--if-let"
                            "-distinct"
                            "-intersection"
                            "-difference"

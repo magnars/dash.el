@@ -273,6 +273,15 @@
   (--> "def" (concat "abc" it "ghi") (upcase it)) => "ABCDEFGHI"
   (--> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI")
 
+(defexamples -when-let
+  (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2)) => 5
+  (--when-let (member :b '(:a :b :c)) (cons :d it)) => '(:d :b :c)
+  (--when-let (even? 3) (cat it :a)) => nil)
+
+(defexamples -if-let
+  (-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7) => 7
+  (--if-let (even? 4) it nil) => t)
+
 (defexamples !cons
   (let (l) (!cons 5 l) l) => '(5)
   (let ((l '(3))) (!cons 5 l) l) => '(5 3))

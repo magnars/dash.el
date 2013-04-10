@@ -63,6 +63,8 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [->>](#--x-form-rest-more) `(x form &rest more)`
 * [-->](#---x-form-rest-more) `(x form &rest more)`
+* [-when-let](#-when-let-var-val-rest-body) `(var-val &rest body)`
+* [-if-let](#-if-let-var-val-then-optional-else) `(var-val then &optional else)`
 * [!cons](#-cons-car-cdr) `(car cdr)`
 * [!cdr](#-cdr-list) `(list)`
 
@@ -672,6 +674,27 @@ in in second form, etc.
 (--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
 (--> "def" (concat "abc" it "ghi") (upcase it)) ;; => "ABCDEFGHI"
 (--> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
+```
+
+### -when-let `(var-val &rest body)`
+
+If `val` evaluates to non-nil, bind it to `var` and execute body.
+`var-val` should be a (var val) pair.
+
+```cl
+(-when-let (match-index (string-match "d" "abcd")) (+ match-index 2)) ;; => 5
+(--when-let (member :b '(:a :b :c)) (cons :d it)) ;; => '(:d :b :c)
+(--when-let (even? 3) (cat it :a)) ;; => nil
+```
+
+### -if-let `(var-val then &optional else)`
+
+If `val` evaluates to non-nil, bind it to `var` and do `then`,
+otherwise do `else`.  `var-val` should be a (`var` `val`) pair.
+
+```cl
+(-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7) ;; => 7
+(--if-let (even? 4) it nil) ;; => t
 ```
 
 ### !cons `(car cdr)`

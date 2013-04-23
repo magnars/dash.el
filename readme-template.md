@@ -77,7 +77,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.
  - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
  - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`.
- - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert`.
+ - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
 
 Thanks!
 

@@ -411,6 +411,11 @@ FROM or TO may be negative."
         (!cdr list)))
     (list (nreverse result) list)))
 
+(defun -insert-at (n x list)
+  "Returns a list with X inserted into LIST at position N."
+  (let ((split-list (-split-at n list)))
+    (append (car split-list) (cons x (cadr split-list)))))
+
 (defmacro --split-with (pred list)
   "Anaphoric form of `-split-with'."
   (let ((l (make-symbol "list"))
@@ -843,6 +848,7 @@ Returns nil if N is less than 1."
                            "--drop-while"
                            "-drop-while"
                            "-split-at"
+                           "-insert-at"
                            "--split-with"
                            "-split-with"
                            "-partition"

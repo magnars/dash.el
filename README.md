@@ -39,6 +39,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-take-while](#-take-while-pred-list) `(pred list)`
 * [-drop-while](#-drop-while-pred-list) `(pred list)`
 * [-split-at](#-split-at-n-list) `(n list)`
+* [-insert-at](#-insert-at-n-x-list) `(n x list)`
 * [-split-with](#-split-with-pred-list) `(pred list)`
 * [-separate](#-separate-pred-list) `(pred list)`
 * [-partition](#-partition-n-list) `(n list)`
@@ -390,6 +391,15 @@ Returns a list of ((-take `n` `list`) (-drop `n` `list`)), in no more than one p
 ```cl
 (-split-at 3 '(1 2 3 4 5)) ;; => '((1 2 3) (4 5))
 (-split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
+```
+
+### -insert-at `(n x list)`
+
+Returns a list with `x` inserted into `list` at position `n`.
+
+```cl
+(-insert-at 1 'x '(a b c)) ;; => '(a x b c)
+(-insert-at 12 'x '(a b c)) ;; => '(a b c x)
 ```
 
 ### -split-with `(pred list)`

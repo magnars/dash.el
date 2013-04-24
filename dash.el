@@ -689,11 +689,22 @@ in in second form, etc."
 
 (defmacro -when-let (var-val &rest body)
   "If VAL evaluates to non-nil, bind it to VAR and execute body.
-VAR-VAL should be a (var val) pair."
+VAR-VAL should be a (VAR VAL) pair."
   (let ((var (car var-val))
         (val (cadr var-val)))
     `(let ((,var ,val))
        (when ,var
+         ,@body))))
+
+(defmacro -when-let* (vars-vals &rest body)
+  "If all VALS evaluate to true, bind them to their corresponding
+  VARS and execute body. VARS-VALS should be a list of (VAR VAL)
+  pairs (corresponding to bindings of `let*')."
+  (if (= (length vars-vals) 1)
+      `(-when-let ,(car vars-vals)
+         ,@body)
+    `(-when-let ,(car vars-vals)
+       (-when-let* ,(cdr vars-vals)
          ,@body))))
 
 (defmacro --when-let (val &rest body)
@@ -705,11 +716,23 @@ body."
 
 (defmacro -if-let (var-val then &optional else)
   "If VAL evaluates to non-nil, bind it to VAR and do THEN,
-otherwise do ELSE.  VAR-VAL should be a (VAR VAL) pair."
+otherwise do ELSE. VAR-VAL should be a (VAR VAL) pair."
   (let ((var (car var-val))
         (val (cadr var-val)))
     `(let ((,var ,val))
        (if ,var ,then ,else))))
+
+(defmacro -if-let* (vars-vals then &optional else)
+  "If all VALS evaluate to true, bind them to their corresponding
+  VARS and do THEN, otherwise do ELSE. VARS-VALS should be a list
+  of (VAR VAL) pairs (corresponding to the bindings of `let*')."
+  (let ((first-pair (car vars-vals))
+        (rest (cdr vars-vals)))
+    (if (= (length vars-vals) 1)
+        `(-if-let ,first-pair ,then ,else)
+      `(-if-let ,first-pair
+         (-if-let* ,rest ,then ,else)
+         ,else))))
 
 (defmacro --if-let (val then &optional else)
   "If VAL evaluates to non-nil, bind it to `it' and do THEN,
@@ -718,8 +741,10 @@ otherwise do ELSE."
      (if it ,then ,else)))
 
 (put '-when-let 'lisp-indent-function 1)
+(put '-when-let* 'lisp-indent-function 1)
 (put '--when-let 'lisp-indent-function 1)
 (put '-if-let 'lisp-indent-function 1)
+(put '-if-let* 'lisp-indent-function 1)
 (put '--if-let 'lisp-indent-function 1)
 
 (defun -distinct (list)
@@ -868,8 +893,10 @@ Returns nil if N is less than 1."
                            "->>"
                            "-->"
                            "-when-let"
+                           "-when-let*"
                            "--when-let"
                            "-if-let"
+                           "-if-let*"
                            "--if-let"
                            "-distinct"
                            "-intersection"

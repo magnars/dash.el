@@ -776,6 +776,16 @@ the tests are always running and the docs are always in sync:
 Oh, and don't edit `README.md` directly, it is auto-generated.
 Change `readme-template.md` or `examples-to-docs.el` instead.
 
+## Changelist
+
+### From 1.1.0 to 1.2.0
+
+- Add `-last` (Matus Goljer)
+- Add `-insert-at` (Emanuel Evans)
+- Add `-when-let` and `-if-let` (Emanuel Evans)
+- Add `-when-let*` and `-if-let*` (Emanuel Evans)
+- Some bugfixes
+
 ## Contributors
 
  - [Matus Goljer](https://github.com/Fuco1) contributed `-union`, `-separate`, `-zip` and `-zip-with`.

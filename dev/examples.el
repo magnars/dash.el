@@ -282,9 +282,17 @@
   (--when-let (member :b '(:a :b :c)) (cons :d it)) => '(:d :b :c)
   (--when-let (even? 3) (cat it :a)) => nil)
 
+(defexamples -when-let*
+  (-when-let* ((x 5) (y 3) (z (+ y 4))) (+ x y z)) => 15
+  (-when-let* ((x 5) (y nil) (z 7)) (+ x y z)) => nil)
+
 (defexamples -if-let
   (-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7) => 7
   (--if-let (even? 4) it nil) => t)
+
+(defexamples -if-let*
+  (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") => 15
+  (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") => "foo")
 
 (defexamples !cons
   (let (l) (!cons 5 l) l) => '(5)

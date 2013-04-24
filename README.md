@@ -65,7 +65,9 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [->>](#--x-form-rest-more) `(x form &rest more)`
 * [-->](#---x-form-rest-more) `(x form &rest more)`
 * [-when-let](#-when-let-var-val-rest-body) `(var-val &rest body)`
+* [-when-let*](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
 * [-if-let](#-if-let-var-val-then-optional-else) `(var-val then &optional else)`
+* [-if-let*](#-if-let-vars-vals-then-optional-else) `(vars-vals then &optional else)`
 * [!cons](#-cons-car-cdr) `(car cdr)`
 * [!cdr](#-cdr-list) `(list)`
 
@@ -689,7 +691,7 @@ in in second form, etc.
 ### -when-let `(var-val &rest body)`
 
 If `val` evaluates to non-nil, bind it to `var` and execute body.
-`var-val` should be a (var val) pair.
+`var-val` should be a (`var` `val`) pair.
 
 ```cl
 (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2)) ;; => 5
@@ -697,14 +699,36 @@ If `val` evaluates to non-nil, bind it to `var` and execute body.
 (--when-let (even? 3) (cat it :a)) ;; => nil
 ```
 
+### -when-let* `(vars-vals &rest body)`
+
+If all `vals` evaluate to true, bind them to their corresponding
+  `vars` and execute body. `vars-vals` should be a list of (`var` `val`)
+  pairs (corresponding to bindings of `let*`).
+
+```cl
+(-when-let* ((x 5) (y 3) (z (+ y 4))) (+ x y z)) ;; => 15
+(-when-let* ((x 5) (y nil) (z 7)) (+ x y z)) ;; => nil
+```
+
 ### -if-let `(var-val then &optional else)`
 
 If `val` evaluates to non-nil, bind it to `var` and do `then`,
-otherwise do `else`.  `var-val` should be a (`var` `val`) pair.
+otherwise do `else`. `var-val` should be a (`var` `val`) pair.
 
 ```cl
 (-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7) ;; => 7
 (--if-let (even? 4) it nil) ;; => t
+```
+
+### -if-let* `(vars-vals then &optional else)`
+
+If all `vals` evaluate to true, bind them to their corresponding
+  `vars` and do `then`, otherwise do `else`. `vars-vals` should be a list
+  of (`var` `val`) pairs (corresponding to the bindings of `let*`).
+
+```cl
+(-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") ;; => 15
+(-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") ;; => "foo"
 ```
 
 ### !cons `(car cdr)`

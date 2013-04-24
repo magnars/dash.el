@@ -689,7 +689,7 @@ in in second form, etc."
 
 (defmacro -when-let (var-val &rest body)
   "If VAL evaluates to non-nil, bind it to VAR and execute body.
-VAR-VAL should be a (var val) pair."
+VAR-VAL should be a (VAR VAL) pair."
   (let ((var (car var-val))
         (val (cadr var-val)))
     `(let ((,var ,val))
@@ -705,7 +705,7 @@ body."
 
 (defmacro -if-let (var-val then &optional else)
   "If VAL evaluates to non-nil, bind it to VAR and do THEN,
-otherwise do ELSE.  VAR-VAL should be a (VAR VAL) pair."
+otherwise do ELSE. VAR-VAL should be a (VAR VAL) pair."
   (let ((var (car var-val))
         (val (cadr var-val)))
     `(let ((,var ,val))

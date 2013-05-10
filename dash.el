@@ -448,31 +448,41 @@ FROM or TO may be negative."
   "Returns a list of ((-filter PRED LIST) (-remove PRED LIST)), in one pass through the list."
   (--separate (funcall pred it) list))
 
-(defun -partition (n list)
-  "Returns a new list with the items in LIST grouped into N-sized sublists.
-If there are not enough items to make the last group N-sized,
-those items are discarded."
+(defun ---partition-all-in-steps-reversed (n step list)
+  "Private: Used by -partition-all-in-steps and -partition-in-steps."
+  (when (< step 1)
+    (error "Step must be a positive number, or you're looking at some juicy infinite loops."))
   (let ((result nil)
-        (sublist nil)
         (len 0))
     (while list
-      (!cons (car list) sublist)
-      (setq len (1+ len))
-      (when (= len n)
-        (!cons (nreverse sublist) result)
-        (setq sublist nil)
-        (setq len 0))
-      (!cdr list))
+      (!cons (-take n list) result)
+      (setq list (-drop step list)))
+    result))
+
+(defun -partition-all-in-steps (n step list)
+  "Returns a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
+The last groups may contain less than N items."
+  (nreverse (---partition-all-in-steps-reversed n step list)))
+
+(defun -partition-in-steps (n step list)
+  "Returns a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
+If there are not enough items to make the last group N-sized,
+those items are discarded."
+  (let ((result (---partition-all-in-steps-reversed n step list)))
+    (while (< (length (car result)) n)
+      (!cdr result))
     (nreverse result)))
 
 (defun -partition-all (n list)
   "Returns a new list with the items in LIST grouped into N-sized sublists.
 The last group may contain less than N items."
-  (let (result)
-    (while list
-      (!cons (-take n list) result)
-      (setq list (-drop n list)))
-    (nreverse result)))
+  (-partition-all-in-steps n n list))
+
+(defun -partition (n list)
+  "Returns a new list with the items in LIST grouped into N-sized sublists.
+If there are not enough items to make the last group N-sized,
+those items are discarded."
+  (-partition-in-steps n n list))
 
 (defmacro --partition-by (form list)
   "Anaphoric form of `-partition-by'."

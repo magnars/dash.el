@@ -43,6 +43,8 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-split-with](#-split-with-pred-list) `(pred list)`
 * [-separate](#-separate-pred-list) `(pred list)`
 * [-partition](#-partition-n-list) `(n list)`
+* [-partition-all-in-steps](#-partition-all-in-steps-n-step-list) `(n step list)`
+* [-partition-in-steps](#-partition-in-steps-n-step-list) `(n step list)`
 * [-partition-all](#-partition-all-n-list) `(n list)`
 * [-partition-by](#-partition-by-fn-list) `(fn list)`
 * [-partition-by-header](#-partition-by-header-fn-list) `(fn list)`
@@ -434,6 +436,29 @@ those items are discarded.
 (-partition 2 '(1 2 3 4 5 6)) ;; => '((1 2) (3 4) (5 6))
 (-partition 2 '(1 2 3 4 5 6 7)) ;; => '((1 2) (3 4) (5 6))
 (-partition 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6))
+```
+
+### -partition-all-in-steps `(n step list)`
+
+Returns a new list with the items in `list` grouped into `n-`sized sublists at offsets `step` apart.
+The last groups may contain less than `n` items.
+
+```cl
+(-partition-all-in-steps 2 1 '(1 2 3 4)) ;; => '((1 2) (2 3) (3 4) (4))
+(-partition-all-in-steps 3 2 '(1 2 3 4)) ;; => '((1 2 3) (3 4))
+(-partition-all-in-steps 3 2 '(1 2 3 4 5)) ;; => '((1 2 3) (3 4 5) (5))
+```
+
+### -partition-in-steps `(n step list)`
+
+Returns a new list with the items in `list` grouped into `n-`sized sublists at offsets `step` apart.
+If there are not enough items to make the last group `n-`sized,
+those items are discarded.
+
+```cl
+(-partition-in-steps 2 1 '(1 2 3 4)) ;; => '((1 2) (2 3) (3 4))
+(-partition-in-steps 3 2 '(1 2 3 4)) ;; => '((1 2 3))
+(-partition-in-steps 3 2 '(1 2 3 4 5)) ;; => '((1 2 3) (3 4 5))
 ```
 
 ### -partition-all `(n list)`

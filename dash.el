@@ -469,7 +469,7 @@ The last groups may contain less than N items."
 If there are not enough items to make the last group N-sized,
 those items are discarded."
   (let ((result (---partition-all-in-steps-reversed n step list)))
-    (while (< (length (car result)) n)
+    (while (and result (< (length (car result)) n))
       (!cdr result))
     (nreverse result)))
 

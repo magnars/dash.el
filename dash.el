@@ -37,6 +37,7 @@
 
 (defmacro --each (list &rest body)
   "Anaphoric form of `-each'."
+  (declare (debug t))
   (let ((l (make-symbol "list")))
     `(let ((,l ,list)
            (it-index 0))
@@ -89,6 +90,7 @@ Returns nil, used for side-effects only."
 
 (defmacro --map (form list)
   "Anaphoric form of `-map'."
+  (declare (debug t))
   `(mapcar (lambda (it) ,form) ,list))
 
 (defmacro --reduce-from (form initial-value list)
@@ -146,6 +148,7 @@ Alias: `-select'"
 
 (defmacro --remove (form list)
   "Anaphoric form of `-remove'."
+  (declare (debug t))
   `(--filter (not ,form) ,list))
 
 (defun -remove (pred list)
@@ -211,6 +214,7 @@ through the REP function."
 
 (defmacro --mapcat (form list)
   "Anaphoric form of `-mapcat'."
+  (declare (debug t))
   `(apply 'append (--map ,form ,list)))
 
 (defun -mapcat (fn list)

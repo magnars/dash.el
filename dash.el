@@ -130,6 +130,41 @@ exposed as `acc`."
       (-reduce-from fn (car list) (cdr list))
     (funcall fn)))
 
+(defun -reduce-r-from (fn initial-value list)
+  "Replace conses with FN, nil with INITIAL-VALUE and evaluate
+the resulting expression. If LIST is empty, INITIAL-VALUE is
+returned and FN is not called.
+
+Note: this function works the same as `-reduce-from' but the
+operation associates from right instead of from left."
+  (if (not list) initial-value
+    (funcall fn (car list) (-reduce-r-from fn initial-value (cdr list)))))
+
+(defmacro --reduce-r-from (form initial-value list)
+  "Anaphoric version of `-reduce-r-from'."
+  `(-reduce-r-from (lambda (&optional it acc) ,form) ,initial-value ,list))
+
+(defun -reduce-r (fn list)
+  "Replace conses with FN and evaluate the resulting expression.
+The final nil is ignored. If LIST contains no items, FN must
+accept no arguments as well, and reduce returns the result of
+calling FN with no arguments. If LIST has only 1 item, it is
+returned and FN is not called.
+
+The first argument of FN is the new item, the second is the
+accumulated value.
+
+Note: this function works the same as `-reduce' but the operation
+associates from right instead of from left."
+  (cond
+   ((not list) (funcall fn))
+   ((not (cdr list)) (car list))
+   (t (funcall fn (car list) (-reduce-r fn (cdr list))))))
+
+(defmacro --reduce-r (form list)
+  "Anaphoric version of `-reduce-r'."
+  `(-reduce-r (lambda (&optional it acc) ,form) ,list))
+
 (defmacro --filter (form list)
   "Anaphoric form of `-filter'."
   (let ((r (make-symbol "result")))
@@ -840,6 +875,10 @@ Returns nil if N is less than 1."
                            "-reduce-from"
                            "--reduce"
                            "-reduce"
+                           "--reduce-r-from"
+                           "-reduce-r-from"
+                           "--reduce-r"
+                           "-reduce-r"
                            "--filter"
                            "-filter"
                            "-select"

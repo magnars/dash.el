@@ -14,7 +14,9 @@ Or you can just dump `dash.el` in your load path somewhere.
 
 * [-map](#-map-fn-list) `(fn list)`
 * [-reduce-from](#-reduce-from-fn-initial-value-list) `(fn initial-value list)`
+* [-reduce-r-from](#-reduce-r-from-fn-initial-value-list) `(fn initial-value list)`
 * [-reduce](#-reduce-fn-list) `(fn list)`
+* [-reduce-r](#-reduce-r-fn-list) `(fn list)`
 * [-filter](#-filter-pred-list) `(pred list)`
 * [-remove](#-remove-pred-list) `(pred list)`
 * [-keep](#-keep-fn-list) `(fn list)`
@@ -121,9 +123,24 @@ In the anaphoric form `--reduce-from`, the accumulated value is
 exposed as `acc`.
 
 ```cl
-(-reduce-from '+ 7 '(1 2)) ;; => 10
-(-reduce-from (lambda (memo item) (+ memo item)) 7 '(1 2)) ;; => 10
-(--reduce-from (+ acc it) 7 '(1 2 3)) ;; => 13
+(-reduce-from '- 10 '(1 2 3)) ;; => 4
+(-reduce-from (lambda (memo item) (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3)) ;; => "(((10 - 1) - 2) - 3)"
+(--reduce-from (concat acc " " it) "START" '("a" "b" "c")) ;; => "START a b c"
+```
+
+### -reduce-r-from `(fn initial-value list)`
+
+Replace conses with `fn`, nil with `initial-value` and evaluate
+the resulting expression. If `list` is empty, `initial-value` is
+returned and `fn` is not called.
+
+Note: this function works the same as `-reduce-from` but the
+operation associates from right instead of from left.
+
+```cl
+(-reduce-r-from '- 10 '(1 2 3)) ;; => -8
+(-reduce-r-from (lambda (item memo) (concat "(" (int-to-string item) " - " memo ")")) "10" '(1 2 3)) ;; => "(1 - (2 - (3 - 10)))"
+(--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) ;; => "a b c END"
 ```
 
 ### -reduce `(fn list)`
@@ -138,9 +155,29 @@ In the anaphoric form `--reduce`, the accumulated value is
 exposed as `acc`.
 
 ```cl
-(-reduce '+ '(1 2)) ;; => 3
+(-reduce '- '(1 2 3 4)) ;; => -8
 (-reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) ;; => "1-2-3"
 (--reduce (format "%s-%s" acc it) '(1 2 3)) ;; => "1-2-3"
+```
+
+### -reduce-r `(fn list)`
+
+Replace conses with `fn` and evaluate the resulting expression.
+The final nil is ignored. If `list` contains no items, `fn` must
+accept no arguments as well, and reduce returns the result of
+calling `fn` with no arguments. If `list` has only 1 item, it is
+returned and `fn` is not called.
+
+The first argument of `fn` is the new item, the second is the
+accumulated value.
+
+Note: this function works the same as `-reduce` but the operation
+associates from right instead of from left.
+
+```cl
+(-reduce-r '- '(1 2 3 4)) ;; => -2
+(-reduce-r (lambda (item memo) (format "%s-%s" memo item)) '(1 2 3)) ;; => "3-2-1"
+(--reduce-r (format "%s-%s" acc it) '(1 2 3)) ;; => "3-2-1"
 ```
 
 ### -filter `(pred list)`

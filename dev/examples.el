@@ -275,6 +275,12 @@
   (-contains? '() 1) => nil
   (-contains? '() '()) => nil)
 
+(defexamples -sort
+  (-sort '< '(3 1 2)) => '(1 2 3)
+  (-sort '> '(3 1 2)) => '(3 2 1)
+  (--sort (< it other) '(3 1 2)) => '(1 2 3)
+  (let ((l '(3 1 2))) (-sort '> l) l) => '(3 1 2))
+
 (defexamples -partial
   (funcall (-partial '- 5) 3) => 2
   (funcall (-partial '+ 5 2) 3) => 10)

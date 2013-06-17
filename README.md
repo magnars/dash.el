@@ -62,6 +62,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-intersection](#-intersection-list-list2) `(list list2)`
 * [-distinct](#-distinct-list) `(list)`
 * [-contains?](#-contains-list-element) `(list element)`
+* [-sort](#-sort-predicate-list) `(predicate list)`
 * [-partial](#-partial-fn-rest-args) `(fn &rest args)`
 * [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
 * [-applify](#-applify-fn) `(fn)`
@@ -673,6 +674,19 @@ or with `-compare-fn` if that's non-nil.
 (-contains? '(1 2 3) 1) ;; => t
 (-contains? '(1 2 3) 2) ;; => t
 (-contains? '(1 2 3) 4) ;; => nil
+```
+
+### -sort `(predicate list)`
+
+Sort `list`, stably, comparing elements using `predicate`.
+Returns the sorted list.  `list` is `not` modified by side effects.
+`predicate` is called with two elements of `list`, and should return non-nil
+if the first element should sort before the second.
+
+```cl
+(-sort '< '(3 1 2)) ;; => '(1 2 3)
+(-sort '> '(3 1 2)) ;; => '(3 2 1)
+(--sort (< it other) '(3 1 2)) ;; => '(1 2 3)
 ```
 
 ### -partial `(fn &rest args)`

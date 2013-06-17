@@ -854,6 +854,12 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 1.3.0 to 1.4.0
+
+- Add `-sort`
+- Add `-reduce-r` (Matus Goljer)
+- Add `-reduce-r-from` (Matus Goljer)
+
 ### From 1.2.0 to 1.3.0
 
 - Add `-partition-in-steps`
@@ -869,7 +875,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Contributors
 
- - [Matus Goljer](https://github.com/Fuco1) contributed `-union`, `-separate`, `-zip` and `-zip-with`.
+ - [Matus Goljer](https://github.com/Fuco1) contributed `-union`, `-separate`, `-zip`, `-zip-with`, `-reduce-r` and `-reduce-r-from`.
  - [Takafumi Arakaki](https://github.com/tkf) contributed `-group-by`.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.

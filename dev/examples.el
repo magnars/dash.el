@@ -336,3 +336,13 @@
 (defexamples !cdr
   (let ((l '(3))) (!cdr l) l) => '()
   (let ((l '(3 5))) (!cdr l) l) => '(5))
+
+(defexamples -sum
+  (-sum '()) => 0
+  (-sum '(1)) => 1
+  (-sum '(1 2 3)) => 6)
+
+(defexamples -product
+  (-product '()) => 1
+  (-product '(1)) => 1
+  (-product '(1 2 3)) => 6)

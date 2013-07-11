@@ -876,6 +876,10 @@ Returns nil if N is less than 1."
   "Return the sum of LIST."
   (apply '+ list))
 
+(defun -product (list)
+  "Return the product of LIST."
+  (apply '* list))
+
 (eval-after-load "lisp-mode"
   '(progn
      (let ((new-keywords '(
@@ -979,6 +983,7 @@ Returns nil if N is less than 1."
                            "-repeat"
                            "-cons*"
                            "-sum"
+                           "-product"
                            ))
            (special-variables '(
                                 "it"

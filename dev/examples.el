@@ -341,3 +341,8 @@
   (-sum '()) => 0
   (-sum '(1)) => 1
   (-sum '(1 2 3)) => 6)
+
+(defexamples -product
+  (-product '()) => 1
+  (-product '(1)) => 1
+  (-product '(1 2 3)) => 6)

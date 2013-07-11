@@ -76,6 +76,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [!cons](#-cons-car-cdr) `(car cdr)`
 * [!cdr](#-cdr-list) `(list)`
 * [-sum](#-sum-list) `(list)`
+* [-product](#-product-list) `(list)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two dashes instead of one.
@@ -834,6 +835,16 @@ Return the sum of `list`.
 (-sum '()) ;; => 0
 (-sum '(1)) ;; => 1
 (-sum '(1 2 3)) ;; => 6
+```
+
+### -product `(list)`
+
+Return the product of `list`.
+
+```cl
+(-product '()) ;; => 1
+(-product '(1)) ;; => 1
+(-product '(1 2 3)) ;; => 6
 ```
 
 

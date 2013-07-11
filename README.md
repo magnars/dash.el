@@ -75,6 +75,8 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-if-let*](#-if-let-vars-vals-then-optional-else) `(vars-vals then &optional else)`
 * [!cons](#-cons-car-cdr) `(car cdr)`
 * [!cdr](#-cdr-list) `(list)`
+* [-sum](#-sum-list) `(list)`
+* [-product](#-product-list) `(list)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two dashes instead of one.
@@ -823,6 +825,26 @@ Destructive: Sets `list` to the cdr of `list`.
 ```cl
 (let ((l '(3))) (!cdr l) l) ;; => '()
 (let ((l '(3 5))) (!cdr l) l) ;; => '(5)
+```
+
+### -sum `(list)`
+
+Return the sum of `list`.
+
+```cl
+(-sum '()) ;; => 0
+(-sum '(1)) ;; => 1
+(-sum '(1 2 3)) ;; => 6
+```
+
+### -product `(list)`
+
+Return the product of `list`.
+
+```cl
+(-product '()) ;; => 1
+(-product '(1)) ;; => 1
+(-product '(1 2 3)) ;; => 6
 ```
 
 

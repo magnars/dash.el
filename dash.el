@@ -872,6 +872,10 @@ Returns nil if N is less than 1."
     (--dotimes n (!cons x ret))
     ret))
 
+(defun -sum (list)
+  "Return the sum of LIST."
+  (apply '+ list))
+
 (eval-after-load "lisp-mode"
   '(progn
      (let ((new-keywords '(
@@ -974,6 +978,7 @@ Returns nil if N is less than 1."
                            "-contains-p"
                            "-repeat"
                            "-cons*"
+                           "-sum"
                            ))
            (special-variables '(
                                 "it"

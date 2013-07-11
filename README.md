@@ -876,6 +876,10 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 1.4.0 to 1.5.0
+
+- Add `-sum` and `-product` (Johan Andersson)
+
 ### From 1.3.0 to 1.4.0
 
 - Add `-sort`
@@ -904,12 +908,13 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
  - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
+ - [Johan Andersson](https://github.com/rejeep) contributed `-sum` and `-produce`.
 
 Thanks!
 
 ## License
 
-Copyright (C) 2012 Magnar Sveen
+Copyright (C) 2012-2013 Magnar Sveen
 
 Authors: Magnar Sveen <magnars@gmail.com>
 Keywords: lists

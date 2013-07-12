@@ -693,6 +693,19 @@ Requires Emacs 24 or higher."
   `(closure (t) (&rest args)
             (apply ',fn (append args ',args))))
 
+(defun -juxt (&rest fns)
+  "Takes a list of functions and returns a fn that is the
+juxtaposition of those fns. The returned fn takes a variable
+number of args, and returns a list containing the result of
+applying each fn to the args (left-to-right).
+
+Requires Emacs 24 or higher."
+  (let ((r (make-symbol "result")))
+    `(closure (t) (&rest args)
+              (let (,r)
+                (--each ',fns (!cons (apply it args) ,r))
+                (nreverse ,r)))))
+
 (defun -applify (fn)
   "Changes an n-arity function FN to a 1-arity function that
 expects a list with n items as arguments"
@@ -966,6 +979,7 @@ Returns nil if N is less than 1."
                            "-replace-where"
                            "-partial"
                            "-rpartial"
+                           "-juxt"
                            "->"
                            "->>"
                            "-->"

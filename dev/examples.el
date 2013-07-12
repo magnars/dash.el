@@ -17,16 +17,16 @@
 
 (defexamples -reduce-from
   (-reduce-from '- 10 '(1 2 3)) => 4
-  (-reduce-from (lambda (memo item) 
-		    (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3)) => "(((10 - 1) - 2) - 3)"
+  (-reduce-from (lambda (memo item)
+                    (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3)) => "(((10 - 1) - 2) - 3)"
   (--reduce-from (concat acc " " it) "START" '("a" "b" "c")) => "START a b c"
   (-reduce-from '+ 7 '()) => 7
   (-reduce-from '+ 7 '(1)) => 8)
 
 (defexamples -reduce-r-from
   (-reduce-r-from '- 10 '(1 2 3)) => -8
-  (-reduce-r-from (lambda (item memo) 
-		    (concat "(" (int-to-string item) " - " memo ")")) "10" '(1 2 3)) => "(1 - (2 - (3 - 10)))"
+  (-reduce-r-from (lambda (item memo)
+                    (concat "(" (int-to-string item) " - " memo ")")) "10" '(1 2 3)) => "(1 - (2 - (3 - 10)))"
   (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) => "a b c END"
   (-reduce-r-from '+ 7 '()) => 7
   (-reduce-r-from '+ 7 '(1)) => 8)
@@ -98,6 +98,16 @@
 (defexamples -count
   (-count 'even? '(1 2 3 4 5)) => 2
   (--count (< it 4) '(1 2 3 4)) => 3)
+
+(defexamples -sum
+  (-sum '()) => 0
+  (-sum '(1)) => 1
+  (-sum '(1 2 3)) => 6)
+
+(defexamples -product
+  (-product '()) => 1
+  (-product '(1)) => 1
+  (-product '(1 2 3)) => 6)
 
 (defexamples -any?
   (-any? 'even? '(1 2 3)) => t
@@ -288,7 +298,11 @@
 (unless (version< emacs-version "24")
   (defexamples -rpartial
     (funcall (-rpartial '- 5) 8) => 3
-    (funcall (-rpartial '- 5 2) 10) => 3))
+    (funcall (-rpartial '- 5 2) 10) => 3)
+
+  (defexamples -juxt
+    (funcall (-juxt '+ '-) 3 5) => '(8 -2)
+    (-map (-juxt 'identity 'square) '(1 2 3)) => '((1 1) (2 4) (3 9))))
 
 (defexamples -applify
   (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) => '(3 6 15)
@@ -336,13 +350,3 @@
 (defexamples !cdr
   (let ((l '(3))) (!cdr l) l) => '()
   (let ((l '(3 5))) (!cdr l) l) => '(5))
-
-(defexamples -sum
-  (-sum '()) => 0
-  (-sum '(1)) => 1
-  (-sum '(1 2 3)) => 6)
-
-(defexamples -product
-  (-product '()) => 1
-  (-product '(1)) => 1
-  (-product '(1 2 3)) => 6)

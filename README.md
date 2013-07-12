@@ -27,6 +27,8 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
 * [-cons*](#-cons-rest-args) `(&rest args)`
 * [-count](#-count-pred-list) `(pred list)`
+* [-sum](#-sum-list) `(list)`
+* [-product](#-product-list) `(list)`
 * [-any?](#-any-pred-list) `(pred list)`
 * [-all?](#-all-pred-list) `(pred list)`
 * [-none?](#-none-pred-list) `(pred list)`
@@ -65,6 +67,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-sort](#-sort-predicate-list) `(predicate list)`
 * [-partial](#-partial-fn-rest-args) `(fn &rest args)`
 * [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
+* [-juxt](#-juxt-rest-fns) `(&rest fns)`
 * [-applify](#-applify-fn) `(fn)`
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [->>](#--x-form-rest-more) `(x form &rest more)`
@@ -75,8 +78,6 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-if-let*](#-if-let-vars-vals-then-optional-else) `(vars-vals then &optional else)`
 * [!cons](#-cons-car-cdr) `(car cdr)`
 * [!cdr](#-cdr-list) `(list)`
-* [-sum](#-sum-list) `(list)`
-* [-product](#-product-list) `(list)`
 
 There are also anaphoric versions of these functions where that makes sense,
 prefixed with two dashes instead of one.
@@ -292,6 +293,26 @@ Counts the number of items in `list` where (`pred` item) is non-nil.
 ```cl
 (-count 'even? '(1 2 3 4 5)) ;; => 2
 (--count (< it 4) '(1 2 3 4)) ;; => 3
+```
+
+### -sum `(list)`
+
+Return the sum of `list`.
+
+```cl
+(-sum '()) ;; => 0
+(-sum '(1)) ;; => 1
+(-sum '(1 2 3)) ;; => 6
+```
+
+### -product `(list)`
+
+Return the product of `list`.
+
+```cl
+(-product '()) ;; => 1
+(-product '(1)) ;; => 1
+(-product '(1 2 3)) ;; => 6
 ```
 
 ### -any? `(pred list)`
@@ -717,6 +738,20 @@ Requires Emacs 24 or higher.
 (funcall (-rpartial '- 5 2) 10) ;; => 3
 ```
 
+### -juxt `(&rest fns)`
+
+Takes a list of functions and returns a fn that is the
+juxtaposition of those fns. The returned fn takes a variable
+number of args, and returns a list containing the result of
+applying each fn to the args (left-to-right).
+
+Requires Emacs 24 or higher.
+
+```cl
+(funcall (-juxt '+ '-) 3 5) ;; => '(8 -2)
+(-map (-juxt 'identity 'square) '(1 2 3)) ;; => '((1 1) (2 4) (3 9))
+```
+
 ### -applify `(fn)`
 
 Changes an n-arity function `fn` to a 1-arity function that
@@ -825,26 +860,6 @@ Destructive: Sets `list` to the cdr of `list`.
 ```cl
 (let ((l '(3))) (!cdr l) l) ;; => '()
 (let ((l '(3 5))) (!cdr l) l) ;; => '(5)
-```
-
-### -sum `(list)`
-
-Return the sum of `list`.
-
-```cl
-(-sum '()) ;; => 0
-(-sum '(1)) ;; => 1
-(-sum '(1 2 3)) ;; => 6
-```
-
-### -product `(list)`
-
-Return the product of `list`.
-
-```cl
-(-product '()) ;; => 1
-(-product '(1)) ;; => 1
-(-product '(1 2 3)) ;; => 6
 ```
 
 

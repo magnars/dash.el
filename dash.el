@@ -265,14 +265,14 @@ result so if the final member of ARGS is not a list the result is
 a dotted list."
   (let (res)
     (--each
-     args
+        args
       (cond
-        ((not res)
-         (setq res it))
-        ((consp res)
-         (setcdr res (cons (cdr res) it)))
-        (t
-         (setq res (cons res it)))))
+       ((not res)
+        (setq res it))
+       ((consp res)
+        (setcdr res (cons (cdr res) it)))
+       (t
+        (setq res (cons res it)))))
     res))
 
 (defmacro --first (form list)

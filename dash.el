@@ -27,6 +27,13 @@
 
 ;;; Code:
 
+(defalias '-first-item 'car
+  "Returns the first item of LIST, or nil on an empty list.")
+
+(defun -last-item (list)
+  "Returns the first item of LIST, or nil on an empty list."
+  (car (last list)))
+
 (defmacro !cons (car cdr)
   "Destructive: Sets CDR to the cons of CAR and CDR."
   `(setq ,cdr (cons ,car ,cdr)))

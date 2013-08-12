@@ -109,6 +109,28 @@
   (-product '(1)) => 1
   (-product '(1 2 3)) => 6)
 
+(defexamples -min
+  (-min 0) => 0
+  (-min 1) => 1
+  (-min 1 2 3) => 1)
+
+(defexamples -min-by
+  (-min-by 'identity '()) => nil
+  (-min-by 'identity '(1)) => 1
+  (--min-by (cdr it) '((a . 1) (b . 2) (c . 3))) => '(a . 1)
+  (-min-by (lambda (x) (string-to-int x)) '("1" "2" "3")) => "1")
+
+(defexamples -max
+  (-max 0) => 0
+  (-max 1) => 1
+  (-max 1 2 3) => 3)
+
+(defexamples -max-by
+  (-max-by 'identity '()) => nil
+  (-max-by 'identity '(1)) => 1
+  (--max-by (cdr it) '((a . 1) (b . 2) (c . 3))) => '(c . 3)
+  (-max-by (lambda (x) (string-to-int x)) '("1" "2" "3")) => "3")
+
 (defexamples -any?
   (-any? 'even? '(1 2 3)) => t
   (-any? 'even? '(1 3 5)) => nil

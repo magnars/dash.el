@@ -893,6 +893,48 @@ Returns nil if N is less than 1."
   "Return the product of LIST."
   (apply '* list))
 
+(defun -min (x &rest xs)
+  "Return the smallest value of all arguments."
+  (apply 'min (cons x xs)))
+
+(defun -min-by (pred list)
+  "Call PRED for each item in LIST and return item with smallest value."
+  (let (min-item (min-value most-positive-fixnum))
+    (-each
+     list
+     (lambda (item)
+       (let ((item-value (funcall pred item)))
+         (when (< item-value min-value)
+           (setq min-value item-value)
+           (setq min-item item)))))
+    min-item))
+
+(defmacro --min-by (form list)
+  "Anaphoric form of `-min-by'."
+  (declare (debug t))
+  `(-min-by (lambda (it) ,form) ,list))
+
+(defun -max (x &rest xs)
+  "Return the largest value of all arguments."
+  (apply 'max (cons x xs)))
+
+(defun -max-by (pred list)
+  "Call PRED for each item in LIST and return item with largest value."
+  (let (max-item (max-value most-negative-fixnum))
+    (-each
+     list
+     (lambda (item)
+       (let ((item-value (funcall pred item)))
+         (when (> item-value max-value)
+           (setq max-value item-value)
+           (setq max-item item)))))
+    max-item))
+
+(defmacro --max-by (form list)
+  "Anaphoric form of `-max-by'."
+  (declare (debug t))
+  `(-max-by (lambda (it) ,form) ,list))
+
 (eval-after-load "lisp-mode"
   '(progn
      (let ((new-keywords '(
@@ -998,6 +1040,12 @@ Returns nil if N is less than 1."
                            "-cons*"
                            "-sum"
                            "-product"
+                           "-min"
+                           "-min-by"
+                           "--min-by"
+                           "-max"
+                           "-max-by"
+                           "--max-by"
                            ))
            (special-variables '(
                                 "it"

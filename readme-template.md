@@ -107,7 +107,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
  - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
- - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-produce`, `-min`, `-max`, `-min-by` and `-max-by`.
+ - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product`, `-min`, `-max`, `-min-by` and `-max-by`.
 
 Thanks!
 

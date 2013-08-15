@@ -701,6 +701,7 @@ Returns the first item of `list`, or nil on an empty list.
 
 ```cl
 (-first-item '(1 2 3)) ;; => 1
+(-first-item nil) ;; => nil
 ```
 
 ### -last-item `(list)`
@@ -709,6 +710,7 @@ Returns the first item of `list`, or nil on an empty list.
 
 ```cl
 (-last-item '(1 2 3)) ;; => 3
+(-last-item nil) ;; => nil
 ```
 
 ### -union `(list list2)`
@@ -964,7 +966,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
-### From 1.7.0 to master
+### From 1.7.0 to 1.8.0
 
 - Add `-first-item` and `-last-item` (Wilfred Hughes)
 

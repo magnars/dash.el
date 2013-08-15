@@ -287,11 +287,11 @@
 
 (defexamples -first-item
   (-first-item '(1 2 3)) => 1
-  (-first-item nil => nil))
+  (-first-item nil) => nil)
 
 (defexamples -last-item
   (-last-item '(1 2 3)) => 3
-  (-last-item nil => nil))
+  (-last-item nil) => nil)
 
 (defexamples -union
   (-union '(1 2 3) '(3 4 5))  => '(1 2 3 4 5)

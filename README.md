@@ -12,6 +12,8 @@ Or you can just dump `dash.el` in your load path somewhere.
 
 ## Functions
 
+* [-first-item](#-first-item-list) `(list)`
+* [-last-item](#-last-item-list) `(list)`
 * [-map](#-map-fn-list) `(fn list)`
 * [-reduce-from](#-reduce-from-fn-initial-value-list) `(fn initial-value list)`
 * [-reduce-r-from](#-reduce-r-from-fn-initial-value-list) `(fn initial-value list)`
@@ -105,6 +107,22 @@ of course the original can also be written like
 which demonstrates the usefulness of both versions.
 
 ## Documentation and examples
+
+### -first-item `(list)`
+
+Returns the first item of `list`, or nil on an empty list.
+
+```cl
+(-first-item '(1 2 3)) ;; => 1
+```
+
+### -last-item `(list)`
+
+Returns the first item of `list`, or nil on an empty list.
+
+```cl
+(-last-item '(1 2 3)) ;; => 3
+```
 
 ### -map `(fn list)`
 

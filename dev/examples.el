@@ -199,6 +199,10 @@
   (-split-at 3 '(1 2 3 4 5)) => '((1 2 3) (4 5))
   (-split-at 17 '(1 2 3 4 5)) => '((1 2 3 4 5) nil))
 
+(defexamples -rotate
+  (-rotate 3 '(1 2 3 4 5 6 7)) => '(5 6 7 1 2 3 4)
+  (-rotate -3 '(1 2 3 4 5 6 7)) => '(4 5 6 7 1 2 3)) 
+
 (defexamples -insert-at
   (-insert-at 1 'x '(a b c)) => '(a x b c)
   (-insert-at 12 'x '(a b c)) => '(a b c x))

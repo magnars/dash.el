@@ -946,6 +946,10 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 1.6.0 to 1.7.0
+
+- Add `-rotate` (Matus Goljer)
+
 ### From 1.5.0 to 1.6.0
 
 - Add `-min`, `-max`, `-min-by` and `-max-by` (Johan Andersson)
@@ -975,7 +979,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Contributors
 
- - [Matus Goljer](https://github.com/Fuco1) contributed `-union`, `-separate`, `-zip`, `-zip-with`, `-reduce-r` and `-reduce-r-from`.
+ - [Matus Goljer](https://github.com/Fuco1) contributed `-union`, `-separate`, `-zip`, `-zip-with`, `-reduce-r`, `-reduce-r-from` and `-rotate`.
  - [Takafumi Arakaki](https://github.com/tkf) contributed `-group-by`.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.

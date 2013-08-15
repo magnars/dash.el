@@ -1,4 +1,5 @@
 (require 'dash)
+(require 'help-fns)
 
 (defvar functions '())
 
@@ -11,21 +12,34 @@
       (replace-regexp-in-string "\t" "\\t" it t t)
       (replace-regexp-in-string "\r" "\\r" it t t))))
 
-(defun docs--signature (cmd)
-  (if (eq 'macro (car cmd))
-      (nth 2 cmd)
-    (nth 1 cmd)))
-
-(defun docs--docstring (cmd)
-  (if (eq 'macro (car cmd))
-      (nth 3 cmd)
-    (nth 2 cmd)))
+(defun docs--signature (function)
+  "Given FUNCTION (a symbol), return its argument list.
+FUNCTION may reference an elisp function, alias, macro or a subr."
+  (let* ((function-value (indirect-function function))
+         (is-alias (eq function-value (symbol-function function)))
+         ;; if FUNCTION isn't an alias, function-symbol is simply FUNCTION
+         (function-symbol function))
+    
+    (when is-alias
+      ;; find the last symbol in the alias chain
+      (while (symbolp (symbol-function function-symbol))
+        (setq function-symbol (symbol-function function-symbol))))
+    
+    (if (subrp function-value)
+        ;; read the docstring to find the signature for subrs
+        (let* ((docstring-args (car (help-split-fundoc
+                                     (documentation function-value)
+                                     function-symbol)))
+               (fun-with-args (read (downcase docstring-args))))
+          (cdr fun-with-args))
+      ;; otherwise get the signature directly
+      (help-function-arglist function-symbol))))
 
 (defmacro defexamples (cmd &rest examples)
   `(add-to-list 'functions (list
                             ',cmd
-                            (docs--signature (symbol-function ',cmd))
-                            (docs--docstring (symbol-function ',cmd))
+                            (docs--signature ',cmd)
+                            (documentation ',cmd)
                             (-map 'example-to-string (-partition 3 ',examples)))))
 
 (defun quote-and-downcase (string)

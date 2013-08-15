@@ -9,6 +9,14 @@
 (defun square (num) (* num num))
 (defun three-letters () '("A" "B" "C"))
 
+(defexamples -first-item
+  (-first-item '(1 2 3)) => 1
+  (-first-item nil => nil))
+
+(defexamples -last-item
+  (-last-item '(1 2 3)) => 3
+  (-last-item nil => nil))
+
 (defexamples -map
   (-map (lambda (num) (* num num)) '(1 2 3 4)) => '(1 4 9 16)
   (-map 'square '(1 2 3 4)) => '(1 4 9 16)

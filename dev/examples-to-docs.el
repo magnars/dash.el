@@ -16,7 +16,7 @@
   "Given FUNCTION (a symbol), return its argument list.
 FUNCTION may reference an elisp function, alias, macro or a subr."
   (let* ((function-value (indirect-function function))
-         (is-alias (eq function-value (symbol-function function)))
+         (is-alias (not (eq function-value (symbol-function function))))
          ;; if FUNCTION isn't an alias, function-symbol is simply FUNCTION
          (function-symbol function))
     

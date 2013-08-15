@@ -47,6 +47,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-take-while](#-take-while-pred-list) `(pred list)`
 * [-drop-while](#-drop-while-pred-list) `(pred list)`
 * [-split-at](#-split-at-n-list) `(n list)`
+* [-rotate](#-rotate-n-list) `(n list)`
 * [-insert-at](#-insert-at-n-x-list) `(n x list)`
 * [-split-with](#-split-with-pred-list) `(pred list)`
 * [-separate](#-separate-pred-list) `(pred list)`
@@ -500,6 +501,16 @@ Returns a list of ((-take `n` `list`) (-drop `n` `list`)), in no more than one p
 ```cl
 (-split-at 3 '(1 2 3 4 5)) ;; => '((1 2 3) (4 5))
 (-split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
+```
+
+### -rotate `(n list)`
+
+Rotate `list` `n` places to the right.  With `n` negative, rotate to the left.
+The time complexity is `o`(n).
+
+```cl
+(-rotate 3 '(1 2 3 4 5 6 7)) ;; => '(5 6 7 1 2 3 4)
+(-rotate -3 '(1 2 3 4 5 6 7)) ;; => '(4 5 6 7 1 2 3)
 ```
 
 ### -insert-at `(n x list)`

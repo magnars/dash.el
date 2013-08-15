@@ -450,6 +450,13 @@ FROM or TO may be negative."
         (!cdr list)))
     (list (nreverse result) list)))
 
+(defun -rotate (n list)
+  "Rotate LIST N places to the right.  With N negative, rotate to the left.
+The time complexity is O(n)."
+  (if (> n 0)
+      (append (last list n) (butlast list n))
+    (append (-drop (- n) list) (-take (- n) list))))
+
 (defun -insert-at (n x list)
   "Returns a list with X inserted into LIST at position N."
   (let ((split-list (-split-at n list)))
@@ -1001,6 +1008,7 @@ Returns nil if N is less than 1."
                            "--drop-while"
                            "-drop-while"
                            "-split-at"
+                           "-rotate"
                            "-insert-at"
                            "--split-with"
                            "-split-with"

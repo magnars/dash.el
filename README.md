@@ -12,8 +12,6 @@ Or you can just dump `dash.el` in your load path somewhere.
 
 ## Functions
 
-* [-first-item](#-first-item-list) `(list)`
-* [-last-item](#-last-item-list) `(list)`
 * [-map](#-map-fn-list) `(fn list)`
 * [-reduce-from](#-reduce-from-fn-initial-value-list) `(fn initial-value list)`
 * [-reduce-r-from](#-reduce-r-from-fn-initial-value-list) `(fn initial-value list)`
@@ -66,6 +64,8 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-zip](#-zip-list1-list2) `(list1 list2)`
 * [-first](#-first-pred-list) `(pred list)`
 * [-last](#-last-pred-list) `(pred list)`
+* [-first-item](#-first-item-list) `(list)`
+* [-last-item](#-last-item-list) `(list)`
 * [-union](#-union-list-list2) `(list list2)`
 * [-difference](#-difference-list-list2) `(list list2)`
 * [-intersection](#-intersection-list-list2) `(list list2)`
@@ -112,22 +112,6 @@ of course the original can also be written like
 which demonstrates the usefulness of both versions.
 
 ## Documentation and examples
-
-### -first-item `(list)`
-
-Returns the first item of `list`, or nil on an empty list.
-
-```cl
-(-first-item '(1 2 3)) ;; => 1
-```
-
-### -last-item `(list)`
-
-Returns the first item of `list`, or nil on an empty list.
-
-```cl
-(-last-item '(1 2 3)) ;; => 3
-```
 
 ### -map `(fn list)`
 
@@ -711,6 +695,22 @@ Return the last x in `list` where (`pred` x) is non-nil, else nil.
 (--last (> (length it) 3) '("a" "looong" "word" "and" "short" "one")) ;; => "short"
 ```
 
+### -first-item `(list)`
+
+Returns the first item of `list`, or nil on an empty list.
+
+```cl
+(-first-item '(1 2 3)) ;; => 1
+```
+
+### -last-item `(list)`
+
+Returns the first item of `list`, or nil on an empty list.
+
+```cl
+(-last-item '(1 2 3)) ;; => 3
+```
+
 ### -union `(list list2)`
 
 Return a new list containing the elements of `list1` and elements of `list2` that are not in `list1`.
@@ -964,6 +964,10 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 1.7.0 to master
+
+- Add `-first-item` and `-last-item` (Wilfred Hughes)
+
 ### From 1.6.0 to 1.7.0
 
 - Add `-rotate` (Matus Goljer)
@@ -1002,7 +1006,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.
  - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
- - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`.
+ - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`, `-first-item` and `-last-item`.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product`, `-min`, `-max`, `-min-by` and `-max-by`.
 

@@ -9,14 +9,6 @@
 (defun square (num) (* num num))
 (defun three-letters () '("A" "B" "C"))
 
-(defexamples -first-item
-  (-first-item '(1 2 3)) => 1
-  (-first-item nil => nil))
-
-(defexamples -last-item
-  (-last-item '(1 2 3)) => 3
-  (-last-item nil => nil))
-
 (defexamples -map
   (-map (lambda (num) (* num num)) '(1 2 3 4)) => '(1 4 9 16)
   (-map 'square '(1 2 3 4)) => '(1 4 9 16)
@@ -209,7 +201,7 @@
 
 (defexamples -rotate
   (-rotate 3 '(1 2 3 4 5 6 7)) => '(5 6 7 1 2 3 4)
-  (-rotate -3 '(1 2 3 4 5 6 7)) => '(4 5 6 7 1 2 3)) 
+  (-rotate -3 '(1 2 3 4 5 6 7)) => '(4 5 6 7 1 2 3))
 
 (defexamples -insert-at
   (-insert-at 1 'x '(a b c)) => '(a x b c)
@@ -292,6 +284,14 @@
   (-last 'even? '(1 2 3 4 5 6 3 3 3)) => 6
   (-last 'even? '(1 3 7 5 9)) => nil
   (--last (> (length it) 3) '("a" "looong" "word" "and" "short" "one")) => "short")
+
+(defexamples -first-item
+  (-first-item '(1 2 3)) => 1
+  (-first-item nil => nil))
+
+(defexamples -last-item
+  (-last-item '(1 2 3)) => 3
+  (-last-item nil => nil))
 
 (defexamples -union
   (-union '(1 2 3) '(3 4 5))  => '(1 2 3 4 5)

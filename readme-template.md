@@ -71,6 +71,10 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 1.7.0 to 1.8.0
+
+- Add `-first-item` and `-last-item` (Wilfred Hughes)
+
 ### From 1.6.0 to 1.7.0
 
 - Add `-rotate` (Matus Goljer)
@@ -109,7 +113,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.
  - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
- - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`.
+ - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`, `-first-item` and `-last-item`.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product`, `-min`, `-max`, `-min-by` and `-max-by`.
 

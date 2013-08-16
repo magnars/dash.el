@@ -117,6 +117,7 @@
 (defexamples -min-by
   (-min-by '> '(4 3 6 1)) => 1
   (-min-by (-on '> 'length) '((1 2 3) (1) (1 2))) => '(1)
+  (--min-by (> (length it) (length other)) '((1 2 3) (1) (1 2))) => '(1)
   (-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) => 22
   (-min-by '< '(4 3 6 1)) => 6)
 
@@ -128,6 +129,7 @@
 (defexamples -max-by
   (-max-by '> '(4 3 6 1)) => 6
   (-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) => '(3)
+  (--max-by (> (car it) (car other)) '((2 2 3) (3) (1 2))) => '(3)
   (-max-by (-on '> 'string-to-int) '("1" "2" "3")) => "3"
   (-max-by '< '(4 3 6 1)) => 1)
 

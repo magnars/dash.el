@@ -1,8 +1,9 @@
 ;;; dash-functional.el --- Collection of useful combinators for Emacs Lisp  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2013 Magnar Sveen
+;; Copyright (C) 2013 Matus Goljer, Magnar Sveen
 
-;; Author: Magnar Sveen <magnars@gmail.com>
+;; Authors: Matus Goljer <matus.goljer@gmail.com>
+;;          Magnar Sveen <magnars@gmail.com>
 ;; Keywords: lisp functions combinators
 
 ;; This program is free software; you can redistribute it and/or modify

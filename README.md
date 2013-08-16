@@ -1063,6 +1063,16 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 1.8.0 to master
+
+The stated scope of dash is increasing. It now includes more
+functional style functions, like combinators and threading macros.
+These have been creeping in anyway, since they're so darn useful. Time
+to make it official. :)
+
+- Split out `dash-functional.el` (Matus Goljer)
+- Add `-andfn`, `-orfn`, `-not`, `-cut`, `-const`, `-flip` and `-on`. (Matus Goljer)
+
 ### From 1.7.0 to 1.8.0
 
 - Add `-first-item` and `-last-item` (Wilfred Hughes)

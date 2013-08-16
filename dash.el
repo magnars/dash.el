@@ -3,7 +3,6 @@
 ;; Copyright (C) 2012 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
-;; Version: 1.8.0
 ;; Keywords: lists
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -949,6 +948,8 @@ Returns nil if N is less than 1."
   (declare (debug t))
   `(-max-by (lambda (it) ,form) ,list))
 
+(require 'dash-functional)
+
 (eval-after-load "lisp-mode"
   '(progn
      (let ((new-keywords '(
@@ -1037,6 +1038,13 @@ Returns nil if N is less than 1."
                            "-partial"
                            "-rpartial"
                            "-juxt"
+                           "-applify"
+                           "-on"
+                           "-flip"
+                           "-const"
+                           "-cut"
+                           "-orfn"
+                           "-andfn"
                            "->"
                            "->>"
                            "-->"

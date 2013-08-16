@@ -72,10 +72,6 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-distinct](#-distinct-list) `(list)`
 * [-contains?](#-contains-list-element) `(list element)`
 * [-sort](#-sort-predicate-list) `(predicate list)`
-* [-partial](#-partial-fn-rest-args) `(fn &rest args)`
-* [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
-* [-juxt](#-juxt-rest-fns) `(&rest fns)`
-* [-applify](#-applify-fn) `(fn)`
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [->>](#--x-form-rest-more) `(x form &rest more)`
 * [-->](#---x-form-rest-more) `(x form &rest more)`
@@ -83,6 +79,17 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-when-let*](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
 * [-if-let](#-if-let-var-val-then-optional-else) `(var-val then &optional else)`
 * [-if-let*](#-if-let-vars-vals-then-optional-else) `(vars-vals then &optional else)`
+* [-partial](#-partial-fn-rest-args) `(fn &rest args)`
+* [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
+* [-juxt](#-juxt-rest-fns) `(&rest fns)`
+* [-applify](#-applify-fn) `(fn)`
+* [-on](#-on-operator-transformer) `(operator transformer)`
+* [-flip](#-flip-func) `(func)`
+* [-const](#-const-c) `(c)`
+* [-cut](#-cut-rest-params) `(&rest params)`
+* [-not](#-not-pred) `(pred)`
+* [-orfn](#-orfn-rest-preds) `(&rest preds)`
+* [-andfn](#-andfn-rest-preds) `(&rest preds)`
 * [!cons](#-cons-car-cdr) `(car cdr)`
 * [!cdr](#-cdr-list) `(list)`
 
@@ -787,56 +794,6 @@ if the first element should sort before the second.
 (--sort (< it other) '(3 1 2)) ;; => '(1 2 3)
 ```
 
-### -partial `(fn &rest args)`
-
-Takes a function `fn` and fewer than the normal arguments to `fn`,
-and returns a fn that takes a variable number of additional `args`.
-When called, the returned function calls `fn` with `args` first and
-then additional args.
-
-```cl
-(funcall (-partial '- 5) 3) ;; => 2
-(funcall (-partial '+ 5 2) 3) ;; => 10
-```
-
-### -rpartial `(fn &rest args)`
-
-Takes a function `fn` and fewer than the normal arguments to `fn`,
-and returns a fn that takes a variable number of additional `args`.
-When called, the returned function calls `fn` with the additional
-args first and then `args`.
-
-Requires Emacs 24 or higher.
-
-```cl
-(funcall (-rpartial '- 5) 8) ;; => 3
-(funcall (-rpartial '- 5 2) 10) ;; => 3
-```
-
-### -juxt `(&rest fns)`
-
-Takes a list of functions and returns a fn that is the
-juxtaposition of those fns. The returned fn takes a variable
-number of args, and returns a list containing the result of
-applying each fn to the args (left-to-right).
-
-Requires Emacs 24 or higher.
-
-```cl
-(funcall (-juxt '+ '-) 3 5) ;; => '(8 -2)
-(-map (-juxt 'identity 'square) '(1 2 3)) ;; => '((1 1) (2 4) (3 9))
-```
-
-### -applify `(fn)`
-
-Changes an n-arity function `fn` to a 1-arity function that
-expects a list with n items as arguments
-
-```cl
-(-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => '(3 6 15)
-(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
-```
-
 ### -> `(x &optional form &rest more)`
 
 Threads the expr through the forms. Inserts `x` as the second
@@ -917,6 +874,146 @@ If all `vals` evaluate to true, bind them to their corresponding
 ```cl
 (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") ;; => 15
 (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") ;; => "foo"
+```
+
+### -partial `(fn &rest args)`
+
+Takes a function `fn` and fewer than the normal arguments to `fn`,
+and returns a fn that takes a variable number of additional `args`.
+When called, the returned function calls `fn` with `args` first and
+then additional args.
+
+```cl
+(funcall (-partial '- 5) 3) ;; => 2
+(funcall (-partial '+ 5 2) 3) ;; => 10
+```
+
+### -rpartial `(fn &rest args)`
+
+Takes a function `fn` and fewer than the normal arguments to `fn`,
+and returns a fn that takes a variable number of additional `args`.
+When called, the returned function calls `fn` with the additional
+args first and then `args`.
+
+Requires Emacs 24 or higher.
+
+```cl
+(funcall (-rpartial '- 5) 8) ;; => 3
+(funcall (-rpartial '- 5 2) 10) ;; => 3
+```
+
+### -juxt `(&rest fns)`
+
+Takes a list of functions and returns a fn that is the
+juxtaposition of those fns. The returned fn takes a variable
+number of args, and returns a list containing the result of
+applying each fn to the args (left-to-right).
+
+Requires Emacs 24 or higher.
+
+```cl
+(funcall (-juxt '+ '-) 3 5) ;; => '(8 -2)
+(-map (-juxt 'identity 'square) '(1 2 3)) ;; => '((1 1) (2 4) (3 9))
+```
+
+### -applify `(fn)`
+
+Changes an n-arity function `fn` to a 1-arity function that
+expects a list with n items as arguments
+
+```cl
+(-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => '(3 6 15)
+(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+(funcall (-applify '<) '(3 6)) ;; => t
+```
+
+### -on `(operator transformer)`
+
+Return a function of two arguments that first applies
+`transformer` to each of them and then applies `operator` on the
+results (in the same order).
+
+In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
+
+```cl
+(-sort (-on '< 'length) '((1 2 3) (1) (1 2))) ;; => '((1) (1 2) (1 2 3))
+(-sort (-on 'string-lessp 'int-to-string) '(10 12 1 2 22)) ;; => '(1 10 12 2 22)
+(funcall (-on '+ '1+) 1 2) ;; => 5
+```
+
+### -flip `(func)`
+
+Swap the order of arguments for binary function `func`.
+
+In types: (a -> b -> c) -> b -> a -> c
+
+```cl
+(funcall (-flip '<) 2 1) ;; => t
+(funcall (-flip '-) 3 8) ;; => 5
+(-sort (-flip '<) '(4 3 6 1)) ;; => '(6 4 3 1)
+```
+
+### -const `(c)`
+
+Return a function that returns `c` ignoring any additional arguments.
+
+In types: a -> b -> a
+
+```cl
+(funcall (-const 2) 1 3 "foo") ;; => 2
+(-map (-const 1) '("a" "b" "c" "d")) ;; => '(1 1 1 1)
+(-sum (-map (-const 1) '("a" "b" "c" "d"))) ;; => 4
+```
+
+### -cut `(&rest params)`
+
+Take n-ary function and n arguments and specialize some of them.
+Arguments denoted by <> will be left unspecialized.
+
+See `srfi-26` for detailed description.
+
+```cl
+(funcall (-cut list 1 <> 3 <> 5) 2 4) ;; => '(1 2 3 4 5)
+(-map (-cut funcall <> 5) '(1+ 1- (lambda (x) (/ 1.0 x)))) ;; => '(6 4 0.2)
+(-filter (-cut < <> 5) '(1 3 5 7 9)) ;; => '(1 3)
+```
+
+### -not `(pred)`
+
+Take an unary predicates `pred` and return an unary predicate
+that returns t if `pred` returns nil and nil if `pred` returns
+non-nil.
+
+```cl
+(funcall (-not 'even?) 5) ;; => t
+(-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8)) ;; => '(1 2 3 4)
+```
+
+### -orfn `(&rest preds)`
+
+Take list of unary predicates `preds` and return an unary
+predicate with argument x that returns non-nil if at least one of
+the `preds` returns non-nil on x.
+
+In types: [a -> Bool] -> a -> Bool
+
+```cl
+(-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 6 8 10)
+(funcall (-orfn 'stringp 'even?) "foo") ;; => t
+```
+
+### -andfn `(&rest preds)`
+
+Take list of unary predicates `preds` and return an unary
+predicate with argument x that returns non-nil if all of the
+`preds` returns non-nil on x.
+
+In types: [a -> Bool] -> a -> Bool
+
+```cl
+(funcall (-andfn (-cut < <> 10) 'even?) 6) ;; => t
+(funcall (-andfn (-cut < <> 10) 'even?) 12) ;; => nil
+(-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 3 5)
 ```
 
 ### !cons `(car cdr)`

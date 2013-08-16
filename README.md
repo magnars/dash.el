@@ -935,6 +935,8 @@ results (in the same order).
 
 In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
 
+Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
+
 ```cl
 (-sort (-on '< 'length) '((1 2 3) (1) (1 2))) ;; => '((1) (1 2) (1 2 3))
 (-sort (-on 'string-lessp 'int-to-string) '(10 12 1 2 22)) ;; => '(1 10 12 2 22)
@@ -947,6 +949,8 @@ Swap the order of arguments for binary function `func`.
 
 In types: (a -> b -> c) -> b -> a -> c
 
+Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
+
 ```cl
 (funcall (-flip '<) 2 1) ;; => t
 (funcall (-flip '-) 3 8) ;; => 5
@@ -958,6 +962,8 @@ In types: (a -> b -> c) -> b -> a -> c
 Return a function that returns `c` ignoring any additional arguments.
 
 In types: a -> b -> a
+
+Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
 
 ```cl
 (funcall (-const 2) 1 3 "foo") ;; => 2
@@ -972,6 +978,8 @@ Arguments denoted by <> will be left unspecialized.
 
 See `srfi-26` for detailed description.
 
+Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
+
 ```cl
 (funcall (-cut list 1 <> 3 <> 5) 2 4) ;; => '(1 2 3 4 5)
 (-map (-cut funcall <> 5) '(1+ 1- (lambda (x) (/ 1.0 x)))) ;; => '(6 4 0.2)
@@ -983,6 +991,8 @@ See `srfi-26` for detailed description.
 Take an unary predicates `pred` and return an unary predicate
 that returns t if `pred` returns nil and nil if `pred` returns
 non-nil.
+
+Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
 
 ```cl
 (funcall (-not 'even?) 5) ;; => t
@@ -997,6 +1007,8 @@ the `preds` returns non-nil on x.
 
 In types: [a -> Bool] -> a -> Bool
 
+Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
+
 ```cl
 (-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 6 8 10)
 (funcall (-orfn 'stringp 'even?) "foo") ;; => t
@@ -1009,6 +1021,8 @@ predicate with argument x that returns non-nil if all of the
 `preds` returns non-nil on x.
 
 In types: [a -> Bool] -> a -> Bool
+
+Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
 
 ```cl
 (funcall (-andfn (-cut < <> 10) 'even?) 6) ;; => t

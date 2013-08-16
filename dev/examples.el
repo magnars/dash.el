@@ -110,26 +110,26 @@
   (-product '(1 2 3)) => 6)
 
 (defexamples -min
-  (-min 0) => 0
-  (-min 1) => 1
-  (-min 1 2 3) => 1)
+  (-min '(0)) => 0
+  (-min '(3 2 1)) => 1
+  (-min '(1 2 3)) => 1)
 
 (defexamples -min-by
-  (-min-by 'identity '()) => nil
-  (-min-by 'identity '(1)) => 1
-  (--min-by (cdr it) '((a . 1) (b . 2) (c . 3))) => '(a . 1)
-  (-min-by (lambda (x) (string-to-int x)) '("1" "2" "3")) => "1")
+  (-min-by '> '(4 3 6 1)) => 1
+  (-min-by (-on '> 'length) '((1 2 3) (1) (1 2))) => '(1)
+  (-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) => 22
+  (-min-by '< '(4 3 6 1)) => 6)
 
 (defexamples -max
-  (-max 0) => 0
-  (-max 1) => 1
-  (-max 1 2 3) => 3)
+  (-max '(0)) => 0
+  (-max '(3 2 1)) => 3
+  (-max '(1 2 3)) => 3)
 
 (defexamples -max-by
-  (-max-by 'identity '()) => nil
-  (-max-by 'identity '(1)) => 1
-  (--max-by (cdr it) '((a . 1) (b . 2) (c . 3))) => '(c . 3)
-  (-max-by (lambda (x) (string-to-int x)) '("1" "2" "3")) => "3")
+  (-max-by '> '(4 3 6 1)) => 6
+  (-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) => '(3)
+  (-max-by (-on '> 'string-to-int) '("1" "2" "3")) => "3"
+  (-max-by '< '(4 3 6 1)) => 1)
 
 (defexamples -any?
   (-any? 'even? '(1 2 3)) => t

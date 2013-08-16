@@ -906,47 +906,41 @@ Returns nil if N is less than 1."
   "Return the product of LIST."
   (apply '* list))
 
-(defun -min (x &rest xs)
-  "Return the smallest value of all arguments."
-  (apply 'min (cons x xs)))
+(defun -max (list)
+  "Return the largest value from LIST of numbers or markers."
+  (apply 'max list))
 
-(defun -min-by (pred list)
-  "Call PRED for each item in LIST and return item with smallest value."
-  (let (min-item (min-value most-positive-fixnum))
-    (-each
-     list
-     (lambda (item)
-       (let ((item-value (funcall pred item)))
-         (when (< item-value min-value)
-           (setq min-value item-value)
-           (setq min-item item)))))
-    min-item))
+(defun -min (list)
+  "Return the smallest value from LIST of numbers or markers."
+  (apply 'min list))
 
-(defmacro --min-by (form list)
-  "Anaphoric form of `-min-by'."
-  (declare (debug t))
-  `(-min-by (lambda (it) ,form) ,list))
+(defun -max-by (comparator list)
+  "Take a comparison function COMPARATOR and a LIST and return
+the greatest element of the list by the comparison function.
 
-(defun -max (x &rest xs)
-  "Return the largest value of all arguments."
-  (apply 'max (cons x xs)))
+See also combinator `-on' which can transform the values before
+comparing them."
+  (--reduce (if (funcall comparator it acc) it acc) list))
 
-(defun -max-by (pred list)
-  "Call PRED for each item in LIST and return item with largest value."
-  (let (max-item (max-value most-negative-fixnum))
-    (-each
-     list
-     (lambda (item)
-       (let ((item-value (funcall pred item)))
-         (when (> item-value max-value)
-           (setq max-value item-value)
-           (setq max-item item)))))
-    max-item))
+(defun -min-by (comparator list)
+  "Take a comparison function COMPARATOR and a LIST and return
+the least element of the list by the comparison function.
+
+See also combinator `-on' which can transform the values before
+comparing them."
+  (--reduce (if (funcall comparator it acc) acc it) list))
 
 (defmacro --max-by (form list)
-  "Anaphoric form of `-max-by'."
-  (declare (debug t))
-  `(-max-by (lambda (it) ,form) ,list))
+  "Anaphoric version of `-max-by'.
+
+The items for the comparator form are exposed as \"it\" and \"other\"."
+  `(-max-by (lambda (it other) ,form) ,list))
+
+(defmacro --min-by (form list)
+  "Anaphoric version of `-min-by'.
+
+The items for the comparator form are exposed as \"it\" and \"other\"."
+  `(-min-by (lambda (it other) ,form) ,list))
 
 (eval-after-load "lisp-mode"
   '(progn

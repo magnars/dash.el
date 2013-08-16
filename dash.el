@@ -586,7 +586,7 @@ those items are discarded."
            (while ,l
              (let* ((it (car ,l))
                     (,n ,form))
-               (if (equal ,h, n)
+               (if (equal ,h ,n)
                    (when ,b
                      (!cons (nreverse ,s) ,r)
                      (setq ,s nil)

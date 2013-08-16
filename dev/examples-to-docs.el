@@ -1,4 +1,5 @@
 (require 'dash)
+(require 'dash-functional)
 (require 'help-fns)
 
 (defvar functions '())
@@ -19,12 +20,12 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
          (is-alias (not (eq function-value (symbol-function function))))
          ;; if FUNCTION isn't an alias, function-symbol is simply FUNCTION
          (function-symbol function))
-    
+
     (when is-alias
       ;; find the last symbol in the alias chain
       (while (symbolp (symbol-function function-symbol))
         (setq function-symbol (symbol-function function-symbol))))
-    
+
     (if (subrp function-value)
         ;; read the docstring to find the signature for subrs
         (let* ((docstring-args (car (help-split-fundoc

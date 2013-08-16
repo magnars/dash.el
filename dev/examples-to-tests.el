@@ -1,5 +1,6 @@
 (require 'ert)
 (require 'dash)
+(require 'dash-functional)
 
 (defun example-to-should (example)
   (let ((actual (car example))

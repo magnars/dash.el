@@ -114,24 +114,26 @@
   (-min '(3 2 1)) => 1
   (-min '(1 2 3)) => 1)
 
-(defexamples -min-by
-  (-min-by '> '(4 3 6 1)) => 1
-  (-min-by (-on '> 'length) '((1 2 3) (1) (1 2))) => '(1)
-  (--min-by (> (length it) (length other)) '((1 2 3) (1) (1 2))) => '(1)
-  (-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) => 22
-  (-min-by '< '(4 3 6 1)) => 6)
+(unless (version< emacs-version "24") ;; required for -on
+ (defexamples -min-by
+   (-min-by '> '(4 3 6 1)) => 1
+   (-min-by (-on '> 'length) '((1 2 3) (1) (1 2))) => '(1)
+   (--min-by (> (length it) (length other)) '((1 2 3) (1) (1 2))) => '(1)
+   (-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) => 22
+   (-min-by '< '(4 3 6 1)) => 6))
 
 (defexamples -max
   (-max '(0)) => 0
   (-max '(3 2 1)) => 3
   (-max '(1 2 3)) => 3)
 
-(defexamples -max-by
-  (-max-by '> '(4 3 6 1)) => 6
-  (-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) => '(3)
-  (--max-by (> (car it) (car other)) '((2 2 3) (3) (1 2))) => '(3)
-  (-max-by (-on '> 'string-to-int) '("1" "2" "3")) => "3"
-  (-max-by '< '(4 3 6 1)) => 1)
+(unless (version< emacs-version "24") ;; required for -on
+ (defexamples -max-by
+   (-max-by '> '(4 3 6 1)) => 6
+   (-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) => '(3)
+   (--max-by (> (car it) (car other)) '((2 2 3) (3) (1 2))) => '(3)
+   (-max-by (-on '> 'string-to-int) '("1" "2" "3")) => "3"
+   (-max-by '< '(4 3 6 1)) => 1))
 
 (defexamples -any?
   (-any? 'even? '(1 2 3)) => t

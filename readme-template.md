@@ -2,6 +2,21 @@
 
 A modern list api for Emacs. No 'cl required.
 
+## Breaking change 1.8.0 -> 2.0.0
+
+- The `-min` and `-max` functions are no longer variadic, but take a
+  list to be more in line with the other dash functions.
+
+- The `-min-by` and `-max-by` now take a comparator function to sort by.
+
+Also: The stated scope of dash is increasing. It now includes more
+functional style functions, like combinators and threading macros.
+These have been creeping in anyway, since they're so darn useful. Time
+to make it official. :)
+
+These new combinators require Emacs 24 for its lexical scope. So
+you'll have to include them with `(require 'dash-functional)`.
+
 ## Installation
 
 It's available on [marmalade](http://marmalade-repo.org/) and [Melpa](http://melpa.milkbox.net/):
@@ -71,15 +86,11 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
-### From 1.8.0 to master
-
-The stated scope of dash is increasing. It now includes more
-functional style functions, like combinators and threading macros.
-These have been creeping in anyway, since they're so darn useful. Time
-to make it official. :)
+### From 1.8.0 to 2.0.0
 
 - Split out `dash-functional.el` (Matus Goljer)
 - Add `-andfn`, `-orfn`, `-not`, `-cut`, `-const`, `-flip` and `-on`. (Matus Goljer)
+- Fix `-min`, `-max`, `-min-by` and `-max-by` (Matus Goljer)
 
 ### From 1.7.0 to 1.8.0
 
@@ -118,14 +129,14 @@ to make it official. :)
 
 ## Contributors
 
- - [Matus Goljer](https://github.com/Fuco1) contributed `-union`, `-separate`, `-zip`, `-zip-with`, `-reduce-r`, `-reduce-r-from` and `-rotate`.
+ - [Matus Goljer](https://github.com/Fuco1) contributed lots of features and functions.
  - [Takafumi Arakaki](https://github.com/tkf) contributed `-group-by`.
  - [tali713](https://github.com/tali713) is the author of `-applify`.
  - [Víctor M. Valenzuela](https://github.com/vemv) contributed `-repeat`.
  - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
  - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`, `-first-item` and `-last-item`.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
- - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product`, `-min`, `-max`, `-min-by` and `-max-by`.
+ - [Johan Andersson](https://github.com/rejeep) contributed `-sum` and `-product`.
 
 Thanks!
 

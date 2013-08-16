@@ -325,6 +325,23 @@
   (--sort (< it other) '(3 1 2)) => '(1 2 3)
   (let ((l '(3 1 2))) (-sort '> l) l) => '(3 1 2))
 
+(defexamples -partial
+  (funcall (-partial '- 5) 3) => 2
+  (funcall (-partial '+ 5 2) 3) => 10)
+
+(unless (version< emacs-version "24")
+  (defexamples -rpartial
+    (funcall (-rpartial '- 5) 8) => 3
+    (funcall (-rpartial '- 5 2) 10) => 3)
+
+  (defexamples -juxt
+    (funcall (-juxt '+ '-) 3 5) => '(8 -2)
+    (-map (-juxt 'identity 'square) '(1 2 3)) => '((1 1) (2 4) (3 9))))
+
+(defexamples -applify
+  (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) => '(3 6 15)
+  (-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5)))))
+
 (defexamples ->
   (-> "Abc") => "Abc"
   (-> "Abc" (concat "def")) => "Abcdef"
@@ -359,67 +376,6 @@
 (defexamples -if-let*
   (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") => 15
   (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") => "foo")
-
-(defexamples -partial
-  (funcall (-partial '- 5) 3) => 2
-  (funcall (-partial '+ 5 2) 3) => 10)
-
-(unless (version< emacs-version "24")
-  (defexamples -rpartial
-    (funcall (-rpartial '- 5) 8) => 3
-    (funcall (-rpartial '- 5 2) 10) => 3)
-
-  (defexamples -juxt
-    (funcall (-juxt '+ '-) 3 5) => '(8 -2)
-    (-map (-juxt 'identity 'square) '(1 2 3)) => '((1 1) (2 4) (3 9))))
-
-(defexamples -applify
-  (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) => '(3 6 15)
-  (-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
-  (funcall (-applify '<) '(3 6)) => t)
-
-(unless (version< emacs-version "24")
-  (defexamples -on
-    (-sort (-on '< 'length) '((1 2 3) (1) (1 2))) => '((1) (1 2) (1 2 3))
-    (-sort (-on 'string-lessp 'int-to-string) '(10 12 1 2 22)) => '(1 10 12 2 22)
-    (funcall (-on '+ '1+) 1 2) => 5
-    (funcall (-on '+ 'identity) 1 2) => 3
-    (funcall (-on '* 'length) '(1 2 3) '(4 5)) => 6
-    (funcall (-on (-on '+ 'length) 'cdr) '(1 2 3) '(4 5)) => 3
-    (funcall (-on '+ (lambda (x) (length (cdr x)))) '(1 2 3) '(4 5)) => 3
-    (-sort (-on '< 'car) '((3 2 5) (2) (1 2))) => '((1 2) (2) (3 2 5))
-    (-sort (-on '< (lambda (x) (length x))) '((1 2 3) (1) (1 2))) => '((1) (1 2) (1 2 3))
-    (-sort (-on (-on '< 'car) 'cdr) '((0 3) (2 1) (4 2 8))) => '((2 1) (4 2 8) (0 3))
-    (-sort (-on '< 'cadr) '((0 3) (2 1) (4 2 8))) => '((2 1) (4 2 8) (0 3)))
-
-  (defexamples -flip
-    (funcall (-flip '<) 2 1) => t
-    (funcall (-flip '-) 3 8) => 5
-    (-sort (-flip '<) '(4 3 6 1)) => '(6 4 3 1))
-
-  (defexamples -const
-    (funcall (-const 2) 1 3 "foo") => 2
-    (-map (-const 1) '("a" "b" "c" "d")) => '(1 1 1 1)
-    (-sum (-map (-const 1) '("a" "b" "c" "d"))) => 4)
-
-  (defexamples -cut
-    (funcall (-cut list 1 <> 3 <> 5) 2 4) => '(1 2 3 4 5)
-    (-map (-cut funcall <> 5) '(1+ 1- (lambda (x) (/ 1.0 x)))) => '(6 4 0.2)
-    (-filter (-cut < <> 5) '(1 3 5 7 9)) => '(1 3))
-
-  (defexamples -not
-    (funcall (-not 'even?) 5) => t
-    (-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8)) => '(1 2 3 4))
-
-  (defexamples -orfn
-    (-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) => '(1 2 3 4 6 8 10)
-    (funcall (-orfn 'stringp 'even?) "foo") => t)
-
-  (defexamples -andfn
-    (funcall (-andfn (-cut < <> 10) 'even?) 6) => t
-    (funcall (-andfn (-cut < <> 10) 'even?) 12) => nil
-    (-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) => '(1 3 5))
-  )
 
 (defexamples !cons
   (let (l) (!cons 5 l) l) => '(5)

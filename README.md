@@ -29,10 +29,10 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-count](#-count-pred-list) `(pred list)`
 * [-sum](#-sum-list) `(list)`
 * [-product](#-product-list) `(list)`
-* [-min](#-min-x-rest-xs) `(x &rest xs)`
-* [-min-by](#-min-by-pred-list) `(pred list)`
-* [-max](#-max-x-rest-xs) `(x &rest xs)`
-* [-max-by](#-max-by-pred-list) `(pred list)`
+* [-min](#-min-list) `(list)`
+* [-min-by](#-min-by-comparator-list) `(comparator list)`
+* [-max](#-max-list) `(list)`
+* [-max-by](#-max-by-comparator-list) `(comparator list)`
 * [-any?](#-any-pred-list) `(pred list)`
 * [-all?](#-all-pred-list) `(pred list)`
 * [-none?](#-none-pred-list) `(pred list)`
@@ -329,44 +329,52 @@ Return the product of `list`.
 (-product '(1 2 3)) ;; => 6
 ```
 
-### -min `(x &rest xs)`
+### -min `(list)`
 
-Return the smallest value of all arguments.
+Return the smallest value from `list` of numbers or markers.
 
 ```cl
-(-min 0) ;; => 0
-(-min 1) ;; => 1
-(-min 1 2 3) ;; => 1
+(-min '(0)) ;; => 0
+(-min '(3 2 1)) ;; => 1
+(-min '(1 2 3)) ;; => 1
 ```
 
-### -min-by `(pred list)`
+### -min-by `(comparator list)`
 
-Call `pred` for each item in `list` and return item with smallest value.
+Take a comparison function `comparator` and a `list` and return
+the least element of the list by the comparison function.
+
+See also combinator `-on` which can transform the values before
+comparing them.
 
 ```cl
-(-min-by 'identity '()) ;; => nil
-(-min-by 'identity '(1)) ;; => 1
-(--min-by (cdr it) '((a . 1) (b . 2) (c . 3))) ;; => '(a . 1)
+(-min-by '> '(4 3 6 1)) ;; => 1
+(-min-by (-on '> 'length) '((1 2 3) (1) (1 2))) ;; => '(1)
+(-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) ;; => 22
 ```
 
-### -max `(x &rest xs)`
+### -max `(list)`
 
-Return the largest value of all arguments.
+Return the largest value from `list` of numbers or markers.
 
 ```cl
-(-max 0) ;; => 0
-(-max 1) ;; => 1
-(-max 1 2 3) ;; => 3
+(-max '(0)) ;; => 0
+(-max '(3 2 1)) ;; => 3
+(-max '(1 2 3)) ;; => 3
 ```
 
-### -max-by `(pred list)`
+### -max-by `(comparator list)`
 
-Call `pred` for each item in `list` and return item with largest value.
+Take a comparison function `comparator` and a `list` and return
+the greatest element of the list by the comparison function.
+
+See also combinator `-on` which can transform the values before
+comparing them.
 
 ```cl
-(-max-by 'identity '()) ;; => nil
-(-max-by 'identity '(1)) ;; => 1
-(--max-by (cdr it) '((a . 1) (b . 2) (c . 3))) ;; => '(c . 3)
+(-max-by '> '(4 3 6 1)) ;; => 6
+(-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) ;; => '(3)
+(-max-by (-on '> 'string-to-int) '("1" "2" "3")) ;; => "3"
 ```
 
 ### -any? `(pred list)`

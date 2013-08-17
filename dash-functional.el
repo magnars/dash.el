@@ -64,34 +64,26 @@ expects a list with n items as arguments"
 TRANSFORMER to each of them and then applies OPERATOR on the
 results (in the same order).
 
-In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
-
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
+In types: (b -> b -> c) -> (a -> b) -> a -> a -> c"
   (lambda (x y) (funcall operator (funcall transformer x) (funcall transformer y))))
 
 (defun -flip (func)
   "Swap the order of arguments for binary function FUNC.
 
-In types: (a -> b -> c) -> b -> a -> c
-
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
+In types: (a -> b -> c) -> b -> a -> c"
   (lambda (x y) (funcall func y x)))
 
 (defun -const (c)
   "Return a function that returns C ignoring any additional arguments.
 
-In types: a -> b -> a
-
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
+In types: a -> b -> a"
   (lambda (&rest _) c))
 
 (defmacro -cut (&rest params)
   "Take n-ary function and n arguments and specialize some of them.
 Arguments denoted by <> will be left unspecialized.
 
-See SRFI-26 for detailed description.
-
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
+See SRFI-26 for detailed description."
   (let* ((i 0)
          (args (mapcar (lambda (_) (setq i (1+ i)) (make-symbol (format "D%d" i)))
                        (-filter (-partial 'eq '<>) params))))
@@ -101,9 +93,7 @@ Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
 (defun -not (pred)
   "Take an unary predicates PRED and return an unary predicate
 that returns t if PRED returns nil and nil if PRED returns
-non-nil.
-
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
+non-nil."
   (lambda (x) (not (funcall pred x))))
 
 (defun -orfn (&rest preds)
@@ -111,9 +101,7 @@ Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
 predicate with argument x that returns non-nil if at least one of
 the PREDS returns non-nil on x.
 
-In types: [a -> Bool] -> a -> Bool
-
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
+In types: [a -> Bool] -> a -> Bool"
   (lambda (x) (-any? (-cut funcall <> x) preds)))
 
 (defun -andfn (&rest preds)
@@ -121,9 +109,7 @@ Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
 predicate with argument x that returns non-nil if all of the
 PREDS returns non-nil on x.
 
-In types: [a -> Bool] -> a -> Bool
-
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
+In types: [a -> Bool] -> a -> Bool"
   (lambda (x) (-all? (-cut funcall <> x) preds)))
 
 (provide 'dash-functional)

@@ -27,11 +27,10 @@ Or you can just dump `dash.el` in your load path somewhere.
 
 ## Functions
 
+
+### List to list
+
 * [-map](#-map-fn-list) `(fn list)`
-* [-reduce-from](#-reduce-from-fn-initial-value-list) `(fn initial-value list)`
-* [-reduce-r-from](#-reduce-r-from-fn-initial-value-list) `(fn initial-value list)`
-* [-reduce](#-reduce-fn-list) `(fn list)`
-* [-reduce-r](#-reduce-r-fn-list) `(fn list)`
 * [-filter](#-filter-pred-list) `(pred list)`
 * [-remove](#-remove-pred-list) `(pred list)`
 * [-keep](#-keep-fn-list) `(fn list)`
@@ -40,7 +39,20 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-flatten](#-flatten-l) `(l)`
 * [-concat](#-concat-rest-lists) `(&rest lists)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
-* [-cons*](#-cons-rest-args) `(&rest args)`
+* [-slice](#-slice-list-from-optional-to) `(list from &optional to)`
+* [-take](#-take-n-list) `(n list)`
+* [-drop](#-drop-n-list) `(n list)`
+* [-take-while](#-take-while-pred-list) `(pred list)`
+* [-drop-while](#-drop-while-pred-list) `(pred list)`
+* [-rotate](#-rotate-n-list) `(n list)`
+* [-insert-at](#-insert-at-n-x-list) `(n x list)`
+
+### Reductions
+
+* [-reduce-from](#-reduce-from-fn-initial-value-list) `(fn initial-value list)`
+* [-reduce-r-from](#-reduce-r-from-fn-initial-value-list) `(fn initial-value list)`
+* [-reduce](#-reduce-fn-list) `(fn list)`
+* [-reduce-r](#-reduce-r-fn-list) `(fn list)`
 * [-count](#-count-pred-list) `(pred list)`
 * [-sum](#-sum-list) `(list)`
 * [-product](#-product-list) `(list)`
@@ -48,22 +60,18 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-min-by](#-min-by-comparator-list) `(comparator list)`
 * [-max](#-max-list) `(list)`
 * [-max-by](#-max-by-comparator-list) `(comparator list)`
+
+### Predicates
+
 * [-any?](#-any-pred-list) `(pred list)`
 * [-all?](#-all-pred-list) `(pred list)`
 * [-none?](#-none-pred-list) `(pred list)`
 * [-only-some?](#-only-some-pred-list) `(pred list)`
-* [-each](#-each-list-fn) `(list fn)`
-* [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
-* [-dotimes](#-dotimes-num-fn) `(num fn)`
-* [-repeat](#-repeat-n-x) `(n x)`
-* [-slice](#-slice-list-from-optional-to) `(list from &optional to)`
-* [-take](#-take-n-list) `(n list)`
-* [-drop](#-drop-n-list) `(n list)`
-* [-take-while](#-take-while-pred-list) `(pred list)`
-* [-drop-while](#-drop-while-pred-list) `(pred list)`
+* [-contains?](#-contains-list-element) `(list element)`
+
+### Partitioning
+
 * [-split-at](#-split-at-n-list) `(n list)`
-* [-rotate](#-rotate-n-list) `(n list)`
-* [-insert-at](#-insert-at-n-x-list) `(n x list)`
 * [-split-with](#-split-with-pred-list) `(pred list)`
 * [-separate](#-separate-pred-list) `(pred list)`
 * [-partition](#-partition-n-list) `(n list)`
@@ -73,6 +81,18 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-partition-by](#-partition-by-fn-list) `(fn list)`
 * [-partition-by-header](#-partition-by-header-fn-list) `(fn list)`
 * [-group-by](#-group-by-fn-list) `(fn list)`
+
+### Set operations
+
+* [-union](#-union-list-list2) `(list list2)`
+* [-difference](#-difference-list-list2) `(list list2)`
+* [-intersection](#-intersection-list-list2) `(list list2)`
+* [-distinct](#-distinct-list) `(list)`
+
+### Other list operations
+
+* [-repeat](#-repeat-n-x) `(n x)`
+* [-cons*](#-cons-rest-args) `(&rest args)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
@@ -81,19 +101,37 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
 * [-last-item](#-last-item-list) `(list)`
-* [-union](#-union-list-list2) `(list list2)`
-* [-difference](#-difference-list-list2) `(list list2)`
-* [-intersection](#-intersection-list-list2) `(list list2)`
-* [-distinct](#-distinct-list) `(list)`
-* [-contains?](#-contains-list-element) `(list element)`
 * [-sort](#-sort-predicate-list) `(predicate list)`
+
+### Threading macros
+
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [->>](#--x-form-rest-more) `(x form &rest more)`
 * [-->](#---x-form-rest-more) `(x form &rest more)`
+
+### Binding
+
 * [-when-let](#-when-let-var-val-rest-body) `(var-val &rest body)`
 * [-when-let*](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
 * [-if-let](#-if-let-var-val-then-optional-else) `(var-val then &optional else)`
 * [-if-let*](#-if-let-vars-vals-then-optional-else) `(vars-vals then &optional else)`
+
+### Side-effects
+
+* [-each](#-each-list-fn) `(list fn)`
+* [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
+* [-dotimes](#-dotimes-num-fn) `(num fn)`
+
+### Destructive operations
+
+* [!cons](#-cons-car-cdr) `(car cdr)`
+* [!cdr](#-cdr-list) `(list)`
+
+### Function composition
+
+
+These combinators require Emacs 24 for its lexical scope. So you'll have to include them with `(require 'dash-functional)`.
+
 * [-partial](#-partial-fn-rest-args) `(fn &rest args)`
 * [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
 * [-juxt](#-juxt-rest-fns) `(&rest fns)`
@@ -105,13 +143,11 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [-not](#-not-pred) `(pred)`
 * [-orfn](#-orfn-rest-preds) `(&rest preds)`
 * [-andfn](#-andfn-rest-preds) `(&rest preds)`
-* [!cons](#-cons-car-cdr) `(car cdr)`
-* [!cdr](#-cdr-list) `(list)`
-
-There are also anaphoric versions of these functions where that makes sense,
-prefixed with two dashes instead of one.
 
 ## Anaphoric functions
+
+There are also anaphoric versions of functions where that makes sense,
+prefixed with two dashes instead of one.
 
 While `-map` takes a function to map over the list, you can also use
 the anaphoric form with double dashes - which will then be executed
@@ -135,6 +171,7 @@ which demonstrates the usefulness of both versions.
 
 ## Documentation and examples
 
+
 ### -map `(fn list)`
 
 Returns a new list consisting of the result of applying `fn` to the items in `list`.
@@ -143,74 +180,6 @@ Returns a new list consisting of the result of applying `fn` to the items in `li
 (-map (lambda (num) (* num num)) '(1 2 3 4)) ;; => '(1 4 9 16)
 (-map 'square '(1 2 3 4)) ;; => '(1 4 9 16)
 (--map (* it it) '(1 2 3 4)) ;; => '(1 4 9 16)
-```
-
-### -reduce-from `(fn initial-value list)`
-
-Returns the result of applying `fn` to `initial-value` and the
-first item in `list`, then applying `fn` to that result and the 2nd
-item, etc. If `list` contains no items, returns `initial-value` and
-`fn` is not called.
-
-In the anaphoric form `--reduce-from`, the accumulated value is
-exposed as `acc`.
-
-```cl
-(-reduce-from '- 10 '(1 2 3)) ;; => 4
-(-reduce-from (lambda (memo item) (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3)) ;; => "(((10 - 1) - 2) - 3)"
-(--reduce-from (concat acc " " it) "START" '("a" "b" "c")) ;; => "START a b c"
-```
-
-### -reduce-r-from `(fn initial-value list)`
-
-Replace conses with `fn`, nil with `initial-value` and evaluate
-the resulting expression. If `list` is empty, `initial-value` is
-returned and `fn` is not called.
-
-Note: this function works the same as `-reduce-from` but the
-operation associates from right instead of from left.
-
-```cl
-(-reduce-r-from '- 10 '(1 2 3)) ;; => -8
-(-reduce-r-from (lambda (item memo) (concat "(" (int-to-string item) " - " memo ")")) "10" '(1 2 3)) ;; => "(1 - (2 - (3 - 10)))"
-(--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) ;; => "a b c END"
-```
-
-### -reduce `(fn list)`
-
-Returns the result of applying `fn` to the first 2 items in `list`,
-then applying `fn` to that result and the 3rd item, etc. If `list`
-contains no items, `fn` must accept no arguments as well, and
-reduce returns the result of calling `fn` with no arguments. If
-`list` has only 1 item, it is returned and `fn` is not called.
-
-In the anaphoric form `--reduce`, the accumulated value is
-exposed as `acc`.
-
-```cl
-(-reduce '- '(1 2 3 4)) ;; => -8
-(-reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) ;; => "1-2-3"
-(--reduce (format "%s-%s" acc it) '(1 2 3)) ;; => "1-2-3"
-```
-
-### -reduce-r `(fn list)`
-
-Replace conses with `fn` and evaluate the resulting expression.
-The final nil is ignored. If `list` contains no items, `fn` must
-accept no arguments as well, and reduce returns the result of
-calling `fn` with no arguments. If `list` has only 1 item, it is
-returned and `fn` is not called.
-
-The first argument of `fn` is the new item, the second is the
-accumulated value.
-
-Note: this function works the same as `-reduce` but the operation
-associates from right instead of from left.
-
-```cl
-(-reduce-r '- '(1 2 3 4)) ;; => -2
-(-reduce-r (lambda (item memo) (format "%s-%s" memo item)) '(1 2 3)) ;; => "3-2-1"
-(--reduce-r (format "%s-%s" acc it) '(1 2 3)) ;; => "3-2-1"
 ```
 
 ### -filter `(pred list)`
@@ -301,18 +270,141 @@ Thus function `fn` should return a list.
 (--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 ```
 
-### -cons* `(&rest args)`
+### -slice `(list from &optional to)`
 
-Makes a new list from the elements of `args`.
-
-The last 2 members of `args` are used as the final cons of the
-result so if the final member of `args` is not a list the result is
-a dotted list.
+Return copy of `list`, starting from index `from` to index `to`.
+`from` or `to` may be negative.
 
 ```cl
-(-cons* 1 2) ;; => '(1 . 2)
-(-cons* 1 2 3) ;; => '(1 2 . 3)
-(-cons* 1) ;; => 1
+(-slice '(1 2 3 4 5) 1) ;; => '(2 3 4 5)
+(-slice '(1 2 3 4 5) 0 3) ;; => '(1 2 3)
+(-slice '(1 2 3 4 5) 1 -1) ;; => '(2 3 4)
+```
+
+### -take `(n list)`
+
+Returns a new list of the first `n` items in `list`, or all items if there are fewer than `n`.
+
+```cl
+(-take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
+(-take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
+```
+
+### -drop `(n list)`
+
+Returns the tail of `list` without the first `n` items.
+
+```cl
+(-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
+(-drop 17 '(1 2 3 4 5)) ;; => '()
+```
+
+### -take-while `(pred list)`
+
+Returns a new list of successive items from `list` while (`pred` item) returns a non-nil value.
+
+```cl
+(-take-while 'even? '(1 2 3 4)) ;; => '()
+(-take-while 'even? '(2 4 5 6)) ;; => '(2 4)
+(--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
+```
+
+### -drop-while `(pred list)`
+
+Returns the tail of `list` starting from the first item for which (`pred` item) returns nil.
+
+```cl
+(-drop-while 'even? '(1 2 3 4)) ;; => '(1 2 3 4)
+(-drop-while 'even? '(2 4 5 6)) ;; => '(5 6)
+(--drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(4 3 2 1)
+```
+
+### -rotate `(n list)`
+
+Rotate `list` `n` places to the right.  With `n` negative, rotate to the left.
+The time complexity is `o`(n).
+
+```cl
+(-rotate 3 '(1 2 3 4 5 6 7)) ;; => '(5 6 7 1 2 3 4)
+(-rotate -3 '(1 2 3 4 5 6 7)) ;; => '(4 5 6 7 1 2 3)
+```
+
+### -insert-at `(n x list)`
+
+Returns a list with `x` inserted into `list` at position `n`.
+
+```cl
+(-insert-at 1 'x '(a b c)) ;; => '(a x b c)
+(-insert-at 12 'x '(a b c)) ;; => '(a b c x)
+```
+
+
+### -reduce-from `(fn initial-value list)`
+
+Returns the result of applying `fn` to `initial-value` and the
+first item in `list`, then applying `fn` to that result and the 2nd
+item, etc. If `list` contains no items, returns `initial-value` and
+`fn` is not called.
+
+In the anaphoric form `--reduce-from`, the accumulated value is
+exposed as `acc`.
+
+```cl
+(-reduce-from '- 10 '(1 2 3)) ;; => 4
+(-reduce-from (lambda (memo item) (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3)) ;; => "(((10 - 1) - 2) - 3)"
+(--reduce-from (concat acc " " it) "START" '("a" "b" "c")) ;; => "START a b c"
+```
+
+### -reduce-r-from `(fn initial-value list)`
+
+Replace conses with `fn`, nil with `initial-value` and evaluate
+the resulting expression. If `list` is empty, `initial-value` is
+returned and `fn` is not called.
+
+Note: this function works the same as `-reduce-from` but the
+operation associates from right instead of from left.
+
+```cl
+(-reduce-r-from '- 10 '(1 2 3)) ;; => -8
+(-reduce-r-from (lambda (item memo) (concat "(" (int-to-string item) " - " memo ")")) "10" '(1 2 3)) ;; => "(1 - (2 - (3 - 10)))"
+(--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) ;; => "a b c END"
+```
+
+### -reduce `(fn list)`
+
+Returns the result of applying `fn` to the first 2 items in `list`,
+then applying `fn` to that result and the 3rd item, etc. If `list`
+contains no items, `fn` must accept no arguments as well, and
+reduce returns the result of calling `fn` with no arguments. If
+`list` has only 1 item, it is returned and `fn` is not called.
+
+In the anaphoric form `--reduce`, the accumulated value is
+exposed as `acc`.
+
+```cl
+(-reduce '- '(1 2 3 4)) ;; => -8
+(-reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) ;; => "1-2-3"
+(--reduce (format "%s-%s" acc it) '(1 2 3)) ;; => "1-2-3"
+```
+
+### -reduce-r `(fn list)`
+
+Replace conses with `fn` and evaluate the resulting expression.
+The final nil is ignored. If `list` contains no items, `fn` must
+accept no arguments as well, and reduce returns the result of
+calling `fn` with no arguments. If `list` has only 1 item, it is
+returned and `fn` is not called.
+
+The first argument of `fn` is the new item, the second is the
+accumulated value.
+
+Note: this function works the same as `-reduce` but the operation
+associates from right instead of from left.
+
+```cl
+(-reduce-r '- '(1 2 3 4)) ;; => -2
+(-reduce-r (lambda (item memo) (format "%s-%s" memo item)) '(1 2 3)) ;; => "3-2-1"
+(--reduce-r (format "%s-%s" acc it) '(1 2 3)) ;; => "3-2-1"
 ```
 
 ### -count `(pred list)`
@@ -392,6 +484,7 @@ comparing them.
 (--max-by (> (car it) (car other)) '((2 2 3) (3) (1 2))) ;; => '(3)
 ```
 
+
 ### -any? `(pred list)`
 
 Returns t if (`pred` x) is non-nil for any x in `list`, else nil.
@@ -437,94 +530,18 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
 (-only-some? 'even? '(2 4 6)) ;; => nil
 ```
 
-### -each `(list fn)`
+### -contains? `(list element)`
 
-Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
-
-```cl
-(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
-(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
-(let (s) (--each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
-```
-
-### -each-while `(list pred fn)`
-
-Calls `fn` with every item in `list` while (`pred` item) is non-nil.
-Returns nil, used for side-effects only.
+Return whether `list` contains `element`.
+The test for equality is done with `equal`,
+or with `-compare-fn` if that's non-nil.
 
 ```cl
-(let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(4 2)
-(let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) ;; => '(2 1)
+(-contains? '(1 2 3) 1) ;; => t
+(-contains? '(1 2 3) 2) ;; => t
+(-contains? '(1 2 3) 4) ;; => nil
 ```
 
-### -dotimes `(num fn)`
-
-Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 through n-1.
-
-```cl
-(let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) ;; => '(2 1 0)
-(let (s) (--dotimes 5 (!cons it s)) s) ;; => '(4 3 2 1 0)
-```
-
-### -repeat `(n x)`
-
-Return a list with `x` repeated `n` times.
-Returns nil if `n` is less than 1.
-
-```cl
-(-repeat 3 :a) ;; => '(:a :a :a)
-(-repeat 1 :a) ;; => '(:a)
-(-repeat 0 :a) ;; => nil
-```
-
-### -slice `(list from &optional to)`
-
-Return copy of `list`, starting from index `from` to index `to`.
-`from` or `to` may be negative.
-
-```cl
-(-slice '(1 2 3 4 5) 1) ;; => '(2 3 4 5)
-(-slice '(1 2 3 4 5) 0 3) ;; => '(1 2 3)
-(-slice '(1 2 3 4 5) 1 -1) ;; => '(2 3 4)
-```
-
-### -take `(n list)`
-
-Returns a new list of the first `n` items in `list`, or all items if there are fewer than `n`.
-
-```cl
-(-take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
-(-take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
-```
-
-### -drop `(n list)`
-
-Returns the tail of `list` without the first `n` items.
-
-```cl
-(-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
-(-drop 17 '(1 2 3 4 5)) ;; => '()
-```
-
-### -take-while `(pred list)`
-
-Returns a new list of successive items from `list` while (`pred` item) returns a non-nil value.
-
-```cl
-(-take-while 'even? '(1 2 3 4)) ;; => '()
-(-take-while 'even? '(2 4 5 6)) ;; => '(2 4)
-(--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
-```
-
-### -drop-while `(pred list)`
-
-Returns the tail of `list` starting from the first item for which (`pred` item) returns nil.
-
-```cl
-(-drop-while 'even? '(1 2 3 4)) ;; => '(1 2 3 4)
-(-drop-while 'even? '(2 4 5 6)) ;; => '(5 6)
-(--drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(4 3 2 1)
-```
 
 ### -split-at `(n list)`
 
@@ -533,25 +550,6 @@ Returns a list of ((-take `n` `list`) (-drop `n` `list`)), in no more than one p
 ```cl
 (-split-at 3 '(1 2 3 4 5)) ;; => '((1 2 3) (4 5))
 (-split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
-```
-
-### -rotate `(n list)`
-
-Rotate `list` `n` places to the right.  With `n` negative, rotate to the left.
-The time complexity is `o`(n).
-
-```cl
-(-rotate 3 '(1 2 3 4 5 6 7)) ;; => '(5 6 7 1 2 3 4)
-(-rotate -3 '(1 2 3 4 5 6 7)) ;; => '(4 5 6 7 1 2 3)
-```
-
-### -insert-at `(n x list)`
-
-Returns a list with `x` inserted into `list` at position `n`.
-
-```cl
-(-insert-at 1 'x '(a b c)) ;; => '(a x b c)
-(-insert-at 12 'x '(a b c)) ;; => '(a b c x)
 ```
 
 ### -split-with `(pred list)`
@@ -654,6 +652,82 @@ elements of `list`.  Keys are compared by `equal`.
 (--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) ;; => '(("a" "a/b" "a/e") ("c" "c/d"))
 ```
 
+
+### -union `(list list2)`
+
+Return a new list containing the elements of `list1` and elements of `list2` that are not in `list1`.
+The test for equality is done with `equal`,
+or with `-compare-fn` if that's non-nil.
+
+```cl
+(-union '(1 2 3) '(3 4 5)) ;; => '(1 2 3 4 5)
+(-union '(1 2 3 4) '()) ;; => '(1 2 3 4)
+(-union '(1 1 2 2) '(3 2 1)) ;; => '(1 1 2 2 3)
+```
+
+### -difference `(list list2)`
+
+Return a new list with only the members of `list` that are not in `list2`.
+The test for equality is done with `equal`,
+or with `-compare-fn` if that's non-nil.
+
+```cl
+(-difference '() '()) ;; => '()
+(-difference '(1 2 3) '(4 5 6)) ;; => '(1 2 3)
+(-difference '(1 2 3 4) '(3 4 5 6)) ;; => '(1 2)
+```
+
+### -intersection `(list list2)`
+
+Return a new list containing only the elements that are members of both `list` and `list2`.
+The test for equality is done with `equal`,
+or with `-compare-fn` if that's non-nil.
+
+```cl
+(-intersection '() '()) ;; => '()
+(-intersection '(1 2 3) '(4 5 6)) ;; => '()
+(-intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
+```
+
+### -distinct `(list)`
+
+Return a new list with all duplicates removed.
+The test for equality is done with `equal`,
+or with `-compare-fn` if that's non-nil.
+
+Alias: `-uniq`
+
+```cl
+(-distinct '()) ;; => '()
+(-distinct '(1 2 2 4)) ;; => '(1 2 4)
+```
+
+
+### -repeat `(n x)`
+
+Return a list with `x` repeated `n` times.
+Returns nil if `n` is less than 1.
+
+```cl
+(-repeat 3 :a) ;; => '(:a :a :a)
+(-repeat 1 :a) ;; => '(:a)
+(-repeat 0 :a) ;; => nil
+```
+
+### -cons* `(&rest args)`
+
+Makes a new list from the elements of `args`.
+
+The last 2 members of `args` are used as the final cons of the
+result so if the final member of `args` is not a list the result is
+a dotted list.
+
+```cl
+(-cons* 1 2) ;; => '(1 . 2)
+(-cons* 1 2 3) ;; => '(1 2 . 3)
+(-cons* 1) ;; => 1
+```
+
 ### -interpose `(sep list)`
 
 Returns a new list of all elements in `list` separated by `sep`.
@@ -743,67 +817,6 @@ Returns the first item of `list`, or nil on an empty list.
 (-last-item nil) ;; => nil
 ```
 
-### -union `(list list2)`
-
-Return a new list containing the elements of `list1` and elements of `list2` that are not in `list1`.
-The test for equality is done with `equal`,
-or with `-compare-fn` if that's non-nil.
-
-```cl
-(-union '(1 2 3) '(3 4 5)) ;; => '(1 2 3 4 5)
-(-union '(1 2 3 4) '()) ;; => '(1 2 3 4)
-(-union '(1 1 2 2) '(3 2 1)) ;; => '(1 1 2 2 3)
-```
-
-### -difference `(list list2)`
-
-Return a new list with only the members of `list` that are not in `list2`.
-The test for equality is done with `equal`,
-or with `-compare-fn` if that's non-nil.
-
-```cl
-(-difference '() '()) ;; => '()
-(-difference '(1 2 3) '(4 5 6)) ;; => '(1 2 3)
-(-difference '(1 2 3 4) '(3 4 5 6)) ;; => '(1 2)
-```
-
-### -intersection `(list list2)`
-
-Return a new list containing only the elements that are members of both `list` and `list2`.
-The test for equality is done with `equal`,
-or with `-compare-fn` if that's non-nil.
-
-```cl
-(-intersection '() '()) ;; => '()
-(-intersection '(1 2 3) '(4 5 6)) ;; => '()
-(-intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
-```
-
-### -distinct `(list)`
-
-Return a new list with all duplicates removed.
-The test for equality is done with `equal`,
-or with `-compare-fn` if that's non-nil.
-
-Alias: `-uniq`
-
-```cl
-(-distinct '()) ;; => '()
-(-distinct '(1 2 2 4)) ;; => '(1 2 4)
-```
-
-### -contains? `(list element)`
-
-Return whether `list` contains `element`.
-The test for equality is done with `equal`,
-or with `-compare-fn` if that's non-nil.
-
-```cl
-(-contains? '(1 2 3) 1) ;; => t
-(-contains? '(1 2 3) 2) ;; => t
-(-contains? '(1 2 3) 4) ;; => nil
-```
-
 ### -sort `(predicate list)`
 
 Sort `list`, stably, comparing elements using `predicate`.
@@ -816,6 +829,7 @@ if the first element should sort before the second.
 (-sort '> '(3 1 2)) ;; => '(3 2 1)
 (--sort (< it other) '(3 1 2)) ;; => '(1 2 3)
 ```
+
 
 ### -> `(x &optional form &rest more)`
 
@@ -855,6 +869,7 @@ in in second form, etc.
 (--> "def" (concat "abc" it "ghi") (upcase it)) ;; => "ABCDEFGHI"
 (--> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
 ```
+
 
 ### -when-let `(var-val &rest body)`
 
@@ -898,6 +913,57 @@ If all `vals` evaluate to true, bind them to their corresponding
 (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") ;; => 15
 (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") ;; => "foo"
 ```
+
+
+### -each `(list fn)`
+
+Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
+
+```cl
+(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
+(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
+(let (s) (--each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
+```
+
+### -each-while `(list pred fn)`
+
+Calls `fn` with every item in `list` while (`pred` item) is non-nil.
+Returns nil, used for side-effects only.
+
+```cl
+(let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(4 2)
+(let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) ;; => '(2 1)
+```
+
+### -dotimes `(num fn)`
+
+Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 through n-1.
+
+```cl
+(let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) ;; => '(2 1 0)
+(let (s) (--dotimes 5 (!cons it s)) s) ;; => '(4 3 2 1 0)
+```
+
+
+### !cons `(car cdr)`
+
+Destructive: Sets `cdr` to the cons of `car` and `cdr`.
+
+```cl
+(let (l) (!cons 5 l) l) ;; => '(5)
+(let ((l '(3))) (!cons 5 l) l) ;; => '(5 3)
+```
+
+### !cdr `(list)`
+
+Destructive: Sets `list` to the cdr of `list`.
+
+```cl
+(let ((l '(3))) (!cdr l) l) ;; => '()
+(let ((l '(3 5))) (!cdr l) l) ;; => '(5)
+```
+
+
 
 ### -partial `(fn &rest args)`
 
@@ -958,8 +1024,6 @@ results (in the same order).
 
 In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
 
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
-
 ```cl
 (-sort (-on '< 'length) '((1 2 3) (1) (1 2))) ;; => '((1) (1 2) (1 2 3))
 (-sort (-on 'string-lessp 'int-to-string) '(10 12 1 2 22)) ;; => '(1 10 12 2 22)
@@ -972,8 +1036,6 @@ Swap the order of arguments for binary function `func`.
 
 In types: (a -> b -> c) -> b -> a -> c
 
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
-
 ```cl
 (funcall (-flip '<) 2 1) ;; => t
 (funcall (-flip '-) 3 8) ;; => 5
@@ -985,8 +1047,6 @@ Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
 Return a function that returns `c` ignoring any additional arguments.
 
 In types: a -> b -> a
-
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
 
 ```cl
 (funcall (-const 2) 1 3 "foo") ;; => 2
@@ -1001,8 +1061,6 @@ Arguments denoted by <> will be left unspecialized.
 
 See `srfi-26` for detailed description.
 
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
-
 ```cl
 (funcall (-cut list 1 <> 3 <> 5) 2 4) ;; => '(1 2 3 4 5)
 (-map (-cut funcall <> 5) '(1+ 1- (lambda (x) (/ 1.0 x)))) ;; => '(6 4 0.2)
@@ -1014,8 +1072,6 @@ Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
 Take an unary predicates `pred` and return an unary predicate
 that returns t if `pred` returns nil and nil if `pred` returns
 non-nil.
-
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
 
 ```cl
 (funcall (-not 'even?) 5) ;; => t
@@ -1030,8 +1086,6 @@ the `preds` returns non-nil on x.
 
 In types: [a -> Bool] -> a -> Bool
 
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
-
 ```cl
 (-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 6 8 10)
 (funcall (-orfn 'stringp 'even?) "foo") ;; => t
@@ -1045,30 +1099,10 @@ predicate with argument x that returns non-nil if all of the
 
 In types: [a -> Bool] -> a -> Bool
 
-Available by `(require 'dash-functional)`. Requires Emacs 24 or higher.
-
 ```cl
 (funcall (-andfn (-cut < <> 10) 'even?) 6) ;; => t
 (funcall (-andfn (-cut < <> 10) 'even?) 12) ;; => nil
 (-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 3 5)
-```
-
-### !cons `(car cdr)`
-
-Destructive: Sets `cdr` to the cons of `car` and `cdr`.
-
-```cl
-(let (l) (!cons 5 l) l) ;; => '(5)
-(let ((l '(3))) (!cons 5 l) l) ;; => '(5 3)
-```
-
-### !cdr `(list)`
-
-Destructive: Sets `list` to the cdr of `list`.
-
-```cl
-(let ((l '(3))) (!cdr l) l) ;; => '()
-(let ((l '(3 5))) (!cdr l) l) ;; => '(5)
 ```
 
 

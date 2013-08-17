@@ -43,6 +43,13 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
                             (documentation ',cmd)
                             (-map 'example-to-string (-partition 3 ',examples)))))
 
+(defmacro def-example-group (group desc &rest examples)
+  `(progn
+     (add-to-list 'functions ,(concat "### " group))
+     (when ,desc
+       (add-to-list 'functions ,desc))
+     ,@examples))
+
 (defun quote-and-downcase (string)
   (format "`%s`" (downcase string)))
 
@@ -53,15 +60,17 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
       (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" it t))))
 
 (defun function-to-md (function)
-  (let ((command-name (car function))
-        (signature (cadr function))
-        (docstring (quote-docstring (nth 2 function)))
-        (examples (nth 3 function)))
-    (format "### %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
-            command-name
-            signature
-            docstring
-            (mapconcat 'identity (-take 3 examples) "\n"))))
+  (if (stringp function)
+      ""
+    (let ((command-name (car function))
+          (signature (cadr function))
+          (docstring (quote-docstring (nth 2 function)))
+          (examples (nth 3 function)))
+      (format "### %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
+              command-name
+              signature
+              docstring
+              (mapconcat 'identity (-take 3 examples) "\n")))))
 
 (defun docs--chop-suffix (suffix s)
   "Remove SUFFIX if it is at end of S."
@@ -77,9 +86,11 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
    (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (format "%S %S" command-name signature))))
 
 (defun function-summary (function)
-  (let ((command-name (car function))
-        (signature (cadr function)))
-    (format "* [%s](#%s) `%s`" command-name (github-id command-name signature) signature)))
+  (if (stringp function)
+      (concat "\n" function "\n")
+    (let ((command-name (car function))
+          (signature (cadr function)))
+      (format "* [%s](#%s) `%s`" command-name (github-id command-name signature) signature))))
 
 (defun simplify-quotes ()
   (goto-char (point-min))

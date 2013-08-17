@@ -29,10 +29,10 @@ Or you can just dump `dash.el` in your load path somewhere.
 
 [[ function-list ]]
 
-There are also anaphoric versions of these functions where that makes sense,
-prefixed with two dashes instead of one.
-
 ## Anaphoric functions
+
+There are also anaphoric versions of functions where that makes sense,
+prefixed with two dashes instead of one.
 
 While `-map` takes a function to map over the list, you can also use
 the anaphoric form with double dashes - which will then be executed

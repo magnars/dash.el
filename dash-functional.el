@@ -83,7 +83,7 @@ Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
 In types: a -> b -> a
 
 Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
-  (lambda (&rest args) c))
+  (lambda (&rest _) c))
 
 (defmacro -cut (&rest params)
   "Take n-ary function and n arguments and specialize some of them.
@@ -93,7 +93,7 @@ See SRFI-26 for detailed description.
 
 Available by `(require 'dash-functional)`. Requires Emacs 24 or higher."
   (let* ((i 0)
-         (args (mapcar (lambda (x) (setq i (1+ i)) (make-symbol (format "D%d" i)))
+         (args (mapcar (lambda (_) (setq i (1+ i)) (make-symbol (format "D%d" i)))
                        (-filter (-partial 'eq '<>) params))))
     `(lambda ,args
        ,(--map (if (eq it '<>) (pop args) it) params))))

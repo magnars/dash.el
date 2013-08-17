@@ -127,7 +127,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 * [!cons](#-cons-car-cdr) `(car cdr)`
 * [!cdr](#-cdr-list) `(list)`
 
-### Function composition
+### Function combinators
 
 
 These combinators require Emacs 24 for its lexical scope. So you'll have to include them with `(require 'dash-functional)`.

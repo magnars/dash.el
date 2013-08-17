@@ -382,7 +382,7 @@
     (let ((l '(3))) (!cdr l) l) => '()
     (let ((l '(3 5))) (!cdr l) l) => '(5)))
 
-(def-example-group "Function composition" "These combinators require Emacs 24 for its lexical scope. So you'll have to include them with `(require 'dash-functional)`."
+(def-example-group "Function combinators" "These combinators require Emacs 24 for its lexical scope. So you'll have to include them with `(require 'dash-functional)`."
   (defexamples -partial
     (funcall (-partial '- 5) 3) => 2
     (funcall (-partial '+ 5 2) 3) => 10)

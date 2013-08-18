@@ -61,12 +61,12 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
 
 (defun function-to-md (function)
   (if (stringp function)
-      ""
+      (concat "\n" (s-replace "### " "## " function) "\n")
     (let ((command-name (car function))
           (signature (cadr function))
           (docstring (quote-docstring (nth 2 function)))
           (examples (nth 3 function)))
-      (format "### %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
+      (format "#### %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
               command-name
               signature
               docstring
@@ -84,6 +84,10 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
   (docs--chop-suffix
    "-"
    (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (format "%S %S" command-name signature))))
+
+(defun s-replace (old new s)
+  "Replaces OLD with NEW in S."
+  (replace-regexp-in-string (regexp-quote old) new s t t))
 
 (defun function-summary (function)
   (if (stringp function)

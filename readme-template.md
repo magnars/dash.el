@@ -73,8 +73,6 @@ of course the original can also be written like
 
 which demonstrates the usefulness of both versions.
 
-## Documentation and examples
-
 [[ function-docs ]]
 
 ## Contribute

@@ -188,10 +188,10 @@ of course the original can also be written like
 
 which demonstrates the usefulness of both versions.
 
-## Documentation and examples
 
+## List to list
 
-### -map `(fn list)`
+#### -map `(fn list)`
 
 Returns a new list consisting of the result of applying `fn` to the items in `list`.
 
@@ -201,7 +201,7 @@ Returns a new list consisting of the result of applying `fn` to the items in `li
 (--map (* it it) '(1 2 3 4)) ;; => '(1 4 9 16)
 ```
 
-### -filter `(pred list)`
+#### -filter `(pred list)`
 
 Returns a new list of the items in `list` for which `pred` returns a non-nil value.
 
@@ -213,7 +213,7 @@ Alias: `-select`
 (--filter (= 0 (% it 2)) '(1 2 3 4)) ;; => '(2 4)
 ```
 
-### -remove `(pred list)`
+#### -remove `(pred list)`
 
 Returns a new list of the items in `list` for which `pred` returns nil.
 
@@ -225,7 +225,7 @@ Alias: `-reject`
 (--remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
 ```
 
-### -keep `(fn list)`
+#### -keep `(fn list)`
 
 Returns a new list of the non-nil results of applying `fn` to the items in `list`.
 
@@ -235,7 +235,7 @@ Returns a new list of the non-nil results of applying `fn` to the items in `list
 (--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => '(40 50 60)
 ```
 
-### -map-when `(pred rep list)`
+#### -map-when `(pred rep list)`
 
 Returns a new list where the elements in `list` that does not match the `pred` function
 are unchanged, and where the elements in `list` that do match the `pred` function are mapped
@@ -247,7 +247,7 @@ through the `rep` function.
 (--map-when (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
 ```
 
-### -map-indexed `(fn list)`
+#### -map-indexed `(fn list)`
 
 Returns a new list consisting of the result of (`fn` index item) for each item in `list`.
 
@@ -258,7 +258,7 @@ In the anaphoric form `--map-indexed`, the index is exposed as `it-index`.
 (--map-indexed (- it it-index) '(1 2 3 4)) ;; => '(1 1 1 1)
 ```
 
-### -flatten `(l)`
+#### -flatten `(l)`
 
 Takes a nested list `l` and returns its contents as a single, flat list.
 
@@ -268,7 +268,7 @@ Takes a nested list `l` and returns its contents as a single, flat list.
 (-flatten '(1 2 (3 . 4))) ;; => '(1 2 (3 . 4))
 ```
 
-### -concat `(&rest lists)`
+#### -concat `(&rest lists)`
 
 Returns a new list with the concatenation of the elements in the supplied `lists`.
 
@@ -278,7 +278,7 @@ Returns a new list with the concatenation of the elements in the supplied `lists
 (-concat '(1) '(2 3) '(4)) ;; => '(1 2 3 4)
 ```
 
-### -mapcat `(fn list)`
+#### -mapcat `(fn list)`
 
 Returns the concatenation of the result of mapping `fn` over `list`.
 Thus function `fn` should return a list.
@@ -289,7 +289,7 @@ Thus function `fn` should return a list.
 (--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 ```
 
-### -slice `(list from &optional to)`
+#### -slice `(list from &optional to)`
 
 Return copy of `list`, starting from index `from` to index `to`.
 `from` or `to` may be negative.
@@ -300,7 +300,7 @@ Return copy of `list`, starting from index `from` to index `to`.
 (-slice '(1 2 3 4 5) 1 -1) ;; => '(2 3 4)
 ```
 
-### -take `(n list)`
+#### -take `(n list)`
 
 Returns a new list of the first `n` items in `list`, or all items if there are fewer than `n`.
 
@@ -309,7 +309,7 @@ Returns a new list of the first `n` items in `list`, or all items if there are f
 (-take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
 ```
 
-### -drop `(n list)`
+#### -drop `(n list)`
 
 Returns the tail of `list` without the first `n` items.
 
@@ -318,7 +318,7 @@ Returns the tail of `list` without the first `n` items.
 (-drop 17 '(1 2 3 4 5)) ;; => '()
 ```
 
-### -take-while `(pred list)`
+#### -take-while `(pred list)`
 
 Returns a new list of successive items from `list` while (`pred` item) returns a non-nil value.
 
@@ -328,7 +328,7 @@ Returns a new list of successive items from `list` while (`pred` item) returns a
 (--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
 ```
 
-### -drop-while `(pred list)`
+#### -drop-while `(pred list)`
 
 Returns the tail of `list` starting from the first item for which (`pred` item) returns nil.
 
@@ -338,7 +338,7 @@ Returns the tail of `list` starting from the first item for which (`pred` item) 
 (--drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(4 3 2 1)
 ```
 
-### -rotate `(n list)`
+#### -rotate `(n list)`
 
 Rotate `list` `n` places to the right.  With `n` negative, rotate to the left.
 The time complexity is `o`(n).
@@ -348,7 +348,7 @@ The time complexity is `o`(n).
 (-rotate -3 '(1 2 3 4 5 6 7)) ;; => '(4 5 6 7 1 2 3)
 ```
 
-### -insert-at `(n x list)`
+#### -insert-at `(n x list)`
 
 Returns a list with `x` inserted into `list` at position `n`.
 
@@ -358,7 +358,9 @@ Returns a list with `x` inserted into `list` at position `n`.
 ```
 
 
-### -reduce-from `(fn initial-value list)`
+## Reductions
+
+#### -reduce-from `(fn initial-value list)`
 
 Returns the result of applying `fn` to `initial-value` and the
 first item in `list`, then applying `fn` to that result and the 2nd
@@ -374,7 +376,7 @@ exposed as `acc`.
 (--reduce-from (concat acc " " it) "START" '("a" "b" "c")) ;; => "START a b c"
 ```
 
-### -reduce-r-from `(fn initial-value list)`
+#### -reduce-r-from `(fn initial-value list)`
 
 Replace conses with `fn`, nil with `initial-value` and evaluate
 the resulting expression. If `list` is empty, `initial-value` is
@@ -389,7 +391,7 @@ operation associates from right instead of from left.
 (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) ;; => "a b c END"
 ```
 
-### -reduce `(fn list)`
+#### -reduce `(fn list)`
 
 Returns the result of applying `fn` to the first 2 items in `list`,
 then applying `fn` to that result and the 3rd item, etc. If `list`
@@ -406,7 +408,7 @@ exposed as `acc`.
 (--reduce (format "%s-%s" acc it) '(1 2 3)) ;; => "1-2-3"
 ```
 
-### -reduce-r `(fn list)`
+#### -reduce-r `(fn list)`
 
 Replace conses with `fn` and evaluate the resulting expression.
 The final nil is ignored. If `list` contains no items, `fn` must
@@ -426,7 +428,7 @@ associates from right instead of from left.
 (--reduce-r (format "%s-%s" acc it) '(1 2 3)) ;; => "3-2-1"
 ```
 
-### -count `(pred list)`
+#### -count `(pred list)`
 
 Counts the number of items in `list` where (`pred` item) is non-nil.
 
@@ -435,7 +437,7 @@ Counts the number of items in `list` where (`pred` item) is non-nil.
 (--count (< it 4) '(1 2 3 4)) ;; => 3
 ```
 
-### -sum `(list)`
+#### -sum `(list)`
 
 Return the sum of `list`.
 
@@ -445,7 +447,7 @@ Return the sum of `list`.
 (-sum '(1 2 3)) ;; => 6
 ```
 
-### -product `(list)`
+#### -product `(list)`
 
 Return the product of `list`.
 
@@ -455,7 +457,7 @@ Return the product of `list`.
 (-product '(1 2 3)) ;; => 6
 ```
 
-### -min `(list)`
+#### -min `(list)`
 
 Return the smallest value from `list` of numbers or markers.
 
@@ -465,7 +467,7 @@ Return the smallest value from `list` of numbers or markers.
 (-min '(1 2 3)) ;; => 1
 ```
 
-### -min-by `(comparator list)`
+#### -min-by `(comparator list)`
 
 Take a comparison function `comparator` and a `list` and return
 the least element of the list by the comparison function.
@@ -479,7 +481,7 @@ comparing them.
 (--min-by (> (length it) (length other)) '((1 2 3) (1) (1 2))) ;; => '(1)
 ```
 
-### -max `(list)`
+#### -max `(list)`
 
 Return the largest value from `list` of numbers or markers.
 
@@ -489,7 +491,7 @@ Return the largest value from `list` of numbers or markers.
 (-max '(1 2 3)) ;; => 3
 ```
 
-### -max-by `(comparator list)`
+#### -max-by `(comparator list)`
 
 Take a comparison function `comparator` and a `list` and return
 the greatest element of the list by the comparison function.
@@ -504,7 +506,9 @@ comparing them.
 ```
 
 
-### -any? `(pred list)`
+## Predicates
+
+#### -any? `(pred list)`
 
 Returns t if (`pred` x) is non-nil for any x in `list`, else nil.
 
@@ -516,7 +520,7 @@ Alias: `-some?`
 (--any? (= 0 (% it 2)) '(1 2 3)) ;; => t
 ```
 
-### -all? `(pred list)`
+#### -all? `(pred list)`
 
 Returns t if (`pred` x) is non-nil for all x in `list`, else nil.
 
@@ -528,7 +532,7 @@ Alias: `-every?`
 (--all? (= 0 (% it 2)) '(2 4 6)) ;; => t
 ```
 
-### -none? `(pred list)`
+#### -none? `(pred list)`
 
 Returns t if (`pred` x) is nil for all x in `list`, else nil.
 
@@ -538,7 +542,7 @@ Returns t if (`pred` x) is nil for all x in `list`, else nil.
 (--none? (= 0 (% it 2)) '(1 2 3)) ;; => nil
 ```
 
-### -only-some? `(pred list)`
+#### -only-some? `(pred list)`
 
 Returns `t` if there is a mix of items in `list` that matches and does not match `pred`.
 Returns `nil` both if all items match the predicate, and if none of the items match the predicate.
@@ -549,7 +553,7 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
 (-only-some? 'even? '(2 4 6)) ;; => nil
 ```
 
-### -contains? `(list element)`
+#### -contains? `(list element)`
 
 Return whether `list` contains `element`.
 The test for equality is done with `equal`,
@@ -562,7 +566,9 @@ or with `-compare-fn` if that's non-nil.
 ```
 
 
-### -split-at `(n list)`
+## Partitioning
+
+#### -split-at `(n list)`
 
 Returns a list of ((-take `n` `list`) (-drop `n` `list`)), in no more than one pass through the list.
 
@@ -571,7 +577,7 @@ Returns a list of ((-take `n` `list`) (-drop `n` `list`)), in no more than one p
 (-split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
 ```
 
-### -split-with `(pred list)`
+#### -split-with `(pred list)`
 
 Returns a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`)), in no more than one pass through the list.
 
@@ -581,7 +587,7 @@ Returns a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`)), in 
 (--split-with (< it 4) '(1 2 3 4 3 2 1)) ;; => '((1 2 3) (4 3 2 1))
 ```
 
-### -separate `(pred list)`
+#### -separate `(pred list)`
 
 Returns a list of ((-filter `pred` `list`) (-remove `pred` `list`)), in one pass through the list.
 
@@ -591,7 +597,7 @@ Returns a list of ((-filter `pred` `list`) (-remove `pred` `list`)), in one pass
 (-separate 'cdr '((1 2) (1) (1 2 3) (4))) ;; => '(((1 2) (1 2 3)) ((1) (4)))
 ```
 
-### -partition `(n list)`
+#### -partition `(n list)`
 
 Returns a new list with the items in `list` grouped into `n-`sized sublists.
 If there are not enough items to make the last group `n-`sized,
@@ -603,7 +609,7 @@ those items are discarded.
 (-partition 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6))
 ```
 
-### -partition-all-in-steps `(n step list)`
+#### -partition-all-in-steps `(n step list)`
 
 Returns a new list with the items in `list` grouped into `n-`sized sublists at offsets `step` apart.
 The last groups may contain less than `n` items.
@@ -614,7 +620,7 @@ The last groups may contain less than `n` items.
 (-partition-all-in-steps 3 2 '(1 2 3 4 5)) ;; => '((1 2 3) (3 4 5) (5))
 ```
 
-### -partition-in-steps `(n step list)`
+#### -partition-in-steps `(n step list)`
 
 Returns a new list with the items in `list` grouped into `n-`sized sublists at offsets `step` apart.
 If there are not enough items to make the last group `n-`sized,
@@ -626,7 +632,7 @@ those items are discarded.
 (-partition-in-steps 3 2 '(1 2 3 4 5)) ;; => '((1 2 3) (3 4 5))
 ```
 
-### -partition-all `(n list)`
+#### -partition-all `(n list)`
 
 Returns a new list with the items in `list` grouped into `n-`sized sublists.
 The last group may contain less than `n` items.
@@ -637,7 +643,7 @@ The last group may contain less than `n` items.
 (-partition-all 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6) (7))
 ```
 
-### -partition-by `(fn list)`
+#### -partition-by `(fn list)`
 
 Applies `fn` to each item in `list`, splitting it each time `fn` returns a new value.
 
@@ -647,7 +653,7 @@ Applies `fn` to each item in `list`, splitting it each time `fn` returns a new v
 (--partition-by (< it 3) '(1 2 3 4 3 2 1)) ;; => '((1 2) (3 4 3) (2 1))
 ```
 
-### -partition-by-header `(fn list)`
+#### -partition-by-header `(fn list)`
 
 Applies `fn` to the first item in `list`. That is the header
   value. Applies `fn` to each item in `list`, splitting it each time
@@ -660,7 +666,7 @@ Applies `fn` to the first item in `list`. That is the header
 (-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1)) ;; => '((2 1 1 1) (4 1 3 5) (6 6 1))
 ```
 
-### -group-by `(fn list)`
+#### -group-by `(fn list)`
 
 Separate `list` into an alist whose keys are `fn` applied to the
 elements of `list`.  Keys are compared by `equal`.
@@ -672,7 +678,9 @@ elements of `list`.  Keys are compared by `equal`.
 ```
 
 
-### -union `(list list2)`
+## Set operations
+
+#### -union `(list list2)`
 
 Return a new list containing the elements of `list1` and elements of `list2` that are not in `list1`.
 The test for equality is done with `equal`,
@@ -684,7 +692,7 @@ or with `-compare-fn` if that's non-nil.
 (-union '(1 1 2 2) '(3 2 1)) ;; => '(1 1 2 2 3)
 ```
 
-### -difference `(list list2)`
+#### -difference `(list list2)`
 
 Return a new list with only the members of `list` that are not in `list2`.
 The test for equality is done with `equal`,
@@ -696,7 +704,7 @@ or with `-compare-fn` if that's non-nil.
 (-difference '(1 2 3 4) '(3 4 5 6)) ;; => '(1 2)
 ```
 
-### -intersection `(list list2)`
+#### -intersection `(list list2)`
 
 Return a new list containing only the elements that are members of both `list` and `list2`.
 The test for equality is done with `equal`,
@@ -708,7 +716,7 @@ or with `-compare-fn` if that's non-nil.
 (-intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
 ```
 
-### -distinct `(list)`
+#### -distinct `(list)`
 
 Return a new list with all duplicates removed.
 The test for equality is done with `equal`,
@@ -722,7 +730,9 @@ Alias: `-uniq`
 ```
 
 
-### -repeat `(n x)`
+## Other list operations
+
+#### -repeat `(n x)`
 
 Return a list with `x` repeated `n` times.
 Returns nil if `n` is less than 1.
@@ -733,7 +743,7 @@ Returns nil if `n` is less than 1.
 (-repeat 0 :a) ;; => nil
 ```
 
-### -cons* `(&rest args)`
+#### -cons* `(&rest args)`
 
 Makes a new list from the elements of `args`.
 
@@ -747,7 +757,7 @@ a dotted list.
 (-cons* 1) ;; => 1
 ```
 
-### -interpose `(sep list)`
+#### -interpose `(sep list)`
 
 Returns a new list of all elements in `list` separated by `sep`.
 
@@ -757,7 +767,7 @@ Returns a new list of all elements in `list` separated by `sep`.
 (-interpose "-" '("a" "b" "c")) ;; => '("a" "-" "b" "-" "c")
 ```
 
-### -interleave `(&rest lists)`
+#### -interleave `(&rest lists)`
 
 Returns a new list of the first item in each list, then the second etc.
 
@@ -767,7 +777,7 @@ Returns a new list of the first item in each list, then the second etc.
 (-interleave '(1 2 3) '("a" "b")) ;; => '(1 "a" 2 "b")
 ```
 
-### -zip-with `(fn list1 list2)`
+#### -zip-with `(fn list1 list2)`
 
 Zip the two lists `list1` and `list2` using a function `fn`.  This
 function is applied pairwise taking as first argument element of
@@ -783,7 +793,7 @@ and the elements from `list2` as `other`.
 (--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde")) ;; => '("Batman and Robin" "Jekyll and Hyde")
 ```
 
-### -zip `(list1 list2)`
+#### -zip `(list1 list2)`
 
 Zip the two lists together.  Return the list where elements
 are cons pairs with car being element from `list1` and cdr being
@@ -796,7 +806,7 @@ length of the shorter one.
 (-zip '(1 2 3 4) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
 ```
 
-### -first `(pred list)`
+#### -first `(pred list)`
 
 Returns the first x in `list` where (`pred` x) is non-nil, else nil.
 
@@ -808,7 +818,7 @@ To get the first item in the list no questions asked, use `car`.
 (--first (> it 2) '(1 2 3)) ;; => 3
 ```
 
-### -last `(pred list)`
+#### -last `(pred list)`
 
 Return the last x in `list` where (`pred` x) is non-nil, else nil.
 
@@ -818,7 +828,7 @@ Return the last x in `list` where (`pred` x) is non-nil, else nil.
 (--last (> (length it) 3) '("a" "looong" "word" "and" "short" "one")) ;; => "short"
 ```
 
-### -first-item `(list)`
+#### -first-item `(list)`
 
 Returns the first item of `list`, or nil on an empty list.
 
@@ -827,7 +837,7 @@ Returns the first item of `list`, or nil on an empty list.
 (-first-item nil) ;; => nil
 ```
 
-### -last-item `(list)`
+#### -last-item `(list)`
 
 Returns the first item of `list`, or nil on an empty list.
 
@@ -836,7 +846,7 @@ Returns the first item of `list`, or nil on an empty list.
 (-last-item nil) ;; => nil
 ```
 
-### -sort `(predicate list)`
+#### -sort `(predicate list)`
 
 Sort `list`, stably, comparing elements using `predicate`.
 Returns the sorted list.  `list` is `not` modified by side effects.
@@ -850,7 +860,9 @@ if the first element should sort before the second.
 ```
 
 
-### -> `(x &optional form &rest more)`
+## Threading macros
+
+#### -> `(x &optional form &rest more)`
 
 Threads the expr through the forms. Inserts `x` as the second
 item in the first form, making a list of it if it is not a list
@@ -863,7 +875,7 @@ second item in second form, etc.
 (-> "Abc" (concat "def") (concat "ghi")) ;; => "Abcdefghi"
 ```
 
-### ->> `(x form &rest more)`
+#### ->> `(x form &rest more)`
 
 Threads the expr through the forms. Inserts `x` as the last item
 in the first form, making a list of it if it is not a list
@@ -876,7 +888,7 @@ last item in second form, etc.
 (->> 5 (- 8)) ;; => 3
 ```
 
-### --> `(x form &rest more)`
+#### --> `(x form &rest more)`
 
 Threads the expr through the forms. Inserts `x` at the position
 signified by the token `it` in the first form. If there are more
@@ -890,7 +902,9 @@ in in second form, etc.
 ```
 
 
-### -when-let `(var-val &rest body)`
+## Binding
+
+#### -when-let `(var-val &rest body)`
 
 If `val` evaluates to non-nil, bind it to `var` and execute body.
 `var-val` should be a (`var` `val`) pair.
@@ -901,7 +915,7 @@ If `val` evaluates to non-nil, bind it to `var` and execute body.
 (--when-let (even? 3) (cat it :a)) ;; => nil
 ```
 
-### -when-let* `(vars-vals &rest body)`
+#### -when-let* `(vars-vals &rest body)`
 
 If all `vals` evaluate to true, bind them to their corresponding
   `vars` and execute body. `vars-vals` should be a list of (`var` `val`)
@@ -912,7 +926,7 @@ If all `vals` evaluate to true, bind them to their corresponding
 (-when-let* ((x 5) (y nil) (z 7)) (+ x y z)) ;; => nil
 ```
 
-### -if-let `(var-val then &optional else)`
+#### -if-let `(var-val then &optional else)`
 
 If `val` evaluates to non-nil, bind it to `var` and do `then`,
 otherwise do `else`. `var-val` should be a (`var` `val`) pair.
@@ -922,7 +936,7 @@ otherwise do `else`. `var-val` should be a (`var` `val`) pair.
 (--if-let (even? 4) it nil) ;; => t
 ```
 
-### -if-let* `(vars-vals then &optional else)`
+#### -if-let* `(vars-vals then &optional else)`
 
 If all `vals` evaluate to true, bind them to their corresponding
   `vars` and do `then`, otherwise do `else`. `vars-vals` should be a list
@@ -934,7 +948,9 @@ If all `vals` evaluate to true, bind them to their corresponding
 ```
 
 
-### -each `(list fn)`
+## Side-effects
+
+#### -each `(list fn)`
 
 Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
 
@@ -944,7 +960,7 @@ Calls `fn` with every item in `list`. Returns nil, used for side-effects only.
 (let (s) (--each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
 ```
 
-### -each-while `(list pred fn)`
+#### -each-while `(list pred fn)`
 
 Calls `fn` with every item in `list` while (`pred` item) is non-nil.
 Returns nil, used for side-effects only.
@@ -954,7 +970,7 @@ Returns nil, used for side-effects only.
 (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) ;; => '(2 1)
 ```
 
-### -dotimes `(num fn)`
+#### -dotimes `(num fn)`
 
 Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 through n-1.
 
@@ -964,7 +980,9 @@ Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 t
 ```
 
 
-### !cons `(car cdr)`
+## Destructive operations
+
+#### !cons `(car cdr)`
 
 Destructive: Sets `cdr` to the cons of `car` and `cdr`.
 
@@ -973,7 +991,7 @@ Destructive: Sets `cdr` to the cons of `car` and `cdr`.
 (let ((l '(3))) (!cons 5 l) l) ;; => '(5 3)
 ```
 
-### !cdr `(list)`
+#### !cdr `(list)`
 
 Destructive: Sets `list` to the cdr of `list`.
 
@@ -983,8 +1001,12 @@ Destructive: Sets `list` to the cdr of `list`.
 ```
 
 
+## Function combinators
 
-### -partial `(fn &rest args)`
+
+These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
+
+#### -partial `(fn &rest args)`
 
 Takes a function `fn` and fewer than the normal arguments to `fn`,
 and returns a fn that takes a variable number of additional `args`.
@@ -996,35 +1018,31 @@ then additional args.
 (funcall (-partial '+ 5 2) 3) ;; => 10
 ```
 
-### -rpartial `(fn &rest args)`
+#### -rpartial `(fn &rest args)`
 
 Takes a function `fn` and fewer than the normal arguments to `fn`,
 and returns a fn that takes a variable number of additional `args`.
 When called, the returned function calls `fn` with the additional
 args first and then `args`.
 
-Requires Emacs 24 or higher.
-
 ```cl
 (funcall (-rpartial '- 5) 8) ;; => 3
 (funcall (-rpartial '- 5 2) 10) ;; => 3
 ```
 
-### -juxt `(&rest fns)`
+#### -juxt `(&rest fns)`
 
 Takes a list of functions and returns a fn that is the
 juxtaposition of those fns. The returned fn takes a variable
 number of args, and returns a list containing the result of
 applying each fn to the args (left-to-right).
 
-Requires Emacs 24 or higher.
-
 ```cl
 (funcall (-juxt '+ '-) 3 5) ;; => '(8 -2)
 (-map (-juxt 'identity 'square) '(1 2 3)) ;; => '((1 1) (2 4) (3 9))
 ```
 
-### -applify `(fn)`
+#### -applify `(fn)`
 
 Changes an n-arity function `fn` to a 1-arity function that
 expects a list with n items as arguments
@@ -1035,7 +1053,7 @@ expects a list with n items as arguments
 (funcall (-applify '<) '(3 6)) ;; => t
 ```
 
-### -on `(operator transformer)`
+#### -on `(operator transformer)`
 
 Return a function of two arguments that first applies
 `transformer` to each of them and then applies `operator` on the
@@ -1049,7 +1067,7 @@ In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
 (-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) ;; => 22
 ```
 
-### -flip `(func)`
+#### -flip `(func)`
 
 Swap the order of arguments for binary function `func`.
 
@@ -1061,7 +1079,7 @@ In types: (a -> b -> c) -> b -> a -> c
 (-sort (-flip '<) '(4 3 6 1)) ;; => '(6 4 3 1)
 ```
 
-### -const `(c)`
+#### -const `(c)`
 
 Return a function that returns `c` ignoring any additional arguments.
 
@@ -1073,7 +1091,7 @@ In types: a -> b -> a
 (-sum (-map (-const 1) '("a" "b" "c" "d"))) ;; => 4
 ```
 
-### -cut `(&rest params)`
+#### -cut `(&rest params)`
 
 Take n-ary function and n arguments and specialize some of them.
 Arguments denoted by <> will be left unspecialized.
@@ -1086,7 +1104,7 @@ See `srfi-26` for detailed description.
 (-filter (-cut < <> 5) '(1 3 5 7 9)) ;; => '(1 3)
 ```
 
-### -not `(pred)`
+#### -not `(pred)`
 
 Take an unary predicates `pred` and return an unary predicate
 that returns t if `pred` returns nil and nil if `pred` returns
@@ -1097,7 +1115,7 @@ non-nil.
 (-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8)) ;; => '(1 2 3 4)
 ```
 
-### -orfn `(&rest preds)`
+#### -orfn `(&rest preds)`
 
 Take list of unary predicates `preds` and return an unary
 predicate with argument x that returns non-nil if at least one of
@@ -1110,7 +1128,7 @@ In types: [a -> Bool] -> a -> Bool
 (funcall (-orfn 'stringp 'even?) "foo") ;; => t
 ```
 
-### -andfn `(&rest preds)`
+#### -andfn `(&rest preds)`
 
 Take list of unary predicates `preds` and return an unary
 predicate with argument x that returns non-nil if all of the

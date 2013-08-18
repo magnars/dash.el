@@ -3,6 +3,7 @@
 ;; Copyright (C) 2012 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
+;; Version: 1.8.0
 ;; Keywords: lists
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -25,13 +26,6 @@
 ;; See documentation on https://github.com/magnars/dash.el#functions
 
 ;;; Code:
-
-(defalias '-first-item 'car
-  "Returns the first item of LIST, or nil on an empty list.")
-
-(defun -last-item (list)
-  "Returns the first item of LIST, or nil on an empty list."
-  (car (last list)))
 
 (defmacro !cons (car cdr)
   "Destructive: Sets CDR to the cons of CAR and CDR."
@@ -306,6 +300,13 @@ To get the first item in the list no questions asked, use `car'."
 (defun -last (pred list)
   "Return the last x in LIST where (PRED x) is non-nil, else nil."
   (--last (funcall pred it) list))
+
+(defalias '-first-item 'car
+  "Returns the first item of LIST, or nil on an empty list.")
+
+(defun -last-item (list)
+  "Returns the first item of LIST, or nil on an empty list."
+  (car (last list)))
 
 (defmacro --count (pred list)
   "Anaphoric form of `-count'."

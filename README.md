@@ -120,7 +120,7 @@ To get function combinators:
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
 * [-last-item](#-last-item-list) `(list)`
-* [-sort](#-sort-predicate-list) `(predicate list)`
+* [-sort](#-sort-comparator-list) `(comparator list)`
 
 ### Threading macros
 
@@ -846,11 +846,11 @@ Returns the first item of `list`, or nil on an empty list.
 (-last-item nil) ;; => nil
 ```
 
-#### -sort `(predicate list)`
+#### -sort `(comparator list)`
 
-Sort `list`, stably, comparing elements using `predicate`.
+Sort `list`, stably, comparing elements using `comparator`.
 Returns the sorted list.  `list` is `not` modified by side effects.
-`predicate` is called with two elements of `list`, and should return non-nil
+`comparator` is called with two elements of `list`, and should return non-nil
 if the first element should sort before the second.
 
 ```cl

@@ -5,7 +5,7 @@
 ;; Authors: Matus Goljer <matus.goljer@gmail.com>
 ;;          Magnar Sveen <magnars@gmail.com>
 ;; Version: 1.0.0
-;; Package-Requires: ((dash "1.8.0") (emacs "24"))
+;; Package-Requires: ((dash "2.0.0") (emacs "24"))
 ;; Keywords: lisp functions combinators
 
 ;; This program is free software; you can redistribute it and/or modify

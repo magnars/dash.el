@@ -142,26 +142,20 @@
     (-min '(3 2 1)) => 1
     (-min '(1 2 3)) => 1)
 
-  (unless (version< emacs-version "24") ;; required for -on
-    (defexamples -min-by
-      (-min-by '> '(4 3 6 1)) => 1
-      (-min-by (-on '> 'length) '((1 2 3) (1) (1 2))) => '(1)
-      (--min-by (> (length it) (length other)) '((1 2 3) (1) (1 2))) => '(1)
-      (-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) => 22
-      (-min-by '< '(4 3 6 1)) => 6))
+  (defexamples -min-by
+    (-min-by '> '(4 3 6 1)) => 1
+    (-min-by '< '(4 3 6 1)) => 6
+    (--min-by (> (length it) (length other)) '((1 2 3) (1) (1 2))) => '(1))
 
   (defexamples -max
     (-max '(0)) => 0
     (-max '(3 2 1)) => 3
     (-max '(1 2 3)) => 3)
 
-  (unless (version< emacs-version "24") ;; required for -on
-    (defexamples -max-by
-      (-max-by '> '(4 3 6 1)) => 6
-      (-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) => '(3)
-      (--max-by (> (car it) (car other)) '((2 2 3) (3) (1 2))) => '(3)
-      (-max-by (-on '> 'string-to-int) '("1" "2" "3")) => "3"
-      (-max-by '< '(4 3 6 1)) => 1)))
+  (defexamples -max-by
+    (-max-by '> '(4 3 6 1)) => 6
+    (--max-by (> (car it) (car other)) '((2 2 3) (3) (1 2))) => '(3)
+    (-max-by '< '(4 3 6 1)) => 1))
 
 (def-example-group "Predicates" nil
   (defexamples -any?
@@ -382,7 +376,7 @@
     (let ((l '(3))) (!cdr l) l) => '()
     (let ((l '(3 5))) (!cdr l) l) => '(5)))
 
-(def-example-group "Function combinators" "These combinators require Emacs 24 for its lexical scope. So you'll have to include them with `(require 'dash-functional)`."
+(def-example-group "Function combinators" "These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`."
   (defexamples -partial
     (funcall (-partial '- 5) 3) => 2
     (funcall (-partial '+ 5 2) 3) => 10)
@@ -404,6 +398,9 @@
   (unless (version< emacs-version "24")
     (defexamples -on
       (-sort (-on '< 'length) '((1 2 3) (1) (1 2))) => '((1) (1 2) (1 2 3))
+      (-min-by (-on '> 'length) '((1 2 3) (4) (1 2))) => '(4)
+      (-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) => 22
+      (-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) => '(3)
       (-sort (-on 'string-lessp 'int-to-string) '(10 12 1 2 22)) => '(1 10 12 2 22)
       (funcall (-on '+ '1+) 1 2) => 5
       (funcall (-on '+ 'identity) 1 2) => 3
@@ -443,4 +440,3 @@
       (funcall (-andfn (-cut < <> 10) 'even?) 12) => nil
       (-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) => '(1 3 5))
     ))
-

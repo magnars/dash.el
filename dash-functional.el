@@ -4,7 +4,7 @@
 
 ;; Authors: Matus Goljer <matus.goljer@gmail.com>
 ;;          Magnar Sveen <magnars@gmail.com>
-;; Version: 1.8.0
+;; Version: 1.0.0
 ;; Package-Requires: ((dash "1.8.0") (emacs "24"))
 ;; Keywords: lisp functions combinators
 
@@ -42,18 +42,14 @@ then additional args."
   "Takes a function FN and fewer than the normal arguments to FN,
 and returns a fn that takes a variable number of additional ARGS.
 When called, the returned function calls FN with the additional
-args first and then ARGS.
-
-Requires Emacs 24 or higher."
+args first and then ARGS."
   (lambda (&rest args-before) (apply fn (append args-before args))))
 
 (defun -juxt (&rest fns)
   "Takes a list of functions and returns a fn that is the
 juxtaposition of those fns. The returned fn takes a variable
 number of args, and returns a list containing the result of
-applying each fn to the args (left-to-right).
-
-Requires Emacs 24 or higher."
+applying each fn to the args (left-to-right)."
   (lambda (&rest args) (mapcar (lambda (x) (apply x args)) fns)))
 
 (defun -applify (fn)

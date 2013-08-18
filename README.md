@@ -7,15 +7,19 @@ A modern list api for Emacs. No 'cl required.
 - The `-min` and `-max` functions are no longer variadic, but take a
   list to be more in line with the other dash functions.
 
-- The `-min-by` and `-max-by` now take a comparator function to sort by.
+- `-min-by` and `-max-by` now take a comparator function to sort by.
 
-Also: The stated scope of dash is increasing. It now includes more
+The stated scope of dash is increasing. It now includes more
 functional style functions, like combinators and threading macros.
 These have been creeping in anyway, since they're so darn useful. Time
 to make it official. :)
 
+- `-rpartial`, `-juxt` and `-applify` are moved to a separate package.
+  Note that `-partial` is still in dash for backwards compatibility
+  reasons.
+
 These new combinators require Emacs 24 for its lexical scope. So
-you'll have to include them with `(require 'dash-functional)`.
+they are offered in a separate package: `dash-functional`.
 
 ## Installation
 
@@ -23,7 +27,22 @@ It's available on [marmalade](http://marmalade-repo.org/) and [Melpa](http://mel
 
     M-x package-install dash
 
-Or you can just dump `dash.el` in your load path somewhere.
+Or you can just dump `dash.el` in your load
+path somewhere.
+
+If you want the function combinators, then also:
+
+    M-x package-install dash-functional
+
+## Using in a package
+
+Add this to the big comment block at the top:
+
+    ;; Package-Requires: ((dash "1.8.0"))
+
+To get function combinators:
+
+    ;; Package-Requires: ((dash "1.8.0") (dash-functional "1.0.0") (emacs "24"))
 
 ## Functions
 
@@ -130,7 +149,7 @@ Or you can just dump `dash.el` in your load path somewhere.
 ### Function combinators
 
 
-These combinators require Emacs 24 for its lexical scope. So you'll have to include them with `(require 'dash-functional)`.
+These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
 
 * [-partial](#-partial-fn-rest-args) `(fn &rest args)`
 * [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
@@ -456,7 +475,7 @@ comparing them.
 
 ```cl
 (-min-by '> '(4 3 6 1)) ;; => 1
-(-min-by (-on '> 'length) '((1 2 3) (1) (1 2))) ;; => '(1)
+(-min-by '< '(4 3 6 1)) ;; => 6
 (--min-by (> (length it) (length other)) '((1 2 3) (1) (1 2))) ;; => '(1)
 ```
 
@@ -480,8 +499,8 @@ comparing them.
 
 ```cl
 (-max-by '> '(4 3 6 1)) ;; => 6
-(-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) ;; => '(3)
 (--max-by (> (car it) (car other)) '((2 2 3) (3) (1 2))) ;; => '(3)
+(-max-by '< '(4 3 6 1)) ;; => 1
 ```
 
 
@@ -1026,8 +1045,8 @@ In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
 
 ```cl
 (-sort (-on '< 'length) '((1 2 3) (1) (1 2))) ;; => '((1) (1 2) (1 2 3))
-(-sort (-on 'string-lessp 'int-to-string) '(10 12 1 2 22)) ;; => '(1 10 12 2 22)
-(funcall (-on '+ '1+) 1 2) ;; => 5
+(-min-by (-on '> 'length) '((1 2 3) (4) (1 2))) ;; => '(4)
+(-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) ;; => 22
 ```
 
 ### -flip `(func)`

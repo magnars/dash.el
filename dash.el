@@ -852,12 +852,12 @@ or with `-compare-fn' if that's non-nil."
 
 (defalias '-contains-p '-contains?)
 
-(defun -sort (predicate list)
-  "Sort LIST, stably, comparing elements using PREDICATE.
+(defun -sort (comparator list)
+  "Sort LIST, stably, comparing elements using COMPARATOR.
 Returns the sorted list.  LIST is NOT modified by side effects.
-PREDICATE is called with two elements of LIST, and should return non-nil
+COMPARATOR is called with two elements of LIST, and should return non-nil
 if the first element should sort before the second."
-  (sort (copy-sequence list) predicate))
+  (sort (copy-sequence list) comparator))
 
 (defmacro --sort (form list)
   "Anaphoric form of `-sort'."

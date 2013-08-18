@@ -238,6 +238,40 @@
     (-group-by 'even? '(1 1 2 2 2 3 4 6 8)) => '((nil . (1 1 3)) (t . (2 2 2 4 6 8)))
     (--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) => '(("a" . ("a/b" "a/e")) ("c" . ("c/d")))))
 
+(def-example-group "Indexing" nil
+  (defexamples -elem-index
+    (-elem-index 2 '(6 7 8 2 3 4)) => 3
+    (-elem-index "bar" '("foo" "bar" "baz")) => 1
+    (-elem-index '(1 2) '((3) (5 6) (1 2) nil)) => 2)
+
+  (defexamples -elem-indices
+    (-elem-indices 2 '(6 7 8 2 3 4 2 1)) => '(3 6)
+    (-elem-indices "bar" '("foo" "bar" "baz")) => '(1)
+    (-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil)) => '(1 3))
+
+  (defexamples -find-index
+    (-find-index 'even? '(2 4 1 6 3 3 5 8)) => 0
+    (--find-index (< 5 it) '(2 4 1 6 3 3 5 8)) => 3
+    (-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz")) => 1)
+
+  (defexamples -find-indices
+    (-find-indices 'even? '(2 4 1 6 3 3 5 8)) => '(0 1 3 7)
+    (--find-indices (< 5 it) '(2 4 1 6 3 3 5 8)) => '(3 7)
+    (-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz")) => '(1))
+
+  (defexamples -select-by-indices
+    (-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r")) => '("c" "o" "l" "o" "r")
+    (-select-by-indices '(2 1 0) '("a" "b" "c")) => '("c" "b" "a")
+    (-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l")) => '("f" "a" "r" "f" "a" "l" "l" "a"))
+  
+  (defexamples -grade-up
+    (-grade-up '< '(3 1 4 2 1 3 3)) => '(1 4 3 0 5 6 2)
+    (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up '< l) l)) => '(1 1 2 3 3 3 4))
+  
+  (defexamples -grade-down
+    (-grade-down '< '(3 1 4 2 1 3 3)) => '(2 0 5 6 3 1 4)
+    (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down '< l) l)) => '(4 3 3 3 2 1 1)))
+
 (def-example-group "Set operations" nil
   (defexamples -union
     (-union '(1 2 3) '(3 4 5))  => '(1 2 3 4 5)

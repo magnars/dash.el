@@ -101,6 +101,16 @@ To get function combinators:
 * [-partition-by-header](#-partition-by-header-fn-list) `(fn list)`
 * [-group-by](#-group-by-fn-list) `(fn list)`
 
+### Indexing
+
+* [-elem-index](#-elem-index-elem-list) `(elem list)`
+* [-elem-indices](#-elem-indices-elem-list) `(elem list)`
+* [-find-index](#-find-index-pred-list) `(pred list)`
+* [-find-indices](#-find-indices-pred-list) `(pred list)`
+* [-select-by-indices](#-select-by-indices-indices-list) `(indices list)`
+* [-grade-up](#-grade-up-comparator-list) `(comparator list)`
+* [-grade-down](#-grade-down-comparator-list) `(comparator list)`
+
 ### Set operations
 
 * [-union](#-union-list-list2) `(list list2)`
@@ -675,6 +685,88 @@ elements of `list`.  Keys are compared by `equal`.
 (-group-by 'even? '()) ;; => '()
 (-group-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => '((nil 1 1 3) (t 2 2 2 4 6 8))
 (--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) ;; => '(("a" "a/b" "a/e") ("c" "c/d"))
+```
+
+
+## Indexing
+
+#### -elem-index `(elem list)`
+
+Return the index of the first element in the given `list` which
+is equal to the query element `elem`, or nil if there is no
+such element.
+
+```cl
+(-elem-index 2 '(6 7 8 2 3 4)) ;; => 3
+(-elem-index "bar" '("foo" "bar" "baz")) ;; => 1
+(-elem-index '(1 2) '((3) (5 6) (1 2) nil)) ;; => 2
+```
+
+#### -elem-indices `(elem list)`
+
+Return the indices of all elements in `list` equal to the query
+element `elem`, in ascending order.
+
+```cl
+(-elem-indices 2 '(6 7 8 2 3 4 2 1)) ;; => '(3 6)
+(-elem-indices "bar" '("foo" "bar" "baz")) ;; => '(1)
+(-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil)) ;; => '(1 3)
+```
+
+#### -find-index `(pred list)`
+
+Return the indices of all elements in `list` satisfying the
+predicate `pred`, in ascending order.
+
+```cl
+(-find-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 0
+(--find-index (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => 3
+(-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz")) ;; => 1
+```
+
+#### -find-indices `(pred list)`
+
+Take a predicate `pred` and a `list` and return the index of the
+first element in the list satisfying the predicate, or nil if
+there is no such element.
+
+```cl
+(-find-indices 'even? '(2 4 1 6 3 3 5 8)) ;; => '(0 1 3 7)
+(--find-indices (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => '(3 7)
+(-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz")) ;; => '(1)
+```
+
+#### -select-by-indices `(indices list)`
+
+Return a list whose elements are elements from `list` selected
+as `(nth i list)` for all i from `indices`.
+
+```cl
+(-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r")) ;; => '("c" "o" "l" "o" "r")
+(-select-by-indices '(2 1 0) '("a" "b" "c")) ;; => '("c" "b" "a")
+(-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l")) ;; => '("f" "a" "r" "f" "a" "l" "l" "a")
+```
+
+#### -grade-up `(comparator list)`
+
+Grades elements of `list` using `comparator` relation, yielding a
+permutation vector such that applying this permutation to `list`
+sorts it in ascending order.
+
+```cl
+(-grade-up '< '(3 1 4 2 1 3 3)) ;; => '(1 4 3 0 5 6 2)
+(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up '< l) l)) ;; => '(1 1 2 3 3 3 4)
+```
+
+#### -grade-down `(comparator list)`
+
+Grades elements of `list` using `comparator` relation, yielding a
+permutation vector such that applying this permutation to `list`
+sorts it in descending order.
+
+```cl
+(-grade-down '< '(3 1 4 2 1 3 3)) ;; => '(2 0 5 6 3 1 4)
+(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down '< l) l)) ;; => '(4 3 3 3 2 1 1)
 ```
 
 

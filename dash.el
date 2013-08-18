@@ -697,6 +697,65 @@ When called, the returned function calls FN with ARGS first and
 then additional args."
   (apply 'apply-partially fn args))
 
+(defun -elem-index (elem list)
+  "Return the index of the first element in the given LIST which
+is equal to the query element ELEM, or nil if there is no
+such element."
+  (car (-elem-indices elem list)))
+
+(defun -elem-indices (elem list)
+  "Return the indices of all elements in LIST equal to the query
+element ELEM, in ascending order."
+  (-find-indices (-partial 'equal elem) list))
+
+(defun -find-indices (pred list)
+  "Take a predicate PRED and a LIST and return the index of the
+first element in the list satisfying the predicate, or nil if
+there is no such element."
+  (let ((i 0))
+    (apply 'append (--map-indexed (when (funcall pred it) (list it-index)) list))))
+
+(defmacro --find-indices (form list)
+  "Anaphoric version of `-find-indices'."
+  `(-find-indices (lambda (it) ,form) ,list))
+
+(defun -find-index (pred list)
+  "Return the indices of all elements in LIST satisfying the
+predicate PRED, in ascending order."
+  (car (-find-indices pred list)))
+
+(defmacro --find-index (form list)
+  "Anaphoric version of `-find-index'."
+  `(-find-index (lambda (it) ,form) ,list))
+
+(defun -select-by-indices (indices list)
+  "Return a list whose elements are elements from LIST selected
+as `(nth i list)` for all i from INDICES."
+  (let (r)
+    (--each indices
+      (!cons (nth it list) r))
+    (nreverse r)))
+
+(defun -grade-up (comparator list)
+  "Grades elements of LIST using COMPARATOR relation, yielding a
+permutation vector such that applying this permutation to LIST
+sorts it in ascending order."
+  ;; ugly hack to "fix" lack of lexical scope
+  (let ((comp `(lambda (it other) (funcall ',comparator (car it) (car other)))))
+    (->> (--map-indexed (cons it it-index) list)
+      (-sort comp)
+      (-map 'cdr))))
+
+(defun -grade-down (comparator list)
+  "Grades elements of LIST using COMPARATOR relation, yielding a
+permutation vector such that applying this permutation to LIST
+sorts it in descending order."
+  ;; ugly hack to "fix" lack of lexical scope
+  (let ((comp `(lambda (it other) (funcall ',comparator (car other) (car it)))))
+    (->> (--map-indexed (cons it it-index) list)
+      (-sort comp)
+      (-map 'cdr))))
+
 (defmacro -> (x &optional form &rest more)
   "Threads the expr through the forms. Inserts X as the second
 item in the first form, making a list of it if it is not a list
@@ -1010,6 +1069,15 @@ The items for the comparator form are exposed as \"it\" and \"other\"."
                            "-cut"
                            "-orfn"
                            "-andfn"
+                           "-elem-index"
+                           "-elem-indices"
+                           "-find-indices"
+                           "--find-indices"
+                           "-find-index"
+                           "--find-index"
+                           "-select-by-indices"
+                           "-grade-up"
+                           "-grade-down"
                            "->"
                            "->>"
                            "-->"

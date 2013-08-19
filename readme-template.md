@@ -103,6 +103,10 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 2.0.0 to 2.1.0
+
+- Add indexing operations (Matus Goljer)
+
 ### From 1.8.0 to 2.0.0
 
 - Split out `dash-functional.el` (Matus Goljer)

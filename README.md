@@ -715,8 +715,9 @@ element `elem`, in ascending order.
 
 #### -find-index `(pred list)`
 
-Return the indices of all elements in `list` satisfying the
-predicate `pred`, in ascending order.
+Take a predicate `pred` and a `list` and return the index of the
+first element in the list satisfying the predicate, or nil if
+there is no such element.
 
 ```cl
 (-find-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 0
@@ -726,9 +727,8 @@ predicate `pred`, in ascending order.
 
 #### -find-indices `(pred list)`
 
-Take a predicate `pred` and a `list` and return the index of the
-first element in the list satisfying the predicate, or nil if
-there is no such element.
+Return the indices of all elements in `list` satisfying the
+predicate `pred`, in ascending order.
 
 ```cl
 (-find-indices 'even? '(2 4 1 6 3 3 5 8)) ;; => '(0 1 3 7)

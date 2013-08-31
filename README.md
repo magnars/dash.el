@@ -164,6 +164,7 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 * [-partial](#-partial-fn-rest-args) `(fn &rest args)`
 * [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
 * [-juxt](#-juxt-rest-fns) `(&rest fns)`
+* [-compose](#-compose-rest-fns) `(&rest fns)`
 * [-applify](#-applify-fn) `(fn)`
 * [-on](#-on-operator-transformer) `(operator transformer)`
 * [-flip](#-flip-func) `(func)`
@@ -1132,6 +1133,20 @@ applying each fn to the args (left-to-right).
 ```cl
 (funcall (-juxt '+ '-) 3 5) ;; => '(8 -2)
 (-map (-juxt 'identity 'square) '(1 2 3)) ;; => '((1 1) (2 4) (3 9))
+```
+
+#### -compose `(&rest fns)`
+
+Takes a list of functions and returns a fn that is the
+composition of those fns. The returned fn takes a variable
+number of arguments, and returns the result of applying
+each fn to the result of applying the previous fn to
+the arguments (right-to-left).
+
+```cl
+(funcall (-compose 'square '+) 2 3) ;; => (square (+ 2 3))
+(funcall (-compose 'identity 'square) 3) ;; => (square 3)
+(funcall (-compose 'square 'identity) 3) ;; => (square 3)
 ```
 
 #### -applify `(fn)`

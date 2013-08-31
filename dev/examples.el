@@ -422,7 +422,13 @@
 
     (defexamples -juxt
       (funcall (-juxt '+ '-) 3 5) => '(8 -2)
-      (-map (-juxt 'identity 'square) '(1 2 3)) => '((1 1) (2 4) (3 9))))
+      (-map (-juxt 'identity 'square) '(1 2 3)) => '((1 1) (2 4) (3 9)))
+
+    (defexamples -compose
+      (funcall (-compose 'square '+) 2 3) => (square (+ 2 3))
+      (funcall (-compose 'identity 'square) 3) => (square 3)
+      (funcall (-compose 'square 'identity) 3) => (square 3)
+      (funcall (-compose (-compose 'not 'even?) 'square) 3) => (funcall (-compose 'not (-compose 'even? 'square)) 3)))
 
   (defexamples -applify
     (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) => '(3 6 15)

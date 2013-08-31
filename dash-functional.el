@@ -52,6 +52,16 @@ number of args, and returns a list containing the result of
 applying each fn to the args (left-to-right)."
   (lambda (&rest args) (mapcar (lambda (x) (apply x args)) fns)))
 
+(defun -compose (&rest fns)
+  "Takes a list of functions and returns a fn that is the
+composition of those fns. The returned fn takes a variable
+number of arguments, and returns the result of applying
+each fn to the result of applying the previous fn to
+the arguments (right-to-left)."
+  (lambda (&rest args)
+    (car (-reduce-r-from (lambda (fn xs) (list (apply fn xs)))
+			 args fns))))
+
 (defun -applify (fn)
   "Changes an n-arity function FN to a 1-arity function that
 expects a list with n items as arguments"

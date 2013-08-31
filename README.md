@@ -1278,6 +1278,10 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 2.1.0 to 2.2.0
+
+- Add `-compose` (Christina Whyte)
+
 ### From 2.0.0 to 2.1.0
 
 - Add indexing operations (Matus Goljer)
@@ -1333,6 +1337,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`, `-first-item` and `-last-item`.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum` and `-product`.
+ - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
 
 Thanks!
 

@@ -850,9 +850,9 @@ otherwise do ELSE."
 (put '-when-let 'lisp-indent-function 1)
 (put '-when-let* 'lisp-indent-function 1)
 (put '--when-let 'lisp-indent-function 1)
-(put '-if-let 'lisp-indent-function 1)
-(put '-if-let* 'lisp-indent-function 1)
-(put '--if-let 'lisp-indent-function 1)
+(put '-if-let 'lisp-indent-function 2)
+(put '-if-let* 'lisp-indent-function 2)
+(put '--if-let 'lisp-indent-function 2)
 
 (defun -distinct (list)
   "Return a new list with all duplicates removed.

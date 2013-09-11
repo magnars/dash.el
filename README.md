@@ -142,8 +142,8 @@ To get function combinators:
 
 * [-when-let](#-when-let-var-val-rest-body) `(var-val &rest body)`
 * [-when-let*](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
-* [-if-let](#-if-let-var-val-then-optional-else) `(var-val then &optional else)`
-* [-if-let*](#-if-let-vars-vals-then-optional-else) `(vars-vals then &optional else)`
+* [-if-let](#-if-let-var-val-then-rest-else) `(var-val then &rest else)`
+* [-if-let*](#-if-let-vars-vals-then-rest-else) `(vars-vals then &rest else)`
 
 ### Side-effects
 
@@ -1019,7 +1019,7 @@ If all `vals` evaluate to true, bind them to their corresponding
 (-when-let* ((x 5) (y nil) (z 7)) (+ x y z)) ;; => nil
 ```
 
-#### -if-let `(var-val then &optional else)`
+#### -if-let `(var-val then &rest else)`
 
 If `val` evaluates to non-nil, bind it to `var` and do `then`,
 otherwise do `else`. `var-val` should be a (`var` `val`) pair.
@@ -1029,7 +1029,7 @@ otherwise do `else`. `var-val` should be a (`var` `val`) pair.
 (--if-let (even? 4) it nil) ;; => t
 ```
 
-#### -if-let* `(vars-vals then &optional else)`
+#### -if-let* `(vars-vals then &rest else)`
 
 If all `vals` evaluate to true, bind them to their corresponding
   `vars` and do `then`, otherwise do `else`. `vars-vals` should be a list

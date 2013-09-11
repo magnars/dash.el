@@ -797,6 +797,7 @@ in in second form, etc."
 (defmacro -when-let (var-val &rest body)
   "If VAL evaluates to non-nil, bind it to VAR and execute body.
 VAR-VAL should be a (VAR VAL) pair."
+  (declare (debug ((symbolp form) body)))
   (let ((var (car var-val))
         (val (cadr var-val)))
     `(let ((,var ,val))
@@ -807,6 +808,7 @@ VAR-VAL should be a (VAR VAL) pair."
   "If all VALS evaluate to true, bind them to their corresponding
   VARS and execute body. VARS-VALS should be a list of (VAR VAL)
   pairs (corresponding to bindings of `let*')."
+  (declare (debug ((&rest (symbolp form)) body)))
   (if (= (length vars-vals) 1)
       `(-when-let ,(car vars-vals)
          ,@body)
@@ -817,6 +819,7 @@ VAR-VAL should be a (VAR VAL) pair."
 (defmacro --when-let (val &rest body)
   "If VAL evaluates to non-nil, bind it to `it' and execute
 body."
+  (declare (debug (form body)))
   `(let ((it ,val))
      (when it
        ,@body)))
@@ -824,6 +827,7 @@ body."
 (defmacro -if-let (var-val then &rest else)
   "If VAL evaluates to non-nil, bind it to VAR and do THEN,
 otherwise do ELSE. VAR-VAL should be a (VAR VAL) pair."
+  (declare (debug ((symbolp form) form body)))
   (let ((var (car var-val))
         (val (cadr var-val)))
     `(let ((,var ,val))
@@ -833,6 +837,7 @@ otherwise do ELSE. VAR-VAL should be a (VAR VAL) pair."
   "If all VALS evaluate to true, bind them to their corresponding
   VARS and do THEN, otherwise do ELSE. VARS-VALS should be a list
   of (VAR VAL) pairs (corresponding to the bindings of `let*')."
+  (declare (debug ((&rest (symbolp form)) form body)))
   (let ((first-pair (car vars-vals))
         (rest (cdr vars-vals)))
     (if (= (length vars-vals) 1)
@@ -844,6 +849,7 @@ otherwise do ELSE. VAR-VAL should be a (VAR VAL) pair."
 (defmacro --if-let (val then &rest else)
   "If VAL evaluates to non-nil, bind it to `it' and do THEN,
 otherwise do ELSE."
+  (declare (debug (form form body)))
   `(let ((it ,val))
      (if it ,then ,@else)))
 

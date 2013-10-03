@@ -464,7 +464,7 @@ Return the sum of `list`.
 ```cl
 (-sum '()) ;; => 0
 (-sum '(1)) ;; => 1
-(-sum '(1 2 3)) ;; => 6
+(-sum '(1 2 3 4)) ;; => 10
 ```
 
 #### -product `(list)`
@@ -474,7 +474,7 @@ Return the product of `list`.
 ```cl
 (-product '()) ;; => 1
 (-product '(1)) ;; => 1
-(-product '(1 2 3)) ;; => 6
+(-product '(1 2 3 4)) ;; => 24
 ```
 
 #### -min `(list)`
@@ -497,8 +497,8 @@ comparing them.
 
 ```cl
 (-min-by '> '(4 3 6 1)) ;; => 1
-(-min-by '< '(4 3 6 1)) ;; => 6
-(--min-by (> (length it) (length other)) '((1 2 3) (1) (1 2))) ;; => '(1)
+(--min-by (> (car it) (car other)) '((1 2 3) (2) (3 2))) ;; => '(1 2 3)
+(--min-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) ;; => '(2)
 ```
 
 #### -max `(list)`
@@ -521,8 +521,8 @@ comparing them.
 
 ```cl
 (-max-by '> '(4 3 6 1)) ;; => 6
-(--max-by (> (car it) (car other)) '((2 2 3) (3) (1 2))) ;; => '(3)
-(-max-by '< '(4 3 6 1)) ;; => 1
+(--max-by (> (car it) (car other)) '((1 2 3) (2) (3 2))) ;; => '(3 2)
+(--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) ;; => '(1 2 3)
 ```
 
 
@@ -1064,9 +1064,9 @@ already. If there are more forms, inserts the first form as the
 second item in second form, etc.
 
 ```cl
-(-> "Abc") ;; => "Abc"
-(-> "Abc" (concat "def")) ;; => "Abcdef"
-(-> "Abc" (concat "def") (concat "ghi")) ;; => "Abcdefghi"
+(-> '(2 3 5)) ;; => '(2 3 5)
+(-> '(2 3 5) (append '(8 13))) ;; => '(2 3 5 8 13)
+(-> '(2 3 5) (append '(8 13)) (-slice 1 -1)) ;; => '(3 5 8)
 ```
 
 #### ->> `(x form &rest more)`
@@ -1077,9 +1077,9 @@ already. If there are more forms, inserts the first form as the
 last item in second form, etc.
 
 ```cl
-(->> "Abc" (concat "def")) ;; => "defAbc"
-(->> "Abc" (concat "def") (concat "ghi")) ;; => "ghidefAbc"
-(->> 5 (- 8)) ;; => 3
+(->> '(1 2 3) (-map 'square)) ;; => '(1 4 9)
+(->> '(1 2 3) (-map 'square) (-remove 'even?)) ;; => '(1 9)
+(->> '(1 2 3) (-map 'square) (-reduce '+)) ;; => 14
 ```
 
 #### --> `(x form &rest more)`

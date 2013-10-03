@@ -130,12 +130,12 @@
   (defexamples -sum
     (-sum '()) => 0
     (-sum '(1)) => 1
-    (-sum '(1 2 3)) => 6)
+    (-sum '(1 2 3 4)) => 10)
 
   (defexamples -product
     (-product '()) => 1
     (-product '(1)) => 1
-    (-product '(1 2 3)) => 6)
+    (-product '(1 2 3 4)) => 24)
 
   (defexamples -min
     (-min '(0)) => 0
@@ -144,8 +144,8 @@
 
   (defexamples -min-by
     (-min-by '> '(4 3 6 1)) => 1
-    (-min-by '< '(4 3 6 1)) => 6
-    (--min-by (> (length it) (length other)) '((1 2 3) (1) (1 2))) => '(1))
+    (--min-by (> (car it) (car other)) '((1 2 3) (2) (3 2))) => '(1 2 3)
+    (--min-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) => '(2))
 
   (defexamples -max
     (-max '(0)) => 0
@@ -154,8 +154,8 @@
 
   (defexamples -max-by
     (-max-by '> '(4 3 6 1)) => 6
-    (--max-by (> (car it) (car other)) '((2 2 3) (3) (1 2))) => '(3)
-    (-max-by '< '(4 3 6 1)) => 1))
+    (--max-by (> (car it) (car other)) '((1 2 3) (2) (3 2))) => '(3 2)
+    (--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) => '(1 2 3)))
 
 (def-example-group "Predicates" nil
   (defexamples -any?
@@ -406,15 +406,16 @@
 
 (def-example-group "Threading macros" nil
   (defexamples ->
-    (-> "Abc") => "Abc"
-    (-> "Abc" (concat "def")) => "Abcdef"
-    (-> "Abc" (concat "def") (concat "ghi")) => "Abcdefghi"
+    (-> '(2 3 5)) => '(2 3 5)
+    (-> '(2 3 5) (append '(8 13))) => '(2 3 5 8 13)
+    (-> '(2 3 5) (append '(8 13)) (-slice 1 -1)) => '(3 5 8)
     (-> 5 square) => 25
     (-> 5 (+ 3) square) => 64)
 
   (defexamples ->>
-    (->> "Abc" (concat "def")) => "defAbc"
-    (->> "Abc" (concat "def") (concat "ghi")) => "ghidefAbc"
+    (->> '(1 2 3) (-map 'square)) => '(1 4 9)
+    (->> '(1 2 3) (-map 'square) (-remove 'even?)) => '(1 9)
+    (->> '(1 2 3) (-map 'square) (-reduce '+)) => 14
     (->> 5 (- 8)) => 3
     (->> 5 (- 3) square) => 4)
 

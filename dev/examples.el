@@ -263,11 +263,11 @@
     (-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r")) => '("c" "o" "l" "o" "r")
     (-select-by-indices '(2 1 0) '("a" "b" "c")) => '("c" "b" "a")
     (-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l")) => '("f" "a" "r" "f" "a" "l" "l" "a"))
-  
+
   (defexamples -grade-up
     (-grade-up '< '(3 1 4 2 1 3 3)) => '(1 4 3 0 5 6 2)
     (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up '< l) l)) => '(1 1 2 3 3 3 4))
-  
+
   (defexamples -grade-down
     (-grade-down '< '(3 1 4 2 1 3 3)) => '(2 0 5 6 3 1 4)
     (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down '< l) l)) => '(4 3 3 3 2 1 1)))
@@ -348,6 +348,57 @@
     (-sort '> '(3 1 2)) => '(3 2 1)
     (--sort (< it other) '(3 1 2)) => '(1 2 3)
     (let ((l '(3 1 2))) (-sort '> l) l) => '(3 1 2)))
+
+(def-example-group "Tree operations" nil
+  (defexamples -tree-map
+    (-tree-map '1+ '(1 (2 3) (4 (5 6) 7))) => '(2 (3 4) (5 (6 7) 8))
+    (-tree-map '(lambda (x) (cons x (expt 2 x))) '(1 (2 3) 4)) => '((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
+    (--tree-map (length it) '("<body>" ("<p>" "text" "</p>") "</body>")) => '(6 (3 4 4) 7)
+    (--tree-map 1 '(1 2 (3 4) (5 6))) => '(1 1 (1 1) (1 1))
+    (--tree-map (cdr it) '((1 . 2) (3 . 4) (5 . 6))) => '(2 4 6))
+
+  (defexamples -tree-reduce
+    (-tree-reduce '+ '(1 (2 3) (4 5))) => 15
+    (-tree-reduce 'concat '("strings" (" on" " various") ((" levels")))) => "strings on various levels"
+    (--tree-reduce (cond
+                    ((stringp it) (concat it " " acc))
+                    (t (let ((sn (symbol-name it))) (concat "<" sn ">" acc "</" sn ">"))))
+                   '(body (p "some words") (div "more" (b "bold") "words"))) => "<body><p>some words</p> <div>more <b>bold</b> words</div></body>")
+
+  (defexamples -tree-reduce-from
+    (-tree-reduce-from '+ 1 '(1 (1 1) ((1)))) => 8
+    (--tree-reduce-from (-concat acc (list it)) nil '(1 (2 3 (4 5)) (6 7))) => '((7 6) ((5 4) 3 2) 1))
+
+  (defexamples -tree-mapreduce
+    (-tree-mapreduce 'list 'append '(1 (2 (3 4) (5 6)) (7 (8 9)))) => '(1 2 3 4 5 6 7 8 9)
+    (--tree-mapreduce 1 (+ it acc) '(1 (2 (4 9) (2 1)) (7 (4 3)))) => 9
+    (--tree-mapreduce 0 (max acc (1+ it)) '(1 (2 (4 9) (2 1)) (7 (4 3)))) => 3
+    (--tree-mapreduce (-value-to-list it)
+                      (-concat it acc)
+                      '((1 . 2) (3 . 4) (5 (6 7) 8))) => '(1 2 3 4 5 6 7 8)
+                      (--tree-mapreduce (if (-cons-pair? it) (cdr it) it)
+                                        (concat it " " acc)
+                                        '("foo" (bar . "bar") ((baz . "baz")) "quux" (qwop . "qwop"))) => "foo bar baz quux qwop"
+                                        (--tree-mapreduce (if (-cons-pair? it) (list (cdr it)) nil)
+                                                          (append it acc)
+                                                          '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam)))) => '(booze qux bla bam))
+
+  (defexamples -tree-mapreduce-from
+    (-tree-mapreduce-from 'identity '* 1 '(1 (2 (3 4) (5 6)) (7 (8 9)))) => 362880
+    (--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) => (2 (4 (8 18) (4 2)) (14 (8 6)))
+    (concat "{" (--tree-mapreduce-from
+                 (cond
+                  ((-cons-pair? it)
+                   (concat (symbol-name (car it)) " -> " (symbol-name (cdr it))))
+                  (t (concat (symbol-name it) " : {")))
+                 (concat it (unless (or (equal acc "}")
+                                        (equal (substring it (1- (length it))) "{"))
+                              ", ") acc)
+                 "}"
+                 '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam))))) => "{elips-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}")
+
+  (defexamples -clone
+    (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) => '(1 2 3)))
 
 (def-example-group "Threading macros" nil
   (defexamples ->

@@ -980,6 +980,128 @@ The items for the comparator form are exposed as \"it\" and \"other\"."
 The items for the comparator form are exposed as \"it\" and \"other\"."
   `(-min-by (lambda (it other) ,form) ,list))
 
+(defun -cons-pair? (con)
+  "Return non-nil if CON is true cons pair.
+That is (A . B) where B is not a list."
+  (and (listp con)
+       (not (listp (cdr con)))))
+
+(defun -cons-to-list (con)
+  "Convert a cons pair to a list with `car' and `cdr' of the pair respectively."
+  (list (car con) (cdr con)))
+
+(defun -value-to-list (val)
+  "Convert a value to a list.
+
+If the value is a cons pair, make a list with two elements, `car'
+and `cdr' of the pair respectively.
+
+If the value is anything else, wrap it in a list."
+  (cond
+   ((-cons-pair? val) (-cons-to-list val))
+   (t (list val))))
+
+(defun -tree-mapreduce-from (fn folder init-value tree)
+  "Apply FN to each element of TREE, and make a list of the results.
+If elements of TREE are lists themselves, apply FN recursively to
+elements of these nested lists.
+
+Then reduce the resulting lists using FOLDER and initial value
+INIT-VALUE. See `-reduce-r-from'.
+
+This is the same as calling `-tree-reduce-from' after `-tree-map'
+but is twice as fast as it only traverse the structure once."
+  (cond
+   ((not tree) nil)
+   ((-cons-pair? tree) (funcall fn tree))
+   ((listp tree)
+    (-reduce-r-from folder init-value (mapcar (lambda (x) (-tree-mapreduce-from fn folder init-value x)) tree)))
+   (t (funcall fn tree))))
+
+(defmacro --tree-mapreduce-from (form folder init-value tree)
+  "Anaphoric form of `-tree-mapreduce-from'."
+  `(-tree-mapreduce-from (lambda (it) ,form) (lambda (it acc) ,folder) ,init-value ,tree))
+
+(defun -tree-mapreduce (fn folder tree)
+  "Apply FN to each element of TREE, and make a list of the results.
+If elements of TREE are lists themselves, apply FN recursively to
+elements of these nested lists.
+
+Then reduce the resulting lists using FOLDER and initial value
+INIT-VALUE. See `-reduce-r-from'.
+
+This is the same as calling `-tree-reduce' after `-tree-map'
+but is twice as fast as it only traverse the structure once."
+  (cond
+   ((not tree) nil)
+   ((-cons-pair? tree) (funcall fn tree))
+   ((listp tree)
+    (-reduce-r folder (mapcar (lambda (x) (-tree-mapreduce fn folder x)) tree)))
+   (t (funcall fn tree))))
+
+(defmacro --tree-mapreduce (form folder tree)
+  "Anaphoric form of `-tree-mapreduce'."
+  `(-tree-mapreduce (lambda (it) ,form) (lambda (it acc) ,folder) ,tree))
+
+(defun -tree-map (fn tree)
+  "Apply FN to each element of TREE while preserving the tree structure."
+  (cond
+   ((not tree) nil)
+   ((-cons-pair? tree) (funcall fn tree))
+   ((listp tree)
+    (mapcar (lambda (x) (-tree-map fn x)) tree))
+   (t (funcall fn tree))))
+
+(defmacro --tree-map (form tree)
+  "Anaphoric form of `-tree-map'."
+  `(-tree-map (lambda (it) ,form) ,tree))
+
+(defun -tree-reduce-from (fn init-value tree)
+  "Use FN to reduce elements of list TREE.
+If elements of TREE are lists themselves, apply the reduction recursively.
+
+FN is first applied to INIT-VALUE and first element of the list,
+then on this result and second element from the list etc.
+
+The initial value is ignored on cons pairs as they always contain
+two elements."
+   (cond
+   ((not tree) nil)
+   ((-cons-pair? tree) tree)
+   ((listp tree)
+    (-reduce-r-from fn init-value (mapcar (lambda (x) (-tree-reduce-from fn init-value x)) tree)))
+   (t tree)))
+
+(defmacro --tree-reduce-from (form init-value tree)
+  "Anaphoric form of `-tree-reduce-from'."
+  `(-tree-reduce-from (lambda (it acc) ,form) ,init-value ,tree))
+
+(defun -tree-reduce (fn tree)
+  "Use FN to reduce elements of list TREE.
+If elements of TREE are lists themselves, apply the reduction recursively.
+
+FN is first applied to first element of the list and second
+element, then on this result and third element from the list etc.
+
+See `-reduce-r' for how exactly are lists of zero or one element handled."
+   (cond
+   ((not tree) nil)
+   ((-cons-pair? tree) tree)
+   ((listp tree)
+    (-reduce-r fn (mapcar (lambda (x) (-tree-reduce fn x)) tree)))
+   (t tree)))
+
+(defmacro --tree-reduce (form tree)
+  "Anaphoric form of `-tree-reduce'."
+  `(-tree-reduce (lambda (it acc) ,form) ,tree))
+
+(defun -clone (list)
+  "Create a deep copy of LIST.
+The new list has the same elements and structure but all cons are
+replaced with new ones.  This is useful when you need to clone a
+structure such as plist or alist."
+  (-tree-map 'identity list))
+
 (eval-after-load "lisp-mode"
   '(progn
      (let ((new-keywords '(
@@ -1109,6 +1231,19 @@ The items for the comparator form are exposed as \"it\" and \"other\"."
                            "-max"
                            "-max-by"
                            "--max-by"
+                           "-cons-to-list"
+                           "-value-to-list"
+                           "-tree-mapreduce-from"
+                           "--tree-mapreduce-from"
+                           "-tree-mapreduce"
+                           "--tree-mapreduce"
+                           "-tree-map"
+                           "--tree-map"
+                           "-tree-reduce-from"
+                           "--tree-reduce-from"
+                           "-tree-reduce"
+                           "--tree-reduce"
+                           "-clone"
                            ))
            (special-variables '(
                                 "it"

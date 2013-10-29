@@ -375,17 +375,20 @@
     (--tree-mapreduce 0 (max acc (1+ it)) '(1 (2 (4 9) (2 1)) (7 (4 3)))) => 3
     (--tree-mapreduce (-value-to-list it)
                       (-concat it acc)
-                      '((1 . 2) (3 . 4) (5 (6 7) 8))) => '(1 2 3 4 5 6 7 8)
-                      (--tree-mapreduce (if (-cons-pair? it) (cdr it) it)
-                                        (concat it " " acc)
-                                        '("foo" (bar . "bar") ((baz . "baz")) "quux" (qwop . "qwop"))) => "foo bar baz quux qwop"
-                                        (--tree-mapreduce (if (-cons-pair? it) (list (cdr it)) nil)
-                                                          (append it acc)
-                                                          '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam)))) => '(booze qux bla bam))
+                      '((1 . 2) (3 . 4) (5 (6 7) 8)))
+    => '(1 2 3 4 5 6 7 8)
+    (--tree-mapreduce (if (-cons-pair? it) (cdr it) it)
+                      (concat it " " acc)
+                      '("foo" (bar . "bar") ((baz . "baz")) "quux" (qwop . "qwop")))
+    => "foo bar baz quux qwop"
+    (--tree-mapreduce (if (-cons-pair? it) (list (cdr it)) nil)
+                      (append it acc)
+                      '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam))))
+    => '(booze qux bla bam))
 
   (defexamples -tree-mapreduce-from
     (-tree-mapreduce-from 'identity '* 1 '(1 (2 (3 4) (5 6)) (7 (8 9)))) => 362880
-    (--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) => (2 (4 (8 18) (4 2)) (14 (8 6)))
+    (--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) => '(2 (4 (8 18) (4 2)) (14 (8 6)))
     (concat "{" (--tree-mapreduce-from
                  (cond
                   ((-cons-pair? it)
@@ -395,7 +398,8 @@
                                         (equal (substring it (1- (length it))) "{"))
                               ", ") acc)
                  "}"
-                 '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam))))) => "{elips-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}")
+                 '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam)))))
+    => "{elips-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}")
 
   (defexamples -clone
     (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) => '(1 2 3)))

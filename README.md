@@ -1386,6 +1386,11 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 2.2.0 to 2.3.0
+
+- Add tree operations (Matus Goljer)
+- Make font-lock optional
+
 ### From 2.1.0 to 2.2.0
 
 - Add `-compose` (Christina Whyte)

@@ -44,6 +44,13 @@ To get function combinators:
 
     ;; Package-Requires: ((dash "1.8.0") (dash-functional "1.0.0") (emacs "24"))
 
+## Syntax highlighting of dash functions
+
+Font lock of dash functions in emacs lisp buffers is now optional.
+Include this in your emacs settings to get syntax highlighting:
+
+    (eval-after-load "dash" '(dash-enable-font-lock))
+
 ## Functions
 
 
@@ -1038,7 +1045,7 @@ but is twice as fast as it only traverse the structure once.
 
 ```cl
 (-tree-mapreduce-from 'identity '* 1 '(1 (2 (3 4) (5 6)) (7 (8 9)))) ;; => 362880
-(--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => (2 (4 (8 18) (4 2)) (14 (8 6)))
+(--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => '(2 (4 (8 18) (4 2)) (14 (8 6)))
 (concat "{" (--tree-mapreduce-from (cond ((-cons-pair? it) (concat (symbol-name (car it)) " -> " (symbol-name (cdr it)))) (t (concat (symbol-name it) " : {"))) (concat it (unless (or (equal acc "}") (equal (substring it (1- (length it))) "{")) ", ") acc) "}" '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam))))) ;; => "{elips-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}"
 ```
 

@@ -44,6 +44,13 @@ To get function combinators:
 
     ;; Package-Requires: ((dash "1.8.0") (dash-functional "1.0.0") (emacs "24"))
 
+## Syntax highlighting of dash functions
+
+Font lock of dash functions in emacs lisp buffers is now optional.
+Include this in your emacs settings to get syntax highlighting:
+
+    (eval-after-load "dash" '(dash-enable-font-lock))
+
 ## Functions
 
 [[ function-list ]]

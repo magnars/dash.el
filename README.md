@@ -132,6 +132,15 @@ To get function combinators:
 * [-last-item](#-last-item-list) `(list)`
 * [-sort](#-sort-comparator-list) `(comparator list)`
 
+### Tree operations
+
+* [-tree-map](#-tree-map-fn-tree) `(fn tree)`
+* [-tree-reduce](#-tree-reduce-fn-tree) `(fn tree)`
+* [-tree-reduce-from](#-tree-reduce-from-fn-init-value-tree) `(fn init-value tree)`
+* [-tree-mapreduce](#-tree-mapreduce-fn-folder-tree) `(fn folder tree)`
+* [-tree-mapreduce-from](#-tree-mapreduce-from-fn-folder-init-value-tree) `(fn folder init-value tree)`
+* [-clone](#-clone-list) `(list)`
+
 ### Threading macros
 
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
@@ -950,6 +959,98 @@ if the first element should sort before the second.
 (-sort '< '(3 1 2)) ;; => '(1 2 3)
 (-sort '> '(3 1 2)) ;; => '(3 2 1)
 (--sort (< it other) '(3 1 2)) ;; => '(1 2 3)
+```
+
+
+## Tree operations
+
+#### -tree-map `(fn tree)`
+
+Apply `fn` to each element of `tree` while preserving the tree structure.
+
+```cl
+(-tree-map '1+ '(1 (2 3) (4 (5 6) 7))) ;; => '(2 (3 4) (5 (6 7) 8))
+(-tree-map '(lambda (x) (cons x (expt 2 x))) '(1 (2 3) 4)) ;; => '((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
+(--tree-map (length it) '("<body>" ("<p>" "text" "</p>") "</body>")) ;; => '(6 (3 4 4) 7)
+```
+
+#### -tree-reduce `(fn tree)`
+
+Use `fn` to reduce elements of list `tree`.
+If elements of `tree` are lists themselves, apply the reduction recursively.
+
+`fn` is first applied to first element of the list and second
+element, then on this result and third element from the list etc.
+
+See `-reduce-r` for how exactly are lists of zero or one element handled.
+
+```cl
+(-tree-reduce '+ '(1 (2 3) (4 5))) ;; => 15
+(-tree-reduce 'concat '("strings" (" on" " various") ((" levels")))) ;; => "strings on various levels"
+(--tree-reduce (cond ((stringp it) (concat it " " acc)) (t (let ((sn (symbol-name it))) (concat "<" sn ">" acc "</" sn ">")))) '(body (p "some words") (div "more" (b "bold") "words"))) ;; => "<body><p>some words</p> <div>more <b>bold</b> words</div></body>"
+```
+
+#### -tree-reduce-from `(fn init-value tree)`
+
+Use `fn` to reduce elements of list `tree`.
+If elements of `tree` are lists themselves, apply the reduction recursively.
+
+`fn` is first applied to `init-value` and first element of the list,
+then on this result and second element from the list etc.
+
+The initial value is ignored on cons pairs as they always contain
+two elements.
+
+```cl
+(-tree-reduce-from '+ 1 '(1 (1 1) ((1)))) ;; => 8
+(--tree-reduce-from (-concat acc (list it)) nil '(1 (2 3 (4 5)) (6 7))) ;; => '((7 6) ((5 4) 3 2) 1)
+```
+
+#### -tree-mapreduce `(fn folder tree)`
+
+Apply `fn` to each element of `tree`, and make a list of the results.
+If elements of `tree` are lists themselves, apply `fn` recursively to
+elements of these nested lists.
+
+Then reduce the resulting lists using `folder` and initial value
+`init-value`. See `-reduce-r-from`.
+
+This is the same as calling `-tree-reduce` after `-tree-map`
+but is twice as fast as it only traverse the structure once.
+
+```cl
+(-tree-mapreduce 'list 'append '(1 (2 (3 4) (5 6)) (7 (8 9)))) ;; => '(1 2 3 4 5 6 7 8 9)
+(--tree-mapreduce 1 (+ it acc) '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => 9
+(--tree-mapreduce 0 (max acc (1+ it)) '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => 3
+```
+
+#### -tree-mapreduce-from `(fn folder init-value tree)`
+
+Apply `fn` to each element of `tree`, and make a list of the results.
+If elements of `tree` are lists themselves, apply `fn` recursively to
+elements of these nested lists.
+
+Then reduce the resulting lists using `folder` and initial value
+`init-value`. See `-reduce-r-from`.
+
+This is the same as calling `-tree-reduce-from` after `-tree-map`
+but is twice as fast as it only traverse the structure once.
+
+```cl
+(-tree-mapreduce-from 'identity '* 1 '(1 (2 (3 4) (5 6)) (7 (8 9)))) ;; => 362880
+(--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => (2 (4 (8 18) (4 2)) (14 (8 6)))
+(concat "{" (--tree-mapreduce-from (cond ((-cons-pair? it) (concat (symbol-name (car it)) " -> " (symbol-name (cdr it)))) (t (concat (symbol-name it) " : {"))) (concat it (unless (or (equal acc "}") (equal (substring it (1- (length it))) "{")) ", ") acc) "}" '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam))))) ;; => "{elips-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}"
+```
+
+#### -clone `(list)`
+
+Create a deep copy of `list`.
+The new list has the same elements and structure but all cons are
+replaced with new ones.  This is useful when you need to clone a
+structure such as plist or alist.
+
+```cl
+(let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) ;; => '(1 2 3)
 ```
 
 

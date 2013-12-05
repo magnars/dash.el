@@ -72,6 +72,10 @@ Include this in your emacs settings to get syntax highlighting:
 * [-drop-while](#-drop-while-pred-list) `(pred list)`
 * [-rotate](#-rotate-n-list) `(n list)`
 * [-insert-at](#-insert-at-n-x-list) `(n x list)`
+* [-replace-at](#-replace-at-n-x-list) `(n x list)`
+* [-update-at](#-update-at-n-func-list) `(n func list)`
+* [-remove-at](#-remove-at-n-list) `(n list)`
+* [-remove-at-indices](#-remove-at-indices-indices-list) `(indices list)`
 
 ### Reductions
 
@@ -382,6 +386,48 @@ Returns a list with `x` inserted into `list` at position `n`.
 ```cl
 (-insert-at 1 'x '(a b c)) ;; => '(a x b c)
 (-insert-at 12 'x '(a b c)) ;; => '(a b c x)
+```
+
+#### -replace-at `(n x list)`
+
+Return a list with element at Nth position in `list` replaced with `x`.
+
+```cl
+(-replace-at 0 9 '(0 1 2 3 4 5)) ;; => '(9 1 2 3 4 5)
+(-replace-at 1 9 '(0 1 2 3 4 5)) ;; => '(0 9 2 3 4 5)
+(-replace-at 4 9 '(0 1 2 3 4 5)) ;; => '(0 1 2 3 9 5)
+```
+
+#### -update-at `(n func list)`
+
+Return a list with element at Nth position in `list` replaced with `(func (nth n list))`.
+
+```cl
+(-update-at 0 (lambda (x) (+ x 9)) '(0 1 2 3 4 5)) ;; => '(9 1 2 3 4 5)
+(-update-at 1 (lambda (x) (+ x 8)) '(0 1 2 3 4 5)) ;; => '(0 9 2 3 4 5)
+(--update-at 2 (length it) '("foo" "bar" "baz" "quux")) ;; => '("foo" "bar" 3 "quux")
+```
+
+#### -remove-at `(n list)`
+
+Return a list with element at Nth position in `list` removed.
+
+```cl
+(-remove-at 0 '("0" "1" "2" "3" "4" "5")) ;; => '("1" "2" "3" "4" "5")
+(-remove-at 1 '("0" "1" "2" "3" "4" "5")) ;; => '("0" "2" "3" "4" "5")
+(-remove-at 2 '("0" "1" "2" "3" "4" "5")) ;; => '("0" "1" "3" "4" "5")
+```
+
+#### -remove-at-indices `(indices list)`
+
+Return a list whose elements are elements from `list` without
+elements selected as `(nth i list)` for all i
+from `indices`.
+
+```cl
+(-remove-at-indices '(0) '("0" "1" "2" "3" "4" "5")) ;; => '("1" "2" "3" "4" "5")
+(-remove-at-indices '(0 2 4) '("0" "1" "2" "3" "4" "5")) ;; => '("1" "3" "5")
+(-remove-at-indices '(0 5) '("0" "1" "2" "3" "4" "5")) ;; => '("1" "2" "3" "4")
 ```
 
 

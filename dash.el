@@ -477,6 +477,38 @@ The time complexity is O(n)."
   (let ((split-list (-split-at n list)))
     (nconc (car split-list) (cons x (cadr split-list)))))
 
+(defun -replace-at (n x list)
+  "Return a list with element at Nth position in LIST replaced with X."
+  (let ((split-list (-split-at n list)))
+    (nconc (car split-list) (cons x (cdr (cadr split-list))))))
+
+(defun -update-at (n func list)
+  "Return a list with element at Nth position in LIST replaced with `(func (nth n list))`."
+  (let ((split-list (-split-at n list)))
+    (nconc (car split-list) (cons (funcall func (car (cadr split-list))) (cdr (cadr split-list))))))
+
+(defmacro --update-at (n form list)
+  "Anaphoric version of `-update-at'."
+  `(-update-at ,n (lambda (it) ,form) ,list))
+
+(defun -remove-at (n list)
+  "Return a list with element at Nth position in LIST removed."
+  (-remove-at-indices (list n) list))
+
+(defun -remove-at-indices (indices list)
+  "Return a list whose elements are elements from LIST without
+elements selected as `(nth i list)` for all i
+from INDICES."
+  (let* ((indices (-sort '< indices))
+         (diffs (cons (car indices) (-map '1- (-zip-with '- (cdr indices) indices))))
+         r)
+    (--each diffs
+      (let ((split (-split-at it list)))
+        (!cons (car split) r)
+        (setq list (cdr (cadr split)))))
+    (!cons list r)
+    (-flatten (nreverse r))))
+
 (defmacro --split-with (pred list)
   "Anaphoric form of `-split-with'."
   (let ((l (make-symbol "list"))
@@ -1180,6 +1212,11 @@ structure such as plist or alist."
                              "-split-at"
                              "-rotate"
                              "-insert-at"
+                             "-replace-at"
+                             "-update-at"
+                             "--update-at"
+                             "-remove-at"
+                             "-remove-at-indices"
                              "--split-with"
                              "-split-with"
                              "-partition"

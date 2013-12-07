@@ -129,6 +129,7 @@ Include this in your emacs settings to get syntax highlighting:
 
 * [-repeat](#-repeat-n-x) `(n x)`
 * [-cons*](#-cons-rest-args) `(&rest args)`
+* [-snoc](#-snoc-list-elem-rest-elements) `(list elem &rest elements)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
@@ -864,6 +865,20 @@ a dotted list.
 (-cons* 1 2) ;; => '(1 . 2)
 (-cons* 1 2 3) ;; => '(1 2 . 3)
 (-cons* 1) ;; => 1
+```
+
+#### -snoc `(list elem &rest elements)`
+
+Append `elem` to the end of the list.
+
+This is like `cons`, but operates on the end of list.
+
+If `elements` is non nil, append these to the list as well.
+
+```cl
+(-snoc '(1 2 3) 4) ;; => '(1 2 3 4)
+(-snoc '(1 2 3) 4 5 6) ;; => '(1 2 3 4 5 6)
+(-snoc '(1 2 3) '(4 5 6)) ;; => '(1 2 3 (4 5 6))
 ```
 
 #### -interpose `(sep list)`

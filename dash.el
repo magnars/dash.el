@@ -275,6 +275,14 @@ a dotted list."
         (setq res (cons res it)))))
     res))
 
+(defun -snoc (list elem &rest elements)
+  "Append ELEM to the end of the list.
+
+This is like `cons', but operates on the end of list.
+
+If ELEMENTS is non nil, append these to the list as well."
+  (-concat list (list elem) elements))
+
 (defmacro --first (form list)
   "Anaphoric form of `-first'."
   (let ((n (make-symbol "needle")))
@@ -1225,6 +1233,7 @@ structure such as plist or alist."
                              "-contains-p"
                              "-repeat"
                              "-cons*"
+                             "-snoc"
                              "-sum"
                              "-product"
                              "-min"

@@ -304,6 +304,11 @@
     (-cons* 1 2 3) => '(1 2 . 3)
     (-cons* 1) => 1)
 
+  (defexamples -snoc
+    (-snoc '(1 2 3) 4) => '(1 2 3 4)
+    (-snoc '(1 2 3) 4 5 6) => '(1 2 3 4 5 6)
+    (-snoc '(1 2 3) '(4 5 6)) => '(1 2 3 (4 5 6)))
+
   (defexamples -interpose
     (-interpose "-" '()) => '()
     (-interpose "-" '("a")) => '("a")

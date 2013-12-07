@@ -2,25 +2,6 @@
 
 A modern list api for Emacs. No 'cl required.
 
-## Breaking change 1.8.0 -> 2.0.0
-
-- The `-min` and `-max` functions are no longer variadic, but take a
-  list to be more in line with the other dash functions.
-
-- `-min-by` and `-max-by` now take a comparator function to sort by.
-
-The stated scope of dash is increasing. It now includes more
-functional style functions, like combinators and threading macros.
-These have been creeping in anyway, since they're so darn useful. Time
-to make it official. :)
-
-- `-rpartial`, `-juxt` and `-applify` are moved to a separate package.
-  Note that `-partial` is still in dash for backwards compatibility
-  reasons.
-
-These new combinators require Emacs 24 for its lexical scope. So
-they are offered in a separate package: `dash-functional`.
-
 ## Installation
 
 It's available on [marmalade](http://marmalade-repo.org/) and [Melpa](http://melpa.milkbox.net/):
@@ -38,11 +19,11 @@ If you want the function combinators, then also:
 
 Add this to the big comment block at the top:
 
-    ;; Package-Requires: ((dash "1.8.0"))
+    ;; Package-Requires: ((dash "2.4.0"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "1.8.0") (dash-functional "1.0.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.4.0") (dash-functional "1.0.0") (emacs "24"))
 
 ## Syntax highlighting of dash functions
 
@@ -1446,6 +1427,11 @@ Oh, and don't edit `README.md` directly, it is auto-generated.
 Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
+
+### From 2.3.0 to 2.4.0
+
+- Add `-snoc` (Matus Goljer)
+- Add `-replace-at`, `-update-at`, `-remove-at`, and `-remove-at-indices` (Matus Goljer)
 
 ### From 2.2.0 to 2.3.0
 

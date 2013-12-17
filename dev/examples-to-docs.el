@@ -72,6 +72,14 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
               docstring
               (mapconcat 'identity (-take 3 examples) "\n")))))
 
+(defun docs--chop-prefix (prefix s)
+  "Remove PREFIX if it is at the start of S."
+  (let ((pos (length prefix)))
+    (if (and (>= (length s) (length prefix))
+             (string= prefix (substring s 0 pos)))
+        (substring s pos)
+      s)))
+
 (defun docs--chop-suffix (suffix s)
   "Remove SUFFIX if it is at end of S."
   (let ((pos (- (length suffix))))
@@ -83,7 +91,9 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
 (defun github-id (command-name signature)
   (docs--chop-suffix
    "-"
-   (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (format "%S %S" command-name signature))))
+   (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (docs--chop-prefix
+                                                   "!"
+                                                   (format "%S %S" command-name signature)))))
 
 (defun s-replace (old new s)
   "Replaces OLD with NEW in S."

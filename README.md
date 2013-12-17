@@ -155,8 +155,8 @@ Include this in your emacs settings to get syntax highlighting:
 
 ### Destructive operations
 
-* [!cons](#-cons-car-cdr) `(car cdr)`
-* [!cdr](#-cdr-list) `(list)`
+* [!cons](#cons-car-cdr) `(car cdr)`
+* [!cdr](#cdr-list) `(list)`
 
 ### Function combinators
 

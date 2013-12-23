@@ -27,6 +27,23 @@
 
 ;;; Code:
 
+(defgroup dash ()
+  "Customize group for dash.el"
+  :group 'lisp
+  :prefix "dash-")
+
+(defun dash--enable-fontlock (symbol value)
+  (when value
+    (dash-enable-font-lock))
+  (set-default symbol value))
+
+(defcustom dash-enable-fontlock nil
+  "If non-nil, enable fontification of dash functions, macros and
+special values."
+  :type 'boolean
+  :set 'dash--enable-fontlock
+  :group 'dash)
+
 (defmacro !cons (car cdr)
   "Destructive: Sets CDR to the cons of CAR and CDR."
   `(setq ,cdr (cons ,car ,cdr)))

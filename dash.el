@@ -524,7 +524,7 @@ from INDICES."
         (!cons (car split) r)
         (setq list (cdr (cadr split)))))
     (!cons list r)
-    (-flatten (nreverse r))))
+    (apply '-concat (nreverse r))))
 
 (defmacro --split-with (pred list)
   "Anaphoric form of `-split-with'."

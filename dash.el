@@ -280,17 +280,7 @@ Thus function FN should return a list."
 The last 2 members of ARGS are used as the final cons of the
 result so if the final member of ARGS is not a list the result is
 a dotted list."
-  (let (res)
-    (--each
-        args
-      (cond
-       ((not res)
-        (setq res it))
-       ((consp res)
-        (setcdr res (cons (cdr res) it)))
-       (t
-        (setq res (cons res it)))))
-    res))
+  (-reduce-r 'cons args))
 
 (defun -snoc (list elem &rest elements)
   "Append ELEM to the end of the list.

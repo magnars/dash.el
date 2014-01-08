@@ -344,7 +344,9 @@
   (defexamples -cons*
     (-cons* 1 2) => '(1 . 2)
     (-cons* 1 2 3) => '(1 2 . 3)
-    (-cons* 1) => 1)
+    (-cons* 1) => 1
+    (-cons* 1 2 3 4) => '(1 2 3 . 4)
+    (apply '-cons* (number-sequence 1 10)) => '(1 2 3 4 5 6 7 8 9 . 10))
 
   (defexamples -snoc
     (-snoc '(1 2 3) 4) => '(1 2 3 4)

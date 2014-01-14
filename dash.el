@@ -783,26 +783,6 @@ as `(nth i list)` for all i from INDICES."
       (!cons (nth it list) r))
     (nreverse r)))
 
-(defun -grade-up (comparator list)
-  "Grades elements of LIST using COMPARATOR relation, yielding a
-permutation vector such that applying this permutation to LIST
-sorts it in ascending order."
-  ;; ugly hack to "fix" lack of lexical scope
-  (let ((comp `(lambda (it other) (funcall ',comparator (car it) (car other)))))
-    (->> (--map-indexed (cons it it-index) list)
-      (-sort comp)
-      (-map 'cdr))))
-
-(defun -grade-down (comparator list)
-  "Grades elements of LIST using COMPARATOR relation, yielding a
-permutation vector such that applying this permutation to LIST
-sorts it in descending order."
-  ;; ugly hack to "fix" lack of lexical scope
-  (let ((comp `(lambda (it other) (funcall ',comparator (car other) (car it)))))
-    (->> (--map-indexed (cons it it-index) list)
-      (-sort comp)
-      (-map 'cdr))))
-
 (defmacro -> (x &optional form &rest more)
   "Threads the expr through the forms. Inserts X as the second
 item in the first form, making a list of it if it is not a list
@@ -840,6 +820,26 @@ in in second form, etc."
 (put '-> 'lisp-indent-function 1)
 (put '->> 'lisp-indent-function 1)
 (put '--> 'lisp-indent-function 1)
+
+(defun -grade-up (comparator list)
+  "Grades elements of LIST using COMPARATOR relation, yielding a
+permutation vector such that applying this permutation to LIST
+sorts it in ascending order."
+  ;; ugly hack to "fix" lack of lexical scope
+  (let ((comp `(lambda (it other) (funcall ',comparator (car it) (car other)))))
+    (->> (--map-indexed (cons it it-index) list)
+      (-sort comp)
+      (-map 'cdr))))
+
+(defun -grade-down (comparator list)
+  "Grades elements of LIST using COMPARATOR relation, yielding a
+permutation vector such that applying this permutation to LIST
+sorts it in descending order."
+  ;; ugly hack to "fix" lack of lexical scope
+  (let ((comp `(lambda (it other) (funcall ',comparator (car other) (car it)))))
+    (->> (--map-indexed (cons it it-index) list)
+      (-sort comp)
+      (-map 'cdr))))
 
 (defmacro -when-let (var-val &rest body)
   "If VAL evaluates to non-nil, bind it to VAR and execute body.

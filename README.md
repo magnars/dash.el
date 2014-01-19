@@ -79,6 +79,7 @@ Include this in your emacs settings to get syntax highlighting:
 * [-none?](#-none-pred-list) `(pred list)`
 * [-only-some?](#-only-some-pred-list) `(pred list)`
 * [-contains?](#-contains-list-element) `(list element)`
+* [-same-items?](#-same-items-list-list2) `(list list2)`
 
 ### Partitioning
 
@@ -618,6 +619,18 @@ or with `-compare-fn` if that's non-nil.
 (-contains? '(1 2 3) 1) ;; => t
 (-contains? '(1 2 3) 2) ;; => t
 (-contains? '(1 2 3) 4) ;; => nil
+```
+
+#### -same-items? `(list list2)`
+
+Return true if `list` and `list2` has the same items.
+
+The order of the elements in the lists does not matter.
+
+```cl
+(-same-items? '(1 2 3) '(1 2 3)) ;; => t
+(-same-items? '(1 2 3) '(3 2 1)) ;; => t
+(-same-items? '(1 2 3) '(1 2 3 4)) ;; => nil
 ```
 
 

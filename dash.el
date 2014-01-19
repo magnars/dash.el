@@ -964,6 +964,18 @@ or with `-compare-fn' if that's non-nil."
 
 (defalias '-contains-p '-contains?)
 
+(defun -same-items? (list list2)
+  "Return true if LIST and LIST2 has the same items.
+
+The order of the elements in the lists does not matter."
+  (let ((length-a (length list))
+        (length-b (length list2)))
+    (and
+     (= length-a length-b)
+     (= length-a (length (-intersection list list2))))))
+
+(defalias '-same-items-p '-same-items?)
+
 (defun -sort (comparator list)
   "Sort LIST, stably, comparing elements using COMPARATOR.
 Returns the sorted list.  LIST is NOT modified by side effects.
@@ -1284,6 +1296,8 @@ structure such as plist or alist."
                              "-difference"
                              "-contains?"
                              "-contains-p"
+                             "-same-items?"
+                             "-same-items-p"
                              "-sort"
                              "--sort"
                              "-repeat"

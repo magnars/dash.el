@@ -226,7 +226,14 @@
     (-contains? '(1 2 3) 2) => t
     (-contains? '(1 2 3) 4) => nil
     (-contains? '() 1) => nil
-    (-contains? '() '()) => nil))
+    (-contains? '() '()) => nil)
+
+  (defexamples -equal?
+    (-equal? '(1 2 3) '(1 2 3)) => t
+    (-equal? '(1 2 3) '(3 2 1)) => t
+    (-equal? '(1 2 3) '(1 2 3 4)) => nil
+    (-equal? '((a . 1) (b . 2)) '((a . 1) (b . 2))) => t
+    (-equal? '(1 2 3) '(2 3 1)) => t))
 
 (def-example-group "Partitioning" nil
   (defexamples -split-at

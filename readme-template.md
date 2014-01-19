@@ -19,11 +19,11 @@ If you want the function combinators, then also:
 
 Add this to the big comment block at the top:
 
-    ;; Package-Requires: ((dash "2.4.2"))
+    ;; Package-Requires: ((dash "2.5.0"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "2.4.2") (dash-functional "1.0.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.5.0") (dash-functional "1.0.0") (emacs "24"))
 
 ## Syntax highlighting of dash functions
 
@@ -90,6 +90,11 @@ Oh, and don't edit `README.md` directly, it is auto-generated.
 Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
+
+### From 2.4.0 to 2.5.0
+
+- Add `-same-items?` (Johan Andersson)
+- A few bugfixes
 
 ### From 2.3.0 to 2.4.0
 
@@ -159,7 +164,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Nic Ferrier](https://github.com/nicferrier) contributed `-cons*`.
  - [Wilfred Hughes](https://github.com/Wilfred) contributed `-slice`, `-first-item` and `-last-item`.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
- - [Johan Andersson](https://github.com/rejeep) contributed `-sum` and `-product`.
+ - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product` and `-same-items?`
  - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
 
 Thanks!

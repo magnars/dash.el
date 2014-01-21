@@ -70,6 +70,8 @@ special values."
   "Calls FN with every item in LIST. Returns nil, used for side-effects only."
   (--each list (funcall fn it)))
 
+(put '-each 'lisp-indent-function 1)
+
 (defmacro --each-while (list pred &rest body)
   "Anaphoric form of `-each-while'."
   (let ((l (make-symbol "list"))
@@ -88,6 +90,8 @@ special values."
 Returns nil, used for side-effects only."
   (--each-while list (funcall pred it) (funcall fn it)))
 
+(put '-each-while 'lisp-indent-function 2)
+
 (defmacro --dotimes (num &rest body)
   "Repeatedly executes BODY (presumably for side-effects) with `it` bound to integers from 0 through n-1."
   `(let ((it 0))
@@ -100,6 +104,8 @@ Returns nil, used for side-effects only."
 (defun -dotimes (num fn)
   "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through n-1."
   (--dotimes num (funcall fn it)))
+
+(put '-dotimes 'lisp-indent-function 1)
 
 (defun -map (fn list)
   "Returns a new list consisting of the result of applying FN to the items in LIST."

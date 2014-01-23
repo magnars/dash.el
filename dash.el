@@ -913,6 +913,22 @@ otherwise do ELSE."
 (put '-if-let* 'lisp-indent-function 2)
 (put '--if-let 'lisp-indent-function 2)
 
+(defmacro -setq (variables values)
+  "Set list of VARIABLES to list of VALUES."
+  (cons
+   'progn
+   (-map-indexed
+    (lambda (index var)
+      `(setq ,var (nth ,index ,values)))
+    variables)))
+
+(defmacro -let (varlist &rest body)
+  "Set variables in VARLIST and yield BODY."
+  (declare (indent 1))
+  `(let ,(apply 'append (-map 'car varlist))
+     ,@(--map (cons '-setq it) varlist)
+     ,@body))
+
 (defun -distinct (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
@@ -1295,6 +1311,8 @@ structure such as plist or alist."
                              "-if-let"
                              "-if-let*"
                              "--if-let"
+                             "-setq"
+                             "-let"
                              "-distinct"
                              "-uniq"
                              "-union"

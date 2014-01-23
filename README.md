@@ -147,6 +147,8 @@ Include this in your emacs settings to get syntax highlighting:
 * [-when-let*](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
 * [-if-let](#-if-let-var-val-then-rest-else) `(var-val then &rest else)`
 * [-if-let*](#-if-let-vars-vals-then-rest-else) `(vars-vals then &rest else)`
+* [-setq](#-setq-variables-values) `(variables values)`
+* [-let](#-let-varlist-rest-body) `(varlist &rest body)`
 
 ### Side-effects
 
@@ -1201,6 +1203,25 @@ If all `vals` evaluate to true, bind them to their corresponding
 ```cl
 (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") ;; => 15
 (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") ;; => "foo"
+```
+
+#### -setq `(variables values)`
+
+Set list of `variables` to list of `values`.
+
+```cl
+(progn (-setq (a b) '(1 2)) (list a b)) ;; => '(1 2)
+(let ((x '(3 4))) (-setq (c d) x) (list c d)) ;; => '(3 4)
+```
+
+#### -let `(varlist &rest body)`
+
+Set variables in `varlist` and yield `body`.
+
+```cl
+(progn (-let (((a b) '(1 2))) (list a b))) ;; => '(1 2)
+(progn (-let (((a b) '(1 2)) ((c d) '(3 4))) (list a b))) ;; => '(1 2)
+(let ((x '(3 4))) (-let (((c d) x)) (list c d))) ;; => '(3 4)
 ```
 
 

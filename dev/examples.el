@@ -403,7 +403,13 @@
     (-sort '< '(3 1 2)) => '(1 2 3)
     (-sort '> '(3 1 2)) => '(3 2 1)
     (--sort (< it other) '(3 1 2)) => '(1 2 3)
-    (let ((l '(3 1 2))) (-sort '> l) l) => '(3 1 2)))
+    (let ((l '(3 1 2))) (-sort '> l) l) => '(3 1 2))
+
+  (defexamples -list
+    (-list 1) => '(1)
+    (-list 1 2 3) => '(1 2 3)
+    (-list '(1 2 3) => '(1 2 3))
+    (-list '((1) (2)) => '((1) (2)))))
 
 (def-example-group "Tree operations" nil
   (defexamples -tree-map

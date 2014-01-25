@@ -125,6 +125,7 @@ Include this in your emacs settings to get syntax highlighting:
 * [-first-item](#-first-item-list) `(list)`
 * [-last-item](#-last-item-list) `(list)`
 * [-sort](#-sort-comparator-list) `(comparator list)`
+* [-list](#-list-rest-args) `(&rest args)`
 
 ### Tree operations
 
@@ -1021,6 +1022,18 @@ if the first element should sort before the second.
 (-sort '< '(3 1 2)) ;; => '(1 2 3)
 (-sort '> '(3 1 2)) ;; => '(3 2 1)
 (--sort (< it other) '(3 1 2)) ;; => '(1 2 3)
+```
+
+#### -list `(&rest args)`
+
+Return a list with `args`.
+
+If first item of `args` is already a list, simply return `args`.  If
+not, return a list with `args` as elements.
+
+```cl
+(-list 1) ;; => '(1)
+(-list 1 2 3) ;; => '(1 2 3)
 ```
 
 

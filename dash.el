@@ -994,6 +994,14 @@ if the first element should sort before the second."
   (declare (debug t))
   `(-sort (lambda (it other) ,form) ,list))
 
+(defun -list (&rest args)
+  "Return a list with ARGS.
+
+If first item of ARGS is already a list, simply return ARGS.  If
+not, return a list with ARGS as elements."
+  (let ((arg (car args)))
+    (if (listp arg) arg args)))
+
 (defun -repeat (n x)
   "Return a list with X repeated N times.
 Returns nil if N is less than 1."
@@ -1306,6 +1314,7 @@ structure such as plist or alist."
                              "-same-items-p"
                              "-sort"
                              "--sort"
+                             "-list"
                              "-repeat"
                              "-sum"
                              "-product"

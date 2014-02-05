@@ -502,7 +502,16 @@
 
   (defexamples -if-let*
     (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") => 15
-    (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") => "foo"))
+    (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") => "foo")
+
+  (defexamples -setq
+    (progn (-setq (a b) '(1 2)) (list a b)) => '(1 2)
+    (let ((x '(3 4))) (-setq (c d) x) (list c d)) => '(3 4))
+
+  (defexamples -let
+    (progn (-let (((a b) '(1 2))) (list a b))) => '(1 2)
+    (progn (-let (((a b) '(1 2)) ((c d) '(3 4))) (list a b))) => '(1 2)
+    (let ((x '(3 4))) (-let (((c d) x)) (list c d))) => '(3 4)))
 
 (def-example-group "Side-effects" nil
   (defexamples -each

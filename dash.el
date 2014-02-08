@@ -781,6 +781,16 @@ there is no such element."
   "Anaphoric version of `-find-index'."
   `(-find-index (lambda (it) ,form) ,list))
 
+(defun -find-last-index (pred list)
+  "Take a predicate PRED and a LIST and return the index of the
+last element in the list satisfying the predicate, or nil if
+there is no such element."
+  (-last-item (-find-indices pred list)))
+
+(defmacro --find-last-index (form list)
+  "Anaphoric version of `-find-last-index'."
+  `(-find-last-index (lambda (it) ,form) ,list))
+
 (defun -select-by-indices (indices list)
   "Return a list whose elements are elements from LIST selected
 as `(nth i list)` for all i from INDICES."
@@ -1291,6 +1301,8 @@ structure such as plist or alist."
                              "--find-indices"
                              "-find-index"
                              "--find-index"
+                             "-find-last-index"
+                             "--find-last-index"
                              "-select-by-indices"
                              "-grade-up"
                              "-grade-down"

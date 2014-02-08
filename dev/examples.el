@@ -303,6 +303,11 @@
     (--find-index (< 5 it) '(2 4 1 6 3 3 5 8)) => 3
     (-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz")) => 1)
 
+  (defexamples -find-last-index
+    (-find-last-index 'even? '(2 4 1 6 3 3 5 8)) => 7
+    (--find-last-index (< 5 it) '(2 7 1 6 3 8 5 2)) => 5
+    (-find-last-index (-partial 'string-lessp "baz") '("q" "foo" "baz")) => 1)
+
   (defexamples -find-indices
     (-find-indices 'even? '(2 4 1 6 3 3 5 8)) => '(0 1 3 7)
     (--find-indices (< 5 it) '(2 4 1 6 3 3 5 8)) => '(3 7)

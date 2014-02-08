@@ -99,6 +99,7 @@ Include this in your emacs settings to get syntax highlighting:
 * [-elem-index](#-elem-index-elem-list) `(elem list)`
 * [-elem-indices](#-elem-indices-elem-list) `(elem list)`
 * [-find-index](#-find-index-pred-list) `(pred list)`
+* [-find-last-index](#-find-last-index-pred-list) `(pred list)`
 * [-find-indices](#-find-indices-pred-list) `(pred list)`
 * [-select-by-indices](#-select-by-indices-indices-list) `(indices list)`
 * [-grade-up](#-grade-up-comparator-list) `(comparator list)`
@@ -782,6 +783,18 @@ there is no such element.
 (-find-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 0
 (--find-index (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => 3
 (-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz")) ;; => 1
+```
+
+#### -find-last-index `(pred list)`
+
+Take a predicate `pred` and a `list` and return the index of the
+last element in the list satisfying the predicate, or nil if
+there is no such element.
+
+```cl
+(-find-last-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 7
+(--find-last-index (< 5 it) '(2 7 1 6 3 8 5 2)) ;; => 5
+(-find-last-index (-partial 'string-lessp "baz") '("q" "foo" "baz")) ;; => 1
 ```
 
 #### -find-indices `(pred list)`

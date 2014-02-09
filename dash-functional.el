@@ -75,11 +75,26 @@ results (in the same order).
 In types: (b -> b -> c) -> (a -> b) -> a -> a -> c"
   (lambda (x y) (funcall operator (funcall transformer x) (funcall transformer y))))
 
+(defun -on2 (operator transformer)
+  "Return a function which first applies TRANSFORMER to each of its arguments
+ (of which there can be any number), and then applies OPERATOR on the results
+ (in the same order)."
+  (lambda (&rest args) (apply operator (mapcar transformer args))))
+
 (defun -flip (func)
   "Swap the order of arguments for binary function FUNC.
 
 In types: (a -> b -> c) -> b -> a -> c"
   (lambda (x y) (funcall func y x)))
+
+(defun -rotate-args (n func)
+  "Rotate the arguments N places to the right for n-ary function FUNC.
+With N negative, rotate to the left."
+  (lambda (&rest args) (apply func (-rotate n args))))
+
+(defun -reverse-args (func)
+  "Reverse the order of arguments to n-ary function FUNC."
+  (lambda (&rest args) (apply func (reverse args))))
 
 (defun -const (c)
   "Return a function that returns C ignoring any additional arguments.
@@ -104,6 +119,12 @@ that returns t if PRED returns nil and nil if PRED returns
 non-nil."
   (lambda (x) (not (funcall pred x))))
 
+(defun -not2 (pred)
+  "Take an n-ary predicates PRED and return an n-ary predicate
+that returns t if PRED returns nil and nil if PRED returns
+non-nil."
+  (lambda (&rest args) (not (apply pred args))))
+
 (defun -orfn (&rest preds)
   "Take list of unary predicates PREDS and return an unary
 predicate with argument x that returns non-nil if at least one of
@@ -112,6 +133,12 @@ the PREDS returns non-nil on x.
 In types: [a -> Bool] -> a -> Bool"
   (lambda (x) (-any? (-cut funcall <> x) preds)))
 
+(defun -orfn2 (&rest preds)
+  "Take list of n-ary predicates PREDS and return an n-ary
+predicate that returns non-nil if at least one of the PREDS
+returns non-nil on the same arguments."
+  (lambda (&rest args) (-any? (-cut apply <> args) preds)))
+
 (defun -andfn (&rest preds)
   "Take list of unary predicates PREDS and return an unary
 predicate with argument x that returns non-nil if all of the
@@ -119,6 +146,12 @@ PREDS returns non-nil on x.
 
 In types: [a -> Bool] -> a -> Bool"
   (lambda (x) (-all? (-cut funcall <> x) preds)))
+
+(defun -andfn2 (&rest preds)
+  "Take list of n-ary predicates PREDS and return an n-ary
+predicate that returns non-nil if all of the PREDS return
+non-nil on the same arguments."
+  (lambda (&rest args) (-all? (-cut apply <> args) preds)))
 
 (provide 'dash-functional)
 

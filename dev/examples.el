@@ -233,7 +233,26 @@
     (-same-items? '(1 2 3) '(3 2 1)) => t
     (-same-items? '(1 2 3) '(1 2 3 4)) => nil
     (-same-items? '((a . 1) (b . 2)) '((a . 1) (b . 2))) => t
-    (-same-items? '(1 2 3) '(2 3 1)) => t))
+    (-same-items? '(1 2 3) '(2 3 1)) => t)
+
+  (defexamples -is-prefix-p
+    (-is-prefix-p '(1 2 3) '(1 2 3 4 5)) => t
+    (-is-prefix-p '(1 2 3 4 5) '(1 2 3)) => nil
+    (-is-prefix-p '(1 3) '(1 2 3 4 5)) => nil
+    (-is-prefix-p '(1 2 3) '(1 2 4 5)) => nil)
+
+  (defexamples -is-suffix-p
+    (-is-suffix-p '(3 4 5) '(1 2 3 4 5)) => t
+    (-is-suffix-p '(1 2 3 4 5) '(3 4 5)) => nil
+    (-is-suffix-p '(3 5) '(1 2 3 4 5)) => nil
+    (-is-suffix-p '(3 4 5) '(1 2 3 5)) => nil)
+
+  (defexamples -is-infix-p
+    (-is-infix-p '(1 2 3) '(1 2 3 4 5)) => t
+    (-is-infix-p '(2 3 4) '(1 2 3 4 5)) => t
+    (-is-infix-p '(3 4 5) '(1 2 3 4 5)) => t
+    (-is-infix-p '(2 3 4) '(1 2 4 5)) => nil
+    (-is-infix-p '(2 4) '(1 2 3 4 5)) => nil))
 
 (def-example-group "Partitioning" nil
   (defexamples -split-at

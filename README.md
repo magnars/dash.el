@@ -80,6 +80,9 @@ Include this in your emacs settings to get syntax highlighting:
 * [-only-some?](#-only-some-pred-list) `(pred list)`
 * [-contains?](#-contains-list-element) `(list element)`
 * [-same-items?](#-same-items-list-list2) `(list list2)`
+* [-is-prefix-p](#-is-prefix-p-prefix-list) `(prefix list)`
+* [-is-suffix-p](#-is-suffix-p-suffix-list) `(suffix list)`
+* [-is-infix-p](#-is-infix-p-infix-list) `(infix list)`
 
 ### Partitioning
 
@@ -633,6 +636,38 @@ The order of the elements in the lists does not matter.
 (-same-items? '(1 2 3) '(1 2 3)) ;; => t
 (-same-items? '(1 2 3) '(3 2 1)) ;; => t
 (-same-items? '(1 2 3) '(1 2 3 4)) ;; => nil
+```
+
+#### -is-prefix-p `(prefix list)`
+
+Return non-nil if `prefix` is prefix of `list`.
+
+```cl
+(-is-prefix-p '(1 2 3) '(1 2 3 4 5)) ;; => t
+(-is-prefix-p '(1 2 3 4 5) '(1 2 3)) ;; => nil
+(-is-prefix-p '(1 3) '(1 2 3 4 5)) ;; => nil
+```
+
+#### -is-suffix-p `(suffix list)`
+
+Return non-nil if `suffix` is suffix of `list`.
+
+```cl
+(-is-suffix-p '(3 4 5) '(1 2 3 4 5)) ;; => t
+(-is-suffix-p '(1 2 3 4 5) '(3 4 5)) ;; => nil
+(-is-suffix-p '(3 5) '(1 2 3 4 5)) ;; => nil
+```
+
+#### -is-infix-p `(infix list)`
+
+Return non-nil if `infix` is infix of `list`.
+
+This operation runs in `o`(n^2) time
+
+```cl
+(-is-infix-p '(1 2 3) '(1 2 3 4 5)) ;; => t
+(-is-infix-p '(2 3 4) '(1 2 3 4 5)) ;; => t
+(-is-infix-p '(3 4 5) '(1 2 3 4 5)) ;; => t
 ```
 
 

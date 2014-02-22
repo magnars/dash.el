@@ -85,6 +85,8 @@ Include this in your emacs settings to get syntax highlighting:
 
 * [-split-at](#-split-at-n-list) `(n list)`
 * [-split-with](#-split-with-pred-list) `(pred list)`
+* [-split-on](#-split-on-item-list) `(item list)`
+* [-split-when](#-split-when-fn-list) `(fn list)`
 * [-separate](#-separate-pred-list) `(pred list)`
 * [-partition](#-partition-n-list) `(n list)`
 * [-partition-all-in-steps](#-partition-all-in-steps-n-step-list) `(n step list)`
@@ -655,6 +657,39 @@ Returns a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`)), in 
 (-split-with 'even? '(1 2 3 4)) ;; => '(nil (1 2 3 4))
 (-split-with 'even? '(2 4 5 6)) ;; => '((2 4) (5 6))
 (--split-with (< it 4) '(1 2 3 4 3 2 1)) ;; => '((1 2 3) (4 3 2 1))
+```
+
+#### -split-on `(item list)`
+
+Split the `list` each time `item` is found.
+
+Unlike `-partition-by`, the `item` is discarded from the results.
+Empty lists are also removed from the result.
+
+Comparison is done by `equal`.
+
+See also `-split-when`.
+
+```cl
+(-split-on '| '(Nil | Leaf a | Node [Tree a])) ;; => '((Nil) (Leaf a) (Node [Tree a]))
+(-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e")) ;; => '(("a" "b") ("c") ("d" "e"))
+(-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e")) ;; => '(("a" "b") ("d" "e"))
+```
+
+#### -split-when `(fn list)`
+
+Split the `list` on each element where `fn` returns non-nil.
+
+Unlike `-partition-by`, the "matched" element is discarded from
+the results.  Empty lists are also removed from the result.
+
+This function can be thought of as a generalization of
+`split-string`.
+
+```cl
+(-split-when 'even? '(1 2 3 4 5 6)) ;; => '((1) (3) (5))
+(-split-when 'even? '(1 2 3 4 6 8 9)) ;; => '((1) (3) (9))
+(--split-when (memq it '(&optional &rest)) '(a b &optional c d &rest args)) ;; => '((a b) (c d) (args))
 ```
 
 #### -separate `(pred list)`

@@ -560,6 +560,41 @@ from INDICES."
   "Returns a list of ((-take-while PRED LIST) (-drop-while PRED LIST)), in no more than one pass through the list."
   (--split-with (funcall pred it) list))
 
+(defmacro -split-on (item list)
+  "Split the LIST each time ITEM is found.
+
+Unlike `-partition-by', the ITEM is discarded from the results.
+Empty lists are also removed from the result.
+
+Comparison is done by `equal'.
+
+See also `-split-when'."
+  (declare (debug (form form)))
+  `(-split-when (lambda (it) (equal it ,item)) ,list))
+
+(defmacro --split-when (form list)
+  "Anaphoric version of `-split-when'."
+  (declare (debug (sexp form)))
+  `(-split-when (lambda (it) ,form) ,list))
+
+(defun -split-when (fn list)
+  "Split the LIST on each element where FN returns non-nil.
+
+Unlike `-partition-by', the \"matched\" element is discarded from
+the results.  Empty lists are also removed from the result.
+
+This function can be thought of as a generalization of
+`split-string'."
+  (let (r s)
+    (while list
+      (if (not (funcall fn (car list)))
+          (push (car list) s)
+        (when s (push (nreverse s) r))
+        (setq s nil))
+      (!cdr list))
+    (when s (push (nreverse s) r))
+    (nreverse r)))
+
 (defmacro --separate (form list)
   "Anaphoric form of `-separate'."
   (declare (debug (sexp form)))
@@ -1308,6 +1343,9 @@ structure such as plist or alist."
                              "-remove-at-indices"
                              "-split-with"
                              "--split-with"
+                             "-split-on"
+                             "-split-when"
+                             "--split-when"
                              "-separate"
                              "--separate"
                              "-partition-all-in-steps"

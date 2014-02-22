@@ -245,6 +245,25 @@
     (-split-with 'even? '(2 4 5 6)) => '((2 4) (5 6))
     (--split-with (< it 4) '(1 2 3 4 3 2 1)) => '((1 2 3) (4 3 2 1)))
 
+  (defexamples -split-on
+    (-split-on '| '(Nil | Leaf a | Node [Tree a])) => '((Nil) (Leaf a) (Node [Tree a]))
+    (-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e")) => '(("a" "b") ("c") ("d" "e"))
+    (-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e")) => '(("a" "b") ("d" "e"))
+    (-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup)) => '(("a" "b") ("c"))
+    (-split-on ':endgroup '("a" "b" :endgroup :endgroup :endgroup "d" "e")) => '(("a" "b") ("d" "e"))
+    (-split-on ':endgroup '(:endgroup "c" :endgroup "d" "e")) => '(("c") ("d" "e"))
+    (-split-on '| '(Nil | | Node [Tree a])) => '((Nil) (Node [Tree a])))
+
+  (defexamples -split-when
+    (-split-when 'even? '(1 2 3 4 5 6)) => '((1) (3) (5))
+    (-split-when 'even? '(1 2 3 4 6 8 9)) => '((1) (3) (9))
+    (--split-when (memq it '(&optional &rest)) '(a b &optional c d &rest args)) => '((a b) (c d) (args))
+    (-split-when 'even? '(1 2 3 5 6)) => '((1) (3 5))
+    (-split-when 'even? '(1 2 3 5)) => '((1) (3 5))
+    (-split-when 'even? '(1 3 4 5 6)) => '((1 3) (5))
+    (-split-when 'even? '(1 2 3 4 5 6 8 10)) => '((1) (3) (5))
+    (-split-when 'even? '(1 2 3 5 7 6)) => '((1) (3 5 7)))
+
   (defexamples -separate
     (-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7)) => '((2 4 6) (1 3 5 7))
     (--separate (< it 5) '(3 7 5 9 3 2 1 4 6)) => '((3 3 2 1 4) (7 5 9 6))

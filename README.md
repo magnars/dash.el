@@ -19,11 +19,11 @@ If you want the function combinators, then also:
 
 Add this to the big comment block at the top:
 
-    ;; Package-Requires: ((dash "2.5.0"))
+    ;; Package-Requires: ((dash "2.6.0"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "2.5.0") (dash-functional "1.0.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.6.0") (dash-functional "1.0.0") (emacs "24"))
 
 ## Syntax highlighting of dash functions
 
@@ -1583,6 +1583,14 @@ Oh, and don't edit `README.md` directly, it is auto-generated.
 Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
+
+### From 2.5.0 to 2.6.0
+
+- Add `-is-prefix-p`, `-is-suffix-p`, `-is-infix-p` (Matus Goljer)
+- Add `-iterate`, `-unfold` (Matus Goljer)
+- Add `-split-on`, `-split-when` (Matus Goljer)
+- Add `-find-last-index` (Matus Goljer)
+- Add `-list` (Johan Andersson)
 
 ### From 2.4.0 to 2.5.0
 

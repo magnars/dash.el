@@ -1016,6 +1016,30 @@ The order of the elements in the lists does not matter."
 
 (defalias '-same-items-p '-same-items?)
 
+(defun -is-prefix-p (prefix list)
+  "Return non-nil if PREFIX is prefix of LIST."
+  (--each-while list (equal (car prefix) it)
+    (!cdr prefix))
+  (not prefix))
+
+(defun -is-suffix-p (suffix list)
+  "Return non-nil if SUFFIX is suffix of LIST."
+  (-is-prefix-p (nreverse suffix) (nreverse list)))
+
+(defun -is-infix-p (infix list)
+  "Return non-nil if INFIX is infix of LIST.
+
+This operation runs in O(n^2) time"
+  (let (done)
+    (while (and (not done) list)
+      (setq done (-is-prefix-p infix list))
+      (!cdr list))
+    done))
+
+(defalias '-is-prefix? '-is-prefix-p)
+(defalias '-is-suffix? '-is-suffix-p)
+(defalias '-is-infix? '-is-infix-p)
+
 (defun -sort (comparator list)
   "Sort LIST, stably, comparing elements using COMPARATOR.
 Returns the sorted list.  LIST is NOT modified by side effects.
@@ -1355,6 +1379,12 @@ structure such as plist or alist."
                              "-contains-p"
                              "-same-items?"
                              "-same-items-p"
+                             "-is-prefix-p"
+                             "-is-prefix?"
+                             "-is-suffix-p"
+                             "-is-suffix?"
+                             "-is-infix-p"
+                             "-is-infix?"
                              "-sort"
                              "--sort"
                              "-list"

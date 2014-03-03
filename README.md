@@ -72,6 +72,14 @@ Include this in your emacs settings to get syntax highlighting:
 * [-max](#-max-list) `(list)`
 * [-max-by](#-max-by-comparator-list) `(comparator list)`
 
+### Unfolding
+
+
+Operations dual to reductions, building lists from seed value rather than consuming a list to produce a single value.
+
+* [-iterate](#-iterate-fun-init-n) `(fun init n)`
+* [-unfold](#-unfold-fun-seed) `(fun seed)`
+
 ### Predicates
 
 * [-any?](#-any-pred-list) `(pred list)`
@@ -564,6 +572,45 @@ comparing them.
 (-max-by '> '(4 3 6 1)) ;; => 6
 (--max-by (> (car it) (car other)) '((1 2 3) (2) (3 2))) ;; => '(3 2)
 (--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) ;; => '(1 2 3)
+```
+
+
+## Unfolding
+
+
+Operations dual to reductions, building lists from seed value rather than consuming a list to produce a single value.
+
+#### -iterate `(fun init n)`
+
+Return a list of iterated applications of `fun` to `init`.
+
+This means a list of form:
+  '(init (fun init) (fun (fun init)) ...)
+
+`n` is the length of the returned list.
+
+```cl
+(-iterate '1+ 1 10) ;; => '(1 2 3 4 5 6 7 8 9 10)
+(-iterate (lambda (x) (+ x x)) 2 5) ;; => '(2 4 8 16 32)
+(--iterate (* it it) 2 5) ;; => '(2 4 16 256 65536)
+```
+
+#### -unfold `(fun seed)`
+
+Build a list from `seed` using `fun`.
+
+This is "dual" operation to `-reduce-r`: while -reduce-r
+consumes a list to produce a single value, `-unfold` takes a
+seed value and builds a (potentially infinite!) list.
+
+`fun` should return `nil` to stop the generating process, or a
+cons (`a` . `b`), where `a` will be prepended to the result and `b` is
+the new seed.
+
+```cl
+(-unfold (lambda (x) (unless (= x 0) (cons x (1- x)))) 10) ;; => '(10 9 8 7 6 5 4 3 2 1)
+(--unfold (when it (cons it (cdr it))) '(1 2 3 4)) ;; => '((1 2 3 4) (2 3 4) (3 4) (4))
+(--unfold (when it (cons it (butlast it))) '(1 2 3 4)) ;; => '((1 2 3 4) (1 2 3) (1 2) (1))
 ```
 
 

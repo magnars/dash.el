@@ -1113,6 +1113,45 @@ The items for the comparator form are exposed as \"it\" and \"other\"."
   (declare (debug (sexp form)))
   `(-min-by (lambda (it other) ,form) ,list))
 
+(defun -iterate (fun init n)
+  "Return a list of iterated applications of FUN to INIT.
+
+This means a list of form:
+  '(init (fun init) (fun (fun init)) ...)
+
+N is the length of the returned list."
+  (if (= n 0) nil
+    (let ((r (list init)))
+      (--dotimes (1- n)
+        (push (funcall fun (car r)) r))
+      (nreverse r))))
+
+(defmacro --iterate (form init n)
+  "Anaphoric version of `-iterate'."
+  (declare (debug (sexp form form)))
+  `(-iterate (lambda (it) ,form) ,init ,n))
+
+(defun -unfold (fun seed)
+  "Build a list from SEED using FUN.
+
+This is \"dual\" operation to `-reduce-r': while -reduce-r
+consumes a list to produce a single value, `-unfold' takes a
+seed value and builds a (potentially infinite!) list.
+
+FUN should return `nil' to stop the generating process, or a
+cons (A . B), where A will be prepended to the result and B is
+the new seed."
+  (let ((last (funcall fun seed)) r)
+    (while last
+      (push (car last) r)
+      (setq last (funcall fun (cdr last))))
+    (nreverse r)))
+
+(defmacro --unfold (form seed)
+  "Anaphoric version of `-unfold'."
+  (declare (debug (sexp form)))
+  `(-unfold (lambda (it) ,form) ,seed))
+
 (defun -cons-pair? (con)
   "Return non-nil if CON is true cons pair.
 That is (A . B) where B is not a list."
@@ -1397,6 +1436,10 @@ structure such as plist or alist."
                              "--max-by"
                              "-min-by"
                              "--min-by"
+                             "-iterate"
+                             "--iterate"
+                             "-unfold"
+                             "--unfold"
                              "-cons-pair?"
                              "-cons-to-list"
                              "-value-to-list"

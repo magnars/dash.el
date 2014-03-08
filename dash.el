@@ -73,7 +73,7 @@ special values."
 
 (defmacro --each-while (list pred &rest body)
   "Anaphoric form of `-each-while'."
-  (declare (debug (form sexp body))
+  (declare (debug (form form body))
            (indent 2))
   (let ((l (make-symbol "list"))
         (c (make-symbol "continue")))
@@ -92,16 +92,18 @@ Returns nil, used for side-effects only."
 (put '-each-while 'lisp-indent-function 2)
 
 (defmacro --dotimes (num &rest body)
-  "Repeatedly executes BODY (presumably for side-effects) with `it` bound to integers from 0 through n-1."
-  (declare (debug (integerp body))
+  "Repeatedly executes BODY (presumably for side-effects) with `it` bound to integers from 0 through NUM-1."
+  (declare (debug (form body))
            (indent 1))
-  `(let ((it 0))
-     (while (< it ,num)
-       ,@body
-       (setq it (1+ it)))))
+  (let ((n (make-symbol "num")))
+    `(let ((,n ,num)
+           (it 0))
+       (while (< it ,n)
+         ,@body
+         (setq it (1+ it))))))
 
 (defun -dotimes (num fn)
-  "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through n-1."
+  "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through NUM-1."
   (--dotimes num (funcall fn it)))
 
 (put '-dotimes 'lisp-indent-function 1)
@@ -112,12 +114,12 @@ Returns nil, used for side-effects only."
 
 (defmacro --map (form list)
   "Anaphoric form of `-map'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(mapcar (lambda (it) ,form) ,list))
 
 (defmacro --reduce-from (form initial-value list)
   "Anaphoric form of `-reduce-from'."
-  (declare (debug (sexp form form)))
+  (declare (debug (form form form)))
   `(let ((acc ,initial-value))
      (--each ,list (setq acc ,form))
      acc))
@@ -134,7 +136,7 @@ exposed as `acc`."
 
 (defmacro --reduce (form list)
   "Anaphoric form of `-reduce'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((lv (make-symbol "list-value")))
     `(let ((,lv ,list))
        (if ,lv
@@ -166,7 +168,7 @@ operation associates from right instead of from left."
 
 (defmacro --reduce-r-from (form initial-value list)
   "Anaphoric version of `-reduce-r-from'."
-  (declare (debug (sexp form form)))
+  (declare (debug (form form form)))
   `(-reduce-r-from (lambda (&optional it acc) ,form) ,initial-value ,list))
 
 (defun -reduce-r (fn list)
@@ -188,12 +190,12 @@ associates from right instead of from left."
 
 (defmacro --reduce-r (form list)
   "Anaphoric version of `-reduce-r'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-reduce-r (lambda (&optional it acc) ,form) ,list))
 
 (defmacro --filter (form list)
   "Anaphoric form of `-filter'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
        (--each ,list (when ,form (!cons it ,r)))
@@ -210,7 +212,7 @@ Alias: `-select'"
 
 (defmacro --remove (form list)
   "Anaphoric form of `-remove'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(--filter (not ,form) ,list))
 
 (defun -remove (pred list)
@@ -224,7 +226,7 @@ Alias: `-reject'"
 
 (defmacro --keep (form list)
   "Anaphoric form of `-keep'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((r (make-symbol "result"))
         (m (make-symbol "mapped")))
     `(let (,r)
@@ -237,7 +239,7 @@ Alias: `-reject'"
 
 (defmacro --map-when (pred rep list)
   "Anaphoric form of `-map-when'."
-  (declare (debug (sexp sexp form)))
+  (declare (debug (form form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
        (--each ,list (!cons (if ,pred ,rep it) ,r))
@@ -245,7 +247,7 @@ Alias: `-reject'"
 
 (defmacro --map-indexed (form list)
   "Anaphoric form of `-map-indexed'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
        (--each ,list
@@ -279,7 +281,7 @@ through the REP function."
 
 (defmacro --mapcat (form list)
   "Anaphoric form of `-mapcat'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(apply 'append (--map ,form ,list)))
 
 (defun -mapcat (fn list)
@@ -305,7 +307,7 @@ If ELEMENTS is non nil, append these to the list as well."
 
 (defmacro --first (form list)
   "Anaphoric form of `-first'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((n (make-symbol "needle")))
     `(let (,n)
        (--each-while ,list (not ,n)
@@ -320,7 +322,7 @@ To get the first item in the list no questions asked, use `car'."
 
 (defmacro --last (form list)
   "Anaphoric form of `-last'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((n (make-symbol "needle")))
     `(let (,n)
        (--each ,list
@@ -340,7 +342,7 @@ To get the first item in the list no questions asked, use `car'."
 
 (defmacro --count (pred list)
   "Anaphoric form of `-count'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((r (make-symbol "result")))
     `(let ((,r 0))
        (--each ,list (when ,pred (setq ,r (1+ ,r))))
@@ -355,7 +357,7 @@ To get the first item in the list no questions asked, use `car'."
 
 (defmacro --any? (form list)
   "Anaphoric form of `-any?'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(---truthy? (--first ,form ,list)))
 
 (defun -any? (pred list)
@@ -374,7 +376,7 @@ Alias: `-some?'"
 
 (defmacro --all? (form list)
   "Anaphoric form of `-all?'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((a (make-symbol "all")))
     `(let ((,a t))
        (--each-while ,list ,a (setq ,a ,form))
@@ -396,7 +398,7 @@ Alias: `-every?'"
 
 (defmacro --none? (form list)
   "Anaphoric form of `-none?'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(--all? (not ,form) ,list))
 
 (defun -none? (pred list)
@@ -408,7 +410,7 @@ Alias: `-every?'"
 
 (defmacro --only-some? (form list)
   "Anaphoric form of `-only-some?'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((y (make-symbol "yes"))
         (n (make-symbol "no")))
     `(let (,y ,n)
@@ -462,7 +464,7 @@ FROM or TO may be negative."
 
 (defmacro --take-while (form list)
   "Anaphoric form of `-take-while'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
        (--each-while ,list ,form (!cons it ,r))
@@ -474,7 +476,7 @@ FROM or TO may be negative."
 
 (defmacro --drop-while (form list)
   "Anaphoric form of `-drop-while'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((l (make-symbol "list")))
     `(let ((,l ,list))
        (while (and ,l (let ((it (car ,l))) ,form))
@@ -518,7 +520,7 @@ The time complexity is O(n)."
 
 (defmacro --update-at (n form list)
   "Anaphoric version of `-update-at'."
-  (declare (debug (integerp sexp form)))
+  (declare (debug (form form form)))
   `(-update-at ,n (lambda (it) ,form) ,list))
 
 (defun -remove-at (n list)
@@ -541,7 +543,7 @@ from INDICES."
 
 (defmacro --split-with (pred list)
   "Anaphoric form of `-split-with'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((l (make-symbol "list"))
         (r (make-symbol "result"))
         (c (make-symbol "continue")))
@@ -574,7 +576,7 @@ See also `-split-when'."
 
 (defmacro --split-when (form list)
   "Anaphoric version of `-split-when'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-split-when (lambda (it) ,form) ,list))
 
 (defun -split-when (fn list)
@@ -597,7 +599,7 @@ This function can be thought of as a generalization of
 
 (defmacro --separate (form list)
   "Anaphoric form of `-separate'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((y (make-symbol "yes"))
         (n (make-symbol "no")))
     `(let (,y ,n)
@@ -646,7 +648,7 @@ those items are discarded."
 
 (defmacro --partition-by (form list)
   "Anaphoric form of `-partition-by'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((r (make-symbol "result"))
         (s (make-symbol "sublist"))
         (v (make-symbol "value"))
@@ -677,7 +679,7 @@ those items are discarded."
 
 (defmacro --partition-by-header (form list)
   "Anaphoric form of `-partition-by-header'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((r (make-symbol "result"))
         (s (make-symbol "sublist"))
         (h (make-symbol "header-value"))
@@ -715,7 +717,7 @@ those items are discarded."
 
 (defmacro --group-by (form list)
   "Anaphoric form of `-group-by'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   (let ((l (make-symbol "list"))
         (v (make-symbol "value"))
         (k (make-symbol "key"))
@@ -769,7 +771,7 @@ elements of LIST.  Keys are compared by `equal'."
   "Anaphoric form of `-zip-with'.
 
 The elements in list1 is bound as `it`, the elements in list2 as `other`."
-  (declare (debug (sexp form form)))
+  (declare (debug (form form form)))
   (let ((r (make-symbol "result"))
         (l1 (make-symbol "list1"))
         (l2 (make-symbol "list2")))
@@ -827,7 +829,7 @@ predicate PRED, in ascending order."
 
 (defmacro --find-indices (form list)
   "Anaphoric version of `-find-indices'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-find-indices (lambda (it) ,form) ,list))
 
 (defun -find-index (pred list)
@@ -838,7 +840,7 @@ there is no such element."
 
 (defmacro --find-index (form list)
   "Anaphoric version of `-find-index'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-find-index (lambda (it) ,form) ,list))
 
 (defun -find-last-index (pred list)
@@ -1084,7 +1086,7 @@ if the first element should sort before the second."
 
 (defmacro --sort (form list)
   "Anaphoric form of `-sort'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-sort (lambda (it other) ,form) ,list))
 
 (defun -list (&rest args)
@@ -1138,14 +1140,14 @@ comparing them."
   "Anaphoric version of `-max-by'.
 
 The items for the comparator form are exposed as \"it\" and \"other\"."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-max-by (lambda (it other) ,form) ,list))
 
 (defmacro --min-by (form list)
   "Anaphoric version of `-min-by'.
 
 The items for the comparator form are exposed as \"it\" and \"other\"."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-min-by (lambda (it other) ,form) ,list))
 
 (defun -iterate (fun init n)
@@ -1163,7 +1165,7 @@ N is the length of the returned list."
 
 (defmacro --iterate (form init n)
   "Anaphoric version of `-iterate'."
-  (declare (debug (sexp form form)))
+  (declare (debug (form form form)))
   `(-iterate (lambda (it) ,form) ,init ,n))
 
 (defun -unfold (fun seed)
@@ -1184,7 +1186,7 @@ the new seed."
 
 (defmacro --unfold (form seed)
   "Anaphoric version of `-unfold'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-unfold (lambda (it) ,form) ,seed))
 
 (defun -cons-pair? (con)
@@ -1227,7 +1229,7 @@ but is twice as fast as it only traverse the structure once."
 
 (defmacro --tree-mapreduce-from (form folder init-value tree)
   "Anaphoric form of `-tree-mapreduce-from'."
-  (declare (debug (sexp sexp form form)))
+  (declare (debug (form form form form)))
   `(-tree-mapreduce-from (lambda (it) ,form) (lambda (it acc) ,folder) ,init-value ,tree))
 
 (defun -tree-mapreduce (fn folder tree)
@@ -1249,7 +1251,7 @@ but is twice as fast as it only traverse the structure once."
 
 (defmacro --tree-mapreduce (form folder tree)
   "Anaphoric form of `-tree-mapreduce'."
-  (declare (debug (sexp sexp form)))
+  (declare (debug (form form form)))
   `(-tree-mapreduce (lambda (it) ,form) (lambda (it acc) ,folder) ,tree))
 
 (defun -tree-map (fn tree)
@@ -1263,7 +1265,7 @@ but is twice as fast as it only traverse the structure once."
 
 (defmacro --tree-map (form tree)
   "Anaphoric form of `-tree-map'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-tree-map (lambda (it) ,form) ,tree))
 
 (defun -tree-reduce-from (fn init-value tree)
@@ -1284,7 +1286,7 @@ two elements."
 
 (defmacro --tree-reduce-from (form init-value tree)
   "Anaphoric form of `-tree-reduce-from'."
-  (declare (debug (sexp form form)))
+  (declare (debug (form form form)))
   `(-tree-reduce-from (lambda (it acc) ,form) ,init-value ,tree))
 
 (defun -tree-reduce (fn tree)
@@ -1304,7 +1306,7 @@ See `-reduce-r' for how exactly are lists of zero or one element handled."
 
 (defmacro --tree-reduce (form tree)
   "Anaphoric form of `-tree-reduce'."
-  (declare (debug (sexp form)))
+  (declare (debug (form form)))
   `(-tree-reduce (lambda (it acc) ,form) ,tree))
 
 (defun -clone (list)

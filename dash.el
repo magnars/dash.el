@@ -92,16 +92,18 @@ Returns nil, used for side-effects only."
 (put '-each-while 'lisp-indent-function 2)
 
 (defmacro --dotimes (num &rest body)
-  "Repeatedly executes BODY (presumably for side-effects) with `it` bound to integers from 0 through n-1."
+  "Repeatedly executes BODY (presumably for side-effects) with `it` bound to integers from 0 through NUM-1."
   (declare (debug (form body))
            (indent 1))
-  `(let ((it 0))
-     (while (< it ,num)
-       ,@body
-       (setq it (1+ it)))))
+  (let ((n (make-symbol "num")))
+    `(let ((,n ,num)
+           (it 0))
+       (while (< it ,n)
+         ,@body
+         (setq it (1+ it))))))
 
 (defun -dotimes (num fn)
-  "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through n-1."
+  "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through NUM-1."
   (--dotimes num (funcall fn it)))
 
 (put '-dotimes 'lisp-indent-function 1)

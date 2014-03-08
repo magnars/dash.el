@@ -1371,7 +1371,7 @@ Returns nil, used for side-effects only.
 
 #### -dotimes `(num fn)`
 
-Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 through n-1.
+Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 through `num-1`.
 
 ```cl
 (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) ;; => '(2 1 0)

@@ -86,6 +86,12 @@
     (-rotate 3 '(1 2 3 4 5 6 7)) => '(5 6 7 1 2 3 4)
     (-rotate -3 '(1 2 3 4 5 6 7)) => '(4 5 6 7 1 2 3))
 
+  (defexamples -intersperse
+    (-intersperse "a" nil) => nil
+    (-intersperse "a" '(1)) => '(1)
+    (-intersperse "a" '(1 2)) => '(1 "a" 2)
+    (-intersperse "a" '(1 2 3 4 5 6 7)) => '(1 "a" 2 "a" 3 "a" 4 "a" 5 "a" 6 "a" 7))
+
   (defexamples -insert-at
     (-insert-at 1 'x '(a b c)) => '(a x b c)
     (-insert-at 12 'x '(a b c)) => '(a b c x)))

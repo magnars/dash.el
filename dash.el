@@ -503,6 +503,12 @@ The time complexity is O(n)."
       (append (last list n) (butlast list n))
     (append (-drop (- n) list) (-take (- n) list))))
 
+(defun -intersperse (x list)
+  "Returns a list with X interspersed between each element of LIST."
+  (if (<= (length list) 1)
+      list
+    (cons (car list) (-mapcat (lambda (it) (list x it)) (cdr list)))))
+
 (defun -insert-at (n x list)
   "Returns a list with X inserted into LIST at position N."
   (let ((split-list (-split-at n list)))

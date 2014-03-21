@@ -174,6 +174,8 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product` and `-same-items?`
  - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
+ - [Steve Lamb](https://github.com/steventlamb) contributed `-intersperse`
+
 
 Thanks!
 

@@ -52,6 +52,7 @@ Include this in your emacs settings to get syntax highlighting:
 * [-take-while](#-take-while-pred-list) `(pred list)`
 * [-drop-while](#-drop-while-pred-list) `(pred list)`
 * [-rotate](#-rotate-n-list) `(n list)`
+* [-intersperse](#-intersperse-x-list) `(x list)`
 * [-insert-at](#-insert-at-n-x-list) `(n x list)`
 * [-replace-at](#-replace-at-n-x-list) `(n x list)`
 * [-update-at](#-update-at-n-func-list) `(n func list)`
@@ -375,6 +376,16 @@ The time complexity is `o`(n).
 ```cl
 (-rotate 3 '(1 2 3 4 5 6 7)) ;; => '(5 6 7 1 2 3 4)
 (-rotate -3 '(1 2 3 4 5 6 7)) ;; => '(4 5 6 7 1 2 3)
+```
+
+#### -intersperse `(x list)`
+
+Returns a list with `x` interspersed between each element of `list`.
+
+```cl
+(-intersperse "a" nil) ;; => nil
+(-intersperse "a" '(1)) ;; => '(1)
+(-intersperse "a" '(1 2)) ;; => '(1 "a" 2)
 ```
 
 #### -insert-at `(n x list)`
@@ -1667,6 +1678,8 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product` and `-same-items?`
  - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
+ - [Steve Lamb](https://github.com/steventlamb) contributed `-intersperse`
+
 
 Thanks!
 

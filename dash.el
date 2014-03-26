@@ -108,6 +108,15 @@ Returns nil, used for side-effects only."
 
 (put '-dotimes 'lisp-indent-function 1)
 
+(defun -maptimes (num fn)
+  "Returns a list consisting of the result of applying FN to the a list of integers from 0 to NUM-1."
+  (-map fn (number-sequence 0 (1- num))))
+
+(defmacro --maptimes (num form)
+  "Anaphoric form of `-maptimes'."
+  (declare (debug (form form)))
+  `(-maptimes ,num (lambda (it) ,form)))
+
 (defun -map (fn list)
   "Returns a new list consisting of the result of applying FN to the items in LIST."
   (mapcar fn list))

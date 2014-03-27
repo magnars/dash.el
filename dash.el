@@ -814,6 +814,25 @@ of cons cells. Otherwise, return the groupings as a list of lists. "
         (--map (cons (car it) (cadr it)) results)
       results)))
 
+(defun -zip-fill (fill-value &rest lists)
+  "Zip LISTS, with FILL-VALUE padded onto the shorter lists. The
+lengths of the returned groupings are equal to the length of the
+longest input list."
+  (apply '-zip (apply '-pad (cons fill-value lists))))
+
+(defun -cycle (list)
+  "Returns an infinite copy of LIST that will cycle through the
+elements and repeat from the beginning."
+  (let ((newlist (-map 'identity list)))
+    (nconc newlist newlist)))
+
+(defun -pad (fill-value &rest lists)
+  "Appends FILL-VALUE to the end of each list in LISTS such that they
+will all have the same length."
+  (let* ((annotations (-annotate 'length lists))
+         (n (-max (-map 'car annotations))))
+    (--map (append (cdr it) (-repeat (- n (car it)) fill-value)) annotations)))
+
 (defun -annotate (fn list)
   "Returns a list of cons cells where each cell is FN applied to each
 element of LIST paired with the unmodified element of LIST."

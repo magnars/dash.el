@@ -439,6 +439,23 @@
     (-zip '(1 2 3) '(4 5 6) '(7 8 9)) => '((1 4 7) (2 5 8) (3 6 9))
     (-zip '(1 2) '(3 4 5) '(6)) => '((1 3 6)))
 
+  (defexamples -zip-fill
+    (-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9)) => '((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0)))
+
+  (defexamples -cycle
+    (-take 5 (-cycle '(1 2 3))) => '(1 2 3 1 2)
+    (-take 7 (-cycle '(1 "and" 3))) => '(1 "and" 3 1 "and" 3 1)
+    (-zip (-cycle '(1 2 3)) '(1 2)) => '((1 . 1) (2 . 2))
+    (-zip-with 'cons (-cycle '(1 2 3)) '(1 2)) => '((1 . 1) (2 . 2))
+    (-map (-partial '-take 5) (-split-at 5 (-cycle '(1 2 3)))) => '((1 2 3 1 2) (3 1 2 3 1)))
+
+  (defexamples -pad
+    (-pad 0 '()) => '(())
+    (-pad 0 '(1)) => '((1))
+    (-pad 0 '(1 2 3) '(4 5)) => '((1 2 3) (4 5 0))
+    (-pad nil '(1 2 3) '(4 5) '(6 7 8 9 10)) => '((1 2 3 nil nil) (4 5 nil nil nil) (6 7 8 9 10))
+    (-pad 0 '(1 2) '(3 4)) => '((1 2) (3 4)))
+
   (defexamples -annotate
     (-annotate '1+ '(1 2 3)) => '((2 . 1) (3 . 2) (4 . 3))
     (-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world"))) => '((5 . ("h" "e" "l" "l" "o")) (2 . ("hello" "world")))

@@ -134,6 +134,9 @@ Operations dual to reductions, building lists from seed value rather than consum
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
 * [-zip](#-zip-rest-lists) `(&rest lists)`
+* [-zip-fill](#-zip-fill-fill-value-rest-lists) `(fill-value &rest lists)`
+* [-cycle](#-cycle-list) `(list)`
+* [-pad](#-pad-fill-value-rest-lists) `(fill-value &rest lists)`
 * [-annotate](#-annotate-fn-list) `(fn list)`
 * [-first](#-first-pred-list) `(pred list)`
 * [-last](#-last-pred-list) `(pred list)`
@@ -1104,6 +1107,38 @@ of cons cells. Otherwise, return the groupings as a list of lists.
 (-zip '(1 2 3 4) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
 ```
 
+#### -zip-fill `(fill-value &rest lists)`
+
+Zip `lists`, with `fill-value` padded onto the shorter lists. The
+lengths of the returned groupings are equal to the length of the
+longest input list.
+
+```cl
+(-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9)) ;; => '((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
+```
+
+#### -cycle `(list)`
+
+Returns an infinite copy of `list` that will cycle through the
+elements and repeat from the beginning.
+
+```cl
+(-take 5 (-cycle '(1 2 3))) ;; => '(1 2 3 1 2)
+(-take 7 (-cycle '(1 "and" 3))) ;; => '(1 "and" 3 1 "and" 3 1)
+(-zip (-cycle '(1 2 3)) '(1 2)) ;; => '((1 . 1) (2 . 2))
+```
+
+#### -pad `(fill-value &rest lists)`
+
+Appends `fill-value` to the end of each list in `lists` such that they
+will all have the same length.
+
+```cl
+(-pad 0 '()) ;; => '(nil)
+(-pad 0 '(1)) ;; => '((1))
+(-pad 0 '(1 2 3) '(4 5)) ;; => '((1 2 3) (4 5 0))
+```
+
 #### -annotate `(fn list)`
 
 Returns a list of cons cells where each cell is `fn` applied to each
@@ -1681,7 +1716,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product` and `-same-items?`
  - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
- - [Steve Lamb](https://github.com/steventlamb) contributed `-annotate` and an n-ary version of `-zip`
+ - [Steve Lamb](https://github.com/steventlamb) contributed `-cycle`, `-pad`, `-annotate`, `-zip-fill` and an n-ary version of `-zip`.
 
 Thanks!
 

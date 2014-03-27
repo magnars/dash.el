@@ -803,14 +803,10 @@ groupings are equal to the length of the shortest input list.
 
 If two lists are provided as arguments, return the groupings as a list
 of cons cells. Otherwise, return the groupings as a list of lists. "
-  (let* ((n (-min (-map 'length lists)))
-         (level-lists (-map (-partial '-take n) lists))
-         results)
-    (while (> n 0)
-      (let ((split-lists (-map (-partial '-split-at 1) level-lists)))
-        (setq results (cons (-map 'caar split-lists) results))
-        (setq level-lists (-map 'cadr split-lists))
-        (setq n (1- n))))
+  (let (results)
+    (while (-none? 'null lists)
+      (setq results (cons (mapcar 'car lists) results))
+      (setq lists (mapcar 'cdr lists)))
     (setq results (nreverse results))
     (if (= (length lists) 2)
         ; to support backward compatability, return

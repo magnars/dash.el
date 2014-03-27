@@ -133,7 +133,7 @@ Operations dual to reductions, building lists from seed value rather than consum
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
-* [-zip](#-zip-list1-list2) `(list1 list2)`
+* [-zip](#-zip-rest-lists) `(&rest lists)`
 * [-first](#-first-pred-list) `(pred list)`
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
@@ -1088,12 +1088,14 @@ and the elements from `list2` as `other`.
 (--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde")) ;; => '("Batman and Robin" "Jekyll and Hyde")
 ```
 
-#### -zip `(list1 list2)`
+#### -zip `(&rest lists)`
 
-Zip the two lists together.  Return the list where elements
-are cons pairs with car being element from `list1` and cdr being
-element from `list2`.  The length of the returned list is the
-length of the shorter one.
+Zip `lists` together.  Group the head of each list, followed by the
+second elements of each list, and so on. The lengths of the returned
+groupings are equal to the length of the shortest input list.
+
+If two lists are provided as arguments, return the groupings as a list
+of cons cells. Otherwise, return the groupings as a list of lists. 
 
 ```cl
 (-zip '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
@@ -1667,6 +1669,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product` and `-same-items?`
  - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
+ - [Steve Lamb](https://github.com/steventlamb) contributed an n-ary version of `-zip`
 
 Thanks!
 

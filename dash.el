@@ -818,6 +818,16 @@ of cons cells. Otherwise, return the groupings as a list of lists. "
         (--map (cons (car it) (cadr it)) results)
       results)))
 
+(defun -annotate (fn list)
+  "Returns a list of cons cells where each cell is FN applied to each
+element of LIST paired with the unmodified element of LIST."
+  (-zip (-map fn list) list))
+
+(defmacro --annotate (form list)
+  "Anaphoric version of `-annotate'."
+  (declare (debug (form form)))
+  `(-annotate (lambda (it) ,form) ,list))
+
 (defun -partial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,
 and returns a fn that takes a variable number of additional ARGS.

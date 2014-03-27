@@ -439,6 +439,11 @@
     (-zip '(1 2 3) '(4 5 6) '(7 8 9)) => '((1 4 7) (2 5 8) (3 6 9))
     (-zip '(1 2) '(3 4 5) '(6)) => '((1 3 6)))
 
+  (defexamples -annotate
+    (-annotate '1+ '(1 2 3)) => '((2 . 1) (3 . 2) (4 . 3))
+    (-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world"))) => '((5 . ("h" "e" "l" "l" "o")) (2 . ("hello" "world")))
+    (--annotate (< 1 it) '(0 1 2 3)) => '((nil . 0) (nil . 1) (t . 2) (t . 3)))
+
   (defexamples -first
     (-first 'even? '(1 2 3)) => 2
     (-first 'even? '(1 3 5)) => nil

@@ -134,6 +134,7 @@ Operations dual to reductions, building lists from seed value rather than consum
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
 * [-zip](#-zip-rest-lists) `(&rest lists)`
+* [-annotate](#-annotate-fn-list) `(fn list)`
 * [-first](#-first-pred-list) `(pred list)`
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
@@ -1103,6 +1104,17 @@ of cons cells. Otherwise, return the groupings as a list of lists.
 (-zip '(1 2 3 4) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
 ```
 
+#### -annotate `(fn list)`
+
+Returns a list of cons cells where each cell is `fn` applied to each
+element of `list` paired with the unmodified element of `list`.
+
+```cl
+(-annotate '1+ '(1 2 3)) ;; => '((2 . 1) (3 . 2) (4 . 3))
+(-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world"))) ;; => '((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
+(--annotate (< 1 it) '(0 1 2 3)) ;; => '((nil . 0) (nil . 1) (t . 2) (t . 3))
+```
+
 #### -first `(pred list)`
 
 Returns the first x in `list` where (`pred` x) is non-nil, else nil.
@@ -1669,7 +1681,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Emanuel Evans](https://github.com/shosti) contributed `-if-let`, `-when-let` and `-insert-at`.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product` and `-same-items?`
  - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
- - [Steve Lamb](https://github.com/steventlamb) contributed an n-ary version of `-zip`
+ - [Steve Lamb](https://github.com/steventlamb) contributed `-annotate` and an n-ary version of `-zip`
 
 Thanks!
 

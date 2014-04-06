@@ -1136,7 +1136,7 @@ Returns the first item of `list`, or nil on an empty list.
 
 #### -last-item `(list)`
 
-Returns the first item of `list`, or nil on an empty list.
+Returns the last item of `list`, or nil on an empty list.
 
 ```cl
 (-last-item '(1 2 3)) ;; => 3

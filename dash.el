@@ -337,7 +337,7 @@ To get the first item in the list no questions asked, use `car'."
   "Returns the first item of LIST, or nil on an empty list.")
 
 (defun -last-item (list)
-  "Returns the first item of LIST, or nil on an empty list."
+  "Returns the last item of LIST, or nil on an empty list."
   (car (last list)))
 
 (defmacro --count (pred list)

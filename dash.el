@@ -426,6 +426,12 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
 (defalias '-only-some-p '-only-some?)
 (defalias '--only-some-p '--only-some?)
 
+(defun -empty? (list)
+  "Return `t` if LIST has no elements."
+  (zerop (length list)))
+
+(defalias '-empty-p '-empty?)
+
 (defun -slice (list from &optional to)
   "Return copy of LIST, starting from index FROM to index TO.
 FROM or TO may be negative."

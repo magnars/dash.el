@@ -265,7 +265,12 @@
     (-is-infix-p '(2 3 4) '(1 2 3 4 5)) => t
     (-is-infix-p '(3 4 5) '(1 2 3 4 5)) => t
     (-is-infix-p '(2 3 4) '(1 2 4 5)) => nil
-    (-is-infix-p '(2 4) '(1 2 3 4 5)) => nil))
+    (-is-infix-p '(2 4) '(1 2 3 4 5)) => nil)
+
+  (defexamples -empty?
+    (-empty? '(1 2 3)) => nil
+    (-empty? '()) => t
+    (-empty? nil) => t))
 
 (def-example-group "Partitioning" nil
   (defexamples -split-at

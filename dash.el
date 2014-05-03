@@ -275,6 +275,10 @@ through the REP function."
       (-mapcat '-flatten l)
     (list l)))
 
+(defun -flatten-n (num list)
+  "Flatten NUM levels of a nested LIST."
+  (-last-item (--iterate (--mapcat (-list it) it) list (1+ num))))
+
 (defun -concat (&rest lists)
   "Returns a new list with the concatenation of the elements in the supplied LISTS."
   (apply 'append lists))

@@ -44,6 +44,7 @@ Include this in your emacs settings to get syntax highlighting:
 * [-map-when](#-map-when-pred-rep-list) `(pred rep list)`
 * [-map-indexed](#-map-indexed-fn-list) `(fn list)`
 * [-flatten](#-flatten-l) `(l)`
+* [-flatten-n](#-flatten-n-num-list) `(num list)`
 * [-concat](#-concat-rest-lists) `(&rest lists)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
 * [-slice](#-slice-list-from-optional-to) `(list from &optional to)`
@@ -299,6 +300,16 @@ Takes a nested list `l` and returns its contents as a single, flat list.
 (-flatten '((1))) ;; => '(1)
 (-flatten '((1 (2 3) (((4 (5))))))) ;; => '(1 2 3 4 5)
 (-flatten '(1 2 (3 . 4))) ;; => '(1 2 (3 . 4))
+```
+
+#### -flatten-n `(num list)`
+
+Flatten `num` levels of a nested `list`.
+
+```cl
+(-flatten-n 1 '((1 2) ((3 4) ((5 6))))) ;; => '(1 2 (3 4) ((5 6)))
+(-flatten-n 2 '((1 2) ((3 4) ((5 6))))) ;; => '(1 2 3 4 (5 6))
+(-flatten-n 3 '((1 2) ((3 4) ((5 6))))) ;; => '(1 2 3 4 5 6)
 ```
 
 #### -concat `(&rest lists)`

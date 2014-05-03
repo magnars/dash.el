@@ -91,6 +91,7 @@ Operations dual to reductions, building lists from seed value rather than consum
 * [-is-prefix-p](#-is-prefix-p-prefix-list) `(prefix list)`
 * [-is-suffix-p](#-is-suffix-p-suffix-list) `(suffix list)`
 * [-is-infix-p](#-is-infix-p-infix-list) `(infix list)`
+* [-empty?](#-empty-list) `(list)`
 
 ### Partitioning
 
@@ -717,6 +718,16 @@ This operation runs in `o`(n^2) time
 (-is-infix-p '(1 2 3) '(1 2 3 4 5)) ;; => t
 (-is-infix-p '(2 3 4) '(1 2 3 4 5)) ;; => t
 (-is-infix-p '(3 4 5) '(1 2 3 4 5)) ;; => t
+```
+
+#### -empty? `(list)`
+
+Return `t` if `list` has no elements.
+
+```cl
+(-empty? '(1 2 3)) ;; => nil
+(-empty? '()) ;; => t
+(-empty? nil) ;; => t
 ```
 
 

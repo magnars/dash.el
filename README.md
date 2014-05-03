@@ -139,6 +139,8 @@ Operations dual to reductions, building lists from seed value rather than consum
 * [-cycle](#-cycle-list) `(list)`
 * [-pad](#-pad-fill-value-rest-lists) `(fill-value &rest lists)`
 * [-annotate](#-annotate-fn-list) `(fn list)`
+* [-table](#-table-fn-rest-lists) `(fn &rest lists)`
+* [-table-flat](#-table-flat-fn-rest-lists) `(fn &rest lists)`
 * [-first](#-first-pred-list) `(pred list)`
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
@@ -1110,7 +1112,7 @@ second elements of each list, and so on. The lengths of the returned
 groupings are equal to the length of the shortest input list.
 
 If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists. 
+of cons cells. Otherwise, return the groupings as a list of lists.
 
 ```cl
 (-zip '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
@@ -1159,6 +1161,49 @@ element of `list` paired with the unmodified element of `list`.
 (-annotate '1+ '(1 2 3)) ;; => '((2 . 1) (3 . 2) (4 . 3))
 (-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world"))) ;; => '((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
 (--annotate (< 1 it) '(0 1 2 3)) ;; => '((nil . 0) (nil . 1) (t . 2) (t . 3))
+```
+
+#### -table `(fn &rest lists)`
+
+Compute outer product of `lists` using function `fn`.
+
+The function `fn` should have the same arity as the number of
+supplied lists.
+
+The outer product is computed by applying fn to all possible
+combinations created by taking one element from each list in
+order.  The dimension of the result is (length lists).
+
+See also: `-table-flat`.
+
+```cl
+(-table '* '(1 2 3) '(1 2 3)) ;; => '((1 2 3) (2 4 6) (3 6 9))
+(-table (lambda (a b) (-sum (-zip-with '* a b))) '((1 2) (3 4)) '((1 3) (2 4))) ;; => '((7 15) (10 22))
+(apply '-table 'list (-repeat 3 '(1 2))) ;; => '((((1 1 1) (2 1 1)) ((1 2 1) (2 2 1))) (((1 1 2) (2 1 2)) ((1 2 2) (2 2 2))))
+```
+
+#### -table-flat `(fn &rest lists)`
+
+Compute flat outer product of `lists` using function `fn`.
+
+The function `fn` should have the same arity as the number of
+supplied lists.
+
+The outer product is computed by applying fn to all possible
+combinations created by taking one element from each list in
+order.  The results are flattened, ignoring the tensor structure
+of the result.  This is equivalent to calling:
+
+    (-flatten-n (1- (length lists)) (-table fn lists))
+
+but the implementation here is much more efficient.
+
+See also: `-flatten-n`, `-table`.
+
+```cl
+(-table-flat 'list '(1 2 3) '(a b c)) ;; => '((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
+(-table-flat '* '(1 2 3) '(1 2 3)) ;; => '(1 2 3 2 4 6 3 6 9)
+(apply '-table-flat 'list (-repeat 3 '(1 2))) ;; => '((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2))
 ```
 
 #### -first `(pred list)`

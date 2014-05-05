@@ -48,6 +48,14 @@
     (-flatten '((1 (2 3) (((4 (5))))))) => '(1 2 3 4 5)
     (-flatten '(1 2 (3 . 4))) => '(1 2 (3 . 4)))
 
+  (defexamples -flatten-n
+    (-flatten-n 1 '((1 2) ((3 4) ((5 6))))) => '(1 2 (3 4) ((5 6)))
+    (-flatten-n 2 '((1 2) ((3 4) ((5 6))))) => '(1 2 3 4 (5 6))
+    (-flatten-n 3 '((1 2) ((3 4) ((5 6))))) => '(1 2 3 4 5 6)
+    (-flatten-n 0 '(3 4)) => '(3 4)
+    (-flatten-n 0 '((1 2) (3 4))) => '((1 2) (3 4))
+    (-flatten-n 0 '(((1 2) (3 4)))) => '(((1 2) (3 4))))
+
   (defexamples -concat
     (-concat '(1)) => '(1)
     (-concat '(1) '(2)) => '(1 2)
@@ -460,6 +468,21 @@
     (-annotate '1+ '(1 2 3)) => '((2 . 1) (3 . 2) (4 . 3))
     (-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world"))) => '((5 . ("h" "e" "l" "l" "o")) (2 . ("hello" "world")))
     (--annotate (< 1 it) '(0 1 2 3)) => '((nil . 0) (nil . 1) (t . 2) (t . 3)))
+
+  (defexamples -table
+    (-table '* '(1 2 3) '(1 2 3)) => '((1 2 3) (2 4 6) (3 6 9))
+    (-table (lambda (a b) (-sum (-zip-with '* a b))) '((1 2) (3 4)) '((1 3) (2 4))) => '((7 15) (10 22))
+    (apply '-table 'list (-repeat 3 '(1 2))) => '((((1 1 1) (2 1 1)) ((1 2 1) (2 2 1))) (((1 1 2) (2 1 2)) ((1 2 2) (2 2 2)))))
+
+  (defexamples -table-flat
+    (-table-flat 'list '(1 2 3) '(a b c)) => '((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
+    (-table-flat '* '(1 2 3) '(1 2 3)) => '(1 2 3 2 4 6 3 6 9)
+    (apply '-table-flat 'list (-repeat 3 '(1 2))) => '((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2))
+
+    ;; flatten law tests
+    (-flatten-n 1 (-table 'list '(1 2 3) '(a b c))) => '((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
+    (-flatten-n 1 (-table '* '(1 2 3) '(1 2 3))) => '(1 2 3 2 4 6 3 6 9)
+    (-flatten-n 2 (apply '-table 'list (-repeat 3 '(1 2)))) => '((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2)))
 
   (defexamples -first
     (-first 'even? '(1 2 3)) => 2

@@ -803,20 +803,45 @@ groupings are equal to the length of the shortest input list.
 
 If two lists are provided as arguments, return the groupings as a list
 of cons cells. Otherwise, return the groupings as a list of lists. "
-  (let* ((n (-min (-map 'length lists)))
-         (level-lists (-map (-partial '-take n) lists))
-         results)
-    (while (> n 0)
-      (let ((split-lists (-map (-partial '-split-at 1) level-lists)))
-        (setq results (cons (-map 'caar split-lists) results))
-        (setq level-lists (-map 'cadr split-lists))
-        (setq n (1- n))))
+  (let (results)
+    (while (-none? 'null lists)
+      (setq results (cons (mapcar 'car lists) results))
+      (setq lists (mapcar 'cdr lists)))
     (setq results (nreverse results))
     (if (= (length lists) 2)
         ; to support backward compatability, return
         ; a cons cell if two lists were provided
         (--map (cons (car it) (cadr it)) results)
       results)))
+
+(defun -zip-fill (fill-value &rest lists)
+  "Zip LISTS, with FILL-VALUE padded onto the shorter lists. The
+lengths of the returned groupings are equal to the length of the
+longest input list."
+  (apply '-zip (apply '-pad (cons fill-value lists))))
+
+(defun -cycle (list)
+  "Returns an infinite copy of LIST that will cycle through the
+elements and repeat from the beginning."
+  (let ((newlist (-map 'identity list)))
+    (nconc newlist newlist)))
+
+(defun -pad (fill-value &rest lists)
+  "Appends FILL-VALUE to the end of each list in LISTS such that they
+will all have the same length."
+  (let* ((annotations (-annotate 'length lists))
+         (n (-max (-map 'car annotations))))
+    (--map (append (cdr it) (-repeat (- n (car it)) fill-value)) annotations)))
+
+(defun -annotate (fn list)
+  "Returns a list of cons cells where each cell is FN applied to each
+element of LIST paired with the unmodified element of LIST."
+  (-zip (-map fn list) list))
+
+(defmacro --annotate (form list)
+  "Anaphoric version of `-annotate'."
+  (declare (debug (form form)))
+  `(-annotate (lambda (it) ,form) ,list))
 
 (defun -partial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,

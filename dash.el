@@ -436,8 +436,7 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
   "Return copy of LIST, starting from index FROM to index TO.
 FROM or TO may be negative."
   (let ((length (length list))
-        (new-list nil)
-        (index 0))
+        (new-list nil))
     ;; to defaults to the end of the list
     (setq to (or to length))
     ;; handle negative indices
@@ -447,11 +446,9 @@ FROM or TO may be negative."
       (setq to (mod to length)))
 
     ;; iterate through the list, keeping the elements we want
-    (while (< index to)
-      (when (>= index from)
-        (!cons (car list) new-list))
-      (!cdr list)
-      (setq index (1+ index)))
+    (--each-while list (< it-index to)
+      (when (>= it-index from)
+        (push it new-list)))
     (nreverse new-list)))
 
 (defun -take (n list)

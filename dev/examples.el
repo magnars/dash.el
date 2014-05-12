@@ -70,7 +70,10 @@
   (defexamples -slice
     (-slice '(1 2 3 4 5) 1) => '(2 3 4 5)
     (-slice '(1 2 3 4 5) 0 3) => '(1 2 3)
-    (-slice '(1 2 3 4 5) 1 -1) => '(2 3 4))
+    (-slice '(1 2 3 4 5) 1 -1) => '(2 3 4)
+    (-slice '(1 2 3 4 5) 0 10) => '(1 2 3 4 5) ;; "to > length" should not fill in nils!
+    (-slice '(1 2 3 4 5) -3) => '(3 4 5)
+    (-slice '(1 2 3 4 5) -3 -1) => '(3 4))
 
   (defexamples -take
     (-take 3 '(1 2 3 4 5)) => '(1 2 3)

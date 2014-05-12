@@ -47,7 +47,7 @@ Include this in your emacs settings to get syntax highlighting:
 * [-flatten-n](#-flatten-n-num-list) `(num list)`
 * [-concat](#-concat-rest-lists) `(&rest lists)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
-* [-slice](#-slice-list-from-optional-to) `(list from &optional to)`
+* [-slice](#-slice-list-from-optional-to-step) `(list from &optional to step)`
 * [-take](#-take-n-list) `(n list)`
 * [-drop](#-drop-n-list) `(n list)`
 * [-take-while](#-take-while-pred-list) `(pred list)`
@@ -335,15 +335,20 @@ Thus function `fn` should return a list.
 (--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 ```
 
-#### -slice `(list from &optional to)`
+#### -slice `(list from &optional to step)`
 
 Return copy of `list`, starting from index `from` to index `to`.
-`from` or `to` may be negative.
+
+`from` or `to` may be negative.  These values are then interpreted
+modulo the length of the list.
+
+If `step` is a number, only each STEPth item in the resulting
+section is returned.  Defaults to 1.
 
 ```cl
 (-slice '(1 2 3 4 5) 1) ;; => '(2 3 4 5)
 (-slice '(1 2 3 4 5) 0 3) ;; => '(1 2 3)
-(-slice '(1 2 3 4 5) 1 -1) ;; => '(2 3 4)
+(-slice '(1 2 3 4 5 6 7 8 9) 1 -1 2) ;; => '(2 4 6 8)
 ```
 
 #### -take `(n list)`

@@ -432,13 +432,19 @@ Returns `nil` both if all items match the predicate, and if none of the items ma
 (defalias '-only-some-p '-only-some?)
 (defalias '--only-some-p '--only-some?)
 
-(defun -slice (list from &optional to)
+(defun -slice (list from &optional to step)
   "Return copy of LIST, starting from index FROM to index TO.
-FROM or TO may be negative."
+
+FROM or TO may be negative.  These values are then interpreted
+modulo the length of the list.
+
+If STEP is a number, only each STEPth item in the resulting
+section is returned.  Defaults to 1."
   (let ((length (length list))
         (new-list nil))
     ;; to defaults to the end of the list
     (setq to (or to length))
+    (setq step (or step 1))
     ;; handle negative indices
     (when (< from 0)
       (setq from (mod from length)))
@@ -447,7 +453,8 @@ FROM or TO may be negative."
 
     ;; iterate through the list, keeping the elements we want
     (--each-while list (< it-index to)
-      (when (>= it-index from)
+      (when (and (>= it-index from)
+                 (= (mod (- from it-index) step) 0))
         (push it new-list)))
     (nreverse new-list)))
 

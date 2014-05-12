@@ -78,10 +78,12 @@ special values."
   (let ((l (make-symbol "list"))
         (c (make-symbol "continue")))
     `(let ((,l ,list)
-           (,c t))
+           (,c t)
+           (it-index 0))
        (while (and ,l ,c)
          (let ((it (car ,l)))
            (if (not ,pred) (setq ,c nil) ,@body))
+         (setq it-index (1+ it-index))
          (!cdr ,l)))))
 
 (defun -each-while (list pred fn)

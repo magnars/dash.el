@@ -467,10 +467,7 @@ section is returned.  Defaults to 1."
         (!cdr list)))
     (nreverse result)))
 
-(defun -drop (n list)
-  "Returns the tail of LIST without the first N items."
-  (--dotimes n (!cdr list))
-  list)
+(defalias '-drop 'nthcdr "Returns the tail of LIST without the first N items.")
 
 (defmacro --take-while (form list)
   "Anaphoric form of `-take-while'."

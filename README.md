@@ -199,6 +199,7 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 * [-orfn](#-orfn-rest-preds) `(&rest preds)`
 * [-andfn](#-andfn-rest-preds) `(&rest preds)`
 * [-iteratefn](#-iteratefn-fn-n) `(fn n)`
+* [-prodfn](#-prodfn-rest-fns) `(&rest fns)`
 
 ## Anaphoric functions
 
@@ -1685,6 +1686,27 @@ This function satisfies the following law:
 (funcall (-iteratefn (lambda (x) (* x x)) 3) 2) ;; => 256
 (funcall (-iteratefn '1+ 3) 1) ;; => 4
 (funcall (-iteratefn 'cdr 3) '(1 2 3 4 5)) ;; => '(4 5)
+```
+
+#### -prodfn `(&rest fns)`
+
+Take a list of n functions and return a function that takes a
+list of length n, applying i-th function to i-th element of the
+input list.  Returns a list of length n.
+
+In types (for n=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
+
+This function satisfies the following laws:
+
+  (-compose (-prodfn f g ...) (-prodfn f' g' ...)) = (-prodfn (-compose f f') (-compose g g') ...)
+  (-prodfn f g ...) = (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1)) ...)
+  (-compose (-prodfn f g ...) (-juxt f' g' ...)) = (-juxt (-compose f f') (-compose g g') ...)
+  (-compose (-partial 'nth n) (-prod f1 f2 ...)) = (-compose fn (-partial 'nth n))
+
+```cl
+(funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3)) ;; => '(2 1 "3")
+(-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) ;; => '((2 1) (4 3) (6 5) (8 7))
+(apply '+ (funcall (-prodfn 'length 'string-to-int) '((1 2 3) "15"))) ;; => 18
 ```
 
 

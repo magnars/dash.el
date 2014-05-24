@@ -135,6 +135,21 @@ This function satisfies the following law:
   (funcall (-iteratefn fn n) init) = (-last-item (-iterate fn init (1+ n)))."
   (lambda (x) (--dotimes n (setq x (funcall fn x))) x))
 
+(defun -prodfn (&rest fns)
+  "Take a list of n functions and return a function that takes a
+list of length n, applying i-th function to i-th element of the
+input list.  Returns a list of length n.
+
+In types (for n=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
+
+This function satisfies the following laws:
+
+  (-compose (-prodfn f g ...) (-prodfn f' g' ...)) = (-prodfn (-compose f f') (-compose g g') ...)
+  (-prodfn f g ...) = (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1)) ...)
+  (-compose (-prodfn f g ...) (-juxt f' g' ...)) = (-juxt (-compose f f') (-compose g g') ...)
+  (-compose (-partial 'nth n) (-prod f1 f2 ...)) = (-compose fn (-partial 'nth n))"
+  (lambda (x) (-zip-with 'funcall fns x)))
+
 (provide 'dash-functional)
 
 ;;; dash-functional.el ends here

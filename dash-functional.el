@@ -60,7 +60,7 @@ each fn to the result of applying the previous fn to
 the arguments (right-to-left)."
   (lambda (&rest args)
     (car (-reduce-r-from (lambda (fn xs) (list (apply fn xs)))
-			 args fns))))
+                         args fns))))
 
 (defun -applify (fn)
   "Changes an n-arity function FN to a 1-arity function that
@@ -119,6 +119,21 @@ PREDS returns non-nil on x.
 
 In types: [a -> Bool] -> a -> Bool"
   (lambda (x) (-all? (-cut funcall <> x) preds)))
+
+(defun -iteratefn (fn n)
+  "Return a function FN composed N times with itself.
+
+FN is a unary function.  If you need to use a function of higher
+arity, use `-applify' first to turn it into an unary function.
+
+With n = 0, this acts as identity function.
+
+In types: (a -> a) -> Int -> a -> a.
+
+This function satisfies the following law:
+
+  (funcall (-iteratefn fn n) init) = (-last-item (-iterate fn init (1+ n)))."
+  (lambda (x) (--dotimes n (setq x (funcall fn x))) x))
 
 (provide 'dash-functional)
 

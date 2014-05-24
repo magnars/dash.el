@@ -712,4 +712,17 @@
       (funcall (-andfn (-cut < <> 10) 'even?) 6) => t
       (funcall (-andfn (-cut < <> 10) 'even?) 12) => nil
       (-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) => '(1 3 5))
+
+    (defexamples -iteratefn
+      (funcall (-iteratefn (lambda (x) (* x x)) 3) 2) => 256
+      (funcall (-iteratefn '1+ 3) 1) => 4
+      (funcall (-iteratefn 'cdr 3) '(1 2 3 4 5)) => '(4 5)
+      (let ((init '(1 2 3 4 5))
+            (fn 'cdr))
+        (and (equal (funcall (-iteratefn fn 0) init)
+                    (-last-item (-iterate fn init (1+ 0))))
+             (equal (funcall (-iteratefn fn 3) init)
+                    (-last-item (-iterate fn init (1+ 3))))
+             (equal (funcall (-iteratefn fn 5) init)
+                    (-last-item (-iterate fn init (1+ 5)))))))
     ))

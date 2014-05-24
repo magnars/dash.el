@@ -198,6 +198,7 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 * [-not](#-not-pred) `(pred)`
 * [-orfn](#-orfn-rest-preds) `(&rest preds)`
 * [-andfn](#-andfn-rest-preds) `(&rest preds)`
+* [-iteratefn](#-iteratefn-fn-n) `(fn n)`
 
 ## Anaphoric functions
 
@@ -1663,6 +1664,27 @@ In types: [a -> Bool] -> a -> Bool
 (funcall (-andfn (-cut < <> 10) 'even?) 6) ;; => t
 (funcall (-andfn (-cut < <> 10) 'even?) 12) ;; => nil
 (-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 3 5)
+```
+
+#### -iteratefn `(fn n)`
+
+Return a function `fn` composed `n` times with itself.
+
+`fn` is a unary function.  If you need to use a function of higher
+arity, use `-applify` first to turn it into an unary function.
+
+With n = 0, this acts as identity function.
+
+In types: (a -> a) -> Int -> a -> a.
+
+This function satisfies the following law:
+
+  (funcall (-iteratefn fn n) init) = (-last-item (-iterate fn init (1+ n))).
+
+```cl
+(funcall (-iteratefn (lambda (x) (* x x)) 3) 2) ;; => 256
+(funcall (-iteratefn '1+ 3) 1) ;; => 4
+(funcall (-iteratefn 'cdr 3) '(1 2 3 4 5)) ;; => '(4 5)
 ```
 
 

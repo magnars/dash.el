@@ -101,9 +101,9 @@ Operations dual to reductions, building lists from seed value rather than consum
 * [-split-when](#-split-when-fn-list) `(fn list)`
 * [-separate](#-separate-pred-list) `(pred list)`
 * [-partition](#-partition-n-list) `(n list)`
-* [-partition-all-in-steps](#-partition-all-in-steps-n-step-list) `(n step list)`
-* [-partition-in-steps](#-partition-in-steps-n-step-list) `(n step list)`
 * [-partition-all](#-partition-all-n-list) `(n list)`
+* [-partition-in-steps](#-partition-in-steps-n-step-list) `(n step list)`
+* [-partition-all-in-steps](#-partition-all-in-steps-n-step-list) `(n step list)`
 * [-partition-by](#-partition-by-fn-list) `(fn list)`
 * [-partition-by-header](#-partition-by-header-fn-list) `(fn list)`
 * [-group-by](#-group-by-fn-list) `(fn list)`
@@ -819,15 +819,15 @@ those items are discarded.
 (-partition 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6))
 ```
 
-#### -partition-all-in-steps `(n step list)`
+#### -partition-all `(n list)`
 
-Returns a new list with the items in `list` grouped into `n-`sized sublists at offsets `step` apart.
-The last groups may contain less than `n` items.
+Returns a new list with the items in `list` grouped into `n-`sized sublists.
+The last group may contain less than `n` items.
 
 ```cl
-(-partition-all-in-steps 2 1 '(1 2 3 4)) ;; => '((1 2) (2 3) (3 4) (4))
-(-partition-all-in-steps 3 2 '(1 2 3 4)) ;; => '((1 2 3) (3 4))
-(-partition-all-in-steps 3 2 '(1 2 3 4 5)) ;; => '((1 2 3) (3 4 5) (5))
+(-partition-all 2 '(1 2 3 4 5 6)) ;; => '((1 2) (3 4) (5 6))
+(-partition-all 2 '(1 2 3 4 5 6 7)) ;; => '((1 2) (3 4) (5 6) (7))
+(-partition-all 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6) (7))
 ```
 
 #### -partition-in-steps `(n step list)`
@@ -842,15 +842,15 @@ those items are discarded.
 (-partition-in-steps 3 2 '(1 2 3 4 5)) ;; => '((1 2 3) (3 4 5))
 ```
 
-#### -partition-all `(n list)`
+#### -partition-all-in-steps `(n step list)`
 
-Returns a new list with the items in `list` grouped into `n-`sized sublists.
-The last group may contain less than `n` items.
+Returns a new list with the items in `list` grouped into `n-`sized sublists at offsets `step` apart.
+The last groups may contain less than `n` items.
 
 ```cl
-(-partition-all 2 '(1 2 3 4 5 6)) ;; => '((1 2) (3 4) (5 6))
-(-partition-all 2 '(1 2 3 4 5 6 7)) ;; => '((1 2) (3 4) (5 6) (7))
-(-partition-all 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6) (7))
+(-partition-all-in-steps 2 1 '(1 2 3 4)) ;; => '((1 2) (2 3) (3 4) (4))
+(-partition-all-in-steps 3 2 '(1 2 3 4)) ;; => '((1 2 3) (3 4))
+(-partition-all-in-steps 3 2 '(1 2 3 4 5)) ;; => '((1 2 3) (3 4 5) (5))
 ```
 
 #### -partition-by `(fn list)`

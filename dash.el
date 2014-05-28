@@ -717,9 +717,9 @@ those items are discarded."
 
 (defun -partition-by-header (fn list)
   "Applies FN to the first item in LIST. That is the header
-  value. Applies FN to each item in LIST, splitting it each time
-  FN returns the header value, but only after seeing at least one
-  other value (the body)."
+value. Applies FN to each item in LIST, splitting it each time FN
+returns the header value, but only after seeing at least one
+other value (the body)."
   (--partition-by-header (funcall fn it) list))
 
 (defmacro --group-by (form list)
@@ -899,7 +899,7 @@ combinations created by taking one element from each list in
 order.  The results are flattened, ignoring the tensor structure
 of the result.  This is equivalent to calling:
 
-    (-flatten-n (1- (length lists)) (-table fn lists))
+  (-flatten-n (1- (length lists)) (-table fn lists))
 
 but the implementation here is much more efficient.
 
@@ -1042,8 +1042,8 @@ VAR-VAL should be a (VAR VAL) pair."
 
 (defmacro -when-let* (vars-vals &rest body)
   "If all VALS evaluate to true, bind them to their corresponding
-  VARS and execute body. VARS-VALS should be a list of (VAR VAL)
-  pairs (corresponding to bindings of `let*')."
+VARS and execute body. VARS-VALS should be a list of (VAR VAL)
+pairs (corresponding to bindings of `let*')."
   (declare (debug ((&rest (symbolp form)) body))
            (indent 1))
   (if (= (length vars-vals) 1)
@@ -1074,8 +1074,8 @@ otherwise do ELSE. VAR-VAL should be a (VAR VAL) pair."
 
 (defmacro -if-let* (vars-vals then &rest else)
   "If all VALS evaluate to true, bind them to their corresponding
-  VARS and do THEN, otherwise do ELSE. VARS-VALS should be a list
-  of (VAR VAL) pairs (corresponding to the bindings of `let*')."
+VARS and do THEN, otherwise do ELSE. VARS-VALS should be a list
+of (VAR VAL) pairs (corresponding to the bindings of `let*')."
   (declare (debug ((&rest (symbolp form)) form body))
            (indent 2))
   (let ((first-pair (car vars-vals))
@@ -1264,7 +1264,8 @@ The items for the comparator form are exposed as \"it\" and \"other\"."
   "Return a list of iterated applications of FUN to INIT.
 
 This means a list of form:
-  '(init (fun init) (fun (fun init)) ...)
+
+  (init (fun init) (fun (fun init)) ...)
 
 N is the length of the returned list."
   (if (= n 0) nil

@@ -611,7 +611,8 @@ Operations dual to reductions, building lists from seed value rather than consum
 Return a list of iterated applications of `fun` to `init`.
 
 This means a list of form:
-  '(init (fun init) (fun (fun init)) ...)
+
+    (init (fun init) (fun (fun init)) ...)
 
 `n` is the length of the returned list.
 
@@ -867,9 +868,9 @@ Applies `fn` to each item in `list`, splitting it each time `fn` returns a new v
 #### -partition-by-header `(fn list)`
 
 Applies `fn` to the first item in `list`. That is the header
-  value. Applies `fn` to each item in `list`, splitting it each time
-  `fn` returns the header value, but only after seeing at least one
-  other value (the body).
+value. Applies `fn` to each item in `list`, splitting it each time `fn`
+returns the header value, but only after seeing at least one
+other value (the body).
 
 ```cl
 (--partition-by-header (= it 1) '(1 2 3 1 2 1 2 3 4)) ;; => '((1 2 3) (1 2) (1 2 3 4))
@@ -1429,8 +1430,8 @@ If `val` evaluates to non-nil, bind it to `var` and execute body.
 #### -when-let* `(vars-vals &rest body)`
 
 If all `vals` evaluate to true, bind them to their corresponding
-  `vars` and execute body. `vars-vals` should be a list of (`var` `val`)
-  pairs (corresponding to bindings of `let*`).
+`vars` and execute body. `vars-vals` should be a list of (`var` `val`)
+pairs (corresponding to bindings of `let*`).
 
 ```cl
 (-when-let* ((x 5) (y 3) (z (+ y 4))) (+ x y z)) ;; => 15
@@ -1450,8 +1451,8 @@ otherwise do `else`. `var-val` should be a (`var` `val`) pair.
 #### -if-let* `(vars-vals then &rest else)`
 
 If all `vals` evaluate to true, bind them to their corresponding
-  `vars` and do `then`, otherwise do `else`. `vars-vals` should be a list
-  of (`var` `val`) pairs (corresponding to the bindings of `let*`).
+`vars` and do `then`, otherwise do `else`. `vars-vals` should be a list
+of (`var` `val`) pairs (corresponding to the bindings of `let*`).
 
 ```cl
 (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") ;; => 15
@@ -1680,7 +1681,7 @@ In types: (a -> a) -> Int -> a -> a.
 
 This function satisfies the following law:
 
-  (funcall (-iteratefn fn n) init) = (-last-item (-iterate fn init (1+ n))).
+    (funcall (-iteratefn fn n) init) = (-last-item (-iterate fn init (1+ n))).
 
 ```cl
 (funcall (-iteratefn (lambda (x) (* x x)) 3) 2) ;; => 256
@@ -1698,10 +1699,10 @@ In types (for n=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
 
 This function satisfies the following laws:
 
-  (-compose (-prodfn f g ...) (-prodfn f' g' ...)) = (-prodfn (-compose f f') (-compose g g') ...)
-  (-prodfn f g ...) = (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1)) ...)
-  (-compose (-prodfn f g ...) (-juxt f' g' ...)) = (-juxt (-compose f f') (-compose g g') ...)
-  (-compose (-partial 'nth n) (-prod f1 f2 ...)) = (-compose fn (-partial 'nth n))
+    (-compose (-prodfn f g ...) (-prodfn f' g' ...)) = (-prodfn (-compose f f') (-compose g g') ...)
+    (-prodfn f g ...) = (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1)) ...)
+    (-compose (-prodfn f g ...) (-juxt f' g' ...)) = (-juxt (-compose f f') (-compose g g') ...)
+    (-compose (-partial 'nth n) (-prod f1 f2 ...)) = (-compose fn (-partial 'nth n))
 
 ```cl
 (funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3)) ;; => '(2 1 "3")

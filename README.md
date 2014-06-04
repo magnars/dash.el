@@ -1233,6 +1233,8 @@ Returns the first x in `list` where (`pred` x) is non-nil, else nil.
 
 To get the first item in the list no questions asked, use `car`.
 
+This function is also available as `-find`.
+
 ```cl
 (-first 'even? '(1 2 3)) ;; => 2
 (-first 'even? '(1 3 5)) ;; => nil

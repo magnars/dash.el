@@ -329,8 +329,13 @@ If ELEMENTS is non nil, append these to the list as well."
 (defun -first (pred list)
   "Returns the first x in LIST where (PRED x) is non-nil, else nil.
 
-To get the first item in the list no questions asked, use `car'."
+To get the first item in the list no questions asked, use `car'.
+
+This function is also available as `-find'."
   (--first (funcall pred it) list))
+
+(defalias '-find '-first)
+(defalias '--find '--first)
 
 (defmacro --last (form list)
   "Anaphoric form of `-last'."
@@ -1480,6 +1485,8 @@ structure such as plist or alist."
                              "-snoc"
                              "-first"
                              "--first"
+                             "-find"
+                             "--find"
                              "-last"
                              "--last"
                              "-first-item"

@@ -90,9 +90,9 @@ Operations dual to reductions, building lists from seed value rather than consum
 * [-only-some?](#-only-some-pred-list) `(pred list)`
 * [-contains?](#-contains-list-element) `(list element)`
 * [-same-items?](#-same-items-list-list2) `(list list2)`
-* [-is-prefix-p](#-is-prefix-p-prefix-list) `(prefix list)`
-* [-is-suffix-p](#-is-suffix-p-suffix-list) `(suffix list)`
-* [-is-infix-p](#-is-infix-p-infix-list) `(infix list)`
+* [-is-prefix?](#-is-prefix-prefix-list) `(prefix list)`
+* [-is-suffix?](#-is-suffix-suffix-list) `(suffix list)`
+* [-is-infix?](#-is-infix-infix-list) `(infix list)`
 
 ### Partitioning
 
@@ -725,36 +725,36 @@ The order of the elements in the lists does not matter.
 (-same-items? '(1 2 3) '(1 2 3 4)) ;; => nil
 ```
 
-#### -is-prefix-p `(prefix list)`
+#### -is-prefix? `(prefix list)`
 
 Return non-nil if `prefix` is prefix of `list`.
 
 ```cl
-(-is-prefix-p '(1 2 3) '(1 2 3 4 5)) ;; => t
-(-is-prefix-p '(1 2 3 4 5) '(1 2 3)) ;; => nil
-(-is-prefix-p '(1 3) '(1 2 3 4 5)) ;; => nil
+(-is-prefix? '(1 2 3) '(1 2 3 4 5)) ;; => t
+(-is-prefix? '(1 2 3 4 5) '(1 2 3)) ;; => nil
+(-is-prefix? '(1 3) '(1 2 3 4 5)) ;; => nil
 ```
 
-#### -is-suffix-p `(suffix list)`
+#### -is-suffix? `(suffix list)`
 
 Return non-nil if `suffix` is suffix of `list`.
 
 ```cl
-(-is-suffix-p '(3 4 5) '(1 2 3 4 5)) ;; => t
-(-is-suffix-p '(1 2 3 4 5) '(3 4 5)) ;; => nil
-(-is-suffix-p '(3 5) '(1 2 3 4 5)) ;; => nil
+(-is-suffix? '(3 4 5) '(1 2 3 4 5)) ;; => t
+(-is-suffix? '(1 2 3 4 5) '(3 4 5)) ;; => nil
+(-is-suffix? '(3 5) '(1 2 3 4 5)) ;; => nil
 ```
 
-#### -is-infix-p `(infix list)`
+#### -is-infix? `(infix list)`
 
 Return non-nil if `infix` is infix of `list`.
 
 This operation runs in `o`(n^2) time
 
 ```cl
-(-is-infix-p '(1 2 3) '(1 2 3 4 5)) ;; => t
-(-is-infix-p '(2 3 4) '(1 2 3 4 5)) ;; => t
-(-is-infix-p '(3 4 5) '(1 2 3 4 5)) ;; => t
+(-is-infix? '(1 2 3) '(1 2 3 4 5)) ;; => t
+(-is-infix? '(2 3 4) '(1 2 3 4 5)) ;; => t
+(-is-infix? '(3 4 5) '(1 2 3 4 5)) ;; => t
 ```
 
 

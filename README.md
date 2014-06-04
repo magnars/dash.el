@@ -42,6 +42,7 @@ Include this in your emacs settings to get syntax highlighting:
 * [-remove](#-remove-pred-list) `(pred list)`
 * [-keep](#-keep-fn-list) `(fn list)`
 * [-map-when](#-map-when-pred-rep-list) `(pred rep list)`
+* [-replace](#-replace-old-new-list) `(old new list)`
 * [-map-indexed](#-map-indexed-fn-list) `(fn list)`
 * [-flatten](#-flatten-l) `(l)`
 * [-flatten-n](#-flatten-n-num-list) `(num list)`
@@ -283,6 +284,18 @@ through the `rep` function.
 (-map-when 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
 (--map-when (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
 (--map-when (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
+```
+
+#### -replace `(old new list)`
+
+Replace all `old` items in `list` with `new`.
+
+Elements are compared using `equal`.
+
+```cl
+(-replace 1 "1" '(1 2 3 4 3 2 1)) ;; => '("1" 2 3 4 3 2 "1")
+(-replace "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => '("a" "nice" "bar" "sentence" "about" "bar")
+(-replace 1 2 nil) ;; => nil
 ```
 
 #### -map-indexed `(fn list)`

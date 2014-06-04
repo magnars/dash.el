@@ -271,6 +271,12 @@ through the REP function."
 (defalias '--replace-where '--map-when)
 (defalias '-replace-where '-map-when)
 
+(defun -replace (old new list)
+  "Replace all OLD items in LIST with NEW.
+
+Elements are compared using `equal'."
+  (--map-when (equal it old) new list))
+
 (defun -flatten (l)
   "Takes a nested list L and returns its contents as a single, flat list."
   (if (and (listp l) (listp (cdr l)))
@@ -1464,6 +1470,7 @@ structure such as plist or alist."
                              "--map-when"
                              "-replace-where"
                              "--replace-where"
+                             "-replace"
                              "-flatten"
                              "-flatten-n"
                              "-concat"

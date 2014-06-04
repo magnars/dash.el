@@ -48,6 +48,15 @@
     (-map-indexed (lambda (index item) (- item index)) '(1 2 3 4)) => '(1 1 1 1)
     (--map-indexed (- it it-index) '(1 2 3 4)) => '(1 1 1 1))
 
+  (defexamples -splice
+    (-splice 'even? (lambda (x) (list x x)) '(1 2 3 4)) => '(1 2 2 3 4 4)
+    (--splice 't (list it it) '(1 2 3 4)) => '(1 1 2 2 3 3 4 4)
+    (--splice (equal it :magic) '((list of) (magical) (code)) '((foo) (bar) :magic (baz))) => '((foo) (bar) (list of) (magical) (code) (baz)))
+
+  (defexamples -splice-list
+    (-splice-list 'keywordp '(a b c) '(1 :foo 2)) => '(1 a b c 2)
+    (-splice-list 'keywordp nil '(1 :foo 2)) => '(1 2))
+
   (defexamples -flatten
     (-flatten '((1))) => '(1)
     (-flatten '((1 (2 3) (((4 (5))))))) => '(1 2 3 4 5)

@@ -45,11 +45,11 @@ special values."
   :group 'dash)
 
 (defmacro !cons (car cdr)
-  "Destructive: Sets CDR to the cons of CAR and CDR."
+  "Destructive: Set CDR to the cons of CAR and CDR."
   `(setq ,cdr (cons ,car ,cdr)))
 
 (defmacro !cdr (list)
-  "Destructive: Sets LIST to the cdr of LIST."
+  "Destructive: Set LIST to the cdr of LIST."
   `(setq ,list (cdr ,list)))
 
 (defmacro --each (list &rest body)
@@ -66,7 +66,7 @@ special values."
          (!cdr ,l)))))
 
 (defun -each (list fn)
-  "Calls FN with every item in LIST. Returns nil, used for side-effects only."
+  "Call FN with every item in LIST. Return nil, used for side-effects only."
   (--each list (funcall fn it)))
 
 (put '-each 'lisp-indent-function 1)
@@ -87,8 +87,8 @@ special values."
          (!cdr ,l)))))
 
 (defun -each-while (list pred fn)
-  "Calls FN with every item in LIST while (PRED item) is non-nil.
-Returns nil, used for side-effects only."
+  "Call FN with every item in LIST while (PRED item) is non-nil.
+Return nil, used for side-effects only."
   (--each-while list (funcall pred it) (funcall fn it)))
 
 (put '-each-while 'lisp-indent-function 2)
@@ -111,7 +111,7 @@ Returns nil, used for side-effects only."
 (put '-dotimes 'lisp-indent-function 1)
 
 (defun -map (fn list)
-  "Returns a new list consisting of the result of applying FN to the items in LIST."
+  "Return a new list consisting of the result of applying FN to the items in LIST."
   (mapcar fn list))
 
 (defmacro --map (form list)
@@ -127,9 +127,9 @@ Returns nil, used for side-effects only."
      acc))
 
 (defun -reduce-from (fn initial-value list)
-  "Returns the result of applying FN to INITIAL-VALUE and the
+  "Return the result of applying FN to INITIAL-VALUE and the
 first item in LIST, then applying FN to that result and the 2nd
-item, etc. If LIST contains no items, returns INITIAL-VALUE and
+item, etc. If LIST contains no items, return INITIAL-VALUE and
 FN is not called.
 
 In the anaphoric form `--reduce-from', the accumulated value is
@@ -146,10 +146,10 @@ exposed as `acc`."
          (let (acc it) ,form)))))
 
 (defun -reduce (fn list)
-  "Returns the result of applying FN to the first 2 items in LIST,
+  "Return the result of applying FN to the first 2 items in LIST,
 then applying FN to that result and the 3rd item, etc. If LIST
 contains no items, FN must accept no arguments as well, and
-reduce returns the result of calling FN with no arguments. If
+reduce return the result of calling FN with no arguments. If
 LIST has only 1 item, it is returned and FN is not called.
 
 In the anaphoric form `--reduce', the accumulated value is
@@ -176,7 +176,7 @@ operation associates from right instead of from left."
 (defun -reduce-r (fn list)
   "Replace conses with FN and evaluate the resulting expression.
 The final nil is ignored. If LIST contains no items, FN must
-accept no arguments as well, and reduce returns the result of
+accept no arguments as well, and reduce return the result of
 calling FN with no arguments. If LIST has only 1 item, it is
 returned and FN is not called.
 
@@ -204,7 +204,7 @@ associates from right instead of from left."
        (nreverse ,r))))
 
 (defun -filter (pred list)
-  "Returns a new list of the items in LIST for which PRED returns a non-nil value.
+  "Return a new list of the items in LIST for which PRED returns a non-nil value.
 
 Alias: `-select'"
   (--filter (funcall pred it) list))
@@ -218,7 +218,7 @@ Alias: `-select'"
   `(--filter (not ,form) ,list))
 
 (defun -remove (pred list)
-  "Returns a new list of the items in LIST for which PRED returns nil.
+  "Return a new list of the items in LIST for which PRED returns nil.
 
 Alias: `-reject'"
   (--remove (funcall pred it) list))
@@ -236,16 +236,8 @@ Alias: `-reject'"
        (nreverse ,r))))
 
 (defun -keep (fn list)
-  "Returns a new list of the non-nil results of applying FN to the items in LIST."
+  "Return a new list of the non-nil results of applying FN to the items in LIST."
   (--keep (funcall fn it) list))
-
-(defmacro --map-when (pred rep list)
-  "Anaphoric form of `-map-when'."
-  (declare (debug (form form form)))
-  (let ((r (make-symbol "result")))
-    `(let (,r)
-       (--each ,list (!cons (if ,pred ,rep it) ,r))
-       (nreverse ,r))))
 
 (defmacro --map-indexed (form list)
   "Anaphoric form of `-map-indexed'."
@@ -257,38 +249,56 @@ Alias: `-reject'"
        (nreverse ,r))))
 
 (defun -map-indexed (fn list)
-  "Returns a new list consisting of the result of (FN index item) for each item in LIST.
+  "Return a new list consisting of the result of (FN index item) for each item in LIST.
 
 In the anaphoric form `--map-indexed', the index is exposed as `it-index`."
   (--map-indexed (funcall fn it-index it) list))
 
+(defmacro --map-when (pred rep list)
+  "Anaphoric form of `-map-when'."
+  (declare (debug (form form form)))
+  (let ((r (make-symbol "result")))
+    `(let (,r)
+       (--each ,list (!cons (if ,pred ,rep it) ,r))
+       (nreverse ,r))))
+
 (defun -map-when (pred rep list)
-  "Returns a new list where the elements in LIST that does not match the PRED function
+  "Return a new list where the elements in LIST that does not match the PRED function
 are unchanged, and where the elements in LIST that do match the PRED function are mapped
-through the REP function."
+through the REP function.
+
+Alias: `-replace-where'
+
+See also: `-update-at'"
   (--map-when (funcall pred it) (funcall rep it) list))
 
-(defalias '--replace-where '--map-when)
 (defalias '-replace-where '-map-when)
+(defalias '--replace-where '--map-when)
 
 (defun -replace (old new list)
   "Replace all OLD items in LIST with NEW.
 
-Elements are compared using `equal'."
+Elements are compared using `equal'.
+
+See also: `-replace-at'"
   (--map-when (equal it old) new list))
 
 (defun -flatten (l)
-  "Takes a nested list L and returns its contents as a single, flat list."
+  "Take a nested list L and return its contents as a single, flat list.
+
+See also: `-flatten-n'"
   (if (and (listp l) (listp (cdr l)))
       (-mapcat '-flatten l)
     (list l)))
 
 (defun -flatten-n (num list)
-  "Flatten NUM levels of a nested LIST."
+  "Flatten NUM levels of a nested LIST.
+
+See also: `-flatten'"
   (-last-item (--iterate (--mapcat (-list it) it) list (1+ num))))
 
 (defun -concat (&rest lists)
-  "Returns a new list with the concatenation of the elements in the supplied LISTS."
+  "Return a new list with the concatenation of the elements in the supplied LISTS."
   (apply 'append lists))
 
 (defmacro --mapcat (form list)
@@ -297,7 +307,7 @@ Elements are compared using `equal'."
   `(apply 'append (--map ,form ,list)))
 
 (defun -mapcat (fn list)
-  "Returns the concatenation of the result of mapping FN over LIST.
+  "Return the concatenation of the result of mapping FN over LIST.
 Thus function FN should return a list."
   (--mapcat (funcall fn it) list))
 
@@ -308,7 +318,9 @@ FUN takes the element matching PRED as input.
 
 This function can be used as replacement for `,@' in case you
 need to splice several lists at marked positions (for example
-with keywords)."
+with keywords).
+
+See also: `-splice-list', `-insert-at'"
   (let (r)
     (--each list
       (if (funcall pred it)
@@ -324,7 +336,7 @@ with keywords)."
 (defun -splice-list (pred new-list list)
   "Splice NEW-LIST in place of elements matching PRED in LIST.
 
-See also more general version: `-splice'."
+See also: `-splice', `-insert-at'"
   (-splice pred (lambda (_) new-list) list))
 
 (defun --splice-list (pred new-list list)
@@ -332,7 +344,7 @@ See also more general version: `-splice'."
   `(-splice-list (lambda (it) ,pred) ,new-list ,list))
 
 (defun -cons* (&rest args)
-  "Makes a new list from the elements of ARGS.
+  "Make a new list from the elements of ARGS.
 
 The last 2 members of ARGS are used as the final cons of the
 result so if the final member of ARGS is not a list the result is
@@ -357,11 +369,11 @@ If ELEMENTS is non nil, append these to the list as well."
        ,n)))
 
 (defun -first (pred list)
-  "Returns the first x in LIST where (PRED x) is non-nil, else nil.
+  "Return the first x in LIST where (PRED x) is non-nil, else nil.
 
 To get the first item in the list no questions asked, use `car'.
 
-This function is also available as `-find'."
+Alias: `-find'"
   (--first (funcall pred it) list))
 
 (defalias '-find '-first)
@@ -381,10 +393,10 @@ This function is also available as `-find'."
   (--last (funcall pred it) list))
 
 (defalias '-first-item 'car
-  "Returns the first item of LIST, or nil on an empty list.")
+  "Return the first item of LIST, or nil on an empty list.")
 
 (defun -last-item (list)
-  "Returns the last item of LIST, or nil on an empty list."
+  "Return the last item of LIST, or nil on an empty list."
   (car (last list)))
 
 (defmacro --count (pred list)
@@ -408,14 +420,13 @@ This function is also available as `-find'."
   `(---truthy? (--first ,form ,list)))
 
 (defun -any? (pred list)
-  "Returns t if (PRED x) is non-nil for any x in LIST, else nil.
+  "Return t if (PRED x) is non-nil for any x in LIST, else nil.
 
-Alias: `-some?'"
+Alias: `-any-p', `-some?', `-some-p'"
   (--any? (funcall pred it) list))
 
 (defalias '-some? '-any?)
 (defalias '--some? '--any?)
-
 (defalias '-any-p '-any?)
 (defalias '--any-p '--any?)
 (defalias '-some-p '-any?)
@@ -430,14 +441,13 @@ Alias: `-some?'"
        (---truthy? ,a))))
 
 (defun -all? (pred list)
-  "Returns t if (PRED x) is non-nil for all x in LIST, else nil.
+  "Return t if (PRED x) is non-nil for all x in LIST, else nil.
 
-Alias: `-every?'"
+Alias: `-all-p', `-every?', `-every-p'"
   (--all? (funcall pred it) list))
 
 (defalias '-every? '-all?)
 (defalias '--every? '--all?)
-
 (defalias '-all-p '-all?)
 (defalias '--all-p '--all?)
 (defalias '-every-p '-all?)
@@ -449,7 +459,9 @@ Alias: `-every?'"
   `(--all? (not ,form) ,list))
 
 (defun -none? (pred list)
-  "Returns t if (PRED x) is nil for all x in LIST, else nil."
+  "Return t if (PRED x) is nil for all x in LIST, else nil.
+
+Alias: `-none-p'"
   (--none? (funcall pred it) list))
 
 (defalias '-none-p '-none?)
@@ -466,8 +478,10 @@ Alias: `-every?'"
        (---truthy? (and ,y ,n)))))
 
 (defun -only-some? (pred list)
-  "Returns `t` if there is a mix of items in LIST that matches and does not match PRED.
-Returns `nil` both if all items match the predicate, and if none of the items match the predicate."
+  "Return `t` if at least one item of LIST matches PRED and at least one item of LIST does not match PRED.
+Return `nil` both if all items match the predicate or if none of the items match the predicate.
+
+Alias: `-only-some-p'"
   (--only-some? (funcall pred it) list))
 
 (defalias '-only-some-p '-only-some?)
@@ -500,7 +514,7 @@ section is returned.  Defaults to 1."
     (nreverse new-list)))
 
 (defun -take (n list)
-  "Returns a new list of the first N items in LIST, or all items if there are fewer than N."
+  "Return a new list of the first N items in LIST, or all items if there are fewer than N."
   (let (result)
     (--dotimes n
       (when list
@@ -508,7 +522,7 @@ section is returned.  Defaults to 1."
         (!cdr list)))
     (nreverse result)))
 
-(defalias '-drop 'nthcdr "Returns the tail of LIST without the first N items.")
+(defalias '-drop 'nthcdr "Return the tail of LIST without the first N items.")
 
 (defmacro --take-while (form list)
   "Anaphoric form of `-take-while'."
@@ -519,7 +533,7 @@ section is returned.  Defaults to 1."
        (nreverse ,r))))
 
 (defun -take-while (pred list)
-  "Returns a new list of successive items from LIST while (PRED item) returns a non-nil value."
+  "Return a new list of successive items from LIST while (PRED item) returns a non-nil value."
   (--take-while (funcall pred it) list))
 
 (defmacro --drop-while (form list)
@@ -532,11 +546,11 @@ section is returned.  Defaults to 1."
        ,l)))
 
 (defun -drop-while (pred list)
-  "Returns the tail of LIST starting from the first item for which (PRED item) returns nil."
+  "Return the tail of LIST starting from the first item for which (PRED item) returns nil."
   (--drop-while (funcall pred it) list))
 
 (defun -split-at (n list)
-  "Returns a list of ((-take N LIST) (-drop N LIST)), in no more than one pass through the list."
+  "Return a list of ((-take N LIST) (-drop N LIST)), in no more than one pass through the list."
   (let (result)
     (--dotimes n
       (when list
@@ -552,17 +566,23 @@ The time complexity is O(n)."
     (append (-drop (- n) list) (-take (- n) list))))
 
 (defun -insert-at (n x list)
-  "Returns a list with X inserted into LIST at position N."
+  "Return a list with X inserted into LIST at position N.
+
+See also: `-splice', `-splice-list'"
   (let ((split-list (-split-at n list)))
     (nconc (car split-list) (cons x (cadr split-list)))))
 
 (defun -replace-at (n x list)
-  "Return a list with element at Nth position in LIST replaced with X."
+  "Return a list with element at Nth position in LIST replaced with X.
+
+See also: `-replace'"
   (let ((split-list (-split-at n list)))
     (nconc (car split-list) (cons x (cdr (cadr split-list))))))
 
 (defun -update-at (n func list)
-  "Return a list with element at Nth position in LIST replaced with `(func (nth n list))`."
+  "Return a list with element at Nth position in LIST replaced with `(func (nth n list))`.
+
+See also: `-map-when'"
   (let ((split-list (-split-at n list)))
     (nconc (car split-list) (cons (funcall func (car (cadr split-list))) (cdr (cadr split-list))))))
 
@@ -572,13 +592,17 @@ The time complexity is O(n)."
   `(-update-at ,n (lambda (it) ,form) ,list))
 
 (defun -remove-at (n list)
-  "Return a list with element at Nth position in LIST removed."
+  "Return a list with element at Nth position in LIST removed.
+
+See also: `-remove-at-indices', `-remove'"
   (-remove-at-indices (list n) list))
 
 (defun -remove-at-indices (indices list)
   "Return a list whose elements are elements from LIST without
 elements selected as `(nth i list)` for all i
-from INDICES."
+from INDICES.
+
+See also: `-remove-at', `-remove'"
   (let* ((indices (-sort '< indices))
          (diffs (cons (car indices) (-map '1- (-zip-with '- (cdr indices) indices))))
          r)
@@ -607,7 +631,7 @@ from INDICES."
        (list (nreverse ,r) ,l))))
 
 (defun -split-with (pred list)
-  "Returns a list of ((-take-while PRED LIST) (-drop-while PRED LIST)), in no more than one pass through the list."
+  "Return a list of ((-take-while PRED LIST) (-drop-while PRED LIST)), in no more than one pass through the list."
   (--split-with (funcall pred it) list))
 
 (defmacro -split-on (item list)
@@ -618,7 +642,7 @@ Empty lists are also removed from the result.
 
 Comparison is done by `equal'.
 
-See also `-split-when'."
+See also `-split-when'"
   (declare (debug (form form)))
   `(-split-when (lambda (it) (equal it ,item)) ,list))
 
@@ -655,7 +679,7 @@ This function can be thought of as a generalization of
        (list (nreverse ,y) (nreverse ,n)))))
 
 (defun -separate (pred list)
-  "Returns a list of ((-filter PRED LIST) (-remove PRED LIST)), in one pass through the list."
+  "Return a list of ((-filter PRED LIST) (-remove PRED LIST)), in one pass through the list."
   (--separate (funcall pred it) list))
 
 (defun ---partition-all-in-steps-reversed (n step list)
@@ -670,12 +694,12 @@ This function can be thought of as a generalization of
     result))
 
 (defun -partition-all-in-steps (n step list)
-  "Returns a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
+  "Return a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
 The last groups may contain less than N items."
   (nreverse (---partition-all-in-steps-reversed n step list)))
 
 (defun -partition-in-steps (n step list)
-  "Returns a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
+  "Return a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
 If there are not enough items to make the last group N-sized,
 those items are discarded."
   (let ((result (---partition-all-in-steps-reversed n step list)))
@@ -684,12 +708,12 @@ those items are discarded."
     (nreverse result)))
 
 (defun -partition-all (n list)
-  "Returns a new list with the items in LIST grouped into N-sized sublists.
+  "Return a new list with the items in LIST grouped into N-sized sublists.
 The last group may contain less than N items."
   (-partition-all-in-steps n n list))
 
 (defun -partition (n list)
-  "Returns a new list with the items in LIST grouped into N-sized sublists.
+  "Return a new list with the items in LIST grouped into N-sized sublists.
 If there are not enough items to make the last group N-sized,
 those items are discarded."
   (-partition-in-steps n n list))
@@ -722,7 +746,7 @@ those items are discarded."
            (nreverse ,r))))))
 
 (defun -partition-by (fn list)
-  "Applies FN to each item in LIST, splitting it each time FN returns a new value."
+  "Apply FN to each item in LIST, splitting it each time FN returns a new value."
   (--partition-by (funcall fn it) list))
 
 (defmacro --partition-by-header (form list)
@@ -757,8 +781,8 @@ those items are discarded."
            (nreverse ,r))))))
 
 (defun -partition-by-header (fn list)
-  "Applies FN to the first item in LIST. That is the header
-value. Applies FN to each item in LIST, splitting it each time FN
+  "Apply FN to the first item in LIST. That is the header
+value. Apply FN to each item in LIST, splitting it each time FN
 returns the header value, but only after seeing at least one
 other value (the body)."
   (--partition-by-header (funcall fn it) list))
@@ -797,7 +821,7 @@ elements of LIST.  Keys are compared by `equal'."
   (--group-by (funcall fn it) list))
 
 (defun -interpose (sep list)
-  "Returns a new list of all elements in LIST separated by SEP."
+  "Return a new list of all elements in LIST separated by SEP."
   (let (result)
     (when list
       (!cons (car list) result)
@@ -808,7 +832,7 @@ elements of LIST.  Keys are compared by `equal'."
     (nreverse result)))
 
 (defun -interleave (&rest lists)
-  "Returns a new list of the first item in each list, then the second etc."
+  "Return a new list of the first item in each list, then the second etc."
   (let (result)
     (while (-none? 'null lists)
       (--each lists (!cons (car it) result))
@@ -869,7 +893,7 @@ longest input list."
   (apply '-zip (apply '-pad (cons fill-value lists))))
 
 (defun -cycle (list)
-  "Returns an infinite copy of LIST that will cycle through the
+  "Return an infinite copy of LIST that will cycle through the
 elements and repeat from the beginning."
   (let ((newlist (-map 'identity list)))
     (nconc newlist newlist)))
@@ -882,7 +906,7 @@ will all have the same length."
     (--map (append (cdr it) (-repeat (- n (car it)) fill-value)) annotations)))
 
 (defun -annotate (fn list)
-  "Returns a list of cons cells where each cell is FN applied to each
+  "Return a list of cons cells where each cell is FN applied to each
 element of LIST paired with the unmodified element of LIST."
   (-zip (-map fn list) list))
 
@@ -918,7 +942,7 @@ The outer product is computed by applying fn to all possible
 combinations created by taking one element from each list in
 order.  The dimension of the result is (length lists).
 
-See also: `-table-flat'."
+See also: `-table-flat'"
   (let ((restore-lists (copy-sequence lists))
         (last-list (last lists))
         (re (--map nil (number-sequence 1 (length lists)))))
@@ -944,7 +968,7 @@ of the result.  This is equivalent to calling:
 
 but the implementation here is much more efficient.
 
-See also: `-flatten-n', `-table'."
+See also: `-flatten-n', `-table'"
   (let ((restore-lists (copy-sequence lists))
         (last-list (last lists))
         re)
@@ -955,8 +979,8 @@ See also: `-flatten-n', `-table'."
     (nreverse re)))
 
 (defun -partial (fn &rest args)
-  "Takes a function FN and fewer than the normal arguments to FN,
-and returns a fn that takes a variable number of additional ARGS.
+  "Take a function FN and fewer than the normal arguments to FN,
+and return a fn that takes a variable number of additional ARGS.
 When called, the returned function calls FN with ARGS first and
 then additional args."
   (apply 'apply-partially fn args))
@@ -1013,9 +1037,9 @@ as `(nth i list)` for all i from INDICES."
     (nreverse r)))
 
 (defmacro -> (x &optional form &rest more)
-  "Threads the expr through the forms. Inserts X as the second
-item in the first form, making a list of it if it is not a list
-already. If there are more forms, inserts the first form as the
+  "Thread the expr through the forms. Insert X as the second item
+in the first form, making a list of it if it is not a list
+already. If there are more forms, insert the first form as the
 second item in second form, etc."
   (cond
    ((null form) x)
@@ -1025,9 +1049,9 @@ second item in second form, etc."
    (:else `(-> (-> ,x ,form) ,@more))))
 
 (defmacro ->> (x form &rest more)
-  "Threads the expr through the forms. Inserts X as the last item
+  "Thread the expr through the forms. Insert X as the last item
 in the first form, making a list of it if it is not a list
-already. If there are more forms, inserts the first form as the
+already. If there are more forms, insert the first form as the
 last item in second form, etc."
   (if (null more)
       (if (listp form)
@@ -1036,10 +1060,10 @@ last item in second form, etc."
     `(->> (->> ,x ,form) ,@more)))
 
 (defmacro --> (x form &rest more)
-  "Threads the expr through the forms. Inserts X at the position
+  "Thread the expr through the forms. Insert X at the position
 signified by the token `it' in the first form. If there are more
-forms, inserts the first form at the position signified by `it'
-in in second form, etc."
+forms, insert the first form at the position signified by `it' in
+in second form, etc."
   (if (null more)
       (if (listp form)
           (--map-when (eq it 'it) x form)
@@ -1051,7 +1075,7 @@ in in second form, etc."
 (put '--> 'lisp-indent-function 1)
 
 (defun -grade-up (comparator list)
-  "Grades elements of LIST using COMPARATOR relation, yielding a
+  "Grade elements of LIST using COMPARATOR relation, yielding a
 permutation vector such that applying this permutation to LIST
 sorts it in ascending order."
   ;; ugly hack to "fix" lack of lexical scope
@@ -1061,7 +1085,7 @@ sorts it in ascending order."
       (-map 'cdr))))
 
 (defun -grade-down (comparator list)
-  "Grades elements of LIST using COMPARATOR relation, yielding a
+  "Grade elements of LIST using COMPARATOR relation, yielding a
 permutation vector such that applying this permutation to LIST
 sorts it in descending order."
   ;; ugly hack to "fix" lack of lexical scope
@@ -1145,6 +1169,8 @@ Alias: `-uniq'"
     (--each list (unless (-contains? result it) (!cons it result)))
     (nreverse result)))
 
+(defalias '-uniq '-distinct)
+
 (defun -union (list list2)
   "Return a new list containing the elements of LIST1 and elements of LIST2 that are not in LIST1.
 The test for equality is done with `equal',
@@ -1153,8 +1179,6 @@ or with `-compare-fn' if that's non-nil."
     (--each list (!cons it result))
     (--each list2 (unless (-contains? result it) (!cons it result)))
     (nreverse result)))
-
-(defalias '-uniq '-distinct)
 
 (defun -intersection (list list2)
   "Return a new list containing only the elements that are members of both LIST and LIST2.
@@ -1171,12 +1195,16 @@ or with `-compare-fn' if that's non-nil."
 (defvar -compare-fn nil
   "Tests for equality use this function or `equal' if this is nil.
 It should only be set using dynamic scope with a let, like:
-(let ((-compare-fn =)) (-union numbers1 numbers2 numbers3)")
+
+  (let ((-compare-fn =)) (-union numbers1 numbers2 numbers3)")
 
 (defun -contains? (list element)
-  "Return whether LIST contains ELEMENT.
-The test for equality is done with `equal',
-or with `-compare-fn' if that's non-nil."
+  "Return non-nil if LIST contains ELEMENT.
+
+The test for equality is done with `equal', or with `-compare-fn'
+if that's non-nil.
+
+Alias: `-contains-p'"
   (not
    (null
     (cond
@@ -1195,7 +1223,9 @@ or with `-compare-fn' if that's non-nil."
 (defun -same-items? (list list2)
   "Return true if LIST and LIST2 has the same items.
 
-The order of the elements in the lists does not matter."
+The order of the elements in the lists does not matter.
+
+Alias: `-same-items-p'"
   (let ((length-a (length list))
         (length-b (length list2)))
     (and
@@ -1205,19 +1235,25 @@ The order of the elements in the lists does not matter."
 (defalias '-same-items-p '-same-items?)
 
 (defun -is-prefix? (prefix list)
-  "Return non-nil if PREFIX is prefix of LIST."
+  "Return non-nil if PREFIX is prefix of LIST.
+
+Alias: `-is-prefix-p'"
   (--each-while list (equal (car prefix) it)
     (!cdr prefix))
   (not prefix))
 
 (defun -is-suffix? (suffix list)
-  "Return non-nil if SUFFIX is suffix of LIST."
+  "Return non-nil if SUFFIX is suffix of LIST.
+
+Alias: `-is-suffix-p'"
   (-is-prefix? (nreverse suffix) (nreverse list)))
 
 (defun -is-infix? (infix list)
   "Return non-nil if INFIX is infix of LIST.
 
-This operation runs in O(n^2) time"
+This operation runs in O(n^2) time
+
+Alias: `-is-infix-p'"
   (let (done)
     (while (and (not done) list)
       (setq done (-is-prefix? infix list))
@@ -1230,7 +1266,7 @@ This operation runs in O(n^2) time"
 
 (defun -sort (comparator list)
   "Sort LIST, stably, comparing elements using COMPARATOR.
-Returns the sorted list.  LIST is NOT modified by side effects.
+Return the sorted list.  LIST is NOT modified by side effects.
 COMPARATOR is called with two elements of LIST, and should return non-nil
 if the first element should sort before the second."
   (sort (copy-sequence list) comparator))
@@ -1250,7 +1286,7 @@ not, return a list with ARGS as elements."
 
 (defun -repeat (n x)
   "Return a list with X repeated N times.
-Returns nil if N is less than 1."
+Return nil if N is less than 1."
   (let (ret)
     (--dotimes n (!cons x ret))
     ret))

@@ -1622,6 +1622,8 @@ structure such as plist or alist."
                              "-cut"
                              "-orfn"
                              "-andfn"
+                             "-iteratefn"
+                             "-prodfn"
                              ))
              (special-variables '(
                                   "it"

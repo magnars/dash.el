@@ -1,4 +1,4 @@
-;; -*- lexical-binding: t; eval: (font-lock-add-keywords nil '(("defexamples\\| => " (0 'font-lock-keyword-face)))); -*-
+;; -*- lexical-binding: t -*-
 
 ;; Only the first three examples per function are shown in the docs,
 ;; so make those good.
@@ -791,3 +791,7 @@ new list."
         (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
                (funcall (-prodfn (-compose f ff) (-compose g gg)) input3))))
     ))
+
+;; Local Variables:
+;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => " (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
+;; End:

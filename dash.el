@@ -195,6 +195,29 @@ associates from right instead of from left."
   (declare (debug (form form)))
   `(-reduce-r (lambda (&optional it acc) ,form) ,list))
 
+(defmacro --collecting-reduce (form l)
+  "Perform a collecting reducing using FORM over the list L.
+
+A collecting reduce is a reduce that does not returns a single value (the
+result of the last computation) but a list of all computations made.
+
+The FORM should use 'FIRST' and 'SECOND' as the current items to be processed.
+The first time FORM is executed FIRST takes nil."
+  `(-flatten
+     (-reduce-from
+       (lambda (previous second)
+	 (let ((first (car (last previous))))
+	   (list previous ,form)))
+       ()
+       ,l)))
+
+(defun -collecting-reduce(func l)
+  "Functional form for `--collecting-reduce'.
+
+FUNC must be a function object and L must a sequence.  FUNC must deal with the
+case when the first argument is nil."
+  (--collecting-reduce (funcall func first second) l))
+
 (defmacro --filter (form list)
   "Anaphoric form of `-filter'."
   (declare (debug (form form)))

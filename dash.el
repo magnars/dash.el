@@ -212,7 +212,7 @@ The first time FORM is executed FIRST takes nil."
        ,l)))
 
 (defun -reductions(func l)
-  "Functional form for `--collecting-reduce'.
+  "Functional form for `--reductions'.
 
 FUNC must be a function object and L must a sequence.  FUNC must deal with the
 case when the first argument is nil."

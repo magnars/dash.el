@@ -202,14 +202,17 @@ A collecting reduce is a reduce that does not returns a single value (the
 result of the last computation) but a list of all computations made.
 
 The FORM should use 'FIRST' and 'SECOND' as the current items to be processed.
-The first time FORM is executed FIRST takes nil."
+If the list L does not have at least two items, FORM will not be used at all.
+The 'FIRST' variable will contain the first item of the list L the first time
+FORM is used, after that point 'FIRST' will contain the result from the
+previous computation."
   `(-flatten
      (-reduce-from
        (lambda (previous second)
 	 (let ((first (car (last previous))))
 	   (list previous ,form)))
-       ()
-       ,l)))
+       (list (car ,l))
+       (cdr ,l))))
 
 (defun -reductions(func l)
   "Functional form for `--reductions'.

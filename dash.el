@@ -218,6 +218,9 @@ FUNC must be a function object and L must a sequence.  FUNC must deal with the
 case when the first argument is nil."
   (--reductions (funcall func first second) l))
 
+(defalias '-scan '-reductions)
+(defalias '--scan '--reductions)
+
 (defmacro --filter (form list)
   "Anaphoric form of `-filter'."
   (declare (debug (form form)))

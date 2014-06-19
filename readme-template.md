@@ -19,11 +19,11 @@ If you want the function combinators, then also:
 
 Add this to the big comment block at the top:
 
-    ;; Package-Requires: ((dash "2.6.0"))
+    ;; Package-Requires: ((dash "2.7.0"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "2.6.0") (dash-functional "1.0.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.7.0") (dash-functional "1.1.0") (emacs "24"))
 
 ## Syntax highlighting of dash functions
 
@@ -91,7 +91,18 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
-### From 2.5.0 to 2.6.0
+### From 2.6 to 2.7
+
+- `-zip` now supports more than two lists (Steve Lamb)
+- Add  `-cycle` ,  `-pad` ,  `-annotate` ,  `-zip-fill` (Steve Lamb)
+- Add `-table`, `-table-flat` (finite cartesian product)
+- Add `-flatten-n`
+- `-slice` now supports "step" argument
+- Add functional combinators `-iteratefn`, `-prodfn`
+- Add `-replace`, `-splice`, `-splice-list` which generalize `-replace-at` and `-insert-at`
+- Add `-compose`, `-iteratefn` and `-prodfn` (dash-functional 1.1)
+
+### From 2.5 to 2.6
 
 - Add `-is-prefix-p`, `-is-suffix-p`, `-is-infix-p` (Matus Goljer)
 - Add `-iterate`, `-unfold` (Matus Goljer)
@@ -99,63 +110,63 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 - Add `-find-last-index` (Matus Goljer)
 - Add `-list` (Johan Andersson)
 
-### From 2.4.0 to 2.5.0
+### From 2.4 to 2.5
 
 - Add `-same-items?` (Johan Andersson)
 - A few bugfixes
 
-### From 2.3.0 to 2.4.0
+### From 2.3 to 2.4
 
 - Add `-snoc` (Matus Goljer)
 - Add `-replace-at`, `-update-at`, `-remove-at`, and `-remove-at-indices` (Matus Goljer)
 
-### From 2.2.0 to 2.3.0
+### From 2.2 to 2.3
 
 - Add tree operations (Matus Goljer)
 - Make font-lock optional
 
-### From 2.1.0 to 2.2.0
+### From 2.1 to 2.2
 
 - Add `-compose` (Christina Whyte)
 
-### From 2.0.0 to 2.1.0
+### From 2.0 to 2.1
 
 - Add indexing operations (Matus Goljer)
 
-### From 1.8.0 to 2.0.0
+### From 1.8 to 2.0
 
 - Split out `dash-functional.el` (Matus Goljer)
 - Add `-andfn`, `-orfn`, `-not`, `-cut`, `-const`, `-flip` and `-on`. (Matus Goljer)
 - Fix `-min`, `-max`, `-min-by` and `-max-by` (Matus Goljer)
 
-### From 1.7.0 to 1.8.0
+### From 1.7 to 1.8
 
 - Add `-first-item` and `-last-item` (Wilfred Hughes)
 
-### From 1.6.0 to 1.7.0
+### From 1.6 to 1.7
 
 - Add `-rotate` (Matus Goljer)
 
-### From 1.5.0 to 1.6.0
+### From 1.5 to 1.6
 
 - Add `-min`, `-max`, `-min-by` and `-max-by` (Johan Andersson)
 
-### From 1.4.0 to 1.5.0
+### From 1.4 to 1.5
 
 - Add `-sum` and `-product` (Johan Andersson)
 
-### From 1.3.0 to 1.4.0
+### From 1.3 to 1.4
 
 - Add `-sort`
 - Add `-reduce-r` (Matus Goljer)
 - Add `-reduce-r-from` (Matus Goljer)
 
-### From 1.2.0 to 1.3.0
+### From 1.2 to 1.3
 
 - Add `-partition-in-steps`
 - Add `-partition-all-in-steps`
 
-### From 1.1.0 to 1.2.0
+### From 1.1 to 1.2
 
 - Add `-last` (Matus Goljer)
 - Add `-insert-at` (Emanuel Evans)

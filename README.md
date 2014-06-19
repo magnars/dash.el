@@ -181,6 +181,7 @@ Other list functions not fit to be classified elsewhere.
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
 * [-last-item](#-last-item-list) `(list)`
+* [-butlast](#-butlast-list) `(list)`
 * [-sort](#-sort-comparator-list) `(comparator list)`
 * [-list](#-list-rest-args) `(&rest args)`
 
@@ -1408,6 +1409,16 @@ Return the last item of `list`, or nil on an empty list.
 ```cl
 (-last-item '(1 2 3)) ;; => 3
 (-last-item nil) ;; => nil
+```
+
+#### -butlast `(list)`
+
+Return a list of all items in list except for the last.
+
+```cl
+(-butlast '(1 2 3)) ;; => '(1 2)
+(-butlast '(1 2)) ;; => '(1)
+(-butlast '(1)) ;; => nil
 ```
 
 #### -sort `(comparator list)`

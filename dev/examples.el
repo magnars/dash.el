@@ -549,6 +549,12 @@ new list."
     (-last-item '(1 2 3)) => 3
     (-last-item nil) => nil)
 
+  (defexamples -butlast
+    (-butlast '(1 2 3)) => '(1 2)
+    (-butlast '(1 2)) => '(1)
+    (-butlast '(1)) => nil
+    (-butlast nil) => nil)
+
   (defexamples -sort
     (-sort '< '(3 1 2)) => '(1 2 3)
     (-sort '> '(3 1 2)) => '(3 2 1)

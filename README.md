@@ -19,11 +19,11 @@ If you want the function combinators, then also:
 
 Add this to the big comment block at the top:
 
-    ;; Package-Requires: ((dash "2.7.0"))
+    ;; Package-Requires: ((dash "2.8.0"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "2.7.0") (dash-functional "1.1.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.8.0") (dash-functional "1.1.0") (emacs "24"))
 
 ## Syntax highlighting of dash functions
 
@@ -1914,6 +1914,10 @@ Oh, and don't edit `README.md` directly, it is auto-generated.
 Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
+
+### From 2.7 to 2.8
+
+- Add `-butlast`
 
 ### From 2.6 to 2.7
 

@@ -50,6 +50,7 @@ new list.
 * [-splice](#-splice-pred-fun-list) `(pred fun list)`
 * [-splice-list](#-splice-list-pred-new-list-list) `(pred new-list list)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
+* [-copy](#-copy-list) `(list)`
 
 ### Sublist selection
 
@@ -367,6 +368,15 @@ Thus function `fn` should return a list.
 (-mapcat 'list '(1 2 3)) ;; => '(1 2 3)
 (-mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 (--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+```
+
+#### -copy `(list)`
+
+Create a shallow copy of `list`.
+
+```cl
+(-copy '(1 2 3)) ;; => '(1 2 3)
+(let ((a '(1 2 3))) (eq a (-copy a))) ;; => nil
 ```
 
 

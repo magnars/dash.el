@@ -48,7 +48,11 @@ new list."
   (defexamples -mapcat
     (-mapcat 'list '(1 2 3)) => '(1 2 3)
     (-mapcat (lambda (item) (list 0 item)) '(1 2 3)) => '(0 1 0 2 0 3)
-    (--mapcat (list 0 it) '(1 2 3)) => '(0 1 0 2 0 3)))
+    (--mapcat (list 0 it) '(1 2 3)) => '(0 1 0 2 0 3))
+
+  (defexamples -copy
+    (-copy '(1 2 3)) => '(1 2 3)
+    (let ((a '(1 2 3))) (eq a (-copy a))) => nil))
 
 (def-example-group "Sublist selection"
   "Functions returning a sublist of the original list."
@@ -620,7 +624,7 @@ new list."
                  "}"
                  '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam)))))
     => "{elips-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}")
-
+  
   (defexamples -clone
     (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) => '(1 2 3)))
 

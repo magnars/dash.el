@@ -586,6 +586,14 @@ new list."
     (--tree-map 1 '(1 2 (3 4) (5 6))) => '(1 1 (1 1) (1 1))
     (--tree-map (cdr it) '((1 . 2) (3 . 4) (5 . 6))) => '(2 4 6))
 
+  (defexamples -tree-map-nodes
+    (-tree-map-nodes 'vectorp (lambda (x) (-sum (append x nil))) '(1 [2 3] 4 (5 [6 7] 8))) => '(1 5 4 (5 13 8))
+    (-tree-map-nodes 'keywordp (lambda (x) (symbol-name x)) '(1 :foo 4 ((5 6 :bar) :baz 8))) => '(1 ":foo" 4 ((5 6 ":bar") ":baz" 8))
+    (--tree-map-nodes
+     (eq (car-safe it) 'add-mode)
+     (-concat it (list :mode 'emacs-lisp-mode))
+     '(with-mode emacs-lisp-mode (foo bar) (add-mode a b) (baz (add-mode c d)))) => '(with-mode emacs-lisp-mode (foo bar) (add-mode a b :mode emacs-lisp-mode) (baz (add-mode c d :mode emacs-lisp-mode))))
+
   (defexamples -tree-reduce
     (-tree-reduce '+ '(1 (2 3) (4 5))) => 15
     (-tree-reduce 'concat '("strings" (" on" " various") ((" levels")))) => "strings on various levels"

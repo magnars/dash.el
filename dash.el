@@ -1508,6 +1508,21 @@ See `-reduce-r' for how exactly are lists of zero or one element handled."
   (declare (debug (form form)))
   `(-tree-reduce (lambda (it acc) ,form) ,tree))
 
+(defun -tree-map-nodes (pred fun tree)
+  "Call FUN on each node of TREE that satisfies PRED.
+
+If PRED returns nil, continue descending down this node.  If PRED
+returns non-nil, apply FUN to this node and do not descend
+further."
+  (if (funcall pred tree)
+      (funcall fun tree)
+    (if (listp tree)
+        (-map (lambda (x) (-tree-map-nodes pred fun x)) tree)
+      tree)))
+
+(defmacro --tree-map-nodes (pred form tree)
+  "Anaphoric form of `-tree-map-nodes'."
+  `(-tree-map-nodes (lambda (it) ,pred) (lambda (it) ,form) ,tree))
 
 (defun -tree-seq (branch children tree)
   "Return a sequence of the nodes in TREE, in depth-first search order.
@@ -1527,6 +1542,7 @@ Non-branch nodes are simply copied."
 (defmacro --tree-seq (branch children tree)
   "Anaphoric form of `-tree-seq'."
   `(-tree-seq (lambda (it) ,branch) (lambda (it) ,children) ,tree))
+
 (defun -clone (list)
   "Create a deep copy of LIST.
 The new list has the same elements and structure but all cons are
@@ -1730,6 +1746,8 @@ structure such as plist or alist."
                              "--tree-reduce"
                              "-tree-seq"
                              "--tree-seq"
+                             "-tree-map-nodes"
+                             "--tree-map-nodes"
                              "-clone"
                              "-rpartial"
                              "-juxt"

@@ -193,6 +193,7 @@ Functions pretending lists are trees.
 
 * [-tree-seq](#-tree-seq-branch-children-tree) `(branch children tree)`
 * [-tree-map](#-tree-map-fn-tree) `(fn tree)`
+* [-tree-map-nodes](#-tree-map-nodes-pred-fun-tree) `(pred fun tree)`
 * [-tree-reduce](#-tree-reduce-fn-tree) `(fn tree)`
 * [-tree-reduce-from](#-tree-reduce-from-fn-init-value-tree) `(fn init-value tree)`
 * [-tree-mapreduce](#-tree-mapreduce-fn-folder-tree) `(fn folder tree)`
@@ -1489,6 +1490,20 @@ Apply `fn` to each element of `tree` while preserving the tree structure.
 (-tree-map '1+ '(1 (2 3) (4 (5 6) 7))) ;; => '(2 (3 4) (5 (6 7) 8))
 (-tree-map '(lambda (x) (cons x (expt 2 x))) '(1 (2 3) 4)) ;; => '((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
 (--tree-map (length it) '("<body>" ("<p>" "text" "</p>") "</body>")) ;; => '(6 (3 4 4) 7)
+```
+
+#### -tree-map-nodes `(pred fun tree)`
+
+Call `fun` on each node of `tree` that satisfies `pred`.
+
+If `pred` returns nil, continue descending down this node.  If `pred`
+returns non-nil, apply `fun` to this node and do not descend
+further.
+
+```cl
+(-tree-map-nodes 'vectorp (lambda (x) (-sum (append x nil))) '(1 [2 3] 4 (5 [6 7] 8))) ;; => '(1 5 4 (5 13 8))
+(-tree-map-nodes 'keywordp (lambda (x) (symbol-name x)) '(1 :foo 4 ((5 6 :bar) :baz 8))) ;; => '(1 ":foo" 4 ((5 6 ":bar") ":baz" 8))
+(--tree-map-nodes (eq (car-safe it) 'add-mode) (-concat it (list :mode 'emacs-lisp-mode)) '(with-mode emacs-lisp-mode (foo bar) (add-mode a b) (baz (add-mode c d)))) ;; => '(with-mode emacs-lisp-mode (foo bar) (add-mode a b :mode emacs-lisp-mode) (baz (add-mode c d :mode emacs-lisp-mode)))
 ```
 
 #### -tree-reduce `(fn tree)`

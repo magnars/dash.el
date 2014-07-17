@@ -50,7 +50,7 @@ new list.
 * [-splice](#-splice-pred-fun-list) `(pred fun list)`
 * [-splice-list](#-splice-list-pred-new-list-list) `(pred new-list list)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
-* [-copy](#-copy-list) `(list)`
+* [-copy](#-copy-arg) `(arg)`
 
 ### Sublist selection
 
@@ -191,6 +191,7 @@ Other list functions not fit to be classified elsewhere.
 
 Functions pretending lists are trees.
 
+* [-tree-seq](#-tree-seq-branch-children-tree) `(branch children tree)`
 * [-tree-map](#-tree-map-fn-tree) `(fn tree)`
 * [-tree-reduce](#-tree-reduce-fn-tree) `(fn tree)`
 * [-tree-reduce-from](#-tree-reduce-from-fn-init-value-tree) `(fn init-value tree)`
@@ -370,7 +371,7 @@ Thus function `fn` should return a list.
 (--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 ```
 
-#### -copy `(list)`
+#### -copy `(arg)`
 
 Create a shallow copy of `list`.
 
@@ -1461,6 +1462,24 @@ not, return a list with `args` as elements.
 
 
 Functions pretending lists are trees.
+
+#### -tree-seq `(branch children tree)`
+
+Return a sequence of the nodes in `tree`, in depth-first search order.
+
+`branch` is a predicate of one argument that returns non-nil if the
+passed argument is a branch, that is, a node that can have children.
+
+`children` is a function of one argument that returns the children
+of the passed branch node.
+
+Non-branch nodes are simply copied.
+
+```cl
+(-tree-seq 'listp 'identity '(1 (2 3) 4 (5 (6 7)))) ;; => '((1 (2 3) 4 (5 (6 7))) 1 (2 3) 2 3 4 (5 (6 7)) 5 (6 7) 6 7)
+(-tree-seq 'listp 'reverse '(1 (2 3) 4 (5 (6 7)))) ;; => '((1 (2 3) 4 (5 (6 7))) (5 (6 7)) (6 7) 7 6 5 4 (2 3) 3 2 1)
+(--tree-seq (vectorp it) (append it nil) [1 [2 3] 4 [5 [6 7]]]) ;; => '([1 [2 3] 4 [5 [6 7]]] 1 [2 3] 2 3 4 [5 [6 7]] 5 [6 7] 6 7)
+```
 
 #### -tree-map `(fn tree)`
 

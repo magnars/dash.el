@@ -1508,6 +1508,25 @@ See `-reduce-r' for how exactly are lists of zero or one element handled."
   (declare (debug (form form)))
   `(-tree-reduce (lambda (it acc) ,form) ,tree))
 
+
+(defun -tree-seq (branch children tree)
+  "Return a sequence of the nodes in TREE, in depth-first search order.
+
+BRANCH is a predicate of one argument that returns non-nil if the
+passed argument is a branch, that is, a node that can have children.
+
+CHILDREN is a function of one argument that returns the children
+of the passed branch node.
+
+Non-branch nodes are simply copied."
+  (cons tree
+        (when (funcall branch tree)
+          (-mapcat (lambda (x) (-tree-seq branch children x))
+                   (funcall children tree)))))
+
+(defmacro --tree-seq (branch children tree)
+  "Anaphoric form of `-tree-seq'."
+  `(-tree-seq (lambda (it) ,branch) (lambda (it) ,children) ,tree))
 (defun -clone (list)
   "Create a deep copy of LIST.
 The new list has the same elements and structure but all cons are
@@ -1709,6 +1728,8 @@ structure such as plist or alist."
                              "--tree-reduce-from"
                              "-tree-reduce"
                              "--tree-reduce"
+                             "-tree-seq"
+                             "--tree-seq"
                              "-clone"
                              "-rpartial"
                              "-juxt"

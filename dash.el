@@ -1,6 +1,6 @@
 ;;; dash.el --- A modern list library for Emacs
 
-;; Copyright (C) 2012 Magnar Sveen
+;; Copyright (C) 2012-2014 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Version: 2.8.0

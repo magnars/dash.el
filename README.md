@@ -2098,7 +2098,7 @@ Thanks!
 
 ## License
 
-Copyright (C) 2012-2013 Magnar Sveen
+Copyright (C) 2012-2014 Magnar Sveen
 
 Authors: Magnar Sveen <magnars@gmail.com>
 Keywords: lists

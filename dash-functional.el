@@ -135,6 +135,19 @@ This function satisfies the following law:
   (funcall (-iteratefn fn n) init) = (-last-item (-iterate fn init (1+ n)))."
   (lambda (x) (--dotimes n (setq x (funcall fn x))) x))
 
+(defun -fixfn (fn)
+  "Return a function that computes the (least) fixpoint of FN.
+
+FN is a unary function, results are compared with `equal'.
+
+In types: (a -> a) -> a -> a."
+  (lambda (x)
+    (let ((re (funcall fn x)))
+      (while (not (equal x re))
+        (setq x re)
+        (setq re (funcall fn re)))
+      re)))
+
 (defun -prodfn (&rest fns)
   "Take a list of n functions and return a function that takes a
 list of length n, applying i-th function to i-th element of the

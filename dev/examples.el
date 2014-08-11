@@ -801,6 +801,12 @@ new list."
              (equal (funcall (-iteratefn fn 5) init)
                     (-last-item (-iterate fn init (1+ 5)))))))
 
+    (defexamples -fixfn
+      ;; Find solution to cos(x) = x
+      (funcall (-fixfn 'cos) 0.7) => 0.7390851332151607
+      ;; Find solution to x^4 - x - 10 = 0
+      (funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0) => 1.8555845286409378)
+
     (defexamples -prodfn
       (funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3)) => '(2 1 "3")
       (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) => '((2 1) (4 3) (6 5) (8 7))

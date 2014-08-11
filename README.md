@@ -250,6 +250,7 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 * [-orfn](#-orfn-rest-preds) `(&rest preds)`
 * [-andfn](#-andfn-rest-preds) `(&rest preds)`
 * [-iteratefn](#-iteratefn-fn-n) `(fn n)`
+* [-fixfn](#-fixfn-fn) `(fn)`
 * [-prodfn](#-prodfn-rest-fns) `(&rest fns)`
 
 ## Anaphoric functions
@@ -1928,6 +1929,19 @@ This function satisfies the following law:
 (funcall (-iteratefn (lambda (x) (* x x)) 3) 2) ;; => 256
 (funcall (-iteratefn '1+ 3) 1) ;; => 4
 (funcall (-iteratefn 'cdr 3) '(1 2 3 4 5)) ;; => '(4 5)
+```
+
+#### -fixfn `(fn)`
+
+Return a function that computes the (least) fixpoint of `fn`.
+
+`fn` is a unary function, results are compared with `equal`.
+
+In types: (a -> a) -> a -> a.
+
+```cl
+(funcall (-fixfn 'cos) 0.7) ;; => 0.7390851332151607
+(funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0) ;; => 1.8555845286409378
 ```
 
 #### -prodfn `(&rest fns)`

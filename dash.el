@@ -1780,6 +1780,7 @@ structure such as plist or alist."
                              "-orfn"
                              "-andfn"
                              "-iteratefn"
+                             "-fixfn"
                              "-prodfn"
                              ))
              (special-variables '(

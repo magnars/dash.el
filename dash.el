@@ -239,6 +239,10 @@ Alias: `-reject'"
   "Return a new list of the non-nil results of applying FN to the items in LIST."
   (--keep (funcall fn it) list))
 
+(defun -non-nil (list)
+  "Return all non-nil elements of LIST."
+  (-remove 'null list))
+
 (defmacro --map-indexed (form list)
   "Anaphoric form of `-map-indexed'."
   (declare (debug (form form)))
@@ -1579,6 +1583,7 @@ structure such as plist or alist."
                              "--remove"
                              "-reject"
                              "--reject"
+                             "-non-nil"
                              "-keep"
                              "--keep"
                              "-map-indexed"

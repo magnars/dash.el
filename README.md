@@ -59,6 +59,7 @@ Functions returning a sublist of the original list.
 
 * [-filter](#-filter-pred-list) `(pred list)`
 * [-remove](#-remove-pred-list) `(pred list)`
+* [-non-nil](#-non-nil-list) `(list)`
 * [-slice](#-slice-list-from-optional-to-step) `(list from &optional to step)`
 * [-take](#-take-n-list) `(n list)`
 * [-drop](#-drop-n-list) `(n list)`
@@ -409,6 +410,14 @@ Alias: `-reject`
 (-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
 (-remove 'even? '(1 2 3 4)) ;; => '(1 3)
 (--remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
+```
+
+#### -non-nil `(list)`
+
+Return all non-nil elements of `list`.
+
+```cl
+(-non-nil '(1 nil 2 nil nil 3 4 nil 5 nil)) ;; => '(1 2 3 4 5)
 ```
 
 #### -slice `(list from &optional to step)`

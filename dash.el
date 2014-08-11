@@ -1371,6 +1371,20 @@ N is the length of the returned list."
   (declare (debug (form form form)))
   `(-iterate (lambda (it) ,form) ,init ,n))
 
+(defun -fix (fn list)
+  "Compute the (least) fixpoint of FN with initial input LIST.
+
+FN is called at least once, results are compared with `equal'."
+  (let ((re (funcall fn list)))
+    (while (not (equal list re))
+      (setq list re)
+      (setq re (funcall fn re)))
+    re))
+
+(defmacro --fix (form list)
+  "Anaphoric form of `-fix'."
+  `(-fix (lambda (it) ,form) ,list))
+
 (defun -unfold (fun seed)
   "Build a list from SEED using FUN.
 
@@ -1734,6 +1748,8 @@ structure such as plist or alist."
                              "--min-by"
                              "-iterate"
                              "--iterate"
+                             "-fix"
+                             "--fix"
                              "-unfold"
                              "--unfold"
                              "-cons-pair?"

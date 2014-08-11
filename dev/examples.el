@@ -572,7 +572,13 @@ new list."
     (-list 1) => '(1)
     (-list 1 2 3) => '(1 2 3)
     (-list '(1 2 3) => '(1 2 3))
-    (-list '((1) (2)) => '((1) (2)))))
+    (-list '((1) (2)) => '((1) (2))))
+
+  (defexamples -fix
+    (-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6))) => '((1) (2) (3) (4) (5) (6))
+    (let ((data '(("starwars" "scifi")
+                  ("jedi" "starwars" "warrior"))))
+      (--fix (-uniq (--mapcat (cons it (cdr (assoc it data))) it)) '("jedi" "book"))) => '("jedi" "starwars" "warrior" "scifi" "book")))
 
 (def-example-group "Tree operations"
   "Functions pretending lists are trees."

@@ -186,6 +186,7 @@ Other list functions not fit to be classified elsewhere.
 * [-butlast](#-butlast-list) `(list)`
 * [-sort](#-sort-comparator-list) `(comparator list)`
 * [-list](#-list-rest-args) `(&rest args)`
+* [-fix](#-fix-fn-list) `(fn list)`
 
 ### Tree operations
 
@@ -1465,6 +1466,17 @@ not, return a list with `args` as elements.
 ```cl
 (-list 1) ;; => '(1)
 (-list 1 2 3) ;; => '(1 2 3)
+```
+
+#### -fix `(fn list)`
+
+Compute the (least) fixpoint of `fn` with initial input `list`.
+
+`fn` is called at least once, results are compared with `equal`.
+
+```cl
+(-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6))) ;; => '((1) (2) (3) (4) (5) (6))
+(let ((data '(("starwars" "scifi") ("jedi" "starwars" "warrior")))) (--fix (-uniq (--mapcat (cons it (cdr (assoc it data))) it)) '("jedi" "book"))) ;; => '("jedi" "starwars" "warrior" "scifi" "book")
 ```
 
 

@@ -720,14 +720,19 @@ new list."
       (list bar face inv)) => '(2 foo-face t)
     (-let [(a (b c) d) (list 1 (list 2 3) 4 5 6)] (list a b c d)) => '(1 2 3 4)
     (-let [[a _ c] [1 2 3 4]] (list a c)) => '(1 3)
+    (-let [[a (b c) d] [1 (2 3) 4]] (list a b c d)) => '(1 2 3 4)
     (-let [[a b c] (string ?f ?o ?b ?a ?r)] (list a b c)) => '(?f ?o ?b)
+    (-let [[a b c] "abcdef"] (list a b c)) => '(?a ?b ?c)
     (-let [[a (b [c]) d] [1 (2 [3 4]) 5 6]] (list a b c d)) => '(1 2 3 5)
     (-let [(a b c d) (list 1 2 3 4 5 6)] (list a b c d)) => '(1 2 3 4)
     ;; d is bound to nil. I don't think we want to error in such a case.
     ;; After all (car nil) => nil
     (-let [(a b c d) (list 1 2 3)] (list a b c d)) => '(1 2 3 nil)
     (-let [[a b c] [1 2 3 4]] (list a b c)) => '(1 2 3)
-    ;; here we error, because "vectors" are rigit, immutable structures,
+    (-let [[a b &rest c] "abcdef"] (list a b c)) => '(?a ?b "cdef")
+    (-let [[a b &rest c] [1 2 3 4 5 6]] (list a b c)) => '(1 2 [3 4 5 6])
+    (-let [[a b &rest [c d]] [1 2 3 4 5 6]] (list a b c d)) => '(1 2 3 4)
+    ;; here we error, because "vectors" are rigid, immutable structures,
     ;; so we should know how many elements there are
     (condition-case nil
         (-let [[a b c d] [1 2 3]]

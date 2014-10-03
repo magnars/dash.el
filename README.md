@@ -1763,6 +1763,11 @@ Vectors:
                      If the `pattern` is longer than `source`, an `error` is
                      thrown.
 
+    [a1 a2 a3 ... &rest rest] ) - as above, but bind the rest of
+                                  the sequence to `rest`.  This is
+                                  conceptually the same as improper list
+                                  matching (a1 a2 ... aN . rest)
+
 Key/value stores:
 
     (&plist key0 a0 ... keyN aN) - bind value mapped by keyK in the

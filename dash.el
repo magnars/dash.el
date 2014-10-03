@@ -1208,9 +1208,17 @@ SOURCE is a proper or improper list."
    (t
     (list (list match-form s)))))
 
-;; TODO: add support to match the "rest" of the sequence, so that we
-;; can break apart strings for example
-;; (-let (([h &rest tail] "fobar")) (list h tail)) => (102 "obar")
+(defun dash--vector-tail (seq start)
+  "Return the tail of SEQ starting at START."
+  (cond
+   ((vectorp seq)
+    (let* ((re-length (- (length seq) start))
+           (re (make-vector re-length 0)))
+      (--dotimes re-length (aset re it (aref seq (+ it start))))
+      re))
+   ((stringp seq)
+    (substring seq start))))
+
 (defun dash--match-vector (match-form source)
   "Setup a vector matching environment and call the real matcher."
   (let ((s (make-symbol "--dash-source--")))
@@ -1223,22 +1231,41 @@ MATCH-FORM is a vector.  Each element of MATCH-FORM is either a
 symbol, which gets bound to the respective value in source or
 another match form which gets destructured recursively.
 
+If second-from-last place in MATCH-FORM is the symbol &rest, the
+next element of the MATCH-FORM is matched against the tail of
+SOURCE, starting at index of the &rest symbol.  This is
+conceptually the same as the (head . tail) match for improper
+lists, where dot plays the role of &rest.
+
 SOURCE is a vector.
 
 If the MATCH-FORM vector is shorter than SOURCE vector, only
 the (length MATCH-FORM) places are bound, the rest of the SOURCE
 is discarded."
-  (let ((i 0))
-    (-flatten-n 1 (--map
-                   (let ((m (aref match-form i)))
-                     (prog1 (cond
-                             ((and (symbolp m)
-                                   ;; do not match symbols starting with _
-                                   (not (eq (aref (symbol-name m) 0) ?_)))
-                              (list (list m `(aref ,source ,i))))
-                             (t (dash--match m `(aref ,source ,i))))
-                       (setq i (1+ i))))
-                   match-form))))
+  (let ((i 0)
+        (l (length match-form))
+        (re))
+    (while (< i l)
+      (let ((m (aref match-form i)))
+        (push (cond
+               ((and (symbolp m)
+                     (eq m '&rest))
+                ;; the reversing here is necessary, because we reverse
+                ;; `re' in the end.  That would then incorrectly
+                ;; reorder sub-expression matches
+                (prog1 (nreverse
+                        (dash--match
+                         (aref match-form (1+ i))
+                         `(dash--vector-tail ,source ,i)))
+                  (setq i l)))
+               ((and (symbolp m)
+                     ;; do not match symbols starting with _
+                     (not (eq (aref (symbol-name m) 0) ?_)))
+                (list (list m `(aref ,source ,i))))
+               (t (nreverse (dash--match m `(aref ,source ,i)))))
+              re)
+        (setq i (1+ i))))
+    (nreverse (-flatten-n 1 re))))
 
 (defun dash--match-kv (match-form source)
   "Setup a kv matching environment and call the real matcher.
@@ -1380,6 +1407,11 @@ Vectors:
                    places not in PATTERN are ignored.
                    If the PATTERN is longer than SOURCE, an `error' is
                    thrown.
+
+  [a1 a2 a3 ... &rest rest] ) - as above, but bind the rest of
+                                the sequence to REST.  This is
+                                conceptually the same as improper list
+                                matching (a1 a2 ... aN . rest)
 
 Key/value stores:
 

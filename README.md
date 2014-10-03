@@ -217,6 +217,8 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 * [-when-let*](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
 * [-if-let](#-if-let-var-val-then-rest-else) `(var-val then &rest else)`
 * [-if-let*](#-if-let-vars-vals-then-rest-else) `(vars-vals then &rest else)`
+* [-let](#-let-varlist-rest-body) `(varlist &rest body)`
+* [-let*](#-let-varlist-rest-body) `(varlist &rest body)`
 
 ### Side-effects
 
@@ -1696,6 +1698,108 @@ of (`var` `val`) pairs (corresponding to the bindings of `let*`).
 ```cl
 (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") ;; => 15
 (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") ;; => "foo"
+```
+
+#### -let `(varlist &rest body)`
+
+Bind variables according to `varlist` then eval `body`.
+
+`varlist` is a list of lists of the form (`pattern` `source`).  Each
+`pattern` is matched against the `source` "structurally".  `source`
+is only evaluated once for each `pattern`.  Each `pattern` is matched
+recursively, and can therefore contain sub-patterns which are
+matched against corresponding sub-expressions of `source`.
+
+All the SOURCEs are evalled before any symbols are
+bound (i.e. "in parallel").
+
+If `varlist` only contains one (`pattern` `source`) element, you can
+optionally specify it using a vector and discarding the
+outer-most parens.  Thus
+
+    (-let ((`pattern` `source`)) ..)
+
+becomes
+
+    (-let [`pattern` `source`] ..).
+
+`-let` uses a convention of not binding places (symbols) starting
+with _ whenever it's possible.  You can use this to skip over
+entries you don't care about.  However, this is not *always*
+possible (as a result of implementation) and these symbols might
+get bound to undefined values.
+
+Following is the overview of supported patterns.  Remember that
+patterns can be matched recursively, so every a, b, aK in the
+following can be a matching construct and not necessarily a
+symbol/variable.
+
+Symbol:
+
+    a - bind the `source` to `a`.  This is just like regular `let`.
+
+Conses and lists:
+
+    (a) - bind `car` of cons/list to `a`
+
+    (a . b) - bind car of cons to `a` and `cdr` to `b`
+
+    (a b) - bind car of list to `a` and `cadr` to `b`
+
+    (a1 a2 a3  ...) - bind 0th car of list to `a1`, 1st to `a2`, 2nd to `a3` ...
+
+    (a1 a2 a3 ... aN . rest) - as above, but bind the Nth cdr to `rest`.
+
+Vectors:
+
+    [a] - bind 0th element of a non-list sequence to `a` (works with
+          vectors, strings, bit arrays...)
+
+    [a1 a2 a3 ...] - bind 0th element of non-list sequence to `a0`, 1st to
+                     `a1`, 2nd to `a2`, ...
+                     If the `pattern` is shorter than `source`, the values at
+                     places not in `pattern` are ignored.
+                     If the `pattern` is longer than `source`, an `error` is
+                     thrown.
+
+Key/value stores:
+
+    (&plist key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                   `source` plist to aK.  If the
+                                   value is not found, aK is nil.
+
+    (&alist key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                   `source` alist to aK.  If the
+                                   value is not found, aK is nil.
+
+    (&hash key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                  `source` hash table to aK.  If the
+                                  value is not found, aK is nil.
+
+```cl
+(-let (([a (b c) d] [1 (2 3) 4])) (list a b c d)) ;; => '(1 2 3 4)
+(-let [(a b c . d) (list 1 2 3 4 5 6)] (list a b c d)) ;; => '(1 2 3 (4 5 6))
+(-let [(&plist :foo foo :bar bar) (list :baz 3 :foo 1 :qux 4 :bar 2)] (list foo bar)) ;; => '(1 2)
+```
+
+#### -let* `(varlist &rest body)`
+
+Bind variables according to `varlist` then eval `body`.
+
+`varlist` is a list of lists of the form (`pattern` `source`).  Each
+`pattern` is matched against the `source` structurally.  `source` is
+only evaluated once for each `pattern`.
+
+Each `source` can refer to the symbols already bound by this
+`varlist`.  This is useful if you want to destructure `source`
+recursively but also want to name the intermediate structures.
+
+See `-let` for the list of all possible patterns.
+
+```cl
+(-let* (((a . b) (cons 1 2)) ((c . d) (cons 3 4))) (list a b c d)) ;; => '(1 2 3 4)
+(-let* (((a . b) (cons 1 (cons 2 3))) ((c . d) b)) (list a b c d)) ;; => '(1 (2 . 3) 2 3)
+(-let* (((&alist "foo" foo "bar" bar) (list (cons "foo" 1) (cons "bar" (list 'a 'b 'c)))) ((a b c) bar)) (list foo a b c bar)) ;; => '(1 a b c (a b c))
 ```
 
 

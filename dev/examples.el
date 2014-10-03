@@ -86,7 +86,10 @@ new list."
     (-slice '(1 2 3 4 5 6) 1 4 2) => '(2 4)
     (-slice '(1 2 3 4 5 6) 2 6 3) => '(3 6)
     (-slice '(1 2 3 4 5 6) 2 -1 2) => '(3 5)
+    (-slice '(1 2 3 4 5 6) 0 -4 2) => '(1)
     (-slice '(1 2 3 4 5 6) -4 -1 2) => '(3 5)
+    (-slice '(1 2 3 4 5 6) -4 5 2) => '(3 5)
+    (-slice '(1 2 3 4 5 6) -3 5 1) => '(4 5)
     (-slice '(1 2 3 4 5 6) 1 2 10) => '(2))
 
   (defexamples -take
@@ -688,7 +691,68 @@ new list."
 
   (defexamples -if-let*
     (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") => 15
-    (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") => "foo"))
+    (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") => "foo")
+
+  (defexamples -let
+    (-let (([a (b c) d] [1 (2 3) 4])) (list a b c d)) => '(1 2 3 4)
+    (-let [(a b c . d) (list 1 2 3 4 5 6)] (list a b c d)) => '(1 2 3 (4 5 6))
+    (-let [(&plist :foo foo :bar bar) (list :baz 3 :foo 1 :qux 4 :bar 2)] (list foo bar)) => '(1 2)
+    (let ((a (list 1 2 3))
+          (b (list 'a 'b 'c)))
+      (-let (((a . b) a)
+             ((c . d) b))
+        (list a b c d))) => '(1 (2 3) a (b c))
+    (-let ((a "foo") (b "bar")) (list a b)) => '("foo" "bar")
+    (-let [foo (list 1 2 3)] foo) => '(1 2 3)
+    (-let [(&plist :foo foo :bar bar) (list :foo 1 :bar 2)] (list foo bar)) => '(1 2)
+    (-let [(&plist :foo (a b) :bar c) (list :foo (list 1 2) :bar 3)] (list a b c)) => '(1 2 3)
+    ;; nil value in plist means subsequent cons matches are nil, because
+    ;; (car nil) => nil
+    (-let [(&plist :foo (a b)) (list :bar 1)] (list a b)) => '(nil nil)
+    (-let [(&plist :foo (&plist :baz baz) :bar bar)
+           (list :foo (list 1 2 :baz 2 :bar 4) :bar 3)]
+      (list baz bar)) => '(2 3)
+    (-let [(_ (&plist :level level :title title))
+           (list 'paragraph (list :title "foo" :level 2))]
+      (list level title)) => '(2 "foo")
+    (-let [(&alist :foo (&plist 'face face 'invisible inv) :bar bar)
+           (list (cons :bar 2) (cons :foo (list 'face 'foo-face 'invisible t)))]
+      (list bar face inv)) => '(2 foo-face t)
+    (-let [(a (b c) d) (list 1 (list 2 3) 4 5 6)] (list a b c d)) => '(1 2 3 4)
+    (-let [[a _ c] [1 2 3 4]] (list a c)) => '(1 3)
+    (-let [[a b c] (string ?f ?o ?b ?a ?r)] (list a b c)) => '(?f ?o ?b)
+    (-let [[a (b [c]) d] [1 (2 [3 4]) 5 6]] (list a b c d)) => '(1 2 3 5)
+    (-let [(a b c d) (list 1 2 3 4 5 6)] (list a b c d)) => '(1 2 3 4)
+    ;; d is bound to nil. I don't think we want to error in such a case.
+    ;; After all (car nil) => nil
+    (-let [(a b c d) (list 1 2 3)] (list a b c d)) => '(1 2 3 nil)
+    (-let [[a b c] [1 2 3 4]] (list a b c)) => '(1 2 3)
+    ;; here we error, because "vectors" are rigit, immutable structures,
+    ;; so we should know how many elements there are
+    (condition-case nil
+        (-let [[a b c d] [1 2 3]]
+          (progn
+            (list a b c d)
+            (error "previous call should fail.")))
+      (error t)) => t
+    (-let [(a . (b . c)) (cons 1 (cons 2 3))] (list a b c)) => '(1 2 3))
+
+  (defexamples -let*
+    (-let* (((a . b) (cons 1 2))
+            ((c . d) (cons 3 4)))
+      (list a b c d)) => '(1 2 3 4)
+    (-let* (((a . b) (cons 1 (cons 2 3)))
+            ((c . d) b))
+      (list a b c d)) => '(1 (2 . 3) 2 3)
+    (-let* (((&alist "foo" foo "bar" bar) (list (cons "foo" 1) (cons "bar" (list 'a 'b 'c))))
+            ((a b c) bar))
+      (list foo a b c bar)) => '(1 a b c (a b c))
+    (let ((a (list 1 2 3))
+          (b (list 'a 'b 'c)))
+      (-let* (((a . b) a)
+              ((c . d) b)) ;; b here comes from above binding
+        (list a b c d))) => '(1 (2 3) 2 (3))
+    (-let* ((a "foo") (b a)) (list a b)) => '("foo" "foo")))
 
 (def-example-group "Side-effects"
   "Functions iterating over lists for side-effect only."

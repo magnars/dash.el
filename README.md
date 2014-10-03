@@ -219,6 +219,7 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 * [-if-let*](#-if-let-vars-vals-then-rest-else) `(vars-vals then &rest else)`
 * [-let](#-let-varlist-rest-body) `(varlist &rest body)`
 * [-let*](#-let-varlist-rest-body) `(varlist &rest body)`
+* [-lambda](#-lambda-match-form-rest-body) `(match-form &rest body)`
 
 ### Side-effects
 
@@ -1800,6 +1801,28 @@ See `-let` for the list of all possible patterns.
 (-let* (((a . b) (cons 1 2)) ((c . d) (cons 3 4))) (list a b c d)) ;; => '(1 2 3 4)
 (-let* (((a . b) (cons 1 (cons 2 3))) ((c . d) b)) (list a b c d)) ;; => '(1 (2 . 3) 2 3)
 (-let* (((&alist "foo" foo "bar" bar) (list (cons "foo" 1) (cons "bar" (list 'a 'b 'c)))) ((a b c) bar)) (list foo a b c bar)) ;; => '(1 a b c (a b c))
+```
+
+#### -lambda `(match-form &rest body)`
+
+Return a lambda which destructures its input as `match-form` and executes `body`.
+
+Note that you have to enclose the `match-form` in a pair of parens,
+such that:
+
+    (-lambda (x) body)
+    (-lambda (x y ...) body)
+
+has the usual semantics of `lambda`.  Furthermore, these get
+translated into normal lambda, so there is no performance
+penalty.
+
+See `-let` for the description of destructuring mechanism.
+
+```cl
+(-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6))) ;; => '(3 7 11)
+(-map (-lambda ([x y]) (+ x y)) '([1 2] [3 4] [5 6])) ;; => '(3 7 11)
+(-map (-lambda ((&plist :a a :b b)) (+ a b)) '((:a 1 :b 2) (:a 3 :b 4) (:a 5 :b 6))) ;; => '(3 7 11)
 ```
 
 

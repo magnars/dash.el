@@ -1404,6 +1404,31 @@ Key/value stores:
       `(let ,inputs
          (-let* ,new-varlist ,@body)))))
 
+(defmacro -lambda (match-form &rest body)
+  "Return a lambda which destructures its input as MATCH-FORM and executes BODY.
+
+Note that you have to enclose the MATCH-FORM in a pair of parens,
+such that:
+
+  (-lambda (x) body)
+  (-lambda (x y ...) body)
+
+has the usual semantics of `lambda'.  Furthermore, these get
+translated into normal lambda, so there is no performance
+penalty.
+
+See `-let' for the description of destructuring mechanism."
+  (cond
+   ((not (consp match-form))
+    (error "match-form must be a list"))
+   ;; no destructuring, so just return regular lambda to make things faster
+   ((and (consp match-form)
+         (symbolp (car match-form)))
+    `(lambda ,match-form ,@body))
+   (t
+    `(lambda (x)
+       (-let* ((,@match-form x)) ,@body)))))
+
 (defun -distinct (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
@@ -1951,6 +1976,7 @@ structure such as plist or alist."
                              "--if-let"
                              "-let*"
                              "-let"
+                             "-lambda"
                              "-distinct"
                              "-uniq"
                              "-union"

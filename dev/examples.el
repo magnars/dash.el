@@ -752,7 +752,14 @@ new list."
       (-let* (((a . b) a)
               ((c . d) b)) ;; b here comes from above binding
         (list a b c d))) => '(1 (2 3) 2 (3))
-    (-let* ((a "foo") (b a)) (list a b)) => '("foo" "foo")))
+    (-let* ((a "foo") (b a)) (list a b)) => '("foo" "foo"))
+
+  (defexamples -lambda
+    (-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6))) => '(3 7 11)
+    (-map (-lambda ([x y]) (+ x y)) '([1 2] [3 4] [5 6])) => '(3 7 11)
+    (-map (-lambda ((&plist :a a :b b)) (+ a b)) '((:a 1 :b 2) (:a 3 :b 4) (:a 5 :b 6))) => '(3 7 11)
+    (-map (-lambda (x) (let ((k (car x)) (v (cadr x))) (+ k v))) '((1 2) (3 4) (5 6))) => '(3 7 11)
+    (condition-case nil (progn (-lambda a t) (error "previous form should error")) (error t)) => t))
 
 (def-example-group "Side-effects"
   "Functions iterating over lists for side-effect only."

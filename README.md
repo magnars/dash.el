@@ -1822,7 +1822,7 @@ See `-let` for the description of destructuring mechanism.
 ```cl
 (-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6))) ;; => '(3 7 11)
 (-map (-lambda ([x y]) (+ x y)) '([1 2] [3 4] [5 6])) ;; => '(3 7 11)
-(-map (-lambda ((&plist :a a :b b)) (+ a b)) '((:a 1 :b 2) (:a 3 :b 4) (:a 5 :b 6))) ;; => '(3 7 11)
+(funcall (-lambda ((_ . a) (_ . b)) (-concat a b)) '(1 2 3) '(4 5 6)) ;; => '(2 3 5 6)
 ```
 
 

@@ -1426,8 +1426,12 @@ See `-let' for the description of destructuring mechanism."
          (symbolp (car match-form)))
     `(lambda ,match-form ,@body))
    (t
-    `(lambda (x)
-       (-let* ((,@match-form x)) ,@body)))))
+    (let* ((inputs (--map-indexed (list it (make-symbol (format "input%d" it-index))) match-form)))
+      ;; TODO: because inputs to the lambda are evaluated only once,
+      ;; -let* need not to create the extra bindings to ensure that.
+      ;; We should find a way to optimize that.  Not critical however.
+      `(lambda ,(--map (cadr it) inputs)
+         (-let* ,inputs ,@body))))))
 
 (defun -distinct (list)
   "Return a new list with all duplicates removed.

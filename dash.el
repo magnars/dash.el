@@ -1253,19 +1253,18 @@ is discarded."
                 ;; the reversing here is necessary, because we reverse
                 ;; `re' in the end.  That would then incorrectly
                 ;; reorder sub-expression matches
-                (prog1 (nreverse
-                        (dash--match
-                         (aref match-form (1+ i))
-                         `(dash--vector-tail ,source ,i)))
+                (prog1 (dash--match
+                        (aref match-form (1+ i))
+                        `(dash--vector-tail ,source ,i))
                   (setq i l)))
                ((and (symbolp m)
                      ;; do not match symbols starting with _
                      (not (eq (aref (symbol-name m) 0) ?_)))
                 (list (list m `(aref ,source ,i))))
-               (t (nreverse (dash--match m `(aref ,source ,i)))))
+               (t (dash--match m `(aref ,source ,i))))
               re)
         (setq i (1+ i))))
-    (nreverse (-flatten-n 1 re))))
+    (-flatten-n 1 (nreverse re))))
 
 (defun dash--match-kv (match-form source)
   "Setup a kv matching environment and call the real matcher.

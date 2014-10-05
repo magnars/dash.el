@@ -766,7 +766,9 @@ new list."
     (-map (-lambda ((&plist :a a :b b)) (+ a b)) '((:a 1 :b 2) (:a 3 :b 4) (:a 5 :b 6))) => '(3 7 11)
     (-map (-lambda (x) (let ((k (car x)) (v (cadr x))) (+ k v))) '((1 2) (3 4) (5 6))) => '(3 7 11)
     (funcall (-lambda ((a) (b)) (+ a b)) '(1 2 3) '(4 5 6)) => 5
-    (condition-case nil (progn (-lambda a t) (error "previous form should error")) (error t)) => t))
+    (condition-case nil (progn (-lambda a t) (error "previous form should error")) (error t)) => t
+    (funcall (-lambda (a b) (+ a b)) 1 2) => 3
+    (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6))
 
 (def-example-group "Side-effects"
   "Functions iterating over lists for side-effect only."

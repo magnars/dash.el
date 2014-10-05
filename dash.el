@@ -1453,8 +1453,7 @@ See `-let' for the description of destructuring mechanism."
    ((not (consp match-form))
     (error "match-form must be a list"))
    ;; no destructuring, so just return regular lambda to make things faster
-   ((and (consp match-form)
-         (symbolp (car match-form)))
+   ((-all? 'symbolp match-form)
     `(lambda ,match-form ,@body))
    (t
     (let* ((inputs (--map-indexed (list it (make-symbol (format "input%d" it-index))) match-form)))

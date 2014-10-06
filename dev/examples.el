@@ -746,7 +746,25 @@ new list."
     (-let [(((a b) c) d) (list (list (list 1 2) 3) 4)] (list a b c d)) => '(1 2 3 4)
     (-let [(((a b) . c) . d) (list (list (list 1 2) 3) 4)] (list a b c d)) => '(1 2 (3) (4))
     (-let [(((a b) c)) (list (list (list 1 2) 3) 4)] (list a b c)) => '(1 2 3)
-    (-let [(((a b) . c)) (list (list (list 1 2) 3) 4)] (list a b c)) => '(1 2 (3)))
+    (-let [(((a b) . c)) (list (list (list 1 2) 3) 4)] (list a b c)) => '(1 2 (3))
+    ;; cdr-skip optimization
+    (-let [(_ (_ (_ a))) (list 1 (list 2 (list 3 4)))] a) => 4
+    (-let [(_ (a)) (list 1 (list 2))] a) => 2
+    (-let [(_ _ _ a) (list 1 2 3 4 5)] a) => 4
+    (-let [(_ _ _ (a b)) (list 1 2 3 (list 4 5))] (list a b)) => '(4 5)
+    (-let [(_ a _ b) (list 1 2 3 4 5)] (list a b)) => '(2 4)
+    (-let [(_ (a b) _ c) (list 1 (list 2 3) 4 5)] (list a b c)) => '(2 3 5)
+    (-let [(_ (a b) _ . c) (list 1 (list 2 3) 4 5)] (list a b c)) => '(2 3 (5))
+    (-let [(_ (a b) _ (c d)) (list 1 (list 2 3) 4 (list 5 6))] (list a b c d)) => '(2 3 5 6)
+    (-let [(_ (a b) _ _ _ (c d)) (list 1 (list 2 3) 4 5 6 (list 7 8))] (list a b c d)) => '(2 3 7 8)
+    (-let [(_ (a b) _ . (c d)) (list 1 (list 2 3) 4 5 6)] (list a b c d)) => '(2 3 5 6)
+    (-let [(_ (a b) _ _ _ [c d]) (list 1 (list 2 3) 4 5 6 (vector 7 8))] (list a b c d)) => '(2 3 7 8)
+    (-let [(_ [a b] _ _ _ [c d]) (list 1 (vector 2 3) 4 5 6 (vector 7 8))] (list a b c d)) => '(2 3 7 8)
+    (-let [(_ _ _ . a) (list 1 2 3 4 5)] a) => '(4 5)
+    (-let [(_ a _ _) (list 1 2 3 4 5)] a) => 2
+    (-let [(_ . b) (cons 1 2)] b) => 2
+    (-let [([a b c d] . e) (cons (vector 1 2 3 4) 5)] (list a b c d e)) => '(1 2 3 4 5)
+    (-let [([a b c d] _ . e) (cons (vector 1 2 3 4) (cons 5 6))] (list a b c d e)) => '(1 2 3 4 6))
 
   (defexamples -let*
     (-let* (((a . b) (cons 1 2))

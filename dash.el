@@ -1179,7 +1179,37 @@ otherwise do ELSE."
   (let ((s (make-symbol "--dash-source--")))
     (cons (list s source) (dash--match-cons-1 match-form s))))
 
-(defun dash--match-cons-1 (match-form source)
+(defun dash--match-cons-skip-cdr (skip-cdr source)
+  "Helper function generating idiomatic shifting code."
+  (cond
+   ((= skip-cdr 0)
+    `(pop ,source))
+   (t
+    `(progn
+       (setq ,s (nthcdr ,skip-cdr ,s))
+       (pop ,s)))))
+
+(defun dash--match-cons-get-car (skip-cdr source)
+  "Helper function generating idiomatic code to get nth car."
+  (cond
+   ((= skip-cdr 0)
+    `(car ,source))
+   ((= skip-cdr 1)
+    `(cadr ,source))
+   (t
+    `(nth ,skip-cdr ,source))))
+
+(defun dash--match-cons-get-cdr (skip-cdr source)
+  "Helper function generating idiomatic code to get nth cdr."
+  (cond
+   ((= skip-cdr 0)
+    source)
+   ((= skip-cdr 1)
+    `(cdr ,source))
+   (t
+    `(nthcdr ,skip-cdr ,source))))
+
+(defun dash--match-cons-1 (match-form source &optional props)
   "Match MATCH-FORM against SOURCE.
 
 MATCH-FORM is a proper or improper list.  Each element of
@@ -1191,30 +1221,37 @@ If the cdr of last cons cell in the list is `nil', matching stops
 there.
 
 SOURCE is a proper or improper list."
-  (cond
-   ((and (consp match-form)
-         (not (null match-form)))
+  (let ((skip-cdr (or (plist-get props :skip-cdr) 0)))
     (cond
-     ;; because each bind-body has a side-effect of chopping the head
-     ;; of the list, we must create a binding even for _ places
-     ((symbolp (car match-form))
+     ((and (consp match-form)
+           (not (null match-form)))
       (cond
-       ((cdr match-form)
-        (cons (list (car match-form) `(pop ,s))
-              (dash--match-cons-1 (cdr match-form) s)))
+       ((symbolp (car match-form))
+        (cond
+         ((cdr match-form)
+          (cond
+           ((eq (aref (symbol-name (car match-form)) 0) ?_)
+            (dash--match-cons-1 (cdr match-form) s
+                                (plist-put props :skip-cdr (1+ skip-cdr))))
+           (t
+            (cons (list (car match-form) (dash--match-cons-skip-cdr skip-cdr s))
+                  (dash--match-cons-1 (cdr match-form) s)))))
+         ;; Last matching place, no need for shift
+         (t
+          (list (list (car match-form) (dash--match-cons-get-car skip-cdr s))))))
        (t
-        (list (list (car match-form) `(car ,s))))))
+        (cond
+         ((cdr match-form)
+          (-concat (dash--match (car match-form) (dash--match-cons-skip-cdr skip-cdr s))
+                   (dash--match-cons-1 (cdr match-form) s)))
+         ;; Last matching place, no need for shift
+         (t
+          (dash--match (car match-form) (dash--match-cons-get-car skip-cdr s)))))))
+     ((eq match-form nil)
+      nil)
+     ;; Handle improper lists.  Last matching place, no need for shift
      (t
-      (cond
-       ((cdr match-form)
-        (-concat (dash--match (car match-form) `(pop ,s))
-                 (dash--match-cons-1 (cdr match-form) s)))
-       (t
-        (dash--match (car match-form) `(car ,s)))))))
-   ((eq match-form nil)
-    nil)
-   (t
-    (list (list match-form s)))))
+      (list (list match-form (dash--match-cons-get-cdr skip-cdr s)))))))
 
 (defun dash--vector-tail (seq start)
   "Return the tail of SEQ starting at START."

@@ -1200,14 +1200,14 @@ SOURCE is a proper or improper list."
      ((symbolp (car match-form))
       (cond
        ((cdr match-form)
-        (cons (list (car match-form) `(prog1 (car ,s) (!cdr ,s)))
+        (cons (list (car match-form) `(pop ,s))
               (dash--match-cons-1 (cdr match-form) s)))
        (t
         (list (list (car match-form) `(car ,s))))))
      (t
       (cond
        ((cdr match-form)
-        (-concat (dash--match (car match-form) `(prog1 (car ,s) (!cdr ,s)))
+        (-concat (dash--match (car match-form) `(pop ,s))
                  (dash--match-cons-1 (cdr match-form) s)))
        (t
         (dash--match (car match-form) `(car ,s)))))))

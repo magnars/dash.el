@@ -1198,11 +1198,19 @@ SOURCE is a proper or improper list."
      ;; because each bind-body has a side-effect of chopping the head
      ;; of the list, we must create a binding even for _ places
      ((symbolp (car match-form))
-      (cons (list (car match-form) `(prog1 (car ,s) (!cdr ,s)))
-            (dash--match-cons-1 (cdr match-form) s)))
+      (cond
+       ((cdr match-form)
+        (cons (list (car match-form) `(prog1 (car ,s) (!cdr ,s)))
+              (dash--match-cons-1 (cdr match-form) s)))
+       (t
+        (list (list (car match-form) `(car ,s))))))
      (t
-      (-concat (dash--match (car match-form) `(prog1 (car ,s) (!cdr ,s)))
-               (dash--match-cons-1 (cdr match-form) s)))))
+      (cond
+       ((cdr match-form)
+        (-concat (dash--match (car match-form) `(prog1 (car ,s) (!cdr ,s)))
+                 (dash--match-cons-1 (cdr match-form) s)))
+       (t
+        (dash--match (car match-form) `(car ,s)))))))
    ((eq match-form nil)
     nil)
    (t

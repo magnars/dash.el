@@ -740,7 +740,13 @@ new list."
             (list a b c d)
             (error "previous call should fail.")))
       (error t)) => t
-    (-let [(a . (b . c)) (cons 1 (cons 2 3))] (list a b c)) => '(1 2 3))
+    (-let [(a . (b . c)) (cons 1 (cons 2 3))] (list a b c)) => '(1 2 3)
+    ;; final cdr optimization
+    (-let [(((a))) (list (list (list 1 2) 3) 4)] a) => 1
+    (-let [(((a b) c) d) (list (list (list 1 2) 3) 4)] (list a b c d)) => '(1 2 3 4)
+    (-let [(((a b) . c) . d) (list (list (list 1 2) 3) 4)] (list a b c d)) => '(1 2 (3) (4))
+    (-let [(((a b) c)) (list (list (list 1 2) 3) 4)] (list a b c)) => '(1 2 3)
+    (-let [(((a b) . c)) (list (list (list 1 2) 3) 4)] (list a b c)) => '(1 2 (3)))
 
   (defexamples -let*
     (-let* (((a . b) (cons 1 2))

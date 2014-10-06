@@ -1459,7 +1459,7 @@ penalty.
 See `-let' for the description of destructuring mechanism."
   (cond
    ((not (consp match-form))
-    (error "match-form must be a list"))
+    (signal 'wrong-type-argument "match-form must be a list"))
    ;; no destructuring, so just return regular lambda to make things faster
    ((-all? 'symbolp match-form)
     `(lambda ,match-form ,@body))

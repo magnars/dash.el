@@ -1174,11 +1174,6 @@ otherwise do ELSE."
   `(let ((it ,val))
      (if it ,then ,@else)))
 
-(defun dash--match-cons (match-form source)
-  "Setup a cons matching environment and call the real matcher."
-  (let ((s (make-symbol "--dash-source--")))
-    (cons (list s source) (dash--match-cons-1 match-form s))))
-
 (defun dash--match-cons-skip-cdr (skip-cdr source)
   "Helper function generating idiomatic shifting code."
   (cond
@@ -1208,6 +1203,29 @@ otherwise do ELSE."
     `(cdr ,source))
    (t
     `(nthcdr ,skip-cdr ,source))))
+
+(defun dash--match-cons (match-form source)
+  "Setup a cons matching environment and call the real matcher."
+  (let ((s (make-symbol "--dash-source--"))
+        (n 0)
+        (m match-form))
+    (while (and (consp m)
+                (symbolp (car m))
+                (eq (aref (symbol-name (car m)) 0) ?_))
+      (setq n (1+ n)) (!cdr m))
+    (cond
+     ;; handle improper lists
+     ((and (consp m)
+           (not (cdr m)))
+      (dash--match (car m) (dash--match-cons-get-car n source)))
+     ;; handle other special types
+     ((> n 0)
+      (dash--match m (dash--match-cons-get-cdr n source)))
+     ;; this is the only entry-point for dash--match-cons-1, that's
+     ;; why we can't simply use the above branch, it would produce
+     ;; infinite recursion
+     (t
+      (cons (list s source) (dash--match-cons-1 match-form s))))))
 
 (defun dash--match-cons-1 (match-form source &optional props)
   "Match MATCH-FORM against SOURCE.

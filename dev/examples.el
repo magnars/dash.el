@@ -741,6 +741,8 @@ new list."
             (error "previous call should fail.")))
       (args-out-of-range t)) => t
     (-let [(a . (b . c)) (cons 1 (cons 2 3))] (list a b c)) => '(1 2 3)
+    (-let [(_ _ . [a b]) (cons 1 (cons 2 (vector 3 4)))] (list a b)) => '(3 4)
+    (-let [(_ _ . (a b)) (cons 1 (cons 2 (list 3 4)))] (list a b)) => '(3 4)
     ;; final cdr optimization
     (-let [(((a))) (list (list (list 1 2) 3) 4)] a) => 1
     (-let [(((a b) c) d) (list (list (list 1 2) 3) 4)] (list a b c d)) => '(1 2 3 4)

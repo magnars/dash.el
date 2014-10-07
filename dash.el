@@ -1251,7 +1251,7 @@ SOURCE is a proper or improper list."
       nil)
      ;; Handle improper lists.  Last matching place, no need for shift
      (t
-      (list (list match-form (dash--match-cons-get-cdr skip-cdr source)))))))
+      (dash--match match-form (dash--match-cons-get-cdr skip-cdr source))))))
 
 (defun dash--vector-tail (seq start)
   "Return the tail of SEQ starting at START."

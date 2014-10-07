@@ -1246,6 +1246,9 @@ SOURCE is a proper or improper list."
       (cond
        ((symbolp (car match-form))
         (cond
+         ((eq (car match-form) '&keys)
+          (when (cdr match-form)
+            (dash--match-kv (cons '&plist (cdr match-form)) (dash--match-cons-get-cdr skip-cdr source))))
          ((cdr match-form)
           (cond
            ((eq (aref (symbol-name (car match-form)) 0) ?_)
@@ -1256,7 +1259,7 @@ SOURCE is a proper or improper list."
                   (dash--match-cons-1 (cdr match-form) source)))))
          ;; Last matching place, no need for shift
          (t
-          (list (list (car match-form) (dash--match-cons-get-car skip-cdr source))))))
+          (dash--match (car match-form) (dash--match-cons-get-car skip-cdr source)))))
        (t
         (cond
          ((cdr match-form)
@@ -1388,6 +1391,8 @@ Key-value stores are disambiguated by placing a token &plist,
     (cond
      ((memq (car match-form) '(&plist &alist &hash))
       (dash--match-kv match-form source))
+     ((eq (car match-form) '&keys)
+      (dash--match-kv (cons '&plist (cdr match-form)) source))
      (t (dash--match-cons match-form source))))
    ((vectorp match-form)
     (dash--match-vector match-form source))))
@@ -1488,7 +1493,16 @@ Key/value stores:
 
   (&hash key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                 SOURCE hash table to aK.  If the
-                                value is not found, aK is nil."
+                                value is not found, aK is nil.
+
+Further, special keyword &keys supports \"inline\" matching of
+plist-like key-value pairs, similarly to &keys keyword of
+`cl-defun'.
+
+  (a1 a2 ... aN &keys key1 b1 ... keyN bK)
+
+This binds N values from the list to a1 ... aN, then interprets
+the cdr as a plist (see key/value matching above)."
   (declare (debug ((&rest (sexp form)) body))
            (indent 1))
   (if (vectorp varlist)

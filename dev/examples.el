@@ -745,6 +745,7 @@ new list."
     (-let [(a . (b . c)) (cons 1 (cons 2 3))] (list a b c)) => '(1 2 3)
     (-let [(_ _ . [a b]) (cons 1 (cons 2 (vector 3 4)))] (list a b)) => '(3 4)
     (-let [(_ _ . (a b)) (cons 1 (cons 2 (list 3 4)))] (list a b)) => '(3 4)
+    (-let [([a b] _ _ c) (list (vector 1 2) 3 4 5)] (list a b c)) => '(1 2 5)
     ;; final cdr optimization
     (-let [(((a))) (list (list (list 1 2) 3) 4)] a) => 1
     (-let [(((a b) c) d) (list (list (list 1 2) 3) 4)] (list a b c d)) => '(1 2 3 4)
@@ -788,7 +789,17 @@ new list."
     (-let [(a b c (d e)) (list 1 2 3 (list 4 5))] (list a b c d e)) => '(1 2 3 4 5)
     (-let [(_ _ (_ _ (_ _ a))) (list 1 2 (list 3 4 (list 5 6 7)))] a) => 7
     (-let [(_ (_ (_ a))) (list 1 (list 2 (list 3 4)))] a) => 4
-    (-let [(_ _ . (&plist :foo a :bar b)) (list 1 2 :bar 2 :foo 1)] (list a b)) => '(1 2))
+    (-let [(_ _ . (&plist :foo a :bar b)) (list 1 2 :bar 2 :foo 1)] (list a b)) => '(1 2)
+    ;; &keys support
+    (-let [(_ _ &keys :foo a :bar b) (list 1 2 :bar 4 :foo 3)] (list a b)) => '(3 4)
+    (-let [(a _ &keys :foo b :bar c) (list 1 2 :bar 4 :foo 3)] (list a b c)) => '(1 3 4)
+    (-let [(a _ _ _ &keys :foo b :bar c) (list 1 2 3 4 :bar 6 :foo 5)] (list a b c)) => '(1 5 6)
+    (-let [(a b &keys :foo c :bar d) (list 1 2 :bar 4 :foo 3)] (list a b c d)) => '(1 2 3 4)
+    (-let [(a b &keys) (list 1 2 :bar 4 :foo 3)] (list a b)) => '(1 2)
+    (-let [(&keys :foo a :bar b) (list 1 2 :bar 4 :foo 3)] (list a b)) => '(3 4)
+    (-let [(a b (c _ _ &keys :foo [d _ (&alist :bar (e &keys :baz f) :qux (&plist :fux g))] :mux h) i)
+           (list 1 2 (list 3 'skip 'skip :foo (vector 4 'skip (list (cons :bar (list 5 :baz 6)) (cons :qux (list :fux 7)))) :mux 8) 9)]
+      (list a b c d e f g h i)) => '(1 2 3 4 5 6 7 8 9))
 
   (defexamples -let*
     (-let* (((a . b) (cons 1 2))

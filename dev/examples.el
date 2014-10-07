@@ -720,6 +720,8 @@ new list."
       (list bar face inv)) => '(2 foo-face t)
     (-let [(a (b c) d) (list 1 (list 2 3) 4 5 6)] (list a b c d)) => '(1 2 3 4)
     (-let [[a _ c] [1 2 3 4]] (list a c)) => '(1 3)
+    (-let [[_ _ _ a] (vector 1 2 3 4)] a) => 4
+    (-let [[a _ _ _ b] (vector 1 2 3 4 5)] (list a b)) => '(1 5)
     (-let [[a (b c) d] [1 (2 3) 4]] (list a b c d)) => '(1 2 3 4)
     (-let [[a b c] (string ?f ?o ?b ?a ?r)] (list a b c)) => '(?f ?o ?b)
     (-let [[a b c] "abcdef"] (list a b c)) => '(?a ?b ?c)

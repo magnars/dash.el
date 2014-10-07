@@ -1306,7 +1306,8 @@ is discarded."
                      ;; do not match symbols starting with _
                      (not (eq (aref (symbol-name m) 0) ?_)))
                 (list (list m `(aref ,source ,i))))
-               (t (dash--match m `(aref ,source ,i))))
+               ((not (symbolp m))
+                (dash--match m `(aref ,source ,i))))
               re)
         (setq i (1+ i))))
     (-flatten-n 1 (nreverse re))))

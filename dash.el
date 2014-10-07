@@ -1231,27 +1231,27 @@ SOURCE is a proper or improper list."
          ((cdr match-form)
           (cond
            ((eq (aref (symbol-name (car match-form)) 0) ?_)
-            (dash--match-cons-1 (cdr match-form) s
+            (dash--match-cons-1 (cdr match-form) source
                                 (plist-put props :skip-cdr (1+ skip-cdr))))
            (t
-            (cons (list (car match-form) (dash--match-cons-skip-cdr skip-cdr s))
-                  (dash--match-cons-1 (cdr match-form) s)))))
+            (cons (list (car match-form) (dash--match-cons-skip-cdr skip-cdr source))
+                  (dash--match-cons-1 (cdr match-form) source)))))
          ;; Last matching place, no need for shift
          (t
-          (list (list (car match-form) (dash--match-cons-get-car skip-cdr s))))))
+          (list (list (car match-form) (dash--match-cons-get-car skip-cdr source))))))
        (t
         (cond
          ((cdr match-form)
-          (-concat (dash--match (car match-form) (dash--match-cons-skip-cdr skip-cdr s))
-                   (dash--match-cons-1 (cdr match-form) s)))
+          (-concat (dash--match (car match-form) (dash--match-cons-skip-cdr skip-cdr source))
+                   (dash--match-cons-1 (cdr match-form) source)))
          ;; Last matching place, no need for shift
          (t
-          (dash--match (car match-form) (dash--match-cons-get-car skip-cdr s)))))))
+          (dash--match (car match-form) (dash--match-cons-get-car skip-cdr source)))))))
      ((eq match-form nil)
       nil)
      ;; Handle improper lists.  Last matching place, no need for shift
      (t
-      (list (list match-form (dash--match-cons-get-cdr skip-cdr s)))))))
+      (list (list match-form (dash--match-cons-get-cdr skip-cdr source)))))))
 
 (defun dash--vector-tail (seq start)
   "Return the tail of SEQ starting at START."

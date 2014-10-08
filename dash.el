@@ -1280,7 +1280,18 @@ SOURCE is a proper or improper list."
 (defun dash--match-vector (match-form source)
   "Setup a vector matching environment and call the real matcher."
   (let ((s (make-symbol "--dash-source--")))
-    (cons (list s source) (dash--match-vector-1 match-form s))))
+    (cond
+     ;; don't bind `s' if we only have one sub-pattern
+     ((= (length match-form) 1)
+      (dash--match (aref match-form 0) `(aref ,source 0)))
+     ;; don't bind `s' if we only have one sub-pattern which is not ignored
+     ((let* ((ignored-places (mapcar 'dash--match-ignore-place-p match-form))
+             (ignored-places-n (length (-remove 'null ignored-places))))
+        (when (= ignored-places-n (1- (length match-form)))
+          (let ((n (-find-index 'null ignored-places)))
+            (dash--match (aref match-form n) `(aref ,source ,n))))))
+     (t
+      (cons (list s source) (dash--match-vector-1 match-form s))))))
 
 (defun dash--match-vector-1 (match-form source)
   "Match MATCH-FORM against SOURCE.
@@ -1330,7 +1341,12 @@ is discarded."
 
 kv can be any key-value store, such as plist, alist or hash-table."
   (let ((s (make-symbol "--dash-source--")))
-    (cons (list s source) (dash--match-kv-1 (cdr match-form) s (car match-form)))))
+    (cond
+     ;; don't bind `s' if we only have one sub-pattern (&type key val)
+     ((= (length match-form) 3)
+      (dash--match-kv-1 (cdr match-form) source (car match-form)))
+     (t
+      (cons (list s source) (dash--match-kv-1 (cdr match-form) s (car match-form)))))))
 
 (defun dash--match-kv-1 (match-form source type)
   "Match MATCH-FORM against SOURCE of type TYPE.

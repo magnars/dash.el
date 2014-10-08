@@ -1782,6 +1782,15 @@ Key/value stores:
                                   `source` hash table to aK.  If the
                                   value is not found, aK is nil.
 
+Further, special keyword &keys supports "inline" matching of
+plist-like key-value pairs, similarly to &keys keyword of
+`cl-defun`.
+
+    (a1 a2 ... aN &keys key1 b1 ... keyN bK)
+
+This binds `n` values from the list to a1 ... aN, then interprets
+the cdr as a plist (see key/value matching above).
+
 ```cl
 (-let (([a (b c) d] [1 (2 3) 4])) (list a b c d)) ;; => '(1 2 3 4)
 (-let [(a b c . d) (list 1 2 3 4 5 6)] (list a b c d)) ;; => '(1 2 3 (4 5 6))

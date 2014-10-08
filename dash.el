@@ -1241,37 +1241,25 @@ there.
 SOURCE is a proper or improper list."
   (let ((skip-cdr (or (plist-get props :skip-cdr) 0)))
     (cond
-     ((and (consp match-form)
-           (not (null match-form)))
+     ((consp match-form)
       (cond
-       ((symbolp (car match-form))
+       ((cdr match-form)
         (cond
-         ((eq (car match-form) '&keys)
-          (when (cdr match-form)
-            (dash--match-kv (cons '&plist (cdr match-form)) (dash--match-cons-get-cdr skip-cdr source))))
-         ((cdr match-form)
-          (cond
-           ((eq (aref (symbol-name (car match-form)) 0) ?_)
-            (dash--match-cons-1 (cdr match-form) source
-                                (plist-put props :skip-cdr (1+ skip-cdr))))
-           (t
-            (cons (list (car match-form) (dash--match-cons-skip-cdr skip-cdr source))
-                  (dash--match-cons-1 (cdr match-form) source)))))
-         ;; Last matching place, no need for shift
+         ((and (symbolp (car match-form))
+               (eq (car match-form) '&keys))
+          (dash--match-kv (cons '&plist (cdr match-form)) (dash--match-cons-get-cdr skip-cdr source)))
+         ((and (symbolp (car match-form))
+               (eq (aref (symbol-name (car match-form)) 0) ?_))
+          (dash--match-cons-1 (cdr match-form) source
+                              (plist-put props :skip-cdr (1+ skip-cdr))))
          (t
-          (dash--match (car match-form) (dash--match-cons-get-car skip-cdr source)))))
-       (t
-        (cond
-         ((cdr match-form)
           (-concat (dash--match (car match-form) (dash--match-cons-skip-cdr skip-cdr source))
-                   (dash--match-cons-1 (cdr match-form) source)))
-         ;; Last matching place, no need for shift
-         (t
-          (dash--match (car match-form) (dash--match-cons-get-car skip-cdr source)))))))
+                   (dash--match-cons-1 (cdr match-form) source)))))
+       (t ;; Last matching place, no need for shift
+        (dash--match (car match-form) (dash--match-cons-get-car skip-cdr source)))))
      ((eq match-form nil)
       nil)
-     ;; Handle improper lists.  Last matching place, no need for shift
-     (t
+     (t ;; Handle improper lists.  Last matching place, no need for shift
       (dash--match match-form (dash--match-cons-get-cdr skip-cdr source))))))
 
 (defun dash--vector-tail (seq start)

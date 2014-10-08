@@ -1174,6 +1174,11 @@ otherwise do ELSE."
   `(let ((it ,val))
      (if it ,then ,@else)))
 
+(defun dash--match-ignore-place-p (symbol)
+  "Return non-nil if SYMBOL is a symbol and starts with _."
+  (and (symbolp symbol)
+       (eq (aref (symbol-name symbol) 0) ?_)))
+
 (defun dash--match-cons-skip-cdr (skip-cdr source)
   "Helper function generating idiomatic shifting code."
   (cond
@@ -1248,8 +1253,7 @@ SOURCE is a proper or improper list."
          ((and (symbolp (car match-form))
                (eq (car match-form) '&keys))
           (dash--match-kv (cons '&plist (cdr match-form)) (dash--match-cons-get-cdr skip-cdr source)))
-         ((and (symbolp (car match-form))
-               (eq (aref (symbol-name (car match-form)) 0) ?_))
+         ((dash--match-ignore-place-p (car match-form))
           (dash--match-cons-1 (cdr match-form) source
                               (plist-put props :skip-cdr (1+ skip-cdr))))
          (t

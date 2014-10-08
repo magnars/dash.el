@@ -799,7 +799,17 @@ new list."
     (-let [(&keys :foo a :bar b) (list 1 2 :bar 4 :foo 3)] (list a b)) => '(3 4)
     (-let [(a b (c _ _ &keys :foo [d _ (&alist :bar (e &keys :baz f) :qux (&plist :fux g))] :mux h) i)
            (list 1 2 (list 3 'skip 'skip :foo (vector 4 'skip (list (cons :bar (list 5 :baz 6)) (cons :qux (list :fux 7)))) :mux 8) 9)]
-      (list a b c d e f g h i)) => '(1 2 3 4 5 6 7 8 9))
+      (list a b c d e f g h i)) => '(1 2 3 4 5 6 7 8 9)
+    ;; single-binding optimization for vectors and kv
+    (-let [[_ [_ [_ a]]] (vector 1 (vector 2 (vector 3 4)))] a) => 4
+    (-let [[a _ _ _] (vector 1 2 3 4)] a) => 1
+    (-let [[_ _ _ a] (vector 1 2 3 4)] a) => 4
+    (-let [[_ _ a _] (vector 1 2 3 4)] a) => 3
+    (-let [[a [_ [_ b]]] (vector 1 (vector 2 (vector 3 4)))] (list a b)) => '(1 4)
+    (-let [[(a _ b)] (vector (list 1 2 3 4))] (list a b)) => '(1 3)
+    (-let [(&plist 'a a) (list 'a 1 'b 2)] a) => 1
+    (-let [(&plist 'a [a b]) (list 'a [1 2] 'b 3)] (list a b)) => '(1 2)
+    (-let [(&plist 'a [a b] 'c c) (list 'a [1 2] 'c 3)] (list a b c)) => '(1 2 3))
 
   (defexamples -let*
     (-let* (((a . b) (cons 1 2))

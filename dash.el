@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012-2014 Magnar Sveen
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
-;; Version: 2.8.0
+;; Version: 2.9.0
 ;; Keywords: lists
 
 ;; This program is free software; you can redistribute it and/or modify

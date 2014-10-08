@@ -19,11 +19,11 @@ If you want the function combinators, then also:
 
 Add this to the big comment block at the top:
 
-    ;; Package-Requires: ((dash "2.8.0"))
+    ;; Package-Requires: ((dash "2.9.0"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "2.8.0") (dash-functional "1.1.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.9.0") (dash-functional "1.2.0") (emacs "24"))
 
 ## Syntax highlighting of dash functions
 
@@ -90,6 +90,15 @@ Oh, and don't edit `README.md` directly, it is auto-generated.
 Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
+
+### From 2.8 to 2.9
+
+- Add `-let`, `-let*` and `-lambda` with destructuring
+- Add `-tree-seq` and `-tree-map-nodes`
+- Add `-non-nil`
+- Add `-fix`
+- Add `-fixfn` (dash-functional 1.2)
+- Add `-copy` (Wilfred Hughes)
 
 ### From 2.7 to 2.8
 

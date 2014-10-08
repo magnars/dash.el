@@ -1319,9 +1319,6 @@ is discarded."
         (push (cond
                ((and (symbolp m)
                      (eq m '&rest))
-                ;; the reversing here is necessary, because we reverse
-                ;; `re' in the end.  That would then incorrectly
-                ;; reorder sub-expression matches
                 (prog1 (dash--match
                         (aref match-form (1+ i))
                         `(dash--vector-tail ,source ,i))

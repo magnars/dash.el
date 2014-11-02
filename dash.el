@@ -1561,7 +1561,12 @@ Alias: `-uniq'"
 (defun -union (list list2)
   "Return a new list containing the elements of LIST1 and elements of LIST2 that are not in LIST1.
 The test for equality is done with `equal',
-or with `-compare-fn' if that's non-nil."
+or with `-compare-fn' if that's non-nil.
+
+In case one of the list is much shorter than the other, the performances will be better if `-union` 
+is called with first argument the long list, like:
+
+  (-union long-list short-list)"
   (let (result)
     (--each list (!cons it result))
     (--each list2 (unless (-contains? result it) (!cons it result)))

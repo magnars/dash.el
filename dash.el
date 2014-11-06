@@ -1532,6 +1532,11 @@ translated into normal lambda, so there is no performance
 penalty.
 
 See `-let' for the description of destructuring mechanism."
+  (declare (doc-string 2) (indent defun)
+           (debug (&define sexp
+                           [&optional stringp]
+                           [&optional ("interactive" interactive)]
+                           def-body)))
   (cond
    ((not (consp match-form))
     (signal 'wrong-type-argument "match-form must be a list"))

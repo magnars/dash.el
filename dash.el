@@ -1906,7 +1906,8 @@ returns non-nil, apply FUN to this node and do not descend
 further."
   (if (funcall pred tree)
       (funcall fun tree)
-    (if (listp tree)
+    (if (and (listp tree)
+             (not (-cons-pair? tree)))
         (-map (lambda (x) (-tree-map-nodes pred fun x)) tree)
       tree)))
 

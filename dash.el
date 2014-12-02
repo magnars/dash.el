@@ -305,6 +305,11 @@ See also: `-flatten-n'"
       (-mapcat '-flatten l)
     (list l)))
 
+(defmacro --iterate (form init n)
+  "Anaphoric version of `-iterate'."
+  (declare (debug (form form form)))
+  `(-iterate (lambda (it) ,form) ,init ,n))
+
 (defun -flatten-n (num list)
   "Flatten NUM levels of a nested LIST.
 
@@ -1742,11 +1747,6 @@ N is the length of the returned list."
       (--dotimes (1- n)
         (push (funcall fun (car r)) r))
       (nreverse r))))
-
-(defmacro --iterate (form init n)
-  "Anaphoric version of `-iterate'."
-  (declare (debug (form form form)))
-  `(-iterate (lambda (it) ,form) ,init ,n))
 
 (defun -fix (fn list)
   "Compute the (least) fixpoint of FN with initial input LIST.

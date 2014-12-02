@@ -287,6 +287,16 @@ Elements are compared using `equal'.
 See also: `-replace-at'"
   (--map-when (equal it old) new list))
 
+(defmacro --mapcat (form list)
+  "Anaphoric form of `-mapcat'."
+  (declare (debug (form form)))
+  `(apply 'append (--map ,form ,list)))
+
+(defun -mapcat (fn list)
+  "Return the concatenation of the result of mapping FN over LIST.
+Thus function FN should return a list."
+  (--mapcat (funcall fn it) list))
+
 (defun -flatten (l)
   "Take a nested list L and return its contents as a single, flat list.
 
@@ -304,16 +314,6 @@ See also: `-flatten'"
 (defun -concat (&rest lists)
   "Return a new list with the concatenation of the elements in the supplied LISTS."
   (apply 'append lists))
-
-(defmacro --mapcat (form list)
-  "Anaphoric form of `-mapcat'."
-  (declare (debug (form form)))
-  `(apply 'append (--map ,form ,list)))
-
-(defun -mapcat (fn list)
-  "Return the concatenation of the result of mapping FN over LIST.
-Thus function FN should return a list."
-  (--mapcat (funcall fn it) list))
 
 (defalias '-copy 'copy-sequence
   "Create a shallow copy of LIST.")

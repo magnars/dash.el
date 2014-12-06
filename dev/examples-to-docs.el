@@ -53,24 +53,31 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
 (defun quote-and-downcase (string)
   (format "`%s`" (downcase string)))
 
-(defun quote-docstring (docstring)
+(defun unquote-and-link (string)
+  (format-link (substring string 1 -1)))
+
+(defun format-link (string-name)
+  (-let* ((name (intern string-name))
+          ((_ signature _ _) (assoc name functions)))
+    (if signature
+        (format "[`%s`](#%s)" name (github-id name signature))
+      (format "`%s`" name))))
+
+(defun format-docstring (docstring)
   (let (case-fold-search)
     (--> docstring
       (replace-regexp-in-string "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b" 'quote-and-downcase it t)
-      (replace-regexp-in-string "`\\([^ ]+\\)'" "`\\1`" it t)
+      (replace-regexp-in-string "`\\([^ ]+\\)'" 'unquote-and-link it t)
       (replace-regexp-in-string "^  " "    " it))))
 
 (defun function-to-md (function)
   (if (stringp function)
       (concat "\n" (s-replace "### " "## " function) "\n")
-    (let ((command-name (car function))
-          (signature (cadr function))
-          (docstring (quote-docstring (nth 2 function)))
-          (examples (nth 3 function)))
-      (format "#### %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
+    (-let [(command-name signature docstring examples) function]
+      (format "#### %s `%s`\n\n%s\n\n```el\n%s\n```\n"
               command-name
               signature
-              docstring
+              (format-docstring docstring)
               (mapconcat 'identity (-take 3 examples) "\n")))))
 
 (defun docs--chop-prefix (prefix s)

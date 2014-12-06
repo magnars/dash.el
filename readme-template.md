@@ -45,7 +45,7 @@ While `-map` takes a function to map over the list, you can also use
 the anaphoric form with double dashes - which will then be executed
 with `it` exposed as the list item. Here's an example:
 
-```cl
+```el
 (-map (lambda (n) (* n n)) '(1 2 3 4)) ;; normal version
 
 (--map (* it it) '(1 2 3 4)) ;; anaphoric version
@@ -53,7 +53,7 @@ with `it` exposed as the list item. Here's an example:
 
 of course the original can also be written like
 
-```cl
+```el
 (defun square (n) (* n n))
 
 (-map 'square '(1 2 3 4))

@@ -74,7 +74,7 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
   (if (stringp function)
       (concat "\n" (s-replace "### " "## " function) "\n")
     (-let [(command-name signature docstring examples) function]
-      (format "#### %s `%s`\n\n%s\n\n```cl\n%s\n```\n"
+      (format "#### %s `%s`\n\n%s\n\n```el\n%s\n```\n"
               command-name
               signature
               (format-docstring docstring)

@@ -199,7 +199,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product` and `-same-items?`
  - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
  - [Steve Lamb](https://github.com/steventlamb) contributed `-cycle`, `-pad`, `-annotate`, `-zip-fill` and an n-ary version of `-zip`.
- - [Fredrik Bergroth](https://github.com/fbergroth) made the `-if-let` family use `-let` desctructuring and improved script for generating documentation.
+ - [Fredrik Bergroth](https://github.com/fbergroth) made the `-if-let` family use `-let` destructuring and improved script for generating documentation.
 
 Thanks!
 

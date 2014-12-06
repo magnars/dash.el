@@ -1312,7 +1312,7 @@ second elements of each list, and so on. The lengths of the returned
 groupings are equal to the length of the shortest input list.
 
 If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists. 
+of cons cells. Otherwise, return the groupings as a list of lists.
 
 ```el
 (-zip '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
@@ -1663,17 +1663,21 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 If `val` evaluates to non-nil, bind it to `var` and execute body.
 `var-val` should be a (`var` `val`) pair.
 
-```el
+Note: binding is done according to `-let`.
+
+```cl
 (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2)) ;; => 5
-(--when-let (member :b '(:a :b :c)) (cons :d it)) ;; => '(:d :b :c)
-(--when-let (even? 3) (cat it :a)) ;; => nil
+(-when-let ((&plist :foo foo) (list :foo "foo")) foo) ;; => "foo"
+(-when-let ((&plist :foo foo) (list :bar "bar")) foo) ;; => nil
 ```
 
 #### -when-let* `(vars-vals &rest body)`
 
 If all `vals` evaluate to true, bind them to their corresponding
 `vars` and execute body. `vars-vals` should be a list of (`var` `val`)
-pairs (corresponding to bindings of `let*`).
+pairs.
+
+Note: binding is done according to `-let`.
 
 ```el
 (-when-let* ((x 5) (y 3) (z (+ y 4))) (+ x y z)) ;; => 15
@@ -1685,7 +1689,9 @@ pairs (corresponding to bindings of `let*`).
 If `val` evaluates to non-nil, bind it to `var` and do `then`,
 otherwise do `else`. `var-val` should be a (`var` `val`) pair.
 
-```el
+Note: binding is done according to `-let`.
+
+```cl
 (-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7) ;; => 7
 (--if-let (even? 4) it nil) ;; => t
 ```
@@ -1694,11 +1700,14 @@ otherwise do `else`. `var-val` should be a (`var` `val`) pair.
 
 If all `vals` evaluate to true, bind them to their corresponding
 `vars` and do `then`, otherwise do `else`. `vars-vals` should be a list
-of (`var` `val`) pairs (corresponding to the bindings of `let*`).
+of (`var` `val`) pairs.
+
+Note: binding is done according to `-let`.
 
 ```el
 (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") ;; => 15
 (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") ;; => "foo"
+(-if-let* (((_ _ x) '(nil nil 7))) x) ;; => 7
 ```
 
 #### -let `(varlist &rest body)`

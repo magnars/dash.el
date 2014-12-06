@@ -678,6 +678,8 @@ new list."
 
   (defexamples -when-let
     (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2)) => 5
+    (-when-let ((&plist :foo foo) (list :foo "foo")) foo) => "foo"
+    (-when-let ((&plist :foo foo) (list :bar "bar")) foo) => nil
     (--when-let (member :b '(:a :b :c)) (cons :d it)) => '(:d :b :c)
     (--when-let (even? 3) (cat it :a)) => nil)
 
@@ -691,7 +693,8 @@ new list."
 
   (defexamples -if-let*
     (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") => 15
-    (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") => "foo")
+    (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") => "foo"
+    (-if-let* (((_ _ x) '(nil nil 7))) x) => 7)
 
   (defexamples -let
     (-let (([a (b c) d] [1 (2 3) 4])) (list a b c d)) => '(1 2 3 4)

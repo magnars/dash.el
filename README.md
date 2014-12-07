@@ -1677,7 +1677,7 @@ If all `vals` evaluate to true, bind them to their corresponding
 `vars` and execute body. `vars-vals` should be a list of (`var` `val`)
 pairs.
 
-Note: binding is done according to [`-let`](#-let-varlist-rest-body).
+Note: binding is done according to [`-let*`](#-let-varlist-rest-body).
 
 ```el
 (-when-let* ((x 5) (y 3) (z (+ y 4))) (+ x y z)) ;; => 15
@@ -1702,7 +1702,7 @@ If all `vals` evaluate to true, bind them to their corresponding
 `vars` and do `then`, otherwise do `else`. `vars-vals` should be a list
 of (`var` `val`) pairs.
 
-Note: binding is done according to [`-let`](#-let-varlist-rest-body).
+Note: binding is done according to [`-let*`](#-let-varlist-rest-body).
 
 ```el
 (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") ;; => 15
@@ -2256,7 +2256,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Johan Andersson](https://github.com/rejeep) contributed `-sum`, `-product` and `-same-items?`
  - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
  - [Steve Lamb](https://github.com/steventlamb) contributed `-cycle`, `-pad`, `-annotate`, `-zip-fill` and an n-ary version of `-zip`.
- - [Fredrik Bergroth](https://github.com/fbergroth) made the `-if-let` family use `-let` desctructuring and improved script for generating documentation.
+ - [Fredrik Bergroth](https://github.com/fbergroth) made the `-if-let` family use `-let` destructuring and improved script for generating documentation.
 
 Thanks!
 

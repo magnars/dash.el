@@ -1126,8 +1126,8 @@ sorts it in descending order."
     `(pop ,source))
    (t
     `(progn
-       (setq ,s (nthcdr ,skip-cdr ,s))
-       (pop ,s)))))
+       (setq ,source (nthcdr ,skip-cdr ,source))
+       (pop ,source)))))
 
 (defun dash--match-cons-get-car (skip-cdr source)
   "Helper function generating idiomatic code to get nth car."

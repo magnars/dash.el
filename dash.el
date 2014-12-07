@@ -1497,7 +1497,7 @@ VARS and do THEN, otherwise do ELSE. VARS-VALS should be a list
 of (VAR VAL) pairs.
 
 Note: binding is done according to `-let'."
-  (declare (debug ((&rest (symbolp form)) form body))
+  (declare (debug ((&rest (sexp form)) form body))
            (indent 2))
   (->> vars-vals
     (-mapcat (-lambda ((pat src)) (dash--match pat src)))
@@ -1512,7 +1512,7 @@ Note: binding is done according to `-let'."
 otherwise do ELSE. VAR-VAL should be a (VAR VAL) pair.
 
 Note: binding is done according to `-let'."
-  (declare (debug ((symbolp form) form body))
+  (declare (debug ((sexp form) form body))
            (indent 2))
   `(-if-let* (,var-val) ,then ,@else))
 
@@ -1529,7 +1529,7 @@ VARS and execute body. VARS-VALS should be a list of (VAR VAL)
 pairs.
 
 Note: binding is done according to `-let'."
-  (declare (debug ((&rest (symbolp form)) body))
+  (declare (debug ((&rest (sexp form)) body))
            (indent 1))
   `(-if-let* ,vars-vals (progn ,@body)))
 
@@ -1538,7 +1538,7 @@ Note: binding is done according to `-let'."
 VAR-VAL should be a (VAR VAL) pair.
 
 Note: binding is done according to `-let'."
-  (declare (debug ((symbolp form) body))
+  (declare (debug ((sexp form) body))
            (indent 1))
   `(-if-let ,var-val (progn ,@body)))
 

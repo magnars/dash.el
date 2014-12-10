@@ -969,7 +969,7 @@ See also: `-table-flat'"
     (while (car last-list)
       (let ((item (apply fn (-map 'car lists))))
         (push item (car re))
-        (pop (car lists))
+        (setcar lists (cdar lists)) ;; silence byte compiler
         (dash--table-carry lists restore-lists re)))
     (nreverse (car (last re)))))
 
@@ -1500,11 +1500,12 @@ Note: binding is done according to `-let*'."
   (declare (debug ((&rest (sexp form)) form body))
            (indent 2))
   (->> vars-vals
-    (-mapcat (-lambda ((pat src)) (dash--match pat src)))
-    (-reduce-r-from
-     (-lambda ((var val) memo)
+    (--mapcat (dash--match (car it) (cadr it)))
+    (--reduce-r-from
+     (let ((var (car it))
+           (val (cadr it)))
        `(let ((,var ,val))
-          (if ,var ,memo ,@else)))
+          (if ,var ,acc ,@else)))
      then)))
 
 (defmacro -if-let (var-val then &rest else)

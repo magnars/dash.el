@@ -969,7 +969,7 @@ See also: `-table-flat'"
     (while (car last-list)
       (let ((item (apply fn (-map 'car lists))))
         (push item (car re))
-        (pop (car lists))
+        (setcar lists (cdar lists)) ;; silence byte compiler
         (dash--table-carry lists restore-lists re)))
     (nreverse (car (last re)))))
 

@@ -901,8 +901,8 @@ of cons cells. Otherwise, return the groupings as a list of lists. "
       (setq lists (mapcar 'cdr lists)))
     (setq results (nreverse results))
     (if (= (length lists) 2)
-        ; to support backward compatability, return
-        ; a cons cell if two lists were provided
+        ;; to support backward compatability, return
+        ;; a cons cell if two lists were provided
         (--map (cons (car it) (cadr it)) results)
       results)))
 

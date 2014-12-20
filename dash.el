@@ -1090,10 +1090,6 @@ in second form, etc."
         (list form x))
     `(--> (--> ,x ,form) ,@more)))
 
-(put '-> 'lisp-indent-function 1)
-(put '->> 'lisp-indent-function 1)
-(put '--> 'lisp-indent-function 1)
-
 (defun -grade-up (comparator list)
   "Grade elements of LIST using COMPARATOR relation, yielding a
 permutation vector such that applying this permutation to LIST
@@ -1101,8 +1097,8 @@ sorts it in ascending order."
   ;; ugly hack to "fix" lack of lexical scope
   (let ((comp `(lambda (it other) (funcall ',comparator (car it) (car other)))))
     (->> (--map-indexed (cons it it-index) list)
-      (-sort comp)
-      (-map 'cdr))))
+         (-sort comp)
+         (-map 'cdr))))
 
 (defun -grade-down (comparator list)
   "Grade elements of LIST using COMPARATOR relation, yielding a
@@ -1111,8 +1107,8 @@ sorts it in descending order."
   ;; ugly hack to "fix" lack of lexical scope
   (let ((comp `(lambda (it other) (funcall ',comparator (car other) (car it)))))
     (->> (--map-indexed (cons it it-index) list)
-      (-sort comp)
-      (-map 'cdr))))
+         (-sort comp)
+         (-map 'cdr))))
 
 (defun dash--match-ignore-place-p (symbol)
   "Return non-nil if SYMBOL is a symbol and starts with _."
@@ -1500,13 +1496,13 @@ Note: binding is done according to `-let*'."
   (declare (debug ((&rest (sexp form)) form body))
            (indent 2))
   (->> vars-vals
-    (--mapcat (dash--match (car it) (cadr it)))
-    (--reduce-r-from
-     (let ((var (car it))
-           (val (cadr it)))
-       `(let ((,var ,val))
-          (if ,var ,acc ,@else)))
-     then)))
+       (--mapcat (dash--match (car it) (cadr it)))
+       (--reduce-r-from
+        (let ((var (car it))
+              (val (cadr it)))
+          `(let ((,var ,val))
+             (if ,var ,acc ,@else)))
+        then)))
 
 (defmacro -if-let (var-val then &rest else)
   "If VAL evaluates to non-nil, bind it to VAR and do THEN,

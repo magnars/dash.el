@@ -226,6 +226,7 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 
 Functions iterating over lists for side-effect only.
 
+* [-mapc](#-mapc-fn-list) `(fn list)`
 * [-each](#-each-list-fn) `(list fn)`
 * [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
 * [-dotimes](#-dotimes-num-fn) `(num fn)`
@@ -1854,9 +1855,23 @@ See [`-let`](#-let-varlist-rest-body) for the description of destructuring mecha
 
 Functions iterating over lists for side-effect only.
 
+#### -mapc `(fn list)`
+
+Apply `fn` to each element of `list` for side effects only.
+
+```el
+(-mapc 'insert '("Hello " "side-effect\n"))
+(--mapc (insert "Hello " it "\n") '("Magnar" "Matus"))
+```
+
 #### -each `(list fn)`
 
 Call `fn` with every item in `list`. Return nil, used for side-effects only.
+
+This is similar to `-mapc` but the order of the arguments is reversed
+and the additional variable `it-index` is bound to integers from 0 to
+the length of the `list` minus one.  For performance criticial tasks
+`-mapc` should be used since it is more efficient.
 
 ```el
 (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil

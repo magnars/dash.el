@@ -119,6 +119,15 @@ Return nil, used for side-effects only."
   (declare (debug (form form)))
   `(mapcar (lambda (it) ,form) ,list))
 
+(defun -mapc (fn list)
+  "Apply FN to each element of LIST for side effects only."
+  (mapc fn list))
+
+(defmacro --mapc (form list)
+  "Anaphoric form of `-mapc'."
+  (declare (debug (form form)))
+  `(mapc (lambda (it) ,form) ,list))
+
 (defmacro --reduce-from (form initial-value list)
   "Anaphoric form of `-reduce-from'."
   (declare (debug (form form form)))
@@ -1949,6 +1958,8 @@ structure such as plist or alist."
                              "--dotimes"
                              "-map"
                              "--map"
+                             "-mapc"
+                             "--mapc"
                              "-reduce-from"
                              "--reduce-from"
                              "-reduce"

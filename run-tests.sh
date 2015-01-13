@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 if [ -z "$EMACS" ] ; then
     EMACS="emacs"
 fi
@@ -10,5 +12,10 @@ $EMACS -batch \
        -l dash-functional.el \
        -l dev/examples-to-tests.el \
        -l dev/examples.el \
-       $([[ $EMACS != "emacs23" ]] && echo -l dev/test-byte-compile.el) \
        -f ert-run-tests-batch-and-exit
+
+if [[ $EMACS != "emacs23" ]]; then
+    $EMACS -Q --batch \
+           --eval '(setq byte-compile-error-on-warn t)' \
+           -f batch-byte-compile dash.el
+fi

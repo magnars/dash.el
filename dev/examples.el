@@ -739,12 +739,7 @@ new list."
     (-let [[a b &rest [c d]] [1 2 3 4 5 6]] (list a b c d)) => '(1 2 3 4)
     ;; here we error, because "vectors" are rigid, immutable structures,
     ;; so we should know how many elements there are
-    (condition-case nil
-        (-let [[a b c d] [1 2 3]]
-          (progn
-            (list a b c d)
-            (error "previous call should fail.")))
-      (args-out-of-range t)) => t
+    (-let [[a b c d] [1 2 3]] t) !!> args-out-of-range
     (-let [(a . (b . c)) (cons 1 (cons 2 3))] (list a b c)) => '(1 2 3)
     (-let [(_ _ . [a b]) (cons 1 (cons 2 (vector 3 4)))] (list a b)) => '(3 4)
     (-let [(_ _ . (a b)) (cons 1 (cons 2 (list 3 4)))] (list a b)) => '(3 4)
@@ -838,7 +833,7 @@ new list."
     (-map (-lambda ((&plist :a a :b b)) (+ a b)) '((:a 1 :b 2) (:a 3 :b 4) (:a 5 :b 6))) => '(3 7 11)
     (-map (-lambda (x) (let ((k (car x)) (v (cadr x))) (+ k v))) '((1 2) (3 4) (5 6))) => '(3 7 11)
     (funcall (-lambda ((a) (b)) (+ a b)) '(1 2 3) '(4 5 6)) => 5
-    (condition-case nil (progn (-lambda a t) (error "previous form should error")) (wrong-type-argument t)) => t
+    (-lambda a t) !!> wrong-type-argument
     (funcall (-lambda (a b) (+ a b)) 1 2) => 3
     (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6))
 
@@ -983,5 +978,5 @@ new list."
     ))
 
 ;; Local Variables:
-;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => " (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
+;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => \\| !!> " (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
 ;; End:

@@ -3,9 +3,12 @@
 (require 'dash-functional)
 
 (defun example-to-should (example)
-  (let ((actual (car example))
-        (expected (nth 2 example)))
-    `(should (equal ,actual ,expected))))
+  (-let [(actual sym expected) example]
+    (cond
+     ((eq sym '=>)
+      `(should (equal ,actual ,expected)))
+     ((eq sym '!!>)
+      `(should-error (eval ',actual) :type ',expected)))))
 
 (defmacro defexamples (cmd &rest examples)
   `(ert-deftest ,cmd ()

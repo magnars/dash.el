@@ -7,7 +7,7 @@ if [ -z "$EMACS" ] ; then
 fi
 
 $EMACS -batch \
-       -l dev/ert.el \
+       $([[ $EMACS == "emacs23" ]] && echo -l dev/ert.el) \
        -l dash.el \
        -l dash-functional.el \
        -l dev/examples-to-tests.el \

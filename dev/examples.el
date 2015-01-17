@@ -574,8 +574,8 @@ new list."
   (defexamples -list
     (-list 1) => '(1)
     (-list 1 2 3) => '(1 2 3)
-    (-list '(1 2 3) => '(1 2 3))
-    (-list '((1) (2)) => '((1) (2))))
+    (-list '(1 2 3)) => '(1 2 3)
+    (-list '((1) (2))) => '((1) (2)))
 
   (defexamples -fix
     (-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6))) => '((1) (2) (3) (4) (5) (6))
@@ -739,12 +739,7 @@ new list."
     (-let [[a b &rest [c d]] [1 2 3 4 5 6]] (list a b c d)) => '(1 2 3 4)
     ;; here we error, because "vectors" are rigid, immutable structures,
     ;; so we should know how many elements there are
-    (condition-case nil
-        (-let [[a b c d] [1 2 3]]
-          (progn
-            (list a b c d)
-            (error "previous call should fail.")))
-      (args-out-of-range t)) => t
+    (-let [[a b c d] [1 2 3]] t) !!> args-out-of-range
     (-let [(a . (b . c)) (cons 1 (cons 2 3))] (list a b c)) => '(1 2 3)
     (-let [(_ _ . [a b]) (cons 1 (cons 2 (vector 3 4)))] (list a b)) => '(3 4)
     (-let [(_ _ . (a b)) (cons 1 (cons 2 (list 3 4)))] (list a b)) => '(3 4)
@@ -838,7 +833,7 @@ new list."
     (-map (-lambda ((&plist :a a :b b)) (+ a b)) '((:a 1 :b 2) (:a 3 :b 4) (:a 5 :b 6))) => '(3 7 11)
     (-map (-lambda (x) (let ((k (car x)) (v (cadr x))) (+ k v))) '((1 2) (3 4) (5 6))) => '(3 7 11)
     (funcall (-lambda ((a) (b)) (+ a b)) '(1 2 3) '(4 5 6)) => 5
-    (condition-case nil (progn (-lambda a t) (error "previous form should error")) (wrong-type-argument t)) => t
+    (-lambda a t) !!> wrong-type-argument
     (funcall (-lambda (a b) (+ a b)) 1 2) => 3
     (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6))
 
@@ -951,7 +946,7 @@ new list."
              (equal (funcall (-iteratefn fn 3) init)
                     (-last-item (-iterate fn init (1+ 3))))
              (equal (funcall (-iteratefn fn 5) init)
-                    (-last-item (-iterate fn init (1+ 5)))))))
+                    (-last-item (-iterate fn init (1+ 5)))))) => t)
 
     (defexamples -fixfn
       ;; Find solution to cos(x) = x
@@ -970,18 +965,17 @@ new list."
             (input '(1 2))
             (input2 "foo")
             (input3 '("10" '(1 2 3))))
-        (equal (funcall (-prodfn f g) input)
-               (funcall (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1))) input))
-        (equal (funcall (-compose (-prodfn f g) (-juxt ff gg)) input2)
-               (funcall (-juxt (-compose f ff) (-compose g gg)) input2))
-        (equal (funcall (-compose (-partial 'nth 0) (-prod f g)) input)
-               (funcall (-compose f (-partial 'nth 0)) input))
-        (equal (funcall (-compose (-partial 'nth 1) (-prod f g)) input)
-               (funcall (-compose g (-partial 'nth 1)) input))
-        (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
-               (funcall (-prodfn (-compose f ff) (-compose g gg)) input3))))
-    ))
+        (and (equal (funcall (-prodfn f g) input)
+                    (funcall (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1))) input))
+             (equal (funcall (-compose (-prodfn f g) (-juxt ff gg)) input2)
+                    (funcall (-juxt (-compose f ff) (-compose g gg)) input2))
+             (equal (funcall (-compose (-partial 'nth 0) (-prodfn f g)) input)
+                    (funcall (-compose f (-partial 'nth 0)) input))
+             (equal (funcall (-compose (-partial 'nth 1) (-prodfn f g)) input)
+                    (funcall (-compose g (-partial 'nth 1)) input))
+             (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
+                    (funcall (-prodfn (-compose f ff) (-compose g gg)) input3)))) => t)))
 
 ;; Local Variables:
-;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => " (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
+;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => \\| !!> " (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
 ;; End:

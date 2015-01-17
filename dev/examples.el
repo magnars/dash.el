@@ -574,8 +574,8 @@ new list."
   (defexamples -list
     (-list 1) => '(1)
     (-list 1 2 3) => '(1 2 3)
-    (-list '(1 2 3) => '(1 2 3))
-    (-list '((1) (2)) => '((1) (2))))
+    (-list '(1 2 3)) => '(1 2 3)
+    (-list '((1) (2))) => '((1) (2)))
 
   (defexamples -fix
     (-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6))) => '((1) (2) (3) (4) (5) (6))
@@ -946,7 +946,7 @@ new list."
              (equal (funcall (-iteratefn fn 3) init)
                     (-last-item (-iterate fn init (1+ 3))))
              (equal (funcall (-iteratefn fn 5) init)
-                    (-last-item (-iterate fn init (1+ 5)))))))
+                    (-last-item (-iterate fn init (1+ 5)))))) => t)
 
     (defexamples -fixfn
       ;; Find solution to cos(x) = x
@@ -965,17 +965,16 @@ new list."
             (input '(1 2))
             (input2 "foo")
             (input3 '("10" '(1 2 3))))
-        (equal (funcall (-prodfn f g) input)
-               (funcall (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1))) input))
-        (equal (funcall (-compose (-prodfn f g) (-juxt ff gg)) input2)
-               (funcall (-juxt (-compose f ff) (-compose g gg)) input2))
-        (equal (funcall (-compose (-partial 'nth 0) (-prod f g)) input)
-               (funcall (-compose f (-partial 'nth 0)) input))
-        (equal (funcall (-compose (-partial 'nth 1) (-prod f g)) input)
-               (funcall (-compose g (-partial 'nth 1)) input))
-        (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
-               (funcall (-prodfn (-compose f ff) (-compose g gg)) input3))))
-    ))
+        (and (equal (funcall (-prodfn f g) input)
+                    (funcall (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1))) input))
+             (equal (funcall (-compose (-prodfn f g) (-juxt ff gg)) input2)
+                    (funcall (-juxt (-compose f ff) (-compose g gg)) input2))
+             (equal (funcall (-compose (-partial 'nth 0) (-prodfn f g)) input)
+                    (funcall (-compose f (-partial 'nth 0)) input))
+             (equal (funcall (-compose (-partial 'nth 1) (-prodfn f g)) input)
+                    (funcall (-compose g (-partial 'nth 1)) input))
+             (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
+                    (funcall (-prodfn (-compose f ff) (-compose g gg)) input3)))) => t)))
 
 ;; Local Variables:
 ;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => \\| !!> " (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))

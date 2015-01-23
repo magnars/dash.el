@@ -1110,6 +1110,37 @@ sorts it in descending order."
          (-sort comp)
          (-map 'cdr))))
 
+(defun dash--short-lambda-find-args (thing)
+  (cond
+   ((consp thing)
+    (nconc (dash--short-lambda-find-args (car thing))
+           (dash--short-lambda-find-args (cdr thing))))
+   ((symbolp thing)
+    (let ((name (symbol-name thing)))
+      (when (string-match-p "^%[0-9]*$" name)
+        (list (string-to-number (substring name 1))))))))
+
+(defun dash--short-lambda-args (body)
+  (let* ((args (dash--short-lambda-find-args body))
+         (high (and args (apply #'max args))))
+    (cond
+     ((null args)
+      `(&rest %&))
+     ((= high 0)
+      `(% &rest %&))
+     ((memq 0 args)
+      (signal 'scan-error "cannot combine % with %1, %2, ..."))
+     (t
+      (let ((numbered-args (mapcar (lambda (n) (intern (format "%%%d" n)))
+                                   (number-sequence 1 high))))
+        `(,@numbered-args &rest %&))))))
+
+(defmacro -$ (&rest body)
+  `(lambda ,(dash--short-lambda-args body)
+     ,@(if (symbolp (car body))
+           (list body)
+         body)))
+
 (defun dash--match-ignore-place-p (symbol)
   "Return non-nil if SYMBOL is a symbol and starts with _."
   (and (symbolp symbol)

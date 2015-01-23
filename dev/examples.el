@@ -676,6 +676,16 @@ new list."
 (def-example-group "Binding"
   "Convenient versions of `let` and `let*` constructs combined with flow control."
 
+  (defexamples -$
+    (-map (-$ 6) '(1 2 3)) => '(6 6 6)
+    (-map (-$ + % 3) '(1 2 3)) => '(4 5 6)
+    (funcall (-$ * % (apply '+ %&)) 5 1 1 1) => 15
+    (-map-indexed (-$ + %1 %2) '(10 9 8)) => '(10 10 10)
+    (funcall (-$ + %2 %3) 1 2 3) => 5
+    (funcall (-$ [%]) 1) => '[%] ;; (funcall (lambda (a) [a]) 1) => [a]
+    (funcall (-$ 'a) 1) => 'a
+    (-$ * % %666) !!> scan-error)
+
   (defexamples -when-let
     (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2)) => 5
     (-when-let ((&plist :foo foo) (list :foo "foo")) foo) => "foo"

@@ -204,6 +204,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`
  - [Steve Lamb](https://github.com/steventlamb) contributed `-cycle`, `-pad`, `-annotate`, `-zip-fill` and an n-ary version of `-zip`.
  - [Fredrik Bergroth](https://github.com/fbergroth) made the `-if-let` family use `-let` destructuring and improved script for generating documentation.
+ - [Mark Oteiza](https://github.com/holomorph) contributed the script to create an info manual.
 
 Thanks!
 

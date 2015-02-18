@@ -426,6 +426,9 @@ n-ary version of @code{-zip}.
 @uref{https://github.com/fbergroth,Fredrik Bergroth} made the
 @code{-if-let} family use @code{-let} destructuring and improved
 script for generating documentation.
+@item
+@uref{https://github.com/holomorph,Mark Oteiza} contributed the
+script to create an info manual.
 @end itemize
 
 Thanks!

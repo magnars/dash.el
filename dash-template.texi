@@ -5,6 +5,10 @@
 @documentencoding UTF-8
 @documentlanguage en
 @syncodeindex fn cp
+@dircategory Emacs
+@direntry
+* Dash: (dash.info). A modern list library for GNU Emacs
+@end direntry
 @c %**end of header
 
 @copying

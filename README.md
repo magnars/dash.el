@@ -180,6 +180,7 @@ Other list functions not fit to be classified elsewhere.
 * [-table](#-table-fn-rest-lists) `(fn &rest lists)`
 * [-table-flat](#-table-flat-fn-rest-lists) `(fn &rest lists)`
 * [-first](#-first-pred-list) `(pred list)`
+* [-some](#-some-pred-list) `(pred list)`
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
 * [-last-item](#-last-item-list) `(list)`
@@ -1407,6 +1408,18 @@ Alias: `-find`
 (-first 'even? '(1 2 3)) ;; => 2
 (-first 'even? '(1 3 5)) ;; => nil
 (--first (> it 2) '(1 2 3)) ;; => 3
+```
+
+#### -some `(pred list)`
+
+Return (`pred` x) for the first `list` item where (`pred` x) is non-nil, else nil.
+
+Alias: `-any`
+
+```el
+(-some 'even? '(1 2 3)) ;; => t
+(--some (member 'foo it) '((foo bar) (baz))) ;; => '(foo bar)
+(--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3))) ;; => 2
 ```
 
 #### -last `(pred list)`

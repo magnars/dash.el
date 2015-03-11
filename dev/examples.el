@@ -546,6 +546,11 @@ new list."
     (-first 'even? '(1 3 5)) => nil
     (--first (> it 2) '(1 2 3)) => 3)
 
+  (defexamples -some
+    (-some 'even? '(1 2 3)) => t
+    (--some (member 'foo it) '((foo bar) (baz))) => '(foo bar)
+    (--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3))) => 2)
+
   (defexamples -last
     (-last 'even? '(1 2 3 4 5 6 3 3 3)) => 6
     (-last 'even? '(1 3 7 5 9)) => nil

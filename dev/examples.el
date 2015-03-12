@@ -9,6 +9,17 @@
 (defun square (num) (* num num))
 (defun three-letters () '("A" "B" "C"))
 
+;; Allow approximate comparison of floating-point results, to work
+;; around differences in implementation between systems. Use the `~>'
+;; symbol instead of `=>' to test the expected and actual values with
+;; `approx-equal'
+(defvar epsilon 1e-15)
+(defun approx-equal (u v)
+  (or (= u v)
+      (< (/ (abs (- u v))
+	    (max (abs u) (abs v)))
+	 epsilon)))
+
 (def-example-group "Maps"
   "Functions in this category take a transforming function, which
 is then applied sequentially to each or selected elements of the
@@ -977,5 +988,5 @@ new list."
                     (funcall (-prodfn (-compose f ff) (-compose g gg)) input3)))) => t)))
 
 ;; Local Variables:
-;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => \\| !!> " (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
+;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => \\| !!> \\| ~>" (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
 ;; End:

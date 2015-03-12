@@ -254,7 +254,7 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 * [-orfn](#-orfn-rest-preds) `(&rest preds)`
 * [-andfn](#-andfn-rest-preds) `(&rest preds)`
 * [-iteratefn](#-iteratefn-fn-n) `(fn n)`
-* [-fixfn](#-fixfn-fn) `(fn)`
+* [-fixfn](#-fixfn-fn-optional-equal-test-halt-test) `(fn &optional equal-test halt-test)`
 * [-prodfn](#-prodfn-rest-fns) `(&rest fns)`
 
 ## Anaphoric functions
@@ -1483,6 +1483,7 @@ not, return a list with `args` as elements.
 ```el
 (-list 1) ;; => '(1)
 (-list 1 2 3) ;; => '(1 2 3)
+(-list '(1 2 3)) ;; => '(1 2 3)
 ```
 
 #### -fix `(fn list)`
@@ -2094,17 +2095,38 @@ This function satisfies the following law:
 (funcall (-iteratefn 'cdr 3) '(1 2 3 4 5)) ;; => '(4 5)
 ```
 
-#### -fixfn `(fn)`
+#### -fixfn `(fn &optional equal-test halt-test)`
 
 Return a function that computes the (least) fixpoint of `fn`.
 
-`fn` is a unary function, results are compared with `equal`.
+`fn` must be a unary function. The returned lambda takes a single
+argument, `x`, the initial value for the fixpoint iteration. The
+iteration halts when either of the following conditions is satisified:
+
+ 1. Iteration converges to the fixpoint, with equality being
+      tested using `equal-test`. If `equal-test` is not specified,
+      `equal` is used. For functions over the floating point
+      numbers, it may be necessary to provide an appropriate
+      appoximate comparsion test.
+
+ 2. `halt-test` returns a non-nil value. `halt-test` defaults to a
+      simple counter that returns t after `-fixfn-max-iterations`,
+      to guard against infinite iteration. Otherwise, `halt-test`
+      must be a function that accepts a single argument, the
+      current value of `x`, and returns non-nil as long as iteration
+      should continue. In this way, a more sophisticated
+      convergence test may be supplied by the caller.
+
+The return value of the lambda is either the fixpoint or, if
+iteration halted before converging, a cons with car `halted` and
+cdr the final output from `halt-test`.
 
 In types: (a -> a) -> a -> a.
 
 ```el
-(funcall (-fixfn 'cos) 0.7) ;; => 0.7390851332151607
+(funcall (-fixfn 'cos 'approx-equal) 0.7) ;; ~> 0.7390851332151607
 (funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0) ;; => 1.8555845286409378
+(funcall (-fixfn 'sin 'approx-equal) 0.1) ;; => '(halted . t)
 ```
 
 #### -prodfn `(&rest fns)`

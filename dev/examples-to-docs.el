@@ -5,9 +5,15 @@
 (defvar functions '())
 
 (defun example-to-string (example)
-  (let ((actual (car example))
-        (expected (nth 2 example)))
-    (--> (format "%S ;; => %S" actual expected)
+  (-let* (((actual sym expected) example)
+	  (comment
+	   (cond
+	    ((eq sym '=>) (format "=> %S" expected))
+	    ((eq sym '~>) (format "~> %S" expected))
+	    ((eq sym '!!>) (format "Error"))
+	    (t (error "Invalid test case: %S" `(,actual ,sym ,expected))))))
+    (--> comment
+      (format "%S ;; %s" actual it)
       (replace-regexp-in-string "\\\\\\?" "?" it)
       (replace-regexp-in-string "\n" "\\n" it t t)
       (replace-regexp-in-string "\t" "\\t" it t t)

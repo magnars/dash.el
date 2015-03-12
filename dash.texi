@@ -1,0 +1,3592 @@
+\input texinfo    @c -*- texinfo -*-
+@c %**start of header
+@setfilename dash.info
+@settitle dash
+@documentencoding UTF-8
+@documentlanguage en
+@syncodeindex fn cp
+@dircategory Emacs
+@direntry
+* Dash: (dash.info). A modern list library for GNU Emacs
+@end direntry
+@c %**end of header
+
+@copying
+
+This manual is for @code{dash.el} version 2.10.0.
+
+Copyright © 2012-2015 Magnar Sveen
+
+@quotation
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see @uref{http://www.gnu.org/licenses/}.
+@end quotation
+@end copying
+
+@finalout
+@titlepage
+@title Dash
+@author Magnar Sveen
+@page
+@vskip 0pt plus 1filll
+@insertcopying
+@end titlepage
+
+@contents
+
+@ifnottex
+@node Top
+@top dash
+@insertcopying
+@end ifnottex
+
+@menu
+* Installation::
+* Functions::
+* Development::
+* Index::
+
+@detailmenu
+--- The Detailed Node Listing ---
+
+Installation
+
+* Using in a package::
+* Syntax highlighting of dash functions::
+
+Functions
+
+* Maps::
+* Sublist selection::
+* List to list::
+* Reductions::
+* Unfolding::
+* Predicates::
+* Partitioning::
+* Indexing::
+* Set operations::
+* Other list operations::
+* Tree operations::
+* Threading macros::
+* Binding::
+* Side-effects::
+* Destructive operations::
+* Function combinators::
+
+Development
+
+* Contribute::          How to contribute
+* Changes::             List of significant changes by version
+* Contributors::        List of contributors
+@end detailmenu
+@end menu
+
+
+
+@node Installation
+@chapter Installation
+
+It's available on @uref{http://marmalade-repo.org/,marmalade} and
+@uref{http://melpa.milkbox.net/,Melpa}; use @code{M-x
+package-install}:
+
+@table @kbd
+@item M-x package-install @key{RET} dash
+Install the dash library.
+@end table
+
+@table @kbd
+@item M-x package-install @key{RET} dash-functional
+Optional, if you want the function combinators.
+@end table
+
+Alternatively, you can just dump @verb{~dash.el~} or
+@verb{~dash-functional.el~} in your load path somewhere.
+
+@menu
+* Using in a package::
+* Syntax highlighting of dash functions::
+@end menu
+
+@node Using in a package
+@section Using in a package
+
+Add this to the big comment block at the top:
+
+@lisp
+;; Package-Requires: ((dash "2.10.0"))
+@end lisp
+
+@noindent To get function combinators:
+
+@lisp
+;; Package-Requires: ((dash "2.10.0") (dash-functional "1.2.0") (emacs "24"))
+@end lisp
+
+@node Syntax highlighting of dash functions
+@section Syntax highlighting of dash functions
+
+Font lock of dash functions in emacs lisp buffers is now optional.
+Include this in your emacs settings to get syntax highlighting:
+
+@lisp
+(eval-after-load "dash" '(dash-enable-font-lock))
+@end lisp
+
+@node Functions
+@chapter Functions
+
+This chapter contains reference documentation for the dash
+@abbr{application programming interface,API}.  All functions and
+constructs in the library are prefixed with a dash (-).
+
+There are also anaphoric versions of functions where that makes sense,
+prefixed with two dashes instead of one.
+
+For instance, while @code{-map} takes a function to map over the list,
+one can also use the anaphoric form with double dashes - which will
+then be executed with @code{it} exposed as the list item. Here's an
+example:
+
+@lisp
+(-map (lambda (n) (* n n)) '(1 2 3 4)) ;; normal version
+
+(--map (* it it) '(1 2 3 4)) ;; anaphoric version
+@end lisp
+
+@noindent Of course, the original can also be written like
+
+@lisp
+(defun square (n) (* n n))
+
+(-map 'square '(1 2 3 4))
+@end lisp
+
+@noindent which demonstrates the usefulness of both versions.
+
+@menu
+* Maps::
+* Sublist selection::
+* List to list::
+* Reductions::
+* Unfolding::
+* Predicates::
+* Partitioning::
+* Indexing::
+* Set operations::
+* Other list operations::
+* Tree operations::
+* Threading macros::
+* Binding::
+* Side-effects::
+* Destructive operations::
+* Function combinators::
+@end menu
+
+
+@node Maps
+@section Maps
+
+
+Functions in this category take a transforming function, which
+is then applied sequentially to each or selected elements of the
+input list.  The results are collected in order and returned as
+new list.
+
+
+@anchor{-map}
+@defun -map (fn list)
+Return a new list consisting of the result of applying @var{fn} to the items in @var{list}.
+
+@example
+@group
+(-map (lambda (num) (* num num)) '(1 2 3 4))
+    @result{} '(1 4 9 16)
+@end group
+@group
+(-map 'square '(1 2 3 4))
+    @result{} '(1 4 9 16)
+@end group
+@group
+(--map (* it it) '(1 2 3 4))
+    @result{} '(1 4 9 16)
+@end group
+@end example
+@end defun
+
+@anchor{-map-when}
+@defun -map-when (pred rep list)
+Return a new list where the elements in @var{list} that does not match the @var{pred} function
+are unchanged, and where the elements in @var{list} that do match the @var{pred} function are mapped
+through the @var{rep} function.
+
+Alias: @code{-replace-where}
+
+See also: @code{-update-at} (@pxref{-update-at})
+
+@example
+@group
+(-map-when 'even? 'square '(1 2 3 4))
+    @result{} '(1 4 3 16)
+@end group
+@group
+(--map-when (> it 2) (* it it) '(1 2 3 4))
+    @result{} '(1 2 9 16)
+@end group
+@group
+(--map-when (= it 2) 17 '(1 2 3 4))
+    @result{} '(1 17 3 4)
+@end group
+@end example
+@end defun
+
+@anchor{-map-indexed}
+@defun -map-indexed (fn list)
+Return a new list consisting of the result of (@var{fn} index item) for each item in @var{list}.
+
+In the anaphoric form @code{--map-indexed}, the index is exposed as `it-index`.
+
+@example
+@group
+(-map-indexed (lambda (index item) (- item index)) '(1 2 3 4))
+    @result{} '(1 1 1 1)
+@end group
+@group
+(--map-indexed (- it it-index) '(1 2 3 4))
+    @result{} '(1 1 1 1)
+@end group
+@end example
+@end defun
+
+@anchor{-annotate}
+@defun -annotate (fn list)
+Return a list of cons cells where each cell is @var{fn} applied to each
+element of @var{list} paired with the unmodified element of @var{list}.
+
+@example
+@group
+(-annotate '1+ '(1 2 3))
+    @result{} '((2 . 1) (3 . 2) (4 . 3))
+@end group
+@group
+(-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world")))
+    @result{} '((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
+@end group
+@group
+(--annotate (< 1 it) '(0 1 2 3))
+    @result{} '((nil . 0) (nil . 1) (t . 2) (t . 3))
+@end group
+@end example
+@end defun
+
+@anchor{-splice}
+@defun -splice (pred fun list)
+Splice lists generated by @var{fun} in place of elements matching @var{pred} in @var{list}.
+
+@var{fun} takes the element matching @var{pred} as input.
+
+This function can be used as replacement for @code{,@@} in case you
+need to splice several lists at marked positions (for example
+with keywords).
+
+See also: @code{-splice-list} (@pxref{-splice-list}), @code{-insert-at} (@pxref{-insert-at})
+
+@example
+@group
+(-splice 'even? (lambda (x) (list x x)) '(1 2 3 4))
+    @result{} '(1 2 2 3 4 4)
+@end group
+@group
+(--splice 't (list it it) '(1 2 3 4))
+    @result{} '(1 1 2 2 3 3 4 4)
+@end group
+@group
+(--splice (equal it :magic) '((list of) (magical) (code)) '((foo) (bar) :magic (baz)))
+    @result{} '((foo) (bar) (list of) (magical) (code) (baz))
+@end group
+@end example
+@end defun
+
+@anchor{-splice-list}
+@defun -splice-list (pred new-list list)
+Splice @var{new-list} in place of elements matching @var{pred} in @var{list}.
+
+See also: @code{-splice} (@pxref{-splice}), @code{-insert-at} (@pxref{-insert-at})
+
+@example
+@group
+(-splice-list 'keywordp '(a b c) '(1 :foo 2))
+    @result{} '(1 a b c 2)
+@end group
+@group
+(-splice-list 'keywordp nil '(1 :foo 2))
+    @result{} '(1 2)
+@end group
+@end example
+@end defun
+
+@anchor{-mapcat}
+@defun -mapcat (fn list)
+Return the concatenation of the result of mapping @var{fn} over @var{list}.
+Thus function @var{fn} should return a list.
+
+@example
+@group
+(-mapcat 'list '(1 2 3))
+    @result{} '(1 2 3)
+@end group
+@group
+(-mapcat (lambda (item) (list 0 item)) '(1 2 3))
+    @result{} '(0 1 0 2 0 3)
+@end group
+@group
+(--mapcat (list 0 it) '(1 2 3))
+    @result{} '(0 1 0 2 0 3)
+@end group
+@end example
+@end defun
+
+@anchor{-copy}
+@defun -copy (arg)
+Create a shallow copy of @var{list}.
+
+@example
+@group
+(-copy '(1 2 3))
+    @result{} '(1 2 3)
+@end group
+@group
+(let ((a '(1 2 3))) (eq a (-copy a)))
+    @result{} nil
+@end group
+@end example
+@end defun
+
+
+@node Sublist selection
+@section Sublist selection
+
+
+Functions returning a sublist of the original list.
+
+
+@anchor{-filter}
+@defun -filter (pred list)
+Return a new list of the items in @var{list} for which @var{pred} returns a non-nil value.
+
+Alias: @code{-select}
+
+@example
+@group
+(-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4))
+    @result{} '(2 4)
+@end group
+@group
+(-filter 'even? '(1 2 3 4))
+    @result{} '(2 4)
+@end group
+@group
+(--filter (= 0 (% it 2)) '(1 2 3 4))
+    @result{} '(2 4)
+@end group
+@end example
+@end defun
+
+@anchor{-remove}
+@defun -remove (pred list)
+Return a new list of the items in @var{list} for which @var{pred} returns nil.
+
+Alias: @code{-reject}
+
+@example
+@group
+(-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4))
+    @result{} '(1 3)
+@end group
+@group
+(-remove 'even? '(1 2 3 4))
+    @result{} '(1 3)
+@end group
+@group
+(--remove (= 0 (% it 2)) '(1 2 3 4))
+    @result{} '(1 3)
+@end group
+@end example
+@end defun
+
+@anchor{-non-nil}
+@defun -non-nil (list)
+Return all non-nil elements of @var{list}.
+
+@example
+@group
+(-non-nil '(1 nil 2 nil nil 3 4 nil 5 nil))
+    @result{} '(1 2 3 4 5)
+@end group
+@end example
+@end defun
+
+@anchor{-slice}
+@defun -slice (list from &optional to step)
+Return copy of @var{list}, starting from index @var{from} to index @var{to}.
+
+@var{from} or @var{to} may be negative.  These values are then interpreted
+modulo the length of the list.
+
+If @var{step} is a number, only each STEPth item in the resulting
+section is returned.  Defaults to 1.
+
+@example
+@group
+(-slice '(1 2 3 4 5) 1)
+    @result{} '(2 3 4 5)
+@end group
+@group
+(-slice '(1 2 3 4 5) 0 3)
+    @result{} '(1 2 3)
+@end group
+@group
+(-slice '(1 2 3 4 5 6 7 8 9) 1 -1 2)
+    @result{} '(2 4 6 8)
+@end group
+@end example
+@end defun
+
+@anchor{-take}
+@defun -take (n list)
+Return a new list of the first @var{n} items in @var{list}, or all items if there are fewer than @var{n}.
+
+@example
+@group
+(-take 3 '(1 2 3 4 5))
+    @result{} '(1 2 3)
+@end group
+@group
+(-take 17 '(1 2 3 4 5))
+    @result{} '(1 2 3 4 5)
+@end group
+@end example
+@end defun
+
+@anchor{-drop}
+@defun -drop (n list)
+Return the tail of @var{list} without the first @var{n} items.
+
+@example
+@group
+(-drop 3 '(1 2 3 4 5))
+    @result{} '(4 5)
+@end group
+@group
+(-drop 17 '(1 2 3 4 5))
+    @result{} '()
+@end group
+@end example
+@end defun
+
+@anchor{-take-while}
+@defun -take-while (pred list)
+Return a new list of successive items from @var{list} while (@var{pred} item) returns a non-nil value.
+
+@example
+@group
+(-take-while 'even? '(1 2 3 4))
+    @result{} '()
+@end group
+@group
+(-take-while 'even? '(2 4 5 6))
+    @result{} '(2 4)
+@end group
+@group
+(--take-while (< it 4) '(1 2 3 4 3 2 1))
+    @result{} '(1 2 3)
+@end group
+@end example
+@end defun
+
+@anchor{-drop-while}
+@defun -drop-while (pred list)
+Return the tail of @var{list} starting from the first item for which (@var{pred} item) returns nil.
+
+@example
+@group
+(-drop-while 'even? '(1 2 3 4))
+    @result{} '(1 2 3 4)
+@end group
+@group
+(-drop-while 'even? '(2 4 5 6))
+    @result{} '(5 6)
+@end group
+@group
+(--drop-while (< it 4) '(1 2 3 4 3 2 1))
+    @result{} '(4 3 2 1)
+@end group
+@end example
+@end defun
+
+@anchor{-select-by-indices}
+@defun -select-by-indices (indices list)
+Return a list whose elements are elements from @var{list} selected
+as `(nth i list)` for all i from @var{indices}.
+
+@example
+@group
+(-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r"))
+    @result{} '("c" "o" "l" "o" "r")
+@end group
+@group
+(-select-by-indices '(2 1 0) '("a" "b" "c"))
+    @result{} '("c" "b" "a")
+@end group
+@group
+(-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l"))
+    @result{} '("f" "a" "r" "f" "a" "l" "l" "a")
+@end group
+@end example
+@end defun
+
+
+@node List to list
+@section List to list
+
+
+Bag of various functions which modify input list.
+
+
+@anchor{-keep}
+@defun -keep (fn list)
+Return a new list of the non-nil results of applying @var{fn} to the items in @var{list}.
+
+@example
+@group
+(-keep 'cdr '((1 2 3) (4 5) (6)))
+    @result{} '((2 3) (5))
+@end group
+@group
+(-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6))
+    @result{} '(40 50 60)
+@end group
+@group
+(--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6))
+    @result{} '(40 50 60)
+@end group
+@end example
+@end defun
+
+@anchor{-concat}
+@defun -concat (&rest lists)
+Return a new list with the concatenation of the elements in the supplied @var{lists}.
+
+@example
+@group
+(-concat '(1))
+    @result{} '(1)
+@end group
+@group
+(-concat '(1) '(2))
+    @result{} '(1 2)
+@end group
+@group
+(-concat '(1) '(2 3) '(4))
+    @result{} '(1 2 3 4)
+@end group
+@end example
+@end defun
+
+@anchor{-flatten}
+@defun -flatten (l)
+Take a nested list @var{l} and return its contents as a single, flat list.
+
+See also: @code{-flatten-n} (@pxref{-flatten-n})
+
+@example
+@group
+(-flatten '((1)))
+    @result{} '(1)
+@end group
+@group
+(-flatten '((1 (2 3) (((4 (5)))))))
+    @result{} '(1 2 3 4 5)
+@end group
+@group
+(-flatten '(1 2 (3 . 4)))
+    @result{} '(1 2 (3 . 4))
+@end group
+@end example
+@end defun
+
+@anchor{-flatten-n}
+@defun -flatten-n (num list)
+Flatten @var{num} levels of a nested @var{list}.
+
+See also: @code{-flatten} (@pxref{-flatten})
+
+@example
+@group
+(-flatten-n 1 '((1 2) ((3 4) ((5 6)))))
+    @result{} '(1 2 (3 4) ((5 6)))
+@end group
+@group
+(-flatten-n 2 '((1 2) ((3 4) ((5 6)))))
+    @result{} '(1 2 3 4 (5 6))
+@end group
+@group
+(-flatten-n 3 '((1 2) ((3 4) ((5 6)))))
+    @result{} '(1 2 3 4 5 6)
+@end group
+@end example
+@end defun
+
+@anchor{-replace}
+@defun -replace (old new list)
+Replace all @var{old} items in @var{list} with @var{new}.
+
+Elements are compared using @code{equal}.
+
+See also: @code{-replace-at} (@pxref{-replace-at})
+
+@example
+@group
+(-replace 1 "1" '(1 2 3 4 3 2 1))
+    @result{} '("1" 2 3 4 3 2 "1")
+@end group
+@group
+(-replace "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo"))
+    @result{} '("a" "nice" "bar" "sentence" "about" "bar")
+@end group
+@group
+(-replace 1 2 nil)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-insert-at}
+@defun -insert-at (n x list)
+Return a list with @var{x} inserted into @var{list} at position @var{n}.
+
+See also: @code{-splice} (@pxref{-splice}), @code{-splice-list} (@pxref{-splice-list})
+
+@example
+@group
+(-insert-at 1 'x '(a b c))
+    @result{} '(a x b c)
+@end group
+@group
+(-insert-at 12 'x '(a b c))
+    @result{} '(a b c x)
+@end group
+@end example
+@end defun
+
+@anchor{-replace-at}
+@defun -replace-at (n x list)
+Return a list with element at Nth position in @var{list} replaced with @var{x}.
+
+See also: @code{-replace} (@pxref{-replace})
+
+@example
+@group
+(-replace-at 0 9 '(0 1 2 3 4 5))
+    @result{} '(9 1 2 3 4 5)
+@end group
+@group
+(-replace-at 1 9 '(0 1 2 3 4 5))
+    @result{} '(0 9 2 3 4 5)
+@end group
+@group
+(-replace-at 4 9 '(0 1 2 3 4 5))
+    @result{} '(0 1 2 3 9 5)
+@end group
+@end example
+@end defun
+
+@anchor{-update-at}
+@defun -update-at (n func list)
+Return a list with element at Nth position in @var{list} replaced with `(func (nth n list))`.
+
+See also: @code{-map-when} (@pxref{-map-when})
+
+@example
+@group
+(-update-at 0 (lambda (x) (+ x 9)) '(0 1 2 3 4 5))
+    @result{} '(9 1 2 3 4 5)
+@end group
+@group
+(-update-at 1 (lambda (x) (+ x 8)) '(0 1 2 3 4 5))
+    @result{} '(0 9 2 3 4 5)
+@end group
+@group
+(--update-at 2 (length it) '("foo" "bar" "baz" "quux"))
+    @result{} '("foo" "bar" 3 "quux")
+@end group
+@end example
+@end defun
+
+@anchor{-remove-at}
+@defun -remove-at (n list)
+Return a list with element at Nth position in @var{list} removed.
+
+See also: @code{-remove-at-indices} (@pxref{-remove-at-indices}), @code{-remove} (@pxref{-remove})
+
+@example
+@group
+(-remove-at 0 '("0" "1" "2" "3" "4" "5"))
+    @result{} '("1" "2" "3" "4" "5")
+@end group
+@group
+(-remove-at 1 '("0" "1" "2" "3" "4" "5"))
+    @result{} '("0" "2" "3" "4" "5")
+@end group
+@group
+(-remove-at 2 '("0" "1" "2" "3" "4" "5"))
+    @result{} '("0" "1" "3" "4" "5")
+@end group
+@end example
+@end defun
+
+@anchor{-remove-at-indices}
+@defun -remove-at-indices (indices list)
+Return a list whose elements are elements from @var{list} without
+elements selected as `(nth i list)` for all i
+from @var{indices}.
+
+See also: @code{-remove-at} (@pxref{-remove-at}), @code{-remove} (@pxref{-remove})
+
+@example
+@group
+(-remove-at-indices '(0) '("0" "1" "2" "3" "4" "5"))
+    @result{} '("1" "2" "3" "4" "5")
+@end group
+@group
+(-remove-at-indices '(0 2 4) '("0" "1" "2" "3" "4" "5"))
+    @result{} '("1" "3" "5")
+@end group
+@group
+(-remove-at-indices '(0 5) '("0" "1" "2" "3" "4" "5"))
+    @result{} '("1" "2" "3" "4")
+@end group
+@end example
+@end defun
+
+
+@node Reductions
+@section Reductions
+
+
+Functions reducing lists into single value.
+
+
+@anchor{-reduce-from}
+@defun -reduce-from (fn initial-value list)
+Return the result of applying @var{fn} to @var{initial-value} and the
+first item in @var{list}, then applying @var{fn} to that result and the 2nd
+item, etc. If @var{list} contains no items, return @var{initial-value} and
+@var{fn} is not called.
+
+In the anaphoric form @code{--reduce-from}, the accumulated value is
+exposed as `acc`.
+
+@example
+@group
+(-reduce-from '- 10 '(1 2 3))
+    @result{} 4
+@end group
+@group
+(-reduce-from (lambda (memo item) (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3))
+    @result{} "(((10 - 1) - 2) - 3)"
+@end group
+@group
+(--reduce-from (concat acc " " it) "START" '("a" "b" "c"))
+    @result{} "START a b c"
+@end group
+@end example
+@end defun
+
+@anchor{-reduce-r-from}
+@defun -reduce-r-from (fn initial-value list)
+Replace conses with @var{fn}, nil with @var{initial-value} and evaluate
+the resulting expression. If @var{list} is empty, @var{initial-value} is
+returned and @var{fn} is not called.
+
+Note: this function works the same as @code{-reduce-from} (@pxref{-reduce-from}) but the
+operation associates from right instead of from left.
+
+@example
+@group
+(-reduce-r-from '- 10 '(1 2 3))
+    @result{} -8
+@end group
+@group
+(-reduce-r-from (lambda (item memo) (concat "(" (int-to-string item) " - " memo ")")) "10" '(1 2 3))
+    @result{} "(1 - (2 - (3 - 10)))"
+@end group
+@group
+(--reduce-r-from (concat it " " acc) "END" '("a" "b" "c"))
+    @result{} "a b c END"
+@end group
+@end example
+@end defun
+
+@anchor{-reduce}
+@defun -reduce (fn list)
+Return the result of applying @var{fn} to the first 2 items in @var{list},
+then applying @var{fn} to that result and the 3rd item, etc. If @var{list}
+contains no items, @var{fn} must accept no arguments as well, and
+reduce return the result of calling @var{fn} with no arguments. If
+@var{list} has only 1 item, it is returned and @var{fn} is not called.
+
+In the anaphoric form @code{--reduce}, the accumulated value is
+exposed as `acc`.
+
+@example
+@group
+(-reduce '- '(1 2 3 4))
+    @result{} -8
+@end group
+@group
+(-reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3))
+    @result{} "1-2-3"
+@end group
+@group
+(--reduce (format "%s-%s" acc it) '(1 2 3))
+    @result{} "1-2-3"
+@end group
+@end example
+@end defun
+
+@anchor{-reduce-r}
+@defun -reduce-r (fn list)
+Replace conses with @var{fn} and evaluate the resulting expression.
+The final nil is ignored. If @var{list} contains no items, @var{fn} must
+accept no arguments as well, and reduce return the result of
+calling @var{fn} with no arguments. If @var{list} has only 1 item, it is
+returned and @var{fn} is not called.
+
+The first argument of @var{fn} is the new item, the second is the
+accumulated value.
+
+Note: this function works the same as @code{-reduce} (@pxref{-reduce}) but the operation
+associates from right instead of from left.
+
+@example
+@group
+(-reduce-r '- '(1 2 3 4))
+    @result{} -2
+@end group
+@group
+(-reduce-r (lambda (item memo) (format "%s-%s" memo item)) '(1 2 3))
+    @result{} "3-2-1"
+@end group
+@group
+(--reduce-r (format "%s-%s" acc it) '(1 2 3))
+    @result{} "3-2-1"
+@end group
+@end example
+@end defun
+
+@anchor{-count}
+@defun -count (pred list)
+Counts the number of items in @var{list} where (@var{pred} item) is non-nil.
+
+@example
+@group
+(-count 'even? '(1 2 3 4 5))
+    @result{} 2
+@end group
+@group
+(--count (< it 4) '(1 2 3 4))
+    @result{} 3
+@end group
+@end example
+@end defun
+
+@anchor{-sum}
+@defun -sum (list)
+Return the sum of @var{list}.
+
+@example
+@group
+(-sum '())
+    @result{} 0
+@end group
+@group
+(-sum '(1))
+    @result{} 1
+@end group
+@group
+(-sum '(1 2 3 4))
+    @result{} 10
+@end group
+@end example
+@end defun
+
+@anchor{-product}
+@defun -product (list)
+Return the product of @var{list}.
+
+@example
+@group
+(-product '())
+    @result{} 1
+@end group
+@group
+(-product '(1))
+    @result{} 1
+@end group
+@group
+(-product '(1 2 3 4))
+    @result{} 24
+@end group
+@end example
+@end defun
+
+@anchor{-min}
+@defun -min (list)
+Return the smallest value from @var{list} of numbers or markers.
+
+@example
+@group
+(-min '(0))
+    @result{} 0
+@end group
+@group
+(-min '(3 2 1))
+    @result{} 1
+@end group
+@group
+(-min '(1 2 3))
+    @result{} 1
+@end group
+@end example
+@end defun
+
+@anchor{-min-by}
+@defun -min-by (comparator list)
+Take a comparison function @var{comparator} and a @var{list} and return
+the least element of the list by the comparison function.
+
+See also combinator @code{-on} (@pxref{-on}) which can transform the values before
+comparing them.
+
+@example
+@group
+(-min-by '> '(4 3 6 1))
+    @result{} 1
+@end group
+@group
+(--min-by (> (car it) (car other)) '((1 2 3) (2) (3 2)))
+    @result{} '(1 2 3)
+@end group
+@group
+(--min-by (> (length it) (length other)) '((1 2 3) (2) (3 2)))
+    @result{} '(2)
+@end group
+@end example
+@end defun
+
+@anchor{-max}
+@defun -max (list)
+Return the largest value from @var{list} of numbers or markers.
+
+@example
+@group
+(-max '(0))
+    @result{} 0
+@end group
+@group
+(-max '(3 2 1))
+    @result{} 3
+@end group
+@group
+(-max '(1 2 3))
+    @result{} 3
+@end group
+@end example
+@end defun
+
+@anchor{-max-by}
+@defun -max-by (comparator list)
+Take a comparison function @var{comparator} and a @var{list} and return
+the greatest element of the list by the comparison function.
+
+See also combinator @code{-on} (@pxref{-on}) which can transform the values before
+comparing them.
+
+@example
+@group
+(-max-by '> '(4 3 6 1))
+    @result{} 6
+@end group
+@group
+(--max-by (> (car it) (car other)) '((1 2 3) (2) (3 2)))
+    @result{} '(3 2)
+@end group
+@group
+(--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2)))
+    @result{} '(1 2 3)
+@end group
+@end example
+@end defun
+
+
+@node Unfolding
+@section Unfolding
+
+
+Operations dual to reductions, building lists from seed value rather than consuming a list to produce a single value.
+
+
+@anchor{-iterate}
+@defun -iterate (fun init n)
+Return a list of iterated applications of @var{fun} to @var{init}.
+
+This means a list of form:
+
+    (init (fun init) (fun (fun init)) ...)
+
+@var{n} is the length of the returned list.
+
+@example
+@group
+(-iterate '1+ 1 10)
+    @result{} '(1 2 3 4 5 6 7 8 9 10)
+@end group
+@group
+(-iterate (lambda (x) (+ x x)) 2 5)
+    @result{} '(2 4 8 16 32)
+@end group
+@group
+(--iterate (* it it) 2 5)
+    @result{} '(2 4 16 256 65536)
+@end group
+@end example
+@end defun
+
+@anchor{-unfold}
+@defun -unfold (fun seed)
+Build a list from @var{seed} using @var{fun}.
+
+This is "dual" operation to @code{-reduce-r} (@pxref{-reduce-r}): while -reduce-r
+consumes a list to produce a single value, @code{-unfold} (@pxref{-unfold}) takes a
+seed value and builds a (potentially infinite!) list.
+
+@var{fun} should return @code{nil} to stop the generating process, or a
+cons (@var{a} . @var{b}), where @var{a} will be prepended to the result and @var{b} is
+the new seed.
+
+@example
+@group
+(-unfold (lambda (x) (unless (= x 0) (cons x (1- x)))) 10)
+    @result{} '(10 9 8 7 6 5 4 3 2 1)
+@end group
+@group
+(--unfold (when it (cons it (cdr it))) '(1 2 3 4))
+    @result{} '((1 2 3 4) (2 3 4) (3 4) (4))
+@end group
+@group
+(--unfold (when it (cons it (butlast it))) '(1 2 3 4))
+    @result{} '((1 2 3 4) (1 2 3) (1 2) (1))
+@end group
+@end example
+@end defun
+
+
+@node Predicates
+@section Predicates
+
+@anchor{-any?}
+@defun -any? (pred list)
+Return t if (@var{pred} x) is non-nil for any x in @var{list}, else nil.
+
+Alias: @code{-any-p}, @code{-some?}, @code{-some-p}
+
+@example
+@group
+(-any? 'even? '(1 2 3))
+    @result{} t
+@end group
+@group
+(-any? 'even? '(1 3 5))
+    @result{} nil
+@end group
+@group
+(--any? (= 0 (% it 2)) '(1 2 3))
+    @result{} t
+@end group
+@end example
+@end defun
+
+@anchor{-all?}
+@defun -all? (pred list)
+Return t if (@var{pred} x) is non-nil for all x in @var{list}, else nil.
+
+Alias: @code{-all-p}, @code{-every?}, @code{-every-p}
+
+@example
+@group
+(-all? 'even? '(1 2 3))
+    @result{} nil
+@end group
+@group
+(-all? 'even? '(2 4 6))
+    @result{} t
+@end group
+@group
+(--all? (= 0 (% it 2)) '(2 4 6))
+    @result{} t
+@end group
+@end example
+@end defun
+
+@anchor{-none?}
+@defun -none? (pred list)
+Return t if (@var{pred} x) is nil for all x in @var{list}, else nil.
+
+Alias: @code{-none-p}
+
+@example
+@group
+(-none? 'even? '(1 2 3))
+    @result{} nil
+@end group
+@group
+(-none? 'even? '(1 3 5))
+    @result{} t
+@end group
+@group
+(--none? (= 0 (% it 2)) '(1 2 3))
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-only-some?}
+@defun -only-some? (pred list)
+Return `t` if at least one item of @var{list} matches @var{pred} and at least one item of @var{list} does not match @var{pred}.
+Return `nil` both if all items match the predicate or if none of the items match the predicate.
+
+Alias: @code{-only-some-p}
+
+@example
+@group
+(-only-some? 'even? '(1 2 3))
+    @result{} t
+@end group
+@group
+(-only-some? 'even? '(1 3 5))
+    @result{} nil
+@end group
+@group
+(-only-some? 'even? '(2 4 6))
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-contains?}
+@defun -contains? (list element)
+Return non-nil if @var{list} contains @var{element}.
+
+The test for equality is done with @code{equal}, or with @code{-compare-fn}
+if that's non-nil.
+
+Alias: @code{-contains-p}
+
+@example
+@group
+(-contains? '(1 2 3) 1)
+    @result{} t
+@end group
+@group
+(-contains? '(1 2 3) 2)
+    @result{} t
+@end group
+@group
+(-contains? '(1 2 3) 4)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-same-items?}
+@defun -same-items? (list list2)
+Return true if @var{list} and @var{list2} has the same items.
+
+The order of the elements in the lists does not matter.
+
+Alias: @code{-same-items-p}
+
+@example
+@group
+(-same-items? '(1 2 3) '(1 2 3))
+    @result{} t
+@end group
+@group
+(-same-items? '(1 2 3) '(3 2 1))
+    @result{} t
+@end group
+@group
+(-same-items? '(1 2 3) '(1 2 3 4))
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-is-prefix?}
+@defun -is-prefix? (prefix list)
+Return non-nil if @var{prefix} is prefix of @var{list}.
+
+Alias: @code{-is-prefix-p}
+
+@example
+@group
+(-is-prefix? '(1 2 3) '(1 2 3 4 5))
+    @result{} t
+@end group
+@group
+(-is-prefix? '(1 2 3 4 5) '(1 2 3))
+    @result{} nil
+@end group
+@group
+(-is-prefix? '(1 3) '(1 2 3 4 5))
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-is-suffix?}
+@defun -is-suffix? (suffix list)
+Return non-nil if @var{suffix} is suffix of @var{list}.
+
+Alias: @code{-is-suffix-p}
+
+@example
+@group
+(-is-suffix? '(3 4 5) '(1 2 3 4 5))
+    @result{} t
+@end group
+@group
+(-is-suffix? '(1 2 3 4 5) '(3 4 5))
+    @result{} nil
+@end group
+@group
+(-is-suffix? '(3 5) '(1 2 3 4 5))
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-is-infix?}
+@defun -is-infix? (infix list)
+Return non-nil if @var{infix} is infix of @var{list}.
+
+This operation runs in @var{o}(n^2) time
+
+Alias: @code{-is-infix-p}
+
+@example
+@group
+(-is-infix? '(1 2 3) '(1 2 3 4 5))
+    @result{} t
+@end group
+@group
+(-is-infix? '(2 3 4) '(1 2 3 4 5))
+    @result{} t
+@end group
+@group
+(-is-infix? '(3 4 5) '(1 2 3 4 5))
+    @result{} t
+@end group
+@end example
+@end defun
+
+
+@node Partitioning
+@section Partitioning
+
+
+Functions partitioning the input list into a list of lists.
+
+
+@anchor{-split-at}
+@defun -split-at (n list)
+Return a list of ((-take @var{n} @var{list}) (-drop @var{n} @var{list})), in no more than one pass through the list.
+
+@example
+@group
+(-split-at 3 '(1 2 3 4 5))
+    @result{} '((1 2 3) (4 5))
+@end group
+@group
+(-split-at 17 '(1 2 3 4 5))
+    @result{} '((1 2 3 4 5) nil)
+@end group
+@end example
+@end defun
+
+@anchor{-split-with}
+@defun -split-with (pred list)
+Return a list of ((-take-while @var{pred} @var{list}) (-drop-while @var{pred} @var{list})), in no more than one pass through the list.
+
+@example
+@group
+(-split-with 'even? '(1 2 3 4))
+    @result{} '(nil (1 2 3 4))
+@end group
+@group
+(-split-with 'even? '(2 4 5 6))
+    @result{} '((2 4) (5 6))
+@end group
+@group
+(--split-with (< it 4) '(1 2 3 4 3 2 1))
+    @result{} '((1 2 3) (4 3 2 1))
+@end group
+@end example
+@end defun
+
+@anchor{-split-on}
+@defun -split-on (item list)
+Split the @var{list} each time @var{item} is found.
+
+Unlike @code{-partition-by} (@pxref{-partition-by}), the @var{item} is discarded from the results.
+Empty lists are also removed from the result.
+
+Comparison is done by @code{equal}.
+
+See also @code{-split-when} (@pxref{-split-when})
+
+@example
+@group
+(-split-on '| '(Nil | Leaf a | Node [Tree a]))
+    @result{} '((Nil) (Leaf a) (Node [Tree a]))
+@end group
+@group
+(-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e"))
+    @result{} '(("a" "b") ("c") ("d" "e"))
+@end group
+@group
+(-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e"))
+    @result{} '(("a" "b") ("d" "e"))
+@end group
+@end example
+@end defun
+
+@anchor{-split-when}
+@defun -split-when (fn list)
+Split the @var{list} on each element where @var{fn} returns non-nil.
+
+Unlike @code{-partition-by} (@pxref{-partition-by}), the "matched" element is discarded from
+the results.  Empty lists are also removed from the result.
+
+This function can be thought of as a generalization of
+@code{split-string}.
+
+@example
+@group
+(-split-when 'even? '(1 2 3 4 5 6))
+    @result{} '((1) (3) (5))
+@end group
+@group
+(-split-when 'even? '(1 2 3 4 6 8 9))
+    @result{} '((1) (3) (9))
+@end group
+@group
+(--split-when (memq it '(&optional &rest)) '(a b &optional c d &rest args))
+    @result{} '((a b) (c d) (args))
+@end group
+@end example
+@end defun
+
+@anchor{-separate}
+@defun -separate (pred list)
+Return a list of ((-filter @var{pred} @var{list}) (-remove @var{pred} @var{list})), in one pass through the list.
+
+@example
+@group
+(-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7))
+    @result{} '((2 4 6) (1 3 5 7))
+@end group
+@group
+(--separate (< it 5) '(3 7 5 9 3 2 1 4 6))
+    @result{} '((3 3 2 1 4) (7 5 9 6))
+@end group
+@group
+(-separate 'cdr '((1 2) (1) (1 2 3) (4)))
+    @result{} '(((1 2) (1 2 3)) ((1) (4)))
+@end group
+@end example
+@end defun
+
+@anchor{-partition}
+@defun -partition (n list)
+Return a new list with the items in @var{list} grouped into @var{n-}sized sublists.
+If there are not enough items to make the last group @var{n-}sized,
+those items are discarded.
+
+@example
+@group
+(-partition 2 '(1 2 3 4 5 6))
+    @result{} '((1 2) (3 4) (5 6))
+@end group
+@group
+(-partition 2 '(1 2 3 4 5 6 7))
+    @result{} '((1 2) (3 4) (5 6))
+@end group
+@group
+(-partition 3 '(1 2 3 4 5 6 7))
+    @result{} '((1 2 3) (4 5 6))
+@end group
+@end example
+@end defun
+
+@anchor{-partition-all}
+@defun -partition-all (n list)
+Return a new list with the items in @var{list} grouped into @var{n-}sized sublists.
+The last group may contain less than @var{n} items.
+
+@example
+@group
+(-partition-all 2 '(1 2 3 4 5 6))
+    @result{} '((1 2) (3 4) (5 6))
+@end group
+@group
+(-partition-all 2 '(1 2 3 4 5 6 7))
+    @result{} '((1 2) (3 4) (5 6) (7))
+@end group
+@group
+(-partition-all 3 '(1 2 3 4 5 6 7))
+    @result{} '((1 2 3) (4 5 6) (7))
+@end group
+@end example
+@end defun
+
+@anchor{-partition-in-steps}
+@defun -partition-in-steps (n step list)
+Return a new list with the items in @var{list} grouped into @var{n-}sized sublists at offsets @var{step} apart.
+If there are not enough items to make the last group @var{n-}sized,
+those items are discarded.
+
+@example
+@group
+(-partition-in-steps 2 1 '(1 2 3 4))
+    @result{} '((1 2) (2 3) (3 4))
+@end group
+@group
+(-partition-in-steps 3 2 '(1 2 3 4))
+    @result{} '((1 2 3))
+@end group
+@group
+(-partition-in-steps 3 2 '(1 2 3 4 5))
+    @result{} '((1 2 3) (3 4 5))
+@end group
+@end example
+@end defun
+
+@anchor{-partition-all-in-steps}
+@defun -partition-all-in-steps (n step list)
+Return a new list with the items in @var{list} grouped into @var{n-}sized sublists at offsets @var{step} apart.
+The last groups may contain less than @var{n} items.
+
+@example
+@group
+(-partition-all-in-steps 2 1 '(1 2 3 4))
+    @result{} '((1 2) (2 3) (3 4) (4))
+@end group
+@group
+(-partition-all-in-steps 3 2 '(1 2 3 4))
+    @result{} '((1 2 3) (3 4))
+@end group
+@group
+(-partition-all-in-steps 3 2 '(1 2 3 4 5))
+    @result{} '((1 2 3) (3 4 5) (5))
+@end group
+@end example
+@end defun
+
+@anchor{-partition-by}
+@defun -partition-by (fn list)
+Apply @var{fn} to each item in @var{list}, splitting it each time @var{fn} returns a new value.
+
+@example
+@group
+(-partition-by 'even? '())
+    @result{} '()
+@end group
+@group
+(-partition-by 'even? '(1 1 2 2 2 3 4 6 8))
+    @result{} '((1 1) (2 2 2) (3) (4 6 8))
+@end group
+@group
+(--partition-by (< it 3) '(1 2 3 4 3 2 1))
+    @result{} '((1 2) (3 4 3) (2 1))
+@end group
+@end example
+@end defun
+
+@anchor{-partition-by-header}
+@defun -partition-by-header (fn list)
+Apply @var{fn} to the first item in @var{list}. That is the header
+value. Apply @var{fn} to each item in @var{list}, splitting it each time @var{fn}
+returns the header value, but only after seeing at least one
+other value (the body).
+
+@example
+@group
+(--partition-by-header (= it 1) '(1 2 3 1 2 1 2 3 4))
+    @result{} '((1 2 3) (1 2) (1 2 3 4))
+@end group
+@group
+(--partition-by-header (> it 0) '(1 2 0 1 0 1 2 3 0))
+    @result{} '((1 2 0) (1 0) (1 2 3 0))
+@end group
+@group
+(-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1))
+    @result{} '((2 1 1 1) (4 1 3 5) (6 6 1))
+@end group
+@end example
+@end defun
+
+@anchor{-group-by}
+@defun -group-by (fn list)
+Separate @var{list} into an alist whose keys are @var{fn} applied to the
+elements of @var{list}.  Keys are compared by @code{equal}.
+
+@example
+@group
+(-group-by 'even? '())
+    @result{} '()
+@end group
+@group
+(-group-by 'even? '(1 1 2 2 2 3 4 6 8))
+    @result{} '((nil 1 1 3) (t 2 2 2 4 6 8))
+@end group
+@group
+(--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e"))
+    @result{} '(("a" "a/b" "a/e") ("c" "c/d"))
+@end group
+@end example
+@end defun
+
+
+@node Indexing
+@section Indexing
+
+
+Return indices of elements based on predicates, sort elements by indices etc.
+
+
+@anchor{-elem-index}
+@defun -elem-index (elem list)
+Return the index of the first element in the given @var{list} which
+is equal to the query element @var{elem}, or nil if there is no
+such element.
+
+@example
+@group
+(-elem-index 2 '(6 7 8 2 3 4))
+    @result{} 3
+@end group
+@group
+(-elem-index "bar" '("foo" "bar" "baz"))
+    @result{} 1
+@end group
+@group
+(-elem-index '(1 2) '((3) (5 6) (1 2) nil))
+    @result{} 2
+@end group
+@end example
+@end defun
+
+@anchor{-elem-indices}
+@defun -elem-indices (elem list)
+Return the indices of all elements in @var{list} equal to the query
+element @var{elem}, in ascending order.
+
+@example
+@group
+(-elem-indices 2 '(6 7 8 2 3 4 2 1))
+    @result{} '(3 6)
+@end group
+@group
+(-elem-indices "bar" '("foo" "bar" "baz"))
+    @result{} '(1)
+@end group
+@group
+(-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil))
+    @result{} '(1 3)
+@end group
+@end example
+@end defun
+
+@anchor{-find-index}
+@defun -find-index (pred list)
+Take a predicate @var{pred} and a @var{list} and return the index of the
+first element in the list satisfying the predicate, or nil if
+there is no such element.
+
+@example
+@group
+(-find-index 'even? '(2 4 1 6 3 3 5 8))
+    @result{} 0
+@end group
+@group
+(--find-index (< 5 it) '(2 4 1 6 3 3 5 8))
+    @result{} 3
+@end group
+@group
+(-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz"))
+    @result{} 1
+@end group
+@end example
+@end defun
+
+@anchor{-find-last-index}
+@defun -find-last-index (pred list)
+Take a predicate @var{pred} and a @var{list} and return the index of the
+last element in the list satisfying the predicate, or nil if
+there is no such element.
+
+@example
+@group
+(-find-last-index 'even? '(2 4 1 6 3 3 5 8))
+    @result{} 7
+@end group
+@group
+(--find-last-index (< 5 it) '(2 7 1 6 3 8 5 2))
+    @result{} 5
+@end group
+@group
+(-find-last-index (-partial 'string-lessp "baz") '("q" "foo" "baz"))
+    @result{} 1
+@end group
+@end example
+@end defun
+
+@anchor{-find-indices}
+@defun -find-indices (pred list)
+Return the indices of all elements in @var{list} satisfying the
+predicate @var{pred}, in ascending order.
+
+@example
+@group
+(-find-indices 'even? '(2 4 1 6 3 3 5 8))
+    @result{} '(0 1 3 7)
+@end group
+@group
+(--find-indices (< 5 it) '(2 4 1 6 3 3 5 8))
+    @result{} '(3 7)
+@end group
+@group
+(-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz"))
+    @result{} '(1)
+@end group
+@end example
+@end defun
+
+@anchor{-grade-up}
+@defun -grade-up (comparator list)
+Grade elements of @var{list} using @var{comparator} relation, yielding a
+permutation vector such that applying this permutation to @var{list}
+sorts it in ascending order.
+
+@example
+@group
+(-grade-up '< '(3 1 4 2 1 3 3))
+    @result{} '(1 4 3 0 5 6 2)
+@end group
+@group
+(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up '< l) l))
+    @result{} '(1 1 2 3 3 3 4)
+@end group
+@end example
+@end defun
+
+@anchor{-grade-down}
+@defun -grade-down (comparator list)
+Grade elements of @var{list} using @var{comparator} relation, yielding a
+permutation vector such that applying this permutation to @var{list}
+sorts it in descending order.
+
+@example
+@group
+(-grade-down '< '(3 1 4 2 1 3 3))
+    @result{} '(2 0 5 6 3 1 4)
+@end group
+@group
+(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down '< l) l))
+    @result{} '(4 3 3 3 2 1 1)
+@end group
+@end example
+@end defun
+
+
+@node Set operations
+@section Set operations
+
+
+Operations pretending lists are sets.
+
+
+@anchor{-union}
+@defun -union (list list2)
+Return a new list containing the elements of @var{list1} and elements of @var{list2} that are not in @var{list1}.
+The test for equality is done with @code{equal},
+or with @code{-compare-fn} if that's non-nil.
+
+@example
+@group
+(-union '(1 2 3) '(3 4 5))
+    @result{} '(1 2 3 4 5)
+@end group
+@group
+(-union '(1 2 3 4) '())
+    @result{} '(1 2 3 4)
+@end group
+@group
+(-union '(1 1 2 2) '(3 2 1))
+    @result{} '(1 1 2 2 3)
+@end group
+@end example
+@end defun
+
+@anchor{-difference}
+@defun -difference (list list2)
+Return a new list with only the members of @var{list} that are not in @var{list2}.
+The test for equality is done with @code{equal},
+or with @code{-compare-fn} if that's non-nil.
+
+@example
+@group
+(-difference '() '())
+    @result{} '()
+@end group
+@group
+(-difference '(1 2 3) '(4 5 6))
+    @result{} '(1 2 3)
+@end group
+@group
+(-difference '(1 2 3 4) '(3 4 5 6))
+    @result{} '(1 2)
+@end group
+@end example
+@end defun
+
+@anchor{-intersection}
+@defun -intersection (list list2)
+Return a new list containing only the elements that are members of both @var{list} and @var{list2}.
+The test for equality is done with @code{equal},
+or with @code{-compare-fn} if that's non-nil.
+
+@example
+@group
+(-intersection '() '())
+    @result{} '()
+@end group
+@group
+(-intersection '(1 2 3) '(4 5 6))
+    @result{} '()
+@end group
+@group
+(-intersection '(1 2 3 4) '(3 4 5 6))
+    @result{} '(3 4)
+@end group
+@end example
+@end defun
+
+@anchor{-distinct}
+@defun -distinct (list)
+Return a new list with all duplicates removed.
+The test for equality is done with @code{equal},
+or with @code{-compare-fn} if that's non-nil.
+
+Alias: @code{-uniq}
+
+@example
+@group
+(-distinct '())
+    @result{} '()
+@end group
+@group
+(-distinct '(1 2 2 4))
+    @result{} '(1 2 4)
+@end group
+@end example
+@end defun
+
+
+@node Other list operations
+@section Other list operations
+
+
+Other list functions not fit to be classified elsewhere.
+
+
+@anchor{-rotate}
+@defun -rotate (n list)
+Rotate @var{list} @var{n} places to the right.  With @var{n} negative, rotate to the left.
+The time complexity is @var{o}(n).
+
+@example
+@group
+(-rotate 3 '(1 2 3 4 5 6 7))
+    @result{} '(5 6 7 1 2 3 4)
+@end group
+@group
+(-rotate -3 '(1 2 3 4 5 6 7))
+    @result{} '(4 5 6 7 1 2 3)
+@end group
+@end example
+@end defun
+
+@anchor{-repeat}
+@defun -repeat (n x)
+Return a list with @var{x} repeated @var{n} times.
+Return nil if @var{n} is less than 1.
+
+@example
+@group
+(-repeat 3 :a)
+    @result{} '(:a :a :a)
+@end group
+@group
+(-repeat 1 :a)
+    @result{} '(:a)
+@end group
+@group
+(-repeat 0 :a)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-cons*}
+@defun -cons* (&rest args)
+Make a new list from the elements of @var{args}.
+
+The last 2 members of @var{args} are used as the final cons of the
+result so if the final member of @var{args} is not a list the result is
+a dotted list.
+
+@example
+@group
+(-cons* 1 2)
+    @result{} '(1 . 2)
+@end group
+@group
+(-cons* 1 2 3)
+    @result{} '(1 2 . 3)
+@end group
+@group
+(-cons* 1)
+    @result{} 1
+@end group
+@end example
+@end defun
+
+@anchor{-snoc}
+@defun -snoc (list elem &rest elements)
+Append @var{elem} to the end of the list.
+
+This is like @code{cons}, but operates on the end of list.
+
+If @var{elements} is non nil, append these to the list as well.
+
+@example
+@group
+(-snoc '(1 2 3) 4)
+    @result{} '(1 2 3 4)
+@end group
+@group
+(-snoc '(1 2 3) 4 5 6)
+    @result{} '(1 2 3 4 5 6)
+@end group
+@group
+(-snoc '(1 2 3) '(4 5 6))
+    @result{} '(1 2 3 (4 5 6))
+@end group
+@end example
+@end defun
+
+@anchor{-interpose}
+@defun -interpose (sep list)
+Return a new list of all elements in @var{list} separated by @var{sep}.
+
+@example
+@group
+(-interpose "-" '())
+    @result{} '()
+@end group
+@group
+(-interpose "-" '("a"))
+    @result{} '("a")
+@end group
+@group
+(-interpose "-" '("a" "b" "c"))
+    @result{} '("a" "-" "b" "-" "c")
+@end group
+@end example
+@end defun
+
+@anchor{-interleave}
+@defun -interleave (&rest lists)
+Return a new list of the first item in each list, then the second etc.
+
+@example
+@group
+(-interleave '(1 2) '("a" "b"))
+    @result{} '(1 "a" 2 "b")
+@end group
+@group
+(-interleave '(1 2) '("a" "b") '("A" "B"))
+    @result{} '(1 "a" "A" 2 "b" "B")
+@end group
+@group
+(-interleave '(1 2 3) '("a" "b"))
+    @result{} '(1 "a" 2 "b")
+@end group
+@end example
+@end defun
+
+@anchor{-zip-with}
+@defun -zip-with (fn list1 list2)
+Zip the two lists @var{list1} and @var{list2} using a function @var{fn}.  This
+function is applied pairwise taking as first argument element of
+@var{list1} and as second argument element of @var{list2} at corresponding
+position.
+
+The anaphoric form @code{--zip-with} binds the elements from @var{list1} as `it`,
+and the elements from @var{list2} as `other`.
+
+@example
+@group
+(-zip-with '+ '(1 2 3) '(4 5 6))
+    @result{} '(5 7 9)
+@end group
+@group
+(-zip-with 'cons '(1 2 3) '(4 5 6))
+    @result{} '((1 . 4) (2 . 5) (3 . 6))
+@end group
+@group
+(--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde"))
+    @result{} '("Batman and Robin" "Jekyll and Hyde")
+@end group
+@end example
+@end defun
+
+@anchor{-zip}
+@defun -zip (&rest lists)
+Zip @var{lists} together.  Group the head of each list, followed by the
+second elements of each list, and so on. The lengths of the returned
+groupings are equal to the length of the shortest input list.
+
+If two lists are provided as arguments, return the groupings as a list
+of cons cells. Otherwise, return the groupings as a list of lists. 
+
+@example
+@group
+(-zip '(1 2 3) '(4 5 6))
+    @result{} '((1 . 4) (2 . 5) (3 . 6))
+@end group
+@group
+(-zip '(1 2 3) '(4 5 6 7))
+    @result{} '((1 . 4) (2 . 5) (3 . 6))
+@end group
+@group
+(-zip '(1 2 3 4) '(4 5 6))
+    @result{} '((1 . 4) (2 . 5) (3 . 6))
+@end group
+@end example
+@end defun
+
+@anchor{-zip-fill}
+@defun -zip-fill (fill-value &rest lists)
+Zip @var{lists}, with @var{fill-value} padded onto the shorter lists. The
+lengths of the returned groupings are equal to the length of the
+longest input list.
+
+@example
+@group
+(-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9))
+    @result{} '((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
+@end group
+@end example
+@end defun
+
+@anchor{-cycle}
+@defun -cycle (list)
+Return an infinite copy of @var{list} that will cycle through the
+elements and repeat from the beginning.
+
+@example
+@group
+(-take 5 (-cycle '(1 2 3)))
+    @result{} '(1 2 3 1 2)
+@end group
+@group
+(-take 7 (-cycle '(1 "and" 3)))
+    @result{} '(1 "and" 3 1 "and" 3 1)
+@end group
+@group
+(-zip (-cycle '(1 2 3)) '(1 2))
+    @result{} '((1 . 1) (2 . 2))
+@end group
+@end example
+@end defun
+
+@anchor{-pad}
+@defun -pad (fill-value &rest lists)
+Appends @var{fill-value} to the end of each list in @var{lists} such that they
+will all have the same length.
+
+@example
+@group
+(-pad 0 '())
+    @result{} '(nil)
+@end group
+@group
+(-pad 0 '(1))
+    @result{} '((1))
+@end group
+@group
+(-pad 0 '(1 2 3) '(4 5))
+    @result{} '((1 2 3) (4 5 0))
+@end group
+@end example
+@end defun
+
+@anchor{-table}
+@defun -table (fn &rest lists)
+Compute outer product of @var{lists} using function @var{fn}.
+
+The function @var{fn} should have the same arity as the number of
+supplied lists.
+
+The outer product is computed by applying fn to all possible
+combinations created by taking one element from each list in
+order.  The dimension of the result is (length lists).
+
+See also: @code{-table-flat} (@pxref{-table-flat})
+
+@example
+@group
+(-table '* '(1 2 3) '(1 2 3))
+    @result{} '((1 2 3) (2 4 6) (3 6 9))
+@end group
+@group
+(-table (lambda (a b) (-sum (-zip-with '* a b))) '((1 2) (3 4)) '((1 3) (2 4)))
+    @result{} '((7 15) (10 22))
+@end group
+@group
+(apply '-table 'list (-repeat 3 '(1 2)))
+    @result{} '((((1 1 1) (2 1 1)) ((1 2 1) (2 2 1))) (((1 1 2) (2 1 2)) ((1 2 2) (2 2 2))))
+@end group
+@end example
+@end defun
+
+@anchor{-table-flat}
+@defun -table-flat (fn &rest lists)
+Compute flat outer product of @var{lists} using function @var{fn}.
+
+The function @var{fn} should have the same arity as the number of
+supplied lists.
+
+The outer product is computed by applying fn to all possible
+combinations created by taking one element from each list in
+order.  The results are flattened, ignoring the tensor structure
+of the result.  This is equivalent to calling:
+
+    (-flatten-n (1- (length lists)) (-table fn lists))
+
+but the implementation here is much more efficient.
+
+See also: @code{-flatten-n} (@pxref{-flatten-n}), @code{-table} (@pxref{-table})
+
+@example
+@group
+(-table-flat 'list '(1 2 3) '(a b c))
+    @result{} '((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
+@end group
+@group
+(-table-flat '* '(1 2 3) '(1 2 3))
+    @result{} '(1 2 3 2 4 6 3 6 9)
+@end group
+@group
+(apply '-table-flat 'list (-repeat 3 '(1 2)))
+    @result{} '((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2))
+@end group
+@end example
+@end defun
+
+@anchor{-first}
+@defun -first (pred list)
+Return the first x in @var{list} where (@var{pred} x) is non-nil, else nil.
+
+To get the first item in the list no questions asked, use @code{car}.
+
+Alias: @code{-find}
+
+@example
+@group
+(-first 'even? '(1 2 3))
+    @result{} 2
+@end group
+@group
+(-first 'even? '(1 3 5))
+    @result{} nil
+@end group
+@group
+(--first (> it 2) '(1 2 3))
+    @result{} 3
+@end group
+@end example
+@end defun
+
+@anchor{-some}
+@defun -some (pred list)
+Return (@var{pred} x) for the first @var{list} item where (@var{pred} x) is non-nil, else nil.
+
+Alias: @code{-any}
+
+@example
+@group
+(-some 'even? '(1 2 3))
+    @result{} t
+@end group
+@group
+(--some (member 'foo it) '((foo bar) (baz)))
+    @result{} '(foo bar)
+@end group
+@group
+(--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3)))
+    @result{} 2
+@end group
+@end example
+@end defun
+
+@anchor{-last}
+@defun -last (pred list)
+Return the last x in @var{list} where (@var{pred} x) is non-nil, else nil.
+
+@example
+@group
+(-last 'even? '(1 2 3 4 5 6 3 3 3))
+    @result{} 6
+@end group
+@group
+(-last 'even? '(1 3 7 5 9))
+    @result{} nil
+@end group
+@group
+(--last (> (length it) 3) '("a" "looong" "word" "and" "short" "one"))
+    @result{} "short"
+@end group
+@end example
+@end defun
+
+@anchor{-first-item}
+@defun -first-item (list)
+Return the first item of @var{list}, or nil on an empty list.
+
+@example
+@group
+(-first-item '(1 2 3))
+    @result{} 1
+@end group
+@group
+(-first-item nil)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-last-item}
+@defun -last-item (list)
+Return the last item of @var{list}, or nil on an empty list.
+
+@example
+@group
+(-last-item '(1 2 3))
+    @result{} 3
+@end group
+@group
+(-last-item nil)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-butlast}
+@defun -butlast (list)
+Return a list of all items in list except for the last.
+
+@example
+@group
+(-butlast '(1 2 3))
+    @result{} '(1 2)
+@end group
+@group
+(-butlast '(1 2))
+    @result{} '(1)
+@end group
+@group
+(-butlast '(1))
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-sort}
+@defun -sort (comparator list)
+Sort @var{list}, stably, comparing elements using @var{comparator}.
+Return the sorted list.  @var{list} is @var{not} modified by side effects.
+@var{comparator} is called with two elements of @var{list}, and should return non-nil
+if the first element should sort before the second.
+
+@example
+@group
+(-sort '< '(3 1 2))
+    @result{} '(1 2 3)
+@end group
+@group
+(-sort '> '(3 1 2))
+    @result{} '(3 2 1)
+@end group
+@group
+(--sort (< it other) '(3 1 2))
+    @result{} '(1 2 3)
+@end group
+@end example
+@end defun
+
+@anchor{-list}
+@defun -list (&rest args)
+Return a list with @var{args}.
+
+If first item of @var{args} is already a list, simply return @var{args}.  If
+not, return a list with @var{args} as elements.
+
+@example
+@group
+(-list 1)
+    @result{} '(1)
+@end group
+@group
+(-list 1 2 3)
+    @result{} '(1 2 3)
+@end group
+@group
+(-list '(1 2 3))
+    @result{} '(1 2 3)
+@end group
+@end example
+@end defun
+
+@anchor{-fix}
+@defun -fix (fn list)
+Compute the (least) fixpoint of @var{fn} with initial input @var{list}.
+
+@var{fn} is called at least once, results are compared with @code{equal}.
+
+@example
+@group
+(-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6)))
+    @result{} '((1) (2) (3) (4) (5) (6))
+@end group
+@group
+(let ((data '(("starwars" "scifi") ("jedi" "starwars" "warrior")))) (--fix (-uniq (--mapcat (cons it (cdr (assoc it data))) it)) '("jedi" "book")))
+    @result{} '("jedi" "starwars" "warrior" "scifi" "book")
+@end group
+@end example
+@end defun
+
+
+@node Tree operations
+@section Tree operations
+
+
+Functions pretending lists are trees.
+
+
+@anchor{-tree-seq}
+@defun -tree-seq (branch children tree)
+Return a sequence of the nodes in @var{tree}, in depth-first search order.
+
+@var{branch} is a predicate of one argument that returns non-nil if the
+passed argument is a branch, that is, a node that can have children.
+
+@var{children} is a function of one argument that returns the children
+of the passed branch node.
+
+Non-branch nodes are simply copied.
+
+@example
+@group
+(-tree-seq 'listp 'identity '(1 (2 3) 4 (5 (6 7))))
+    @result{} '((1 (2 3) 4 (5 (6 7))) 1 (2 3) 2 3 4 (5 (6 7)) 5 (6 7) 6 7)
+@end group
+@group
+(-tree-seq 'listp 'reverse '(1 (2 3) 4 (5 (6 7))))
+    @result{} '((1 (2 3) 4 (5 (6 7))) (5 (6 7)) (6 7) 7 6 5 4 (2 3) 3 2 1)
+@end group
+@group
+(--tree-seq (vectorp it) (append it nil) [1 [2 3] 4 [5 [6 7]]])
+    @result{} '([1 [2 3] 4 [5 [6 7]]] 1 [2 3] 2 3 4 [5 [6 7]] 5 [6 7] 6 7)
+@end group
+@end example
+@end defun
+
+@anchor{-tree-map}
+@defun -tree-map (fn tree)
+Apply @var{fn} to each element of @var{tree} while preserving the tree structure.
+
+@example
+@group
+(-tree-map '1+ '(1 (2 3) (4 (5 6) 7)))
+    @result{} '(2 (3 4) (5 (6 7) 8))
+@end group
+@group
+(-tree-map '(lambda (x) (cons x (expt 2 x))) '(1 (2 3) 4))
+    @result{} '((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
+@end group
+@group
+(--tree-map (length it) '("<body>" ("<p>" "text" "</p>") "</body>"))
+    @result{} '(6 (3 4 4) 7)
+@end group
+@end example
+@end defun
+
+@anchor{-tree-map-nodes}
+@defun -tree-map-nodes (pred fun tree)
+Call @var{fun} on each node of @var{tree} that satisfies @var{pred}.
+
+If @var{pred} returns nil, continue descending down this node.  If @var{pred}
+returns non-nil, apply @var{fun} to this node and do not descend
+further.
+
+@example
+@group
+(-tree-map-nodes 'vectorp (lambda (x) (-sum (append x nil))) '(1 [2 3] 4 (5 [6 7] 8)))
+    @result{} '(1 5 4 (5 13 8))
+@end group
+@group
+(-tree-map-nodes 'keywordp (lambda (x) (symbol-name x)) '(1 :foo 4 ((5 6 :bar) :baz 8)))
+    @result{} '(1 ":foo" 4 ((5 6 ":bar") ":baz" 8))
+@end group
+@group
+(--tree-map-nodes (eq (car-safe it) 'add-mode) (-concat it (list :mode 'emacs-lisp-mode)) '(with-mode emacs-lisp-mode (foo bar) (add-mode a b) (baz (add-mode c d))))
+    @result{} '(with-mode emacs-lisp-mode (foo bar) (add-mode a b :mode emacs-lisp-mode) (baz (add-mode c d :mode emacs-lisp-mode)))
+@end group
+@end example
+@end defun
+
+@anchor{-tree-reduce}
+@defun -tree-reduce (fn tree)
+Use @var{fn} to reduce elements of list @var{tree}.
+If elements of @var{tree} are lists themselves, apply the reduction recursively.
+
+@var{fn} is first applied to first element of the list and second
+element, then on this result and third element from the list etc.
+
+See @code{-reduce-r} (@pxref{-reduce-r}) for how exactly are lists of zero or one element handled.
+
+@example
+@group
+(-tree-reduce '+ '(1 (2 3) (4 5)))
+    @result{} 15
+@end group
+@group
+(-tree-reduce 'concat '("strings" (" on" " various") ((" levels"))))
+    @result{} "strings on various levels"
+@end group
+@group
+(--tree-reduce (cond ((stringp it) (concat it " " acc)) (t (let ((sn (symbol-name it))) (concat "<" sn ">" acc "</" sn ">")))) '(body (p "some words") (div "more" (b "bold") "words")))
+    @result{} "<body><p>some words</p> <div>more <b>bold</b> words</div></body>"
+@end group
+@end example
+@end defun
+
+@anchor{-tree-reduce-from}
+@defun -tree-reduce-from (fn init-value tree)
+Use @var{fn} to reduce elements of list @var{tree}.
+If elements of @var{tree} are lists themselves, apply the reduction recursively.
+
+@var{fn} is first applied to @var{init-value} and first element of the list,
+then on this result and second element from the list etc.
+
+The initial value is ignored on cons pairs as they always contain
+two elements.
+
+@example
+@group
+(-tree-reduce-from '+ 1 '(1 (1 1) ((1))))
+    @result{} 8
+@end group
+@group
+(--tree-reduce-from (-concat acc (list it)) nil '(1 (2 3 (4 5)) (6 7)))
+    @result{} '((7 6) ((5 4) 3 2) 1)
+@end group
+@end example
+@end defun
+
+@anchor{-tree-mapreduce}
+@defun -tree-mapreduce (fn folder tree)
+Apply @var{fn} to each element of @var{tree}, and make a list of the results.
+If elements of @var{tree} are lists themselves, apply @var{fn} recursively to
+elements of these nested lists.
+
+Then reduce the resulting lists using @var{folder} and initial value
+@var{init-value}. See @code{-reduce-r-from} (@pxref{-reduce-r-from}).
+
+This is the same as calling @code{-tree-reduce} (@pxref{-tree-reduce}) after @code{-tree-map} (@pxref{-tree-map})
+but is twice as fast as it only traverse the structure once.
+
+@example
+@group
+(-tree-mapreduce 'list 'append '(1 (2 (3 4) (5 6)) (7 (8 9))))
+    @result{} '(1 2 3 4 5 6 7 8 9)
+@end group
+@group
+(--tree-mapreduce 1 (+ it acc) '(1 (2 (4 9) (2 1)) (7 (4 3))))
+    @result{} 9
+@end group
+@group
+(--tree-mapreduce 0 (max acc (1+ it)) '(1 (2 (4 9) (2 1)) (7 (4 3))))
+    @result{} 3
+@end group
+@end example
+@end defun
+
+@anchor{-tree-mapreduce-from}
+@defun -tree-mapreduce-from (fn folder init-value tree)
+Apply @var{fn} to each element of @var{tree}, and make a list of the results.
+If elements of @var{tree} are lists themselves, apply @var{fn} recursively to
+elements of these nested lists.
+
+Then reduce the resulting lists using @var{folder} and initial value
+@var{init-value}. See @code{-reduce-r-from} (@pxref{-reduce-r-from}).
+
+This is the same as calling @code{-tree-reduce-from} (@pxref{-tree-reduce-from}) after @code{-tree-map} (@pxref{-tree-map})
+but is twice as fast as it only traverse the structure once.
+
+@example
+@group
+(-tree-mapreduce-from 'identity '* 1 '(1 (2 (3 4) (5 6)) (7 (8 9))))
+    @result{} 362880
+@end group
+@group
+(--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3))))
+    @result{} '(2 (4 (8 18) (4 2)) (14 (8 6)))
+@end group
+@group
+(concat "@{" (--tree-mapreduce-from (cond ((-cons-pair? it) (concat (symbol-name (car it)) " -> " (symbol-name (cdr it)))) (t (concat (symbol-name it) " : @{"))) (concat it (unless (or (equal acc "@}") (equal (substring it (1- (length it))) "@{")) ", ") acc) "@}" '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam)))))
+    @result{} "@{elips-mode : @{foo : @{bar -> booze@{, baz -> qux@{, c-mode : @{foo -> bla, bum -> bam@}@}"
+@end group
+@end example
+@end defun
+
+@anchor{-clone}
+@defun -clone (list)
+Create a deep copy of @var{list}.
+The new list has the same elements and structure but all cons are
+replaced with new ones.  This is useful when you need to clone a
+structure such as plist or alist.
+
+@example
+@group
+(let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b)
+    @result{} '(1 2 3)
+@end group
+@end example
+@end defun
+
+
+@node Threading macros
+@section Threading macros
+
+@anchor{->}
+@defun -> (x &optional form &rest more)
+Thread the expr through the forms. Insert @var{x} as the second item
+in the first form, making a list of it if it is not a list
+already. If there are more forms, insert the first form as the
+second item in second form, etc.
+
+@example
+@group
+(-> '(2 3 5))
+    @result{} '(2 3 5)
+@end group
+@group
+(-> '(2 3 5) (append '(8 13)))
+    @result{} '(2 3 5 8 13)
+@end group
+@group
+(-> '(2 3 5) (append '(8 13)) (-slice 1 -1))
+    @result{} '(3 5 8)
+@end group
+@end example
+@end defun
+
+@anchor{->>}
+@defun ->> (x form &rest more)
+Thread the expr through the forms. Insert @var{x} as the last item
+in the first form, making a list of it if it is not a list
+already. If there are more forms, insert the first form as the
+last item in second form, etc.
+
+@example
+@group
+(->> '(1 2 3) (-map 'square))
+    @result{} '(1 4 9)
+@end group
+@group
+(->> '(1 2 3) (-map 'square) (-remove 'even?))
+    @result{} '(1 9)
+@end group
+@group
+(->> '(1 2 3) (-map 'square) (-reduce '+))
+    @result{} 14
+@end group
+@end example
+@end defun
+
+@anchor{-->}
+@defun --> (x form &rest more)
+Thread the expr through the forms. Insert @var{x} at the position
+signified by the token @code{it} in the first form. If there are more
+forms, insert the first form at the position signified by @code{it} in
+in second form, etc.
+
+@example
+@group
+(--> "def" (concat "abc" it "ghi"))
+    @result{} "abcdefghi"
+@end group
+@group
+(--> "def" (concat "abc" it "ghi") (upcase it))
+    @result{} "ABCDEFGHI"
+@end group
+@group
+(--> "def" (concat "abc" it "ghi") upcase)
+    @result{} "ABCDEFGHI"
+@end group
+@end example
+@end defun
+
+
+@node Binding
+@section Binding
+
+
+Convenient versions of `let` and `let*` constructs combined with flow control.
+
+
+@anchor{-when-let}
+@defun -when-let (var-val &rest body)
+If @var{val} evaluates to non-nil, bind it to @var{var} and execute body.
+@var{var-val} should be a (@var{var} @var{val}) pair.
+
+Note: binding is done according to @code{-let} (@pxref{-let}).
+
+@example
+@group
+(-when-let (match-index (string-match "d" "abcd")) (+ match-index 2))
+    @result{} 5
+@end group
+@group
+(-when-let ((&plist :foo foo) (list :foo "foo")) foo)
+    @result{} "foo"
+@end group
+@group
+(-when-let ((&plist :foo foo) (list :bar "bar")) foo)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-when-let*}
+@defun -when-let* (vars-vals &rest body)
+If all @var{vals} evaluate to true, bind them to their corresponding
+@var{vars} and execute body. @var{vars-vals} should be a list of (@var{var} @var{val})
+pairs.
+
+Note: binding is done according to @code{-let*} (@pxref{-let*}).
+
+@example
+@group
+(-when-let* ((x 5) (y 3) (z (+ y 4))) (+ x y z))
+    @result{} 15
+@end group
+@group
+(-when-let* ((x 5) (y nil) (z 7)) (+ x y z))
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-if-let}
+@defun -if-let (var-val then &rest else)
+If @var{val} evaluates to non-nil, bind it to @var{var} and do @var{then},
+otherwise do @var{else}. @var{var-val} should be a (@var{var} @var{val}) pair.
+
+Note: binding is done according to @code{-let} (@pxref{-let}).
+
+@example
+@group
+(-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7)
+    @result{} 7
+@end group
+@group
+(--if-let (even? 4) it nil)
+    @result{} t
+@end group
+@end example
+@end defun
+
+@anchor{-if-let*}
+@defun -if-let* (vars-vals then &rest else)
+If all @var{vals} evaluate to true, bind them to their corresponding
+@var{vars} and do @var{then}, otherwise do @var{else}. @var{vars-vals} should be a list
+of (@var{var} @var{val}) pairs.
+
+Note: binding is done according to @code{-let*} (@pxref{-let*}).
+
+@example
+@group
+(-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo")
+    @result{} 15
+@end group
+@group
+(-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo")
+    @result{} "foo"
+@end group
+@group
+(-if-let* (((_ _ x) '(nil nil 7))) x)
+    @result{} 7
+@end group
+@end example
+@end defun
+
+@anchor{-let}
+@defun -let (varlist &rest body)
+Bind variables according to @var{varlist} then eval @var{body}.
+
+@var{varlist} is a list of lists of the form (@var{pattern} @var{source}).  Each
+@var{pattern} is matched against the @var{source} "structurally".  @var{source}
+is only evaluated once for each @var{pattern}.  Each @var{pattern} is matched
+recursively, and can therefore contain sub-patterns which are
+matched against corresponding sub-expressions of @var{source}.
+
+All the SOURCEs are evalled before any symbols are
+bound (i.e. "in parallel").
+
+If @var{varlist} only contains one (@var{pattern} @var{source}) element, you can
+optionally specify it using a vector and discarding the
+outer-most parens.  Thus
+
+    (-let ((@var{pattern} @var{source})) ..)
+
+becomes
+
+    (-let [@var{pattern} @var{source}] ..).
+
+@code{-let} (@pxref{-let}) uses a convention of not binding places (symbols) starting
+with _ whenever it's possible.  You can use this to skip over
+entries you don't care about.  However, this is not *always*
+possible (as a result of implementation) and these symbols might
+get bound to undefined values.
+
+Following is the overview of supported patterns.  Remember that
+patterns can be matched recursively, so every a, b, aK in the
+following can be a matching construct and not necessarily a
+symbol/variable.
+
+Symbol:
+
+    a - bind the @var{source} to @var{a}.  This is just like regular @code{let}.
+
+Conses and lists:
+
+    (a) - bind @code{car} of cons/list to @var{a}
+
+    (a . b) - bind car of cons to @var{a} and @code{cdr} to @var{b}
+
+    (a b) - bind car of list to @var{a} and @code{cadr} to @var{b}
+
+    (a1 a2 a3  ...) - bind 0th car of list to @var{a1}, 1st to @var{a2}, 2nd to @var{a3} ...
+
+    (a1 a2 a3 ... aN . rest) - as above, but bind the Nth cdr to @var{rest}.
+
+Vectors:
+
+    [a] - bind 0th element of a non-list sequence to @var{a} (works with
+          vectors, strings, bit arrays...)
+
+    [a1 a2 a3 ...] - bind 0th element of non-list sequence to @var{a0}, 1st to
+                     @var{a1}, 2nd to @var{a2}, ...
+                     If the @var{pattern} is shorter than @var{source}, the values at
+                     places not in @var{pattern} are ignored.
+                     If the @var{pattern} is longer than @var{source}, an @code{error} is
+                     thrown.
+
+    [a1 a2 a3 ... &rest rest] ) - as above, but bind the rest of
+                                  the sequence to @var{rest}.  This is
+                                  conceptually the same as improper list
+                                  matching (a1 a2 ... aN . rest)
+
+Key/value stores:
+
+    (&plist key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                   @var{source} plist to aK.  If the
+                                   value is not found, aK is nil.
+
+    (&alist key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                   @var{source} alist to aK.  If the
+                                   value is not found, aK is nil.
+
+    (&hash key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                  @var{source} hash table to aK.  If the
+                                  value is not found, aK is nil.
+
+Further, special keyword &keys supports "inline" matching of
+plist-like key-value pairs, similarly to &keys keyword of
+@code{cl-defun}.
+
+    (a1 a2 ... aN &keys key1 b1 ... keyN bK)
+
+This binds @var{n} values from the list to a1 ... aN, then interprets
+the cdr as a plist (see key/value matching above).
+
+@example
+@group
+(-let (([a (b c) d] [1 (2 3) 4])) (list a b c d))
+    @result{} '(1 2 3 4)
+@end group
+@group
+(-let [(a b c . d) (list 1 2 3 4 5 6)] (list a b c d))
+    @result{} '(1 2 3 (4 5 6))
+@end group
+@group
+(-let [(&plist :foo foo :bar bar) (list :baz 3 :foo 1 :qux 4 :bar 2)] (list foo bar))
+    @result{} '(1 2)
+@end group
+@end example
+@end defun
+
+@anchor{-let*}
+@defun -let* (varlist &rest body)
+Bind variables according to @var{varlist} then eval @var{body}.
+
+@var{varlist} is a list of lists of the form (@var{pattern} @var{source}).  Each
+@var{pattern} is matched against the @var{source} structurally.  @var{source} is
+only evaluated once for each @var{pattern}.
+
+Each @var{source} can refer to the symbols already bound by this
+@var{varlist}.  This is useful if you want to destructure @var{source}
+recursively but also want to name the intermediate structures.
+
+See @code{-let} (@pxref{-let}) for the list of all possible patterns.
+
+@example
+@group
+(-let* (((a . b) (cons 1 2)) ((c . d) (cons 3 4))) (list a b c d))
+    @result{} '(1 2 3 4)
+@end group
+@group
+(-let* (((a . b) (cons 1 (cons 2 3))) ((c . d) b)) (list a b c d))
+    @result{} '(1 (2 . 3) 2 3)
+@end group
+@group
+(-let* (((&alist "foo" foo "bar" bar) (list (cons "foo" 1) (cons "bar" (list 'a 'b 'c)))) ((a b c) bar)) (list foo a b c bar))
+    @result{} '(1 a b c (a b c))
+@end group
+@end example
+@end defun
+
+@anchor{-lambda}
+@defun -lambda (match-form &rest body)
+Return a lambda which destructures its input as @var{match-form} and executes @var{body}.
+
+Note that you have to enclose the @var{match-form} in a pair of parens,
+such that:
+
+    (-lambda (x) body)
+    (-lambda (x y ...) body)
+
+has the usual semantics of @code{lambda}.  Furthermore, these get
+translated into normal lambda, so there is no performance
+penalty.
+
+See @code{-let} (@pxref{-let}) for the description of destructuring mechanism.
+
+@example
+@group
+(-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6)))
+    @result{} '(3 7 11)
+@end group
+@group
+(-map (-lambda ([x y]) (+ x y)) '([1 2] [3 4] [5 6]))
+    @result{} '(3 7 11)
+@end group
+@group
+(funcall (-lambda ((_ . a) (_ . b)) (-concat a b)) '(1 2 3) '(4 5 6))
+    @result{} '(2 3 5 6)
+@end group
+@end example
+@end defun
+
+
+@node Side-effects
+@section Side-effects
+
+
+Functions iterating over lists for side-effect only.
+
+
+@anchor{-each}
+@defun -each (list fn)
+Call @var{fn} with every item in @var{list}. Return nil, used for side-effects only.
+
+@example
+@group
+(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))))
+    @result{} nil
+@end group
+@group
+(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s)
+    @result{} '(3 2 1)
+@end group
+@group
+(let (s) (--each '(1 2 3) (setq s (cons it s))) s)
+    @result{} '(3 2 1)
+@end group
+@end example
+@end defun
+
+@anchor{-each-while}
+@defun -each-while (list pred fn)
+Call @var{fn} with every item in @var{list} while (@var{pred} item) is non-nil.
+Return nil, used for side-effects only.
+
+@example
+@group
+(let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s)
+    @result{} '(4 2)
+@end group
+@group
+(let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s)
+    @result{} '(2 1)
+@end group
+@end example
+@end defun
+
+@anchor{-dotimes}
+@defun -dotimes (num fn)
+Repeatedly calls @var{fn} (presumably for side-effects) passing in integers from 0 through @var{num-1}.
+
+@example
+@group
+(let (s) (-dotimes 3 (lambda (n) (!cons n s))) s)
+    @result{} '(2 1 0)
+@end group
+@group
+(let (s) (--dotimes 5 (!cons it s)) s)
+    @result{} '(4 3 2 1 0)
+@end group
+@end example
+@end defun
+
+
+@node Destructive operations
+@section Destructive operations
+
+@anchor{!cons}
+@defun !cons (car cdr)
+Destructive: Set @var{cdr} to the cons of @var{car} and @var{cdr}.
+
+@example
+@group
+(let (l) (!cons 5 l) l)
+    @result{} '(5)
+@end group
+@group
+(let ((l '(3))) (!cons 5 l) l)
+    @result{} '(5 3)
+@end group
+@end example
+@end defun
+
+@anchor{!cdr}
+@defun !cdr (list)
+Destructive: Set @var{list} to the cdr of @var{list}.
+
+@example
+@group
+(let ((l '(3))) (!cdr l) l)
+    @result{} '()
+@end group
+@group
+(let ((l '(3 5))) (!cdr l) l)
+    @result{} '(5)
+@end group
+@end example
+@end defun
+
+
+@node Function combinators
+@section Function combinators
+
+
+These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
+
+
+@anchor{-partial}
+@defun -partial (fn &rest args)
+Takes a function @var{fn} and fewer than the normal arguments to @var{fn},
+and returns a fn that takes a variable number of additional @var{args}.
+When called, the returned function calls @var{fn} with @var{args} first and
+then additional args.
+
+@example
+@group
+(funcall (-partial '- 5) 3)
+    @result{} 2
+@end group
+@group
+(funcall (-partial '+ 5 2) 3)
+    @result{} 10
+@end group
+@end example
+@end defun
+
+@anchor{-rpartial}
+@defun -rpartial (fn &rest args)
+Takes a function @var{fn} and fewer than the normal arguments to @var{fn},
+and returns a fn that takes a variable number of additional @var{args}.
+When called, the returned function calls @var{fn} with the additional
+args first and then @var{args}.
+
+@example
+@group
+(funcall (-rpartial '- 5) 8)
+    @result{} 3
+@end group
+@group
+(funcall (-rpartial '- 5 2) 10)
+    @result{} 3
+@end group
+@end example
+@end defun
+
+@anchor{-juxt}
+@defun -juxt (&rest fns)
+Takes a list of functions and returns a fn that is the
+juxtaposition of those fns. The returned fn takes a variable
+number of args, and returns a list containing the result of
+applying each fn to the args (left-to-right).
+
+@example
+@group
+(funcall (-juxt '+ '-) 3 5)
+    @result{} '(8 -2)
+@end group
+@group
+(-map (-juxt 'identity 'square) '(1 2 3))
+    @result{} '((1 1) (2 4) (3 9))
+@end group
+@end example
+@end defun
+
+@anchor{-compose}
+@defun -compose (&rest fns)
+Takes a list of functions and returns a fn that is the
+composition of those fns. The returned fn takes a variable
+number of arguments, and returns the result of applying
+each fn to the result of applying the previous fn to
+the arguments (right-to-left).
+
+@example
+@group
+(funcall (-compose 'square '+) 2 3)
+    @result{} (square (+ 2 3))
+@end group
+@group
+(funcall (-compose 'identity 'square) 3)
+    @result{} (square 3)
+@end group
+@group
+(funcall (-compose 'square 'identity) 3)
+    @result{} (square 3)
+@end group
+@end example
+@end defun
+
+@anchor{-applify}
+@defun -applify (fn)
+Changes an n-arity function @var{fn} to a 1-arity function that
+expects a list with n items as arguments
+
+@example
+@group
+(-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5)))
+    @result{} '(3 6 15)
+@end group
+@group
+(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5)))
+    @result{} '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+@end group
+@group
+(funcall (-applify '<) '(3 6))
+    @result{} t
+@end group
+@end example
+@end defun
+
+@anchor{-on}
+@defun -on (operator transformer)
+Return a function of two arguments that first applies
+@var{transformer} to each of them and then applies @var{operator} on the
+results (in the same order).
+
+In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
+
+@example
+@group
+(-sort (-on '< 'length) '((1 2 3) (1) (1 2)))
+    @result{} '((1) (1 2) (1 2 3))
+@end group
+@group
+(-min-by (-on '> 'length) '((1 2 3) (4) (1 2)))
+    @result{} '(4)
+@end group
+@group
+(-min-by (-on 'string-lessp 'int-to-string) '(2 100 22))
+    @result{} 22
+@end group
+@end example
+@end defun
+
+@anchor{-flip}
+@defun -flip (func)
+Swap the order of arguments for binary function @var{func}.
+
+In types: (a -> b -> c) -> b -> a -> c
+
+@example
+@group
+(funcall (-flip '<) 2 1)
+    @result{} t
+@end group
+@group
+(funcall (-flip '-) 3 8)
+    @result{} 5
+@end group
+@group
+(-sort (-flip '<) '(4 3 6 1))
+    @result{} '(6 4 3 1)
+@end group
+@end example
+@end defun
+
+@anchor{-const}
+@defun -const (c)
+Return a function that returns @var{c} ignoring any additional arguments.
+
+In types: a -> b -> a
+
+@example
+@group
+(funcall (-const 2) 1 3 "foo")
+    @result{} 2
+@end group
+@group
+(-map (-const 1) '("a" "b" "c" "d"))
+    @result{} '(1 1 1 1)
+@end group
+@group
+(-sum (-map (-const 1) '("a" "b" "c" "d")))
+    @result{} 4
+@end group
+@end example
+@end defun
+
+@anchor{-cut}
+@defun -cut (&rest params)
+Take n-ary function and n arguments and specialize some of them.
+Arguments denoted by <> will be left unspecialized.
+
+See @var{srfi-26} for detailed description.
+
+@example
+@group
+(funcall (-cut list 1 <> 3 <> 5) 2 4)
+    @result{} '(1 2 3 4 5)
+@end group
+@group
+(-map (-cut funcall <> 5) '(1+ 1- (lambda (x) (/ 1.0 x))))
+    @result{} '(6 4 0.2)
+@end group
+@group
+(-filter (-cut < <> 5) '(1 3 5 7 9))
+    @result{} '(1 3)
+@end group
+@end example
+@end defun
+
+@anchor{-not}
+@defun -not (pred)
+Take an unary predicates @var{pred} and return an unary predicate
+that returns t if @var{pred} returns nil and nil if @var{pred} returns
+non-nil.
+
+@example
+@group
+(funcall (-not 'even?) 5)
+    @result{} t
+@end group
+@group
+(-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8))
+    @result{} '(1 2 3 4)
+@end group
+@end example
+@end defun
+
+@anchor{-orfn}
+@defun -orfn (&rest preds)
+Take list of unary predicates @var{preds} and return an unary
+predicate with argument x that returns non-nil if at least one of
+the @var{preds} returns non-nil on x.
+
+In types: [a -> Bool] -> a -> Bool
+
+@example
+@group
+(-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10))
+    @result{} '(1 2 3 4 6 8 10)
+@end group
+@group
+(funcall (-orfn 'stringp 'even?) "foo")
+    @result{} t
+@end group
+@end example
+@end defun
+
+@anchor{-andfn}
+@defun -andfn (&rest preds)
+Take list of unary predicates @var{preds} and return an unary
+predicate with argument x that returns non-nil if all of the
+@var{preds} returns non-nil on x.
+
+In types: [a -> Bool] -> a -> Bool
+
+@example
+@group
+(funcall (-andfn (-cut < <> 10) 'even?) 6)
+    @result{} t
+@end group
+@group
+(funcall (-andfn (-cut < <> 10) 'even?) 12)
+    @result{} nil
+@end group
+@group
+(-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10))
+    @result{} '(1 3 5)
+@end group
+@end example
+@end defun
+
+@anchor{-iteratefn}
+@defun -iteratefn (fn n)
+Return a function @var{fn} composed @var{n} times with itself.
+
+@var{fn} is a unary function.  If you need to use a function of higher
+arity, use @code{-applify} (@pxref{-applify}) first to turn it into an unary function.
+
+With n = 0, this acts as identity function.
+
+In types: (a -> a) -> Int -> a -> a.
+
+This function satisfies the following law:
+
+    (funcall (-iteratefn fn n) init) = (-last-item (-iterate fn init (1+ n))).
+
+@example
+@group
+(funcall (-iteratefn (lambda (x) (* x x)) 3) 2)
+    @result{} 256
+@end group
+@group
+(funcall (-iteratefn '1+ 3) 1)
+    @result{} 4
+@end group
+@group
+(funcall (-iteratefn 'cdr 3) '(1 2 3 4 5))
+    @result{} '(4 5)
+@end group
+@end example
+@end defun
+
+@anchor{-fixfn}
+@defun -fixfn (fn &optional equal-test halt-test)
+Return a function that computes the (least) fixpoint of @var{fn}.
+
+@var{fn} must be a unary function. The returned lambda takes a single
+argument, @var{x}, the initial value for the fixpoint iteration. The
+iteration halts when either of the following conditions is satisified:
+
+ 1. Iteration converges to the fixpoint, with equality being
+      tested using @var{equal-test}. If @var{equal-test} is not specified,
+      @code{equal} is used. For functions over the floating point
+      numbers, it may be necessary to provide an appropriate
+      appoximate comparsion test.
+
+ 2. @var{halt-test} returns a non-nil value. @var{halt-test} defaults to a
+      simple counter that returns t after @code{-fixfn-max-iterations},
+      to guard against infinite iteration. Otherwise, @var{halt-test}
+      must be a function that accepts a single argument, the
+      current value of @var{x}, and returns non-nil as long as iteration
+      should continue. In this way, a more sophisticated
+      convergence test may be supplied by the caller.
+
+The return value of the lambda is either the fixpoint or, if
+iteration halted before converging, a cons with car @code{halted} and
+cdr the final output from @var{halt-test}.
+
+In types: (a -> a) -> a -> a.
+
+@example
+@group
+(funcall (-fixfn 'cos 'approx-equal) 0.7)
+    @result{} 0.7390851332151607
+@end group
+@group
+(funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0)
+    @result{} 1.8555845286409378
+@end group
+@group
+(funcall (-fixfn 'sin 'approx-equal) 0.1)
+    @result{} '(halted . t)
+@end group
+@end example
+@end defun
+
+@anchor{-prodfn}
+@defun -prodfn (&rest fns)
+Take a list of n functions and return a function that takes a
+list of length n, applying i-th function to i-th element of the
+input list.  Returns a list of length n.
+
+In types (for n=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
+
+This function satisfies the following laws:
+
+    (-compose (-prodfn f g ...) (-prodfn f' g' ...)) = (-prodfn (-compose f f') (-compose g g') ...)
+    (-prodfn f g ...) = (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1)) ...)
+    (-compose (-prodfn f g ...) (-juxt f' g' ...)) = (-juxt (-compose f f') (-compose g g') ...)
+    (-compose (-partial 'nth n) (-prod f1 f2 ...)) = (-compose fn (-partial 'nth n))
+
+@example
+@group
+(funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3))
+    @result{} '(2 1 "3")
+@end group
+@group
+(-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8)))
+    @result{} '((2 1) (4 3) (6 5) (8 7))
+@end group
+@group
+(apply '+ (funcall (-prodfn 'length 'string-to-int) '((1 2 3) "15")))
+    @result{} 18
+@end group
+@end example
+@end defun
+
+
+@node Development
+@chapter Development
+
+The dash repository is hosted on GitHub:
+@uref{https://github.com/magnars/dash.el}
+
+@menu
+* Contribute::          How to contribute
+* Changes::             List of significant changes by version
+* Contributors::        List of contributors
+@end menu
+
+@node Contribute
+@section Contribute
+
+Yes, please do. Pure functions in the list manipulation realm only,
+please. There's a suite of tests in @verb{~dev/examples.el~}, so remember to add
+tests for your function, or it might get broken later.
+
+Run the tests with @code{./run-tests.sh}. Create the docs with
+@code{./create-docs.sh}. I highly recommend that you install these as a
+pre-commit hook, so that the tests are always running and the docs are
+always in sync:
+
+@verbatim
+cp pre-commit.sh .git/hooks/pre-commit
+@end verbatim
+
+Oh, and don't edit @file{README.md} directly, it is auto-generated.
+Change @file{readme-template.md} or @file{examples-to-docs.el}
+instead.  The same goes for the info manual.
+
+@node Changes
+@section Changes
+
+@noindent Changes in 2.10:
+
+@itemize
+@item
+Add @code{-let} destructuring to @code{-if-let} and @code{-when-let}
+(Fredrik Bergroth)
+@end itemize
+
+@noindent Changes in 2.9:
+
+@itemize
+@item
+Add @code{-let}, @code{-let*} and @code{-lambda} with destructuring
+@item
+Add @code{-tree-seq} and @code{-tree-map-nodes}
+@item
+Add @code{-non-nil}
+@item
+Add @code{-fix}
+@item
+Add @code{-fixfn} (dash-functional 1.2)
+@item
+Add @code{-copy} (Wilfred Hughes)
+@end itemize
+
+@noindent Changes in 2.8:
+
+@itemize
+@item
+Add @code{-butlast}
+@end itemize
+
+@noindent Changes in 2.7:
+
+@itemize
+@item
+@code{-zip} now supports more than two lists (Steve Lamb)
+@item
+Add @code{-cycle}, @code{-pad}, @code{-annotate}, @code{-zip-fill}
+(Steve Lamb)
+@item
+Add @code{-table}, @code{-table-flat} (finite cartesian product)
+@item
+Add @code{-flatten-n}
+@item
+@code{-slice} now supports "step" argument
+@item
+Add functional combinators @code{-iteratefn}, @code{-prodfn}
+@item
+Add @code{-replace}, @code{-splice}, @code{-splice-list} which
+generalize @code{-replace-at} and @code{-insert-at}
+@item
+Add @code{-compose}, @code{-iteratefn} and @code{-prodfn}
+(dash-functional 1.1)
+@end itemize
+
+@noindent Changes in 2.6:
+
+@itemize
+@item
+Add @code{-is-prefix-p}, @code{-is-suffix-p}, @code{-is-infix-p}
+(Matus Goljer)
+@item
+Add @code{-iterate}, @code{-unfold} (Matus Goljer)
+@item
+Add @code{-split-on}, @code{-split-when} (Matus Goljer)
+@item
+Add @code{-find-last-index} (Matus Goljer)
+@item
+Add @code{-list} (Johan Andersson)
+@end itemize
+
+@noindent Changes in 2.5:
+
+@itemize
+@item
+Add @code{-same-items?} (Johan Andersson)
+@item
+A few bugfixes
+@end itemize
+
+@noindent Changes in 2.4:
+
+@itemize
+@item
+Add @code{-snoc} (Matus Goljer)
+@item
+Add @code{-replace-at}, @code{-update-at}, @code{-remove-at}, and
+@code{-remove-at-indices} (Matus Goljer)
+@end itemize
+
+@noindent Changes in 2.3:
+
+@itemize
+@item
+Add tree operations (Matus Goljer)
+@item
+Make font-lock optional
+@end itemize
+
+@noindent Changes in 2.2:
+
+@itemize
+@item
+Add @code{-compose} (Christina Whyte)
+@end itemize
+
+@noindent Changes in 2.1:
+
+@itemize
+@item
+Add indexing operations (Matus Goljer)
+@end itemize
+
+@noindent Changes in 2.0:
+
+@itemize
+@item
+Split out @code{dash-functional.el} (Matus Goljer)
+@item
+Add @code{-andfn}, @code{-orfn}, @code{-not}, @code{-cut},
+@code{-const}, @code{-flip} and @code{-on}. (Matus Goljer)
+@item
+Fix @code{-min}, @code{-max}, @code{-min-by} and @code{-max-by} (Matus
+Goljer)
+@end itemize
+
+@noindent Changes in 1.8:
+
+@itemize
+@item
+Add @code{-first-item} and @code{-last-item} (Wilfred Hughes)
+@end itemize
+
+@noindent Changes in 1.7:
+
+@itemize
+@item
+Add @code{-rotate} (Matus Goljer)
+@end itemize
+
+@noindent Changes in 1.6:
+
+@itemize
+@item
+Add @code{-min}, @code{-max}, @code{-min-by} and @code{-max-by} (Johan
+Andersson)
+@end itemize
+
+@noindent Changes in 1.5:
+
+@itemize
+@item
+Add @code{-sum} and @code{-product} (Johan Andersson)
+@end itemize
+
+@noindent Changes in 1.4:
+
+@itemize
+@item
+Add @code{-sort}
+@item
+Add @code{-reduce-r} (Matus Goljer)
+@item
+Add @code{-reduce-r-from} (Matus Goljer)
+@end itemize
+
+@noindent Changes in 1.3:
+
+@itemize
+@item
+Add @code{-partition-in-steps}
+@item
+Add @code{-partition-all-in-steps}
+@end itemize
+
+@noindent Changes in 1.2:
+
+@itemize
+@item
+Add @code{-last} (Matus Goljer)
+@item
+Add @code{-insert-at} (Emanuel Evans)
+@item
+Add @code{-when-let} and @code{-if-let} (Emanuel Evans)
+@item
+Add @code{-when-let*} and @code{-if-let*} (Emanuel Evans)
+@item
+Some bugfixes
+@end itemize
+
+@node Contributors
+@section Contributors
+
+@itemize
+@item
+@uref{https://github.com/Fuco1,Matus Goljer} contributed lots of
+features and functions.
+@item
+@uref{https://github.com/tkf,Takafumi Arakaki} contributed
+@code{-group-by}.
+@item
+@uref{https://github.com/tali713,tali713} is the author of
+@code{-applify}.
+@item
+@uref{https://github.com/vemv,Víctor M. Valenzuela} contributed
+@code{-repeat}.
+@item
+@uref{https://github.com/nicferrier,Nic Ferrier} contributed
+@code{-cons*}.
+@item
+@uref{https://github.com/Wilfred,Wilfred Hughes} contributed
+@code{-slice}, @code{-first-item} and @code{-last-item}.
+@item
+@uref{https://github.com/shosti,Emanuel Evans} contributed
+@code{-if-let}, @code{-when-let} and @code{-insert-at}.
+@item
+@uref{https://github.com/rejeep,Johan Andersson} contributed
+@code{-sum}, @code{-product} and @code{-same-items?}
+@item
+@uref{https://github.com/kurisuwhyte,Christina Whyte} contributed
+@code{-compose}
+@item
+@uref{https://github.com/steventlamb,Steve Lamb} contributed
+@code{-cycle}, @code{-pad}, @code{-annotate}, @code{-zip-fill} and an
+n-ary version of @code{-zip}.
+@item
+@uref{https://github.com/fbergroth,Fredrik Bergroth} made the
+@code{-if-let} family use @code{-let} destructuring and improved
+script for generating documentation.
+@item
+@uref{https://github.com/holomorph,Mark Oteiza} contributed the
+script to create an info manual.
+@end itemize
+
+Thanks!
+
+@node Index
+@unnumbered Index
+
+@printindex cp
+
+@bye

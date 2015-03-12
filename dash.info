@@ -1,0 +1,2675 @@
+This is dash.info, produced by makeinfo version 4.8 from dash.texi.
+
+INFO-DIR-SECTION Emacs
+START-INFO-DIR-ENTRY
+* Dash: (dash.info). A modern list library for GNU Emacs
+END-INFO-DIR-ENTRY
+
+   This manual is for `dash.el' version 2.10.0.
+
+   Copyright © 2012-2015 Magnar Sveen
+
+     This program is free software; you can redistribute it and/or
+     modify it under the terms of the GNU General Public License as
+     published by the Free Software Foundation, either version 3 of
+     the License, or (at your option) any later version.
+
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     You should have received a copy of the GNU General Public License
+     along with this program.  If not, see
+     `http://www.gnu.org/licenses/'.
+
+
+File: dash.info,  Node: Top,  Next: Installation,  Up: (dir)
+
+dash
+****
+
+This manual is for `dash.el' version 2.10.0.
+
+   Copyright © 2012-2015 Magnar Sveen
+
+     This program is free software; you can redistribute it and/or
+     modify it under the terms of the GNU General Public License as
+     published by the Free Software Foundation, either version 3 of
+     the License, or (at your option) any later version.
+
+     This program is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     You should have received a copy of the GNU General Public License
+     along with this program.  If not, see
+     `http://www.gnu.org/licenses/'.
+
+* Menu:
+
+* Installation::
+* Functions::
+* Development::
+* Index::
+
+--- The Detailed Node Listing ---
+
+Installation
+
+* Using in a package::
+* Syntax highlighting of dash functions::
+
+Functions
+
+* Maps::
+* Sublist selection::
+* List to list::
+* Reductions::
+* Unfolding::
+* Predicates::
+* Partitioning::
+* Indexing::
+* Set operations::
+* Other list operations::
+* Tree operations::
+* Threading macros::
+* Binding::
+* Side-effects::
+* Destructive operations::
+* Function combinators::
+
+Development
+
+* Contribute::          How to contribute
+* Changes::             List of significant changes by version
+* Contributors::        List of contributors
+
+
+File: dash.info,  Node: Installation,  Next: Functions,  Prev: Top,  Up: Top
+
+1 Installation
+**************
+
+It's available on marmalade (http://marmalade-repo.org/) and Melpa
+(http://melpa.milkbox.net/); use `M-x package-install':
+
+`M-x package-install <RET> dash'
+     Install the dash library.
+
+`M-x package-install <RET> dash-functional'
+     Optional, if you want the function combinators.
+
+   Alternatively, you can just dump dash.el or dash-functional.el in
+your load path somewhere.
+
+* Menu:
+
+* Using in a package::
+* Syntax highlighting of dash functions::
+
+
+File: dash.info,  Node: Using in a package,  Next: Syntax highlighting of dash functions,  Up: Installation
+
+1.1 Using in a package
+======================
+
+Add this to the big comment block at the top:
+
+     ;; Package-Requires: ((dash "2.10.0"))
+
+To get function combinators:
+
+     ;; Package-Requires: ((dash "2.10.0") (dash-functional "1.2.0") (emacs "24"))
+
+
+File: dash.info,  Node: Syntax highlighting of dash functions,  Prev: Using in a package,  Up: Installation
+
+1.2 Syntax highlighting of dash functions
+=========================================
+
+Font lock of dash functions in emacs lisp buffers is now optional.
+Include this in your emacs settings to get syntax highlighting:
+
+     (eval-after-load "dash" '(dash-enable-font-lock))
+
+
+File: dash.info,  Node: Functions,  Next: Development,  Prev: Installation,  Up: Top
+
+2 Functions
+***********
+
+This chapter contains reference documentation for the dash
+application programming interface (API).  All functions and
+constructs in the library are prefixed with a dash (-).
+
+   There are also anaphoric versions of functions where that makes
+sense, prefixed with two dashes instead of one.
+
+   For instance, while `-map' takes a function to map over the list,
+one can also use the anaphoric form with double dashes - which will
+then be executed with `it' exposed as the list item. Here's an
+example:
+
+     (-map (lambda (n) (* n n)) '(1 2 3 4)) ;; normal version
+
+     (--map (* it it) '(1 2 3 4)) ;; anaphoric version
+
+Of course, the original can also be written like
+
+     (defun square (n) (* n n))
+
+     (-map 'square '(1 2 3 4))
+
+which demonstrates the usefulness of both versions.
+
+* Menu:
+
+* Maps::
+* Sublist selection::
+* List to list::
+* Reductions::
+* Unfolding::
+* Predicates::
+* Partitioning::
+* Indexing::
+* Set operations::
+* Other list operations::
+* Tree operations::
+* Threading macros::
+* Binding::
+* Side-effects::
+* Destructive operations::
+* Function combinators::
+
+
+File: dash.info,  Node: Maps,  Next: Sublist selection,  Up: Functions
+
+2.1 Maps
+========
+
+Functions in this category take a transforming function, which is
+then applied sequentially to each or selected elements of the input
+list.  The results are collected in order and returned as new list.
+
+ -- Function: -map (fn list)
+     Return a new list consisting of the result of applying FN to the
+     items in LIST.
+
+          (-map (lambda (num) (* num num)) '(1 2 3 4))
+              => '(1 4 9 16)
+          (-map 'square '(1 2 3 4))
+              => '(1 4 9 16)
+          (--map (* it it) '(1 2 3 4))
+              => '(1 4 9 16)
+
+ -- Function: -map-when (pred rep list)
+     Return a new list where the elements in LIST that does not match
+     the PRED function are unchanged, and where the elements in LIST
+     that do match the PRED function are mapped through the REP
+     function.
+
+     Alias: `-replace-where'
+
+     See also: `-update-at' (*note -update-at::)
+
+          (-map-when 'even? 'square '(1 2 3 4))
+              => '(1 4 3 16)
+          (--map-when (> it 2) (* it it) '(1 2 3 4))
+              => '(1 2 9 16)
+          (--map-when (= it 2) 17 '(1 2 3 4))
+              => '(1 17 3 4)
+
+ -- Function: -map-indexed (fn list)
+     Return a new list consisting of the result of (FN index item)
+     for each item in LIST.
+
+     In the anaphoric form `--map-indexed', the index is exposed as
+     `it-index`.
+
+          (-map-indexed (lambda (index item) (- item index)) '(1 2 3 4))
+              => '(1 1 1 1)
+          (--map-indexed (- it it-index) '(1 2 3 4))
+              => '(1 1 1 1)
+
+ -- Function: -annotate (fn list)
+     Return a list of cons cells where each cell is FN applied to each
+     element of LIST paired with the unmodified element of LIST.
+
+          (-annotate '1+ '(1 2 3))
+              => '((2 . 1) (3 . 2) (4 . 3))
+          (-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world")))
+              => '((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
+          (--annotate (< 1 it) '(0 1 2 3))
+              => '((nil . 0) (nil . 1) (t . 2) (t . 3))
+
+ -- Function: -splice (pred fun list)
+     Splice lists generated by FUN in place of elements matching PRED
+     in LIST.
+
+     FUN takes the element matching PRED as input.
+
+     This function can be used as replacement for `,@' in case you
+     need to splice several lists at marked positions (for example
+     with keywords).
+
+     See also: `-splice-list' (*note -splice-list::), `-insert-at'
+     (*note -insert-at::)
+
+          (-splice 'even? (lambda (x) (list x x)) '(1 2 3 4))
+              => '(1 2 2 3 4 4)
+          (--splice 't (list it it) '(1 2 3 4))
+              => '(1 1 2 2 3 3 4 4)
+          (--splice (equal it :magic) '((list of) (magical) (code)) '((foo) (bar) :magic (baz)))
+              => '((foo) (bar) (list of) (magical) (code) (baz))
+
+ -- Function: -splice-list (pred new-list list)
+     Splice NEW-LIST in place of elements matching PRED in LIST.
+
+     See also: `-splice' (*note -splice::), `-insert-at' (*note
+     -insert-at::)
+
+          (-splice-list 'keywordp '(a b c) '(1 :foo 2))
+              => '(1 a b c 2)
+          (-splice-list 'keywordp nil '(1 :foo 2))
+              => '(1 2)
+
+ -- Function: -mapcat (fn list)
+     Return the concatenation of the result of mapping FN over LIST.
+     Thus function FN should return a list.
+
+          (-mapcat 'list '(1 2 3))
+              => '(1 2 3)
+          (-mapcat (lambda (item) (list 0 item)) '(1 2 3))
+              => '(0 1 0 2 0 3)
+          (--mapcat (list 0 it) '(1 2 3))
+              => '(0 1 0 2 0 3)
+
+ -- Function: -copy (arg)
+     Create a shallow copy of LIST.
+
+          (-copy '(1 2 3))
+              => '(1 2 3)
+          (let ((a '(1 2 3))) (eq a (-copy a)))
+              => nil
+
+
+File: dash.info,  Node: Sublist selection,  Next: List to list,  Prev: Maps,  Up: Functions
+
+2.2 Sublist selection
+=====================
+
+Functions returning a sublist of the original list.
+
+ -- Function: -filter (pred list)
+     Return a new list of the items in LIST for which PRED returns a
+     non-nil value.
+
+     Alias: `-select'
+
+          (-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4))
+              => '(2 4)
+          (-filter 'even? '(1 2 3 4))
+              => '(2 4)
+          (--filter (= 0 (% it 2)) '(1 2 3 4))
+              => '(2 4)
+
+ -- Function: -remove (pred list)
+     Return a new list of the items in LIST for which PRED returns
+     nil.
+
+     Alias: `-reject'
+
+          (-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4))
+              => '(1 3)
+          (-remove 'even? '(1 2 3 4))
+              => '(1 3)
+          (--remove (= 0 (% it 2)) '(1 2 3 4))
+              => '(1 3)
+
+ -- Function: -non-nil (list)
+     Return all non-nil elements of LIST.
+
+          (-non-nil '(1 nil 2 nil nil 3 4 nil 5 nil))
+              => '(1 2 3 4 5)
+
+ -- Function: -slice (list from &optional to step)
+     Return copy of LIST, starting from index FROM to index TO.
+
+     FROM or TO may be negative.  These values are then interpreted
+     modulo the length of the list.
+
+     If STEP is a number, only each STEPth item in the resulting
+     section is returned.  Defaults to 1.
+
+          (-slice '(1 2 3 4 5) 1)
+              => '(2 3 4 5)
+          (-slice '(1 2 3 4 5) 0 3)
+              => '(1 2 3)
+          (-slice '(1 2 3 4 5 6 7 8 9) 1 -1 2)
+              => '(2 4 6 8)
+
+ -- Function: -take (n list)
+     Return a new list of the first N items in LIST, or all items if
+     there are fewer than N.
+
+          (-take 3 '(1 2 3 4 5))
+              => '(1 2 3)
+          (-take 17 '(1 2 3 4 5))
+              => '(1 2 3 4 5)
+
+ -- Function: -drop (n list)
+     Return the tail of LIST without the first N items.
+
+          (-drop 3 '(1 2 3 4 5))
+              => '(4 5)
+          (-drop 17 '(1 2 3 4 5))
+              => '()
+
+ -- Function: -take-while (pred list)
+     Return a new list of successive items from LIST while (PRED
+     item) returns a non-nil value.
+
+          (-take-while 'even? '(1 2 3 4))
+              => '()
+          (-take-while 'even? '(2 4 5 6))
+              => '(2 4)
+          (--take-while (< it 4) '(1 2 3 4 3 2 1))
+              => '(1 2 3)
+
+ -- Function: -drop-while (pred list)
+     Return the tail of LIST starting from the first item for which
+     (PRED item) returns nil.
+
+          (-drop-while 'even? '(1 2 3 4))
+              => '(1 2 3 4)
+          (-drop-while 'even? '(2 4 5 6))
+              => '(5 6)
+          (--drop-while (< it 4) '(1 2 3 4 3 2 1))
+              => '(4 3 2 1)
+
+ -- Function: -select-by-indices (indices list)
+     Return a list whose elements are elements from LIST selected as
+     `(nth i list)` for all i from INDICES.
+
+          (-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r"))
+              => '("c" "o" "l" "o" "r")
+          (-select-by-indices '(2 1 0) '("a" "b" "c"))
+              => '("c" "b" "a")
+          (-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l"))
+              => '("f" "a" "r" "f" "a" "l" "l" "a")
+
+
+File: dash.info,  Node: List to list,  Next: Reductions,  Prev: Sublist selection,  Up: Functions
+
+2.3 List to list
+================
+
+Bag of various functions which modify input list.
+
+ -- Function: -keep (fn list)
+     Return a new list of the non-nil results of applying FN to the
+     items in LIST.
+
+          (-keep 'cdr '((1 2 3) (4 5) (6)))
+              => '((2 3) (5))
+          (-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6))
+              => '(40 50 60)
+          (--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6))
+              => '(40 50 60)
+
+ -- Function: -concat (&rest lists)
+     Return a new list with the concatenation of the elements in the
+     supplied LISTS.
+
+          (-concat '(1))
+              => '(1)
+          (-concat '(1) '(2))
+              => '(1 2)
+          (-concat '(1) '(2 3) '(4))
+              => '(1 2 3 4)
+
+ -- Function: -flatten (l)
+     Take a nested list L and return its contents as a single, flat
+     list.
+
+     See also: `-flatten-n' (*note -flatten-n::)
+
+          (-flatten '((1)))
+              => '(1)
+          (-flatten '((1 (2 3) (((4 (5)))))))
+              => '(1 2 3 4 5)
+          (-flatten '(1 2 (3 . 4)))
+              => '(1 2 (3 . 4))
+
+ -- Function: -flatten-n (num list)
+     Flatten NUM levels of a nested LIST.
+
+     See also: `-flatten' (*note -flatten::)
+
+          (-flatten-n 1 '((1 2) ((3 4) ((5 6)))))
+              => '(1 2 (3 4) ((5 6)))
+          (-flatten-n 2 '((1 2) ((3 4) ((5 6)))))
+              => '(1 2 3 4 (5 6))
+          (-flatten-n 3 '((1 2) ((3 4) ((5 6)))))
+              => '(1 2 3 4 5 6)
+
+ -- Function: -replace (old new list)
+     Replace all OLD items in LIST with NEW.
+
+     Elements are compared using `equal'.
+
+     See also: `-replace-at' (*note -replace-at::)
+
+          (-replace 1 "1" '(1 2 3 4 3 2 1))
+              => '("1" 2 3 4 3 2 "1")
+          (-replace "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo"))
+              => '("a" "nice" "bar" "sentence" "about" "bar")
+          (-replace 1 2 nil)
+              => nil
+
+ -- Function: -insert-at (n x list)
+     Return a list with X inserted into LIST at position N.
+
+     See also: `-splice' (*note -splice::), `-splice-list' (*note
+     -splice-list::)
+
+          (-insert-at 1 'x '(a b c))
+              => '(a x b c)
+          (-insert-at 12 'x '(a b c))
+              => '(a b c x)
+
+ -- Function: -replace-at (n x list)
+     Return a list with element at Nth position in LIST replaced with
+     X.
+
+     See also: `-replace' (*note -replace::)
+
+          (-replace-at 0 9 '(0 1 2 3 4 5))
+              => '(9 1 2 3 4 5)
+          (-replace-at 1 9 '(0 1 2 3 4 5))
+              => '(0 9 2 3 4 5)
+          (-replace-at 4 9 '(0 1 2 3 4 5))
+              => '(0 1 2 3 9 5)
+
+ -- Function: -update-at (n func list)
+     Return a list with element at Nth position in LIST replaced with
+     `(func (nth n list))`.
+
+     See also: `-map-when' (*note -map-when::)
+
+          (-update-at 0 (lambda (x) (+ x 9)) '(0 1 2 3 4 5))
+              => '(9 1 2 3 4 5)
+          (-update-at 1 (lambda (x) (+ x 8)) '(0 1 2 3 4 5))
+              => '(0 9 2 3 4 5)
+          (--update-at 2 (length it) '("foo" "bar" "baz" "quux"))
+              => '("foo" "bar" 3 "quux")
+
+ -- Function: -remove-at (n list)
+     Return a list with element at Nth position in LIST removed.
+
+     See also: `-remove-at-indices' (*note -remove-at-indices::),
+     `-remove' (*note -remove::)
+
+          (-remove-at 0 '("0" "1" "2" "3" "4" "5"))
+              => '("1" "2" "3" "4" "5")
+          (-remove-at 1 '("0" "1" "2" "3" "4" "5"))
+              => '("0" "2" "3" "4" "5")
+          (-remove-at 2 '("0" "1" "2" "3" "4" "5"))
+              => '("0" "1" "3" "4" "5")
+
+ -- Function: -remove-at-indices (indices list)
+     Return a list whose elements are elements from LIST without
+     elements selected as `(nth i list)` for all i from INDICES.
+
+     See also: `-remove-at' (*note -remove-at::), `-remove' (*note
+     -remove::)
+
+          (-remove-at-indices '(0) '("0" "1" "2" "3" "4" "5"))
+              => '("1" "2" "3" "4" "5")
+          (-remove-at-indices '(0 2 4) '("0" "1" "2" "3" "4" "5"))
+              => '("1" "3" "5")
+          (-remove-at-indices '(0 5) '("0" "1" "2" "3" "4" "5"))
+              => '("1" "2" "3" "4")
+
+
+File: dash.info,  Node: Reductions,  Next: Unfolding,  Prev: List to list,  Up: Functions
+
+2.4 Reductions
+==============
+
+Functions reducing lists into single value.
+
+ -- Function: -reduce-from (fn initial-value list)
+     Return the result of applying FN to INITIAL-VALUE and the first
+     item in LIST, then applying FN to that result and the 2nd item,
+     etc. If LIST contains no items, return INITIAL-VALUE and FN is
+     not called.
+
+     In the anaphoric form `--reduce-from', the accumulated value is
+     exposed as `acc`.
+
+          (-reduce-from '- 10 '(1 2 3))
+              => 4
+          (-reduce-from (lambda (memo item) (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3))
+              => "(((10 - 1) - 2) - 3)"
+          (--reduce-from (concat acc " " it) "START" '("a" "b" "c"))
+              => "START a b c"
+
+ -- Function: -reduce-r-from (fn initial-value list)
+     Replace conses with FN, nil with INITIAL-VALUE and evaluate the
+     resulting expression. If LIST is empty, INITIAL-VALUE is
+     returned and FN is not called.
+
+     Note: this function works the same as `-reduce-from' (*note
+     -reduce-from::) but the operation associates from right instead
+     of from left.
+
+          (-reduce-r-from '- 10 '(1 2 3))
+              => -8
+          (-reduce-r-from (lambda (item memo) (concat "(" (int-to-string item) " - " memo ")")) "10" '(1 2 3))
+              => "(1 - (2 - (3 - 10)))"
+          (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c"))
+              => "a b c END"
+
+ -- Function: -reduce (fn list)
+     Return the result of applying FN to the first 2 items in LIST,
+     then applying FN to that result and the 3rd item, etc. If LIST
+     contains no items, FN must accept no arguments as well, and
+     reduce return the result of calling FN with no arguments. If
+     LIST has only 1 item, it is returned and FN is not called.
+
+     In the anaphoric form `--reduce', the accumulated value is
+     exposed as `acc`.
+
+          (-reduce '- '(1 2 3 4))
+              => -8
+          (-reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3))
+              => "1-2-3"
+          (--reduce (format "%s-%s" acc it) '(1 2 3))
+              => "1-2-3"
+
+ -- Function: -reduce-r (fn list)
+     Replace conses with FN and evaluate the resulting expression.
+     The final nil is ignored. If LIST contains no items, FN must
+     accept no arguments as well, and reduce return the result of
+     calling FN with no arguments. If LIST has only 1 item, it is
+     returned and FN is not called.
+
+     The first argument of FN is the new item, the second is the
+     accumulated value.
+
+     Note: this function works the same as `-reduce' (*note
+     -reduce::) but the operation associates from right instead of
+     from left.
+
+          (-reduce-r '- '(1 2 3 4))
+              => -2
+          (-reduce-r (lambda (item memo) (format "%s-%s" memo item)) '(1 2 3))
+              => "3-2-1"
+          (--reduce-r (format "%s-%s" acc it) '(1 2 3))
+              => "3-2-1"
+
+ -- Function: -count (pred list)
+     Counts the number of items in LIST where (PRED item) is non-nil.
+
+          (-count 'even? '(1 2 3 4 5))
+              => 2
+          (--count (< it 4) '(1 2 3 4))
+              => 3
+
+ -- Function: -sum (list)
+     Return the sum of LIST.
+
+          (-sum '())
+              => 0
+          (-sum '(1))
+              => 1
+          (-sum '(1 2 3 4))
+              => 10
+
+ -- Function: -product (list)
+     Return the product of LIST.
+
+          (-product '())
+              => 1
+          (-product '(1))
+              => 1
+          (-product '(1 2 3 4))
+              => 24
+
+ -- Function: -min (list)
+     Return the smallest value from LIST of numbers or markers.
+
+          (-min '(0))
+              => 0
+          (-min '(3 2 1))
+              => 1
+          (-min '(1 2 3))
+              => 1
+
+ -- Function: -min-by (comparator list)
+     Take a comparison function COMPARATOR and a LIST and return the
+     least element of the list by the comparison function.
+
+     See also combinator `-on' (*note -on::) which can transform the
+     values before comparing them.
+
+          (-min-by '> '(4 3 6 1))
+              => 1
+          (--min-by (> (car it) (car other)) '((1 2 3) (2) (3 2)))
+              => '(1 2 3)
+          (--min-by (> (length it) (length other)) '((1 2 3) (2) (3 2)))
+              => '(2)
+
+ -- Function: -max (list)
+     Return the largest value from LIST of numbers or markers.
+
+          (-max '(0))
+              => 0
+          (-max '(3 2 1))
+              => 3
+          (-max '(1 2 3))
+              => 3
+
+ -- Function: -max-by (comparator list)
+     Take a comparison function COMPARATOR and a LIST and return the
+     greatest element of the list by the comparison function.
+
+     See also combinator `-on' (*note -on::) which can transform the
+     values before comparing them.
+
+          (-max-by '> '(4 3 6 1))
+              => 6
+          (--max-by (> (car it) (car other)) '((1 2 3) (2) (3 2)))
+              => '(3 2)
+          (--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2)))
+              => '(1 2 3)
+
+
+File: dash.info,  Node: Unfolding,  Next: Predicates,  Prev: Reductions,  Up: Functions
+
+2.5 Unfolding
+=============
+
+Operations dual to reductions, building lists from seed value rather
+than consuming a list to produce a single value.
+
+ -- Function: -iterate (fun init n)
+     Return a list of iterated applications of FUN to INIT.
+
+     This means a list of form:
+
+     (init (fun init) (fun (fun init)) ...)
+
+     N is the length of the returned list.
+
+          (-iterate '1+ 1 10)
+              => '(1 2 3 4 5 6 7 8 9 10)
+          (-iterate (lambda (x) (+ x x)) 2 5)
+              => '(2 4 8 16 32)
+          (--iterate (* it it) 2 5)
+              => '(2 4 16 256 65536)
+
+ -- Function: -unfold (fun seed)
+     Build a list from SEED using FUN.
+
+     This is "dual" operation to `-reduce-r' (*note -reduce-r::):
+     while -reduce-r consumes a list to produce a single value,
+     `-unfold' (*note -unfold::) takes a seed value and builds a
+     (potentially infinite!) list.
+
+     FUN should return `nil' to stop the generating process, or a
+     cons (A . B), where A will be prepended to the result and B is
+     the new seed.
+
+          (-unfold (lambda (x) (unless (= x 0) (cons x (1- x)))) 10)
+              => '(10 9 8 7 6 5 4 3 2 1)
+          (--unfold (when it (cons it (cdr it))) '(1 2 3 4))
+              => '((1 2 3 4) (2 3 4) (3 4) (4))
+          (--unfold (when it (cons it (butlast it))) '(1 2 3 4))
+              => '((1 2 3 4) (1 2 3) (1 2) (1))
+
+
+File: dash.info,  Node: Predicates,  Next: Partitioning,  Prev: Unfolding,  Up: Functions
+
+2.6 Predicates
+==============
+
+ -- Function: -any? (pred list)
+     Return t if (PRED x) is non-nil for any x in LIST, else nil.
+
+     Alias: `-any-p', `-some?', `-some-p'
+
+          (-any? 'even? '(1 2 3))
+              => t
+          (-any? 'even? '(1 3 5))
+              => nil
+          (--any? (= 0 (% it 2)) '(1 2 3))
+              => t
+
+ -- Function: -all? (pred list)
+     Return t if (PRED x) is non-nil for all x in LIST, else nil.
+
+     Alias: `-all-p', `-every?', `-every-p'
+
+          (-all? 'even? '(1 2 3))
+              => nil
+          (-all? 'even? '(2 4 6))
+              => t
+          (--all? (= 0 (% it 2)) '(2 4 6))
+              => t
+
+ -- Function: -none? (pred list)
+     Return t if (PRED x) is nil for all x in LIST, else nil.
+
+     Alias: `-none-p'
+
+          (-none? 'even? '(1 2 3))
+              => nil
+          (-none? 'even? '(1 3 5))
+              => t
+          (--none? (= 0 (% it 2)) '(1 2 3))
+              => nil
+
+ -- Function: -only-some? (pred list)
+     Return `t` if at least one item of LIST matches PRED and at
+     least one item of LIST does not match PRED.  Return `nil` both
+     if all items match the predicate or if none of the items match
+     the predicate.
+
+     Alias: `-only-some-p'
+
+          (-only-some? 'even? '(1 2 3))
+              => t
+          (-only-some? 'even? '(1 3 5))
+              => nil
+          (-only-some? 'even? '(2 4 6))
+              => nil
+
+ -- Function: -contains? (list element)
+     Return non-nil if LIST contains ELEMENT.
+
+     The test for equality is done with `equal', or with `-compare-fn'
+     if that's non-nil.
+
+     Alias: `-contains-p'
+
+          (-contains? '(1 2 3) 1)
+              => t
+          (-contains? '(1 2 3) 2)
+              => t
+          (-contains? '(1 2 3) 4)
+              => nil
+
+ -- Function: -same-items? (list list2)
+     Return true if LIST and LIST2 has the same items.
+
+     The order of the elements in the lists does not matter.
+
+     Alias: `-same-items-p'
+
+          (-same-items? '(1 2 3) '(1 2 3))
+              => t
+          (-same-items? '(1 2 3) '(3 2 1))
+              => t
+          (-same-items? '(1 2 3) '(1 2 3 4))
+              => nil
+
+ -- Function: -is-prefix? (prefix list)
+     Return non-nil if PREFIX is prefix of LIST.
+
+     Alias: `-is-prefix-p'
+
+          (-is-prefix? '(1 2 3) '(1 2 3 4 5))
+              => t
+          (-is-prefix? '(1 2 3 4 5) '(1 2 3))
+              => nil
+          (-is-prefix? '(1 3) '(1 2 3 4 5))
+              => nil
+
+ -- Function: -is-suffix? (suffix list)
+     Return non-nil if SUFFIX is suffix of LIST.
+
+     Alias: `-is-suffix-p'
+
+          (-is-suffix? '(3 4 5) '(1 2 3 4 5))
+              => t
+          (-is-suffix? '(1 2 3 4 5) '(3 4 5))
+              => nil
+          (-is-suffix? '(3 5) '(1 2 3 4 5))
+              => nil
+
+ -- Function: -is-infix? (infix list)
+     Return non-nil if INFIX is infix of LIST.
+
+     This operation runs in O(n^2) time
+
+     Alias: `-is-infix-p'
+
+          (-is-infix? '(1 2 3) '(1 2 3 4 5))
+              => t
+          (-is-infix? '(2 3 4) '(1 2 3 4 5))
+              => t
+          (-is-infix? '(3 4 5) '(1 2 3 4 5))
+              => t
+
+
+File: dash.info,  Node: Partitioning,  Next: Indexing,  Prev: Predicates,  Up: Functions
+
+2.7 Partitioning
+================
+
+Functions partitioning the input list into a list of lists.
+
+ -- Function: -split-at (n list)
+     Return a list of ((-take N LIST) (-drop N LIST)), in no more
+     than one pass through the list.
+
+          (-split-at 3 '(1 2 3 4 5))
+              => '((1 2 3) (4 5))
+          (-split-at 17 '(1 2 3 4 5))
+              => '((1 2 3 4 5) nil)
+
+ -- Function: -split-with (pred list)
+     Return a list of ((-take-while PRED LIST) (-drop-while PRED
+     LIST)), in no more than one pass through the list.
+
+          (-split-with 'even? '(1 2 3 4))
+              => '(nil (1 2 3 4))
+          (-split-with 'even? '(2 4 5 6))
+              => '((2 4) (5 6))
+          (--split-with (< it 4) '(1 2 3 4 3 2 1))
+              => '((1 2 3) (4 3 2 1))
+
+ -- Function: -split-on (item list)
+     Split the LIST each time ITEM is found.
+
+     Unlike `-partition-by' (*note -partition-by::), the ITEM is
+     discarded from the results.  Empty lists are also removed from
+     the result.
+
+     Comparison is done by `equal'.
+
+     See also `-split-when' (*note -split-when::)
+
+          (-split-on '| '(Nil | Leaf a | Node [Tree a]))
+              => '((Nil) (Leaf a) (Node [Tree a]))
+          (-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e"))
+              => '(("a" "b") ("c") ("d" "e"))
+          (-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e"))
+              => '(("a" "b") ("d" "e"))
+
+ -- Function: -split-when (fn list)
+     Split the LIST on each element where FN returns non-nil.
+
+     Unlike `-partition-by' (*note -partition-by::), the "matched"
+     element is discarded from the results.  Empty lists are also
+     removed from the result.
+
+     This function can be thought of as a generalization of
+     `split-string'.
+
+          (-split-when 'even? '(1 2 3 4 5 6))
+              => '((1) (3) (5))
+          (-split-when 'even? '(1 2 3 4 6 8 9))
+              => '((1) (3) (9))
+          (--split-when (memq it '(&optional &rest)) '(a b &optional c d &rest args))
+              => '((a b) (c d) (args))
+
+ -- Function: -separate (pred list)
+     Return a list of ((-filter PRED LIST) (-remove PRED LIST)), in
+     one pass through the list.
+
+          (-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7))
+              => '((2 4 6) (1 3 5 7))
+          (--separate (< it 5) '(3 7 5 9 3 2 1 4 6))
+              => '((3 3 2 1 4) (7 5 9 6))
+          (-separate 'cdr '((1 2) (1) (1 2 3) (4)))
+              => '(((1 2) (1 2 3)) ((1) (4)))
+
+ -- Function: -partition (n list)
+     Return a new list with the items in LIST grouped into N-sized
+     sublists.  If there are not enough items to make the last group
+     N-sized, those items are discarded.
+
+          (-partition 2 '(1 2 3 4 5 6))
+              => '((1 2) (3 4) (5 6))
+          (-partition 2 '(1 2 3 4 5 6 7))
+              => '((1 2) (3 4) (5 6))
+          (-partition 3 '(1 2 3 4 5 6 7))
+              => '((1 2 3) (4 5 6))
+
+ -- Function: -partition-all (n list)
+     Return a new list with the items in LIST grouped into N-sized
+     sublists.  The last group may contain less than N items.
+
+          (-partition-all 2 '(1 2 3 4 5 6))
+              => '((1 2) (3 4) (5 6))
+          (-partition-all 2 '(1 2 3 4 5 6 7))
+              => '((1 2) (3 4) (5 6) (7))
+          (-partition-all 3 '(1 2 3 4 5 6 7))
+              => '((1 2 3) (4 5 6) (7))
+
+ -- Function: -partition-in-steps (n step list)
+     Return a new list with the items in LIST grouped into N-sized
+     sublists at offsets STEP apart.  If there are not enough items
+     to make the last group N-sized, those items are discarded.
+
+          (-partition-in-steps 2 1 '(1 2 3 4))
+              => '((1 2) (2 3) (3 4))
+          (-partition-in-steps 3 2 '(1 2 3 4))
+              => '((1 2 3))
+          (-partition-in-steps 3 2 '(1 2 3 4 5))
+              => '((1 2 3) (3 4 5))
+
+ -- Function: -partition-all-in-steps (n step list)
+     Return a new list with the items in LIST grouped into N-sized
+     sublists at offsets STEP apart.  The last groups may contain
+     less than N items.
+
+          (-partition-all-in-steps 2 1 '(1 2 3 4))
+              => '((1 2) (2 3) (3 4) (4))
+          (-partition-all-in-steps 3 2 '(1 2 3 4))
+              => '((1 2 3) (3 4))
+          (-partition-all-in-steps 3 2 '(1 2 3 4 5))
+              => '((1 2 3) (3 4 5) (5))
+
+ -- Function: -partition-by (fn list)
+     Apply FN to each item in LIST, splitting it each time FN returns
+     a new value.
+
+          (-partition-by 'even? '())
+              => '()
+          (-partition-by 'even? '(1 1 2 2 2 3 4 6 8))
+              => '((1 1) (2 2 2) (3) (4 6 8))
+          (--partition-by (< it 3) '(1 2 3 4 3 2 1))
+              => '((1 2) (3 4 3) (2 1))
+
+ -- Function: -partition-by-header (fn list)
+     Apply FN to the first item in LIST. That is the header value.
+     Apply FN to each item in LIST, splitting it each time FN returns
+     the header value, but only after seeing at least one other value
+     (the body).
+
+          (--partition-by-header (= it 1) '(1 2 3 1 2 1 2 3 4))
+              => '((1 2 3) (1 2) (1 2 3 4))
+          (--partition-by-header (> it 0) '(1 2 0 1 0 1 2 3 0))
+              => '((1 2 0) (1 0) (1 2 3 0))
+          (-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1))
+              => '((2 1 1 1) (4 1 3 5) (6 6 1))
+
+ -- Function: -group-by (fn list)
+     Separate LIST into an alist whose keys are FN applied to the
+     elements of LIST.  Keys are compared by `equal'.
+
+          (-group-by 'even? '())
+              => '()
+          (-group-by 'even? '(1 1 2 2 2 3 4 6 8))
+              => '((nil 1 1 3) (t 2 2 2 4 6 8))
+          (--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e"))
+              => '(("a" "a/b" "a/e") ("c" "c/d"))
+
+
+File: dash.info,  Node: Indexing,  Next: Set operations,  Prev: Partitioning,  Up: Functions
+
+2.8 Indexing
+============
+
+Return indices of elements based on predicates, sort elements by
+indices etc.
+
+ -- Function: -elem-index (elem list)
+     Return the index of the first element in the given LIST which is
+     equal to the query element ELEM, or nil if there is no such
+     element.
+
+          (-elem-index 2 '(6 7 8 2 3 4))
+              => 3
+          (-elem-index "bar" '("foo" "bar" "baz"))
+              => 1
+          (-elem-index '(1 2) '((3) (5 6) (1 2) nil))
+              => 2
+
+ -- Function: -elem-indices (elem list)
+     Return the indices of all elements in LIST equal to the query
+     element ELEM, in ascending order.
+
+          (-elem-indices 2 '(6 7 8 2 3 4 2 1))
+              => '(3 6)
+          (-elem-indices "bar" '("foo" "bar" "baz"))
+              => '(1)
+          (-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil))
+              => '(1 3)
+
+ -- Function: -find-index (pred list)
+     Take a predicate PRED and a LIST and return the index of the
+     first element in the list satisfying the predicate, or nil if
+     there is no such element.
+
+          (-find-index 'even? '(2 4 1 6 3 3 5 8))
+              => 0
+          (--find-index (< 5 it) '(2 4 1 6 3 3 5 8))
+              => 3
+          (-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz"))
+              => 1
+
+ -- Function: -find-last-index (pred list)
+     Take a predicate PRED and a LIST and return the index of the
+     last element in the list satisfying the predicate, or nil if
+     there is no such element.
+
+          (-find-last-index 'even? '(2 4 1 6 3 3 5 8))
+              => 7
+          (--find-last-index (< 5 it) '(2 7 1 6 3 8 5 2))
+              => 5
+          (-find-last-index (-partial 'string-lessp "baz") '("q" "foo" "baz"))
+              => 1
+
+ -- Function: -find-indices (pred list)
+     Return the indices of all elements in LIST satisfying the
+     predicate PRED, in ascending order.
+
+          (-find-indices 'even? '(2 4 1 6 3 3 5 8))
+              => '(0 1 3 7)
+          (--find-indices (< 5 it) '(2 4 1 6 3 3 5 8))
+              => '(3 7)
+          (-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz"))
+              => '(1)
+
+ -- Function: -grade-up (comparator list)
+     Grade elements of LIST using COMPARATOR relation, yielding a
+     permutation vector such that applying this permutation to LIST
+     sorts it in ascending order.
+
+          (-grade-up '< '(3 1 4 2 1 3 3))
+              => '(1 4 3 0 5 6 2)
+          (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up '< l) l))
+              => '(1 1 2 3 3 3 4)
+
+ -- Function: -grade-down (comparator list)
+     Grade elements of LIST using COMPARATOR relation, yielding a
+     permutation vector such that applying this permutation to LIST
+     sorts it in descending order.
+
+          (-grade-down '< '(3 1 4 2 1 3 3))
+              => '(2 0 5 6 3 1 4)
+          (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down '< l) l))
+              => '(4 3 3 3 2 1 1)
+
+
+File: dash.info,  Node: Set operations,  Next: Other list operations,  Prev: Indexing,  Up: Functions
+
+2.9 Set operations
+==================
+
+Operations pretending lists are sets.
+
+ -- Function: -union (list list2)
+     Return a new list containing the elements of LIST1 and elements
+     of LIST2 that are not in LIST1.  The test for equality is done
+     with `equal', or with `-compare-fn' if that's non-nil.
+
+          (-union '(1 2 3) '(3 4 5))
+              => '(1 2 3 4 5)
+          (-union '(1 2 3 4) '())
+              => '(1 2 3 4)
+          (-union '(1 1 2 2) '(3 2 1))
+              => '(1 1 2 2 3)
+
+ -- Function: -difference (list list2)
+     Return a new list with only the members of LIST that are not in
+     LIST2.  The test for equality is done with `equal', or with
+     `-compare-fn' if that's non-nil.
+
+          (-difference '() '())
+              => '()
+          (-difference '(1 2 3) '(4 5 6))
+              => '(1 2 3)
+          (-difference '(1 2 3 4) '(3 4 5 6))
+              => '(1 2)
+
+ -- Function: -intersection (list list2)
+     Return a new list containing only the elements that are members
+     of both LIST and LIST2.  The test for equality is done with
+     `equal', or with `-compare-fn' if that's non-nil.
+
+          (-intersection '() '())
+              => '()
+          (-intersection '(1 2 3) '(4 5 6))
+              => '()
+          (-intersection '(1 2 3 4) '(3 4 5 6))
+              => '(3 4)
+
+ -- Function: -distinct (list)
+     Return a new list with all duplicates removed.  The test for
+     equality is done with `equal', or with `-compare-fn' if that's
+     non-nil.
+
+     Alias: `-uniq'
+
+          (-distinct '())
+              => '()
+          (-distinct '(1 2 2 4))
+              => '(1 2 4)
+
+
+File: dash.info,  Node: Other list operations,  Next: Tree operations,  Prev: Set operations,  Up: Functions
+
+2.10 Other list operations
+==========================
+
+Other list functions not fit to be classified elsewhere.
+
+ -- Function: -rotate (n list)
+     Rotate LIST N places to the right.  With N negative, rotate to
+     the left.  The time complexity is O(n).
+
+          (-rotate 3 '(1 2 3 4 5 6 7))
+              => '(5 6 7 1 2 3 4)
+          (-rotate -3 '(1 2 3 4 5 6 7))
+              => '(4 5 6 7 1 2 3)
+
+ -- Function: -repeat (n x)
+     Return a list with X repeated N times.  Return nil if N is less
+     than 1.
+
+          (-repeat 3 :a)
+              => '(:a :a :a)
+          (-repeat 1 :a)
+              => '(:a)
+          (-repeat 0 :a)
+              => nil
+
+ -- Function: -cons* (&rest args)
+     Make a new list from the elements of ARGS.
+
+     The last 2 members of ARGS are used as the final cons of the
+     result so if the final member of ARGS is not a list the result is
+     a dotted list.
+
+          (-cons* 1 2)
+              => '(1 . 2)
+          (-cons* 1 2 3)
+              => '(1 2 . 3)
+          (-cons* 1)
+              => 1
+
+ -- Function: -snoc (list elem &rest elements)
+     Append ELEM to the end of the list.
+
+     This is like `cons', but operates on the end of list.
+
+     If ELEMENTS is non nil, append these to the list as well.
+
+          (-snoc '(1 2 3) 4)
+              => '(1 2 3 4)
+          (-snoc '(1 2 3) 4 5 6)
+              => '(1 2 3 4 5 6)
+          (-snoc '(1 2 3) '(4 5 6))
+              => '(1 2 3 (4 5 6))
+
+ -- Function: -interpose (sep list)
+     Return a new list of all elements in LIST separated by SEP.
+
+          (-interpose "-" '())
+              => '()
+          (-interpose "-" '("a"))
+              => '("a")
+          (-interpose "-" '("a" "b" "c"))
+              => '("a" "-" "b" "-" "c")
+
+ -- Function: -interleave (&rest lists)
+     Return a new list of the first item in each list, then the
+     second etc.
+
+          (-interleave '(1 2) '("a" "b"))
+              => '(1 "a" 2 "b")
+          (-interleave '(1 2) '("a" "b") '("A" "B"))
+              => '(1 "a" "A" 2 "b" "B")
+          (-interleave '(1 2 3) '("a" "b"))
+              => '(1 "a" 2 "b")
+
+ -- Function: -zip-with (fn list1 list2)
+     Zip the two lists LIST1 and LIST2 using a function FN.  This
+     function is applied pairwise taking as first argument element of
+     LIST1 and as second argument element of LIST2 at corresponding
+     position.
+
+     The anaphoric form `--zip-with' binds the elements from LIST1 as
+     `it`, and the elements from LIST2 as `other`.
+
+          (-zip-with '+ '(1 2 3) '(4 5 6))
+              => '(5 7 9)
+          (-zip-with 'cons '(1 2 3) '(4 5 6))
+              => '((1 . 4) (2 . 5) (3 . 6))
+          (--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde"))
+              => '("Batman and Robin" "Jekyll and Hyde")
+
+ -- Function: -zip (&rest lists)
+     Zip LISTS together.  Group the head of each list, followed by the
+     second elements of each list, and so on. The lengths of the
+     returned groupings are equal to the length of the shortest input
+     list.
+
+     If two lists are provided as arguments, return the groupings as
+     a list of cons cells. Otherwise, return the groupings as a list
+     of lists.
+
+          (-zip '(1 2 3) '(4 5 6))
+              => '((1 . 4) (2 . 5) (3 . 6))
+          (-zip '(1 2 3) '(4 5 6 7))
+              => '((1 . 4) (2 . 5) (3 . 6))
+          (-zip '(1 2 3 4) '(4 5 6))
+              => '((1 . 4) (2 . 5) (3 . 6))
+
+ -- Function: -zip-fill (fill-value &rest lists)
+     Zip LISTS, with FILL-VALUE padded onto the shorter lists. The
+     lengths of the returned groupings are equal to the length of the
+     longest input list.
+
+          (-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9))
+              => '((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
+
+ -- Function: -cycle (list)
+     Return an infinite copy of LIST that will cycle through the
+     elements and repeat from the beginning.
+
+          (-take 5 (-cycle '(1 2 3)))
+              => '(1 2 3 1 2)
+          (-take 7 (-cycle '(1 "and" 3)))
+              => '(1 "and" 3 1 "and" 3 1)
+          (-zip (-cycle '(1 2 3)) '(1 2))
+              => '((1 . 1) (2 . 2))
+
+ -- Function: -pad (fill-value &rest lists)
+     Appends FILL-VALUE to the end of each list in LISTS such that
+     they will all have the same length.
+
+          (-pad 0 '())
+              => '(nil)
+          (-pad 0 '(1))
+              => '((1))
+          (-pad 0 '(1 2 3) '(4 5))
+              => '((1 2 3) (4 5 0))
+
+ -- Function: -table (fn &rest lists)
+     Compute outer product of LISTS using function FN.
+
+     The function FN should have the same arity as the number of
+     supplied lists.
+
+     The outer product is computed by applying fn to all possible
+     combinations created by taking one element from each list in
+     order.  The dimension of the result is (length lists).
+
+     See also: `-table-flat' (*note -table-flat::)
+
+          (-table '* '(1 2 3) '(1 2 3))
+              => '((1 2 3) (2 4 6) (3 6 9))
+          (-table (lambda (a b) (-sum (-zip-with '* a b))) '((1 2) (3 4)) '((1 3) (2 4)))
+              => '((7 15) (10 22))
+          (apply '-table 'list (-repeat 3 '(1 2)))
+              => '((((1 1 1) (2 1 1)) ((1 2 1) (2 2 1))) (((1 1 2) (2 1 2)) ((1 2 2) (2 2 2))))
+
+ -- Function: -table-flat (fn &rest lists)
+     Compute flat outer product of LISTS using function FN.
+
+     The function FN should have the same arity as the number of
+     supplied lists.
+
+     The outer product is computed by applying fn to all possible
+     combinations created by taking one element from each list in
+     order.  The results are flattened, ignoring the tensor structure
+     of the result.  This is equivalent to calling:
+
+     (-flatten-n (1- (length lists)) (-table fn lists))
+
+     but the implementation here is much more efficient.
+
+     See also: `-flatten-n' (*note -flatten-n::), `-table' (*note
+     -table::)
+
+          (-table-flat 'list '(1 2 3) '(a b c))
+              => '((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
+          (-table-flat '* '(1 2 3) '(1 2 3))
+              => '(1 2 3 2 4 6 3 6 9)
+          (apply '-table-flat 'list (-repeat 3 '(1 2)))
+              => '((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2))
+
+ -- Function: -first (pred list)
+     Return the first x in LIST where (PRED x) is non-nil, else nil.
+
+     To get the first item in the list no questions asked, use `car'.
+
+     Alias: `-find'
+
+          (-first 'even? '(1 2 3))
+              => 2
+          (-first 'even? '(1 3 5))
+              => nil
+          (--first (> it 2) '(1 2 3))
+              => 3
+
+ -- Function: -some (pred list)
+     Return (PRED x) for the first LIST item where (PRED x) is
+     non-nil, else nil.
+
+     Alias: `-any'
+
+          (-some 'even? '(1 2 3))
+              => t
+          (--some (member 'foo it) '((foo bar) (baz)))
+              => '(foo bar)
+          (--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3)))
+              => 2
+
+ -- Function: -last (pred list)
+     Return the last x in LIST where (PRED x) is non-nil, else nil.
+
+          (-last 'even? '(1 2 3 4 5 6 3 3 3))
+              => 6
+          (-last 'even? '(1 3 7 5 9))
+              => nil
+          (--last (> (length it) 3) '("a" "looong" "word" "and" "short" "one"))
+              => "short"
+
+ -- Function: -first-item (list)
+     Return the first item of LIST, or nil on an empty list.
+
+          (-first-item '(1 2 3))
+              => 1
+          (-first-item nil)
+              => nil
+
+ -- Function: -last-item (list)
+     Return the last item of LIST, or nil on an empty list.
+
+          (-last-item '(1 2 3))
+              => 3
+          (-last-item nil)
+              => nil
+
+ -- Function: -butlast (list)
+     Return a list of all items in list except for the last.
+
+          (-butlast '(1 2 3))
+              => '(1 2)
+          (-butlast '(1 2))
+              => '(1)
+          (-butlast '(1))
+              => nil
+
+ -- Function: -sort (comparator list)
+     Sort LIST, stably, comparing elements using COMPARATOR.  Return
+     the sorted list.  LIST is NOT modified by side effects.
+     COMPARATOR is called with two elements of LIST, and should
+     return non-nil if the first element should sort before the
+     second.
+
+          (-sort '< '(3 1 2))
+              => '(1 2 3)
+          (-sort '> '(3 1 2))
+              => '(3 2 1)
+          (--sort (< it other) '(3 1 2))
+              => '(1 2 3)
+
+ -- Function: -list (&rest args)
+     Return a list with ARGS.
+
+     If first item of ARGS is already a list, simply return ARGS.  If
+     not, return a list with ARGS as elements.
+
+          (-list 1)
+              => '(1)
+          (-list 1 2 3)
+              => '(1 2 3)
+          (-list '(1 2 3))
+              => '(1 2 3)
+
+ -- Function: -fix (fn list)
+     Compute the (least) fixpoint of FN with initial input LIST.
+
+     FN is called at least once, results are compared with `equal'.
+
+          (-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6)))
+              => '((1) (2) (3) (4) (5) (6))
+          (let ((data '(("starwars" "scifi") ("jedi" "starwars" "warrior")))) (--fix (-uniq (--mapcat (cons it (cdr (assoc it data))) it)) '("jedi" "book")))
+              => '("jedi" "starwars" "warrior" "scifi" "book")
+
+
+File: dash.info,  Node: Tree operations,  Next: Threading macros,  Prev: Other list operations,  Up: Functions
+
+2.11 Tree operations
+====================
+
+Functions pretending lists are trees.
+
+ -- Function: -tree-seq (branch children tree)
+     Return a sequence of the nodes in TREE, in depth-first search
+     order.
+
+     BRANCH is a predicate of one argument that returns non-nil if the
+     passed argument is a branch, that is, a node that can have
+     children.
+
+     CHILDREN is a function of one argument that returns the children
+     of the passed branch node.
+
+     Non-branch nodes are simply copied.
+
+          (-tree-seq 'listp 'identity '(1 (2 3) 4 (5 (6 7))))
+              => '((1 (2 3) 4 (5 (6 7))) 1 (2 3) 2 3 4 (5 (6 7)) 5 (6 7) 6 7)
+          (-tree-seq 'listp 'reverse '(1 (2 3) 4 (5 (6 7))))
+              => '((1 (2 3) 4 (5 (6 7))) (5 (6 7)) (6 7) 7 6 5 4 (2 3) 3 2 1)
+          (--tree-seq (vectorp it) (append it nil) [1 [2 3] 4 [5 [6 7]]])
+              => '([1 [2 3] 4 [5 [6 7]]] 1 [2 3] 2 3 4 [5 [6 7]] 5 [6 7] 6 7)
+
+ -- Function: -tree-map (fn tree)
+     Apply FN to each element of TREE while preserving the tree
+     structure.
+
+          (-tree-map '1+ '(1 (2 3) (4 (5 6) 7)))
+              => '(2 (3 4) (5 (6 7) 8))
+          (-tree-map '(lambda (x) (cons x (expt 2 x))) '(1 (2 3) 4))
+              => '((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
+          (--tree-map (length it) '("<body>" ("<p>" "text" "</p>") "</body>"))
+              => '(6 (3 4 4) 7)
+
+ -- Function: -tree-map-nodes (pred fun tree)
+     Call FUN on each node of TREE that satisfies PRED.
+
+     If PRED returns nil, continue descending down this node.  If PRED
+     returns non-nil, apply FUN to this node and do not descend
+     further.
+
+          (-tree-map-nodes 'vectorp (lambda (x) (-sum (append x nil))) '(1 [2 3] 4 (5 [6 7] 8)))
+              => '(1 5 4 (5 13 8))
+          (-tree-map-nodes 'keywordp (lambda (x) (symbol-name x)) '(1 :foo 4 ((5 6 :bar) :baz 8)))
+              => '(1 ":foo" 4 ((5 6 ":bar") ":baz" 8))
+          (--tree-map-nodes (eq (car-safe it) 'add-mode) (-concat it (list :mode 'emacs-lisp-mode)) '(with-mode emacs-lisp-mode (foo bar) (add-mode a b) (baz (add-mode c d))))
+              => '(with-mode emacs-lisp-mode (foo bar) (add-mode a b :mode emacs-lisp-mode) (baz (add-mode c d :mode emacs-lisp-mode)))
+
+ -- Function: -tree-reduce (fn tree)
+     Use FN to reduce elements of list TREE.  If elements of TREE are
+     lists themselves, apply the reduction recursively.
+
+     FN is first applied to first element of the list and second
+     element, then on this result and third element from the list etc.
+
+     See `-reduce-r' (*note -reduce-r::) for how exactly are lists of
+     zero or one element handled.
+
+          (-tree-reduce '+ '(1 (2 3) (4 5)))
+              => 15
+          (-tree-reduce 'concat '("strings" (" on" " various") ((" levels"))))
+              => "strings on various levels"
+          (--tree-reduce (cond ((stringp it) (concat it " " acc)) (t (let ((sn (symbol-name it))) (concat "<" sn ">" acc "</" sn ">")))) '(body (p "some words") (div "more" (b "bold") "words")))
+              => "<body><p>some words</p> <div>more <b>bold</b> words</div></body>"
+
+ -- Function: -tree-reduce-from (fn init-value tree)
+     Use FN to reduce elements of list TREE.  If elements of TREE are
+     lists themselves, apply the reduction recursively.
+
+     FN is first applied to INIT-VALUE and first element of the list,
+     then on this result and second element from the list etc.
+
+     The initial value is ignored on cons pairs as they always contain
+     two elements.
+
+          (-tree-reduce-from '+ 1 '(1 (1 1) ((1))))
+              => 8
+          (--tree-reduce-from (-concat acc (list it)) nil '(1 (2 3 (4 5)) (6 7)))
+              => '((7 6) ((5 4) 3 2) 1)
+
+ -- Function: -tree-mapreduce (fn folder tree)
+     Apply FN to each element of TREE, and make a list of the results.
+     If elements of TREE are lists themselves, apply FN recursively to
+     elements of these nested lists.
+
+     Then reduce the resulting lists using FOLDER and initial value
+     INIT-VALUE. See `-reduce-r-from' (*note -reduce-r-from::).
+
+     This is the same as calling `-tree-reduce' (*note
+     -tree-reduce::) after `-tree-map' (*note -tree-map::) but is
+     twice as fast as it only traverse the structure once.
+
+          (-tree-mapreduce 'list 'append '(1 (2 (3 4) (5 6)) (7 (8 9))))
+              => '(1 2 3 4 5 6 7 8 9)
+          (--tree-mapreduce 1 (+ it acc) '(1 (2 (4 9) (2 1)) (7 (4 3))))
+              => 9
+          (--tree-mapreduce 0 (max acc (1+ it)) '(1 (2 (4 9) (2 1)) (7 (4 3))))
+              => 3
+
+ -- Function: -tree-mapreduce-from (fn folder init-value tree)
+     Apply FN to each element of TREE, and make a list of the results.
+     If elements of TREE are lists themselves, apply FN recursively to
+     elements of these nested lists.
+
+     Then reduce the resulting lists using FOLDER and initial value
+     INIT-VALUE. See `-reduce-r-from' (*note -reduce-r-from::).
+
+     This is the same as calling `-tree-reduce-from' (*note
+     -tree-reduce-from::) after `-tree-map' (*note -tree-map::) but
+     is twice as fast as it only traverse the structure once.
+
+          (-tree-mapreduce-from 'identity '* 1 '(1 (2 (3 4) (5 6)) (7 (8 9))))
+              => 362880
+          (--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3))))
+              => '(2 (4 (8 18) (4 2)) (14 (8 6)))
+          (concat "{" (--tree-mapreduce-from (cond ((-cons-pair? it) (concat (symbol-name (car it)) " -> " (symbol-name (cdr it)))) (t (concat (symbol-name it) " : {"))) (concat it (unless (or (equal acc "}") (equal (substring it (1- (length it))) "{")) ", ") acc) "}" '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam)))))
+              => "{elips-mode : {foo : {bar -> booze{, baz -> qux{, c-mode : {foo -> bla, bum -> bam}}"
+
+ -- Function: -clone (list)
+     Create a deep copy of LIST.  The new list has the same elements
+     and structure but all cons are replaced with new ones.  This is
+     useful when you need to clone a structure such as plist or alist.
+
+          (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b)
+              => '(1 2 3)
+
+
+File: dash.info,  Node: Threading macros,  Next: Binding,  Prev: Tree operations,  Up: Functions
+
+2.12 Threading macros
+=====================
+
+ -- Function: -> (x &optional form &rest more)
+     Thread the expr through the forms. Insert X as the second item
+     in the first form, making a list of it if it is not a list
+     already. If there are more forms, insert the first form as the
+     second item in second form, etc.
+
+          (-> '(2 3 5))
+              => '(2 3 5)
+          (-> '(2 3 5) (append '(8 13)))
+              => '(2 3 5 8 13)
+          (-> '(2 3 5) (append '(8 13)) (-slice 1 -1))
+              => '(3 5 8)
+
+ -- Function: ->> (x form &rest more)
+     Thread the expr through the forms. Insert X as the last item in
+     the first form, making a list of it if it is not a list already.
+     If there are more forms, insert the first form as the last item
+     in second form, etc.
+
+          (->> '(1 2 3) (-map 'square))
+              => '(1 4 9)
+          (->> '(1 2 3) (-map 'square) (-remove 'even?))
+              => '(1 9)
+          (->> '(1 2 3) (-map 'square) (-reduce '+))
+              => 14
+
+ -- Function: -> (x form &rest more)
+     Thread the expr through the forms. Insert X at the position
+     signified by the token `it' in the first form. If there are more
+     forms, insert the first form at the position signified by `it' in
+     in second form, etc.
+
+          (--> "def" (concat "abc" it "ghi"))
+              => "abcdefghi"
+          (--> "def" (concat "abc" it "ghi") (upcase it))
+              => "ABCDEFGHI"
+          (--> "def" (concat "abc" it "ghi") upcase)
+              => "ABCDEFGHI"
+
+
+File: dash.info,  Node: Binding,  Next: Side-effects,  Prev: Threading macros,  Up: Functions
+
+2.13 Binding
+============
+
+Convenient versions of `let` and `let*` constructs combined with flow
+control.
+
+ -- Function: -when-let (var-val &rest body)
+     If VAL evaluates to non-nil, bind it to VAR and execute body.
+     VAR-VAL should be a (VAR VAL) pair.
+
+     Note: binding is done according to `-let' (*note -let::).
+
+          (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2))
+              => 5
+          (-when-let ((&plist :foo foo) (list :foo "foo")) foo)
+              => "foo"
+          (-when-let ((&plist :foo foo) (list :bar "bar")) foo)
+              => nil
+
+ -- Function: -when-let* (vars-vals &rest body)
+     If all VALS evaluate to true, bind them to their corresponding
+     VARS and execute body. VARS-VALS should be a list of (VAR VAL)
+     pairs.
+
+     Note: binding is done according to `-let*' (*note -let*::).
+
+          (-when-let* ((x 5) (y 3) (z (+ y 4))) (+ x y z))
+              => 15
+          (-when-let* ((x 5) (y nil) (z 7)) (+ x y z))
+              => nil
+
+ -- Function: -if-let (var-val then &rest else)
+     If VAL evaluates to non-nil, bind it to VAR and do THEN,
+     otherwise do ELSE. VAR-VAL should be a (VAR VAL) pair.
+
+     Note: binding is done according to `-let' (*note -let::).
+
+          (-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7)
+              => 7
+          (--if-let (even? 4) it nil)
+              => t
+
+ -- Function: -if-let* (vars-vals then &rest else)
+     If all VALS evaluate to true, bind them to their corresponding
+     VARS and do THEN, otherwise do ELSE. VARS-VALS should be a list
+     of (VAR VAL) pairs.
+
+     Note: binding is done according to `-let*' (*note -let*::).
+
+          (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo")
+              => 15
+          (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo")
+              => "foo"
+          (-if-let* (((_ _ x) '(nil nil 7))) x)
+              => 7
+
+ -- Function: -let (varlist &rest body)
+     Bind variables according to VARLIST then eval BODY.
+
+     VARLIST is a list of lists of the form (PATTERN SOURCE).  Each
+     PATTERN is matched against the SOURCE "structurally".  SOURCE is
+     only evaluated once for each PATTERN.  Each PATTERN is matched
+     recursively, and can therefore contain sub-patterns which are
+     matched against corresponding sub-expressions of SOURCE.
+
+     All the SOURCEs are evalled before any symbols are bound (i.e.
+     "in parallel").
+
+     If VARLIST only contains one (PATTERN SOURCE) element, you can
+     optionally specify it using a vector and discarding the
+     outer-most parens.  Thus
+
+     (-let ((PATTERN SOURCE)) ..)
+
+     becomes
+
+     (-let [PATTERN SOURCE] ..).
+
+     `-let' (*note -let::) uses a convention of not binding places
+     (symbols) starting with _ whenever it's possible.  You can use
+     this to skip over entries you don't care about.  However, this
+     is not *always* possible (as a result of implementation) and
+     these symbols might get bound to undefined values.
+
+     Following is the overview of supported patterns.  Remember that
+     patterns can be matched recursively, so every a, b, aK in the
+     following can be a matching construct and not necessarily a
+     symbol/variable.
+
+     Symbol:
+
+     a - bind the SOURCE to A.  This is just like regular `let'.
+
+     Conses and lists:
+
+     (a) - bind `car' of cons/list to A
+
+     (a . b) - bind car of cons to A and `cdr' to B
+
+     (a b) - bind car of list to A and `cadr' to B
+
+     (a1 a2 a3  ...) - bind 0th car of list to A1, 1st to A2, 2nd to
+     A3 ...
+
+     (a1 a2 a3 ... aN . rest) - as above, but bind the Nth cdr to
+     REST.
+
+     Vectors:
+
+     [a] - bind 0th element of a non-list sequence to A (works with
+            vectors, strings, bit arrays...)
+
+     [a1 a2 a3 ...] - bind 0th element of non-list sequence to A0,
+     1st to                      A1, 2nd to A2, ...
+        If the PATTERN is shorter than SOURCE, the values at
+                 places not in PATTERN are ignored.
+         If the PATTERN is longer than SOURCE, an `error' is
+                 thrown.
+
+     [a1 a2 a3 ... &rest rest] ) - as above, but bind the rest of
+                                  the sequence to REST.  This is
+                                  conceptually the same as improper
+     list                                   matching (a1 a2 ... aN .
+     rest)
+
+     Key/value stores:
+
+     (&plist key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                      SOURCE plist to aK.  If the
+                                    value is not found, aK is nil.
+
+     (&alist key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                      SOURCE alist to aK.  If the
+                                    value is not found, aK is nil.
+
+     (&hash key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                    SOURCE hash table to aK.  If the
+                                      value is not found, aK is nil.
+
+     Further, special keyword &keys supports "inline" matching of
+     plist-like key-value pairs, similarly to &keys keyword of
+     `cl-defun'.
+
+     (a1 a2 ... aN &keys key1 b1 ... keyN bK)
+
+     This binds N values from the list to a1 ... aN, then interprets
+     the cdr as a plist (see key/value matching above).
+
+          (-let (([a (b c) d] [1 (2 3) 4])) (list a b c d))
+              => '(1 2 3 4)
+          (-let [(a b c . d) (list 1 2 3 4 5 6)] (list a b c d))
+              => '(1 2 3 (4 5 6))
+          (-let [(&plist :foo foo :bar bar) (list :baz 3 :foo 1 :qux 4 :bar 2)] (list foo bar))
+              => '(1 2)
+
+ -- Function: -let* (varlist &rest body)
+     Bind variables according to VARLIST then eval BODY.
+
+     VARLIST is a list of lists of the form (PATTERN SOURCE).  Each
+     PATTERN is matched against the SOURCE structurally.  SOURCE is
+     only evaluated once for each PATTERN.
+
+     Each SOURCE can refer to the symbols already bound by this
+     VARLIST.  This is useful if you want to destructure SOURCE
+     recursively but also want to name the intermediate structures.
+
+     See `-let' (*note -let::) for the list of all possible patterns.
+
+          (-let* (((a . b) (cons 1 2)) ((c . d) (cons 3 4))) (list a b c d))
+              => '(1 2 3 4)
+          (-let* (((a . b) (cons 1 (cons 2 3))) ((c . d) b)) (list a b c d))
+              => '(1 (2 . 3) 2 3)
+          (-let* (((&alist "foo" foo "bar" bar) (list (cons "foo" 1) (cons "bar" (list 'a 'b 'c)))) ((a b c) bar)) (list foo a b c bar))
+              => '(1 a b c (a b c))
+
+ -- Function: -lambda (match-form &rest body)
+     Return a lambda which destructures its input as MATCH-FORM and
+     executes BODY.
+
+     Note that you have to enclose the MATCH-FORM in a pair of parens,
+     such that:
+
+     (-lambda (x) body)     (-lambda (x y ...) body)
+
+     has the usual semantics of `lambda'.  Furthermore, these get
+     translated into normal lambda, so there is no performance
+     penalty.
+
+     See `-let' (*note -let::) for the description of destructuring
+     mechanism.
+
+          (-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6)))
+              => '(3 7 11)
+          (-map (-lambda ([x y]) (+ x y)) '([1 2] [3 4] [5 6]))
+              => '(3 7 11)
+          (funcall (-lambda ((_ . a) (_ . b)) (-concat a b)) '(1 2 3) '(4 5 6))
+              => '(2 3 5 6)
+
+
+File: dash.info,  Node: Side-effects,  Next: Destructive operations,  Prev: Binding,  Up: Functions
+
+2.14 Side-effects
+=================
+
+Functions iterating over lists for side-effect only.
+
+ -- Function: -each (list fn)
+     Call FN with every item in LIST. Return nil, used for
+     side-effects only.
+
+          (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))))
+              => nil
+          (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s)
+              => '(3 2 1)
+          (let (s) (--each '(1 2 3) (setq s (cons it s))) s)
+              => '(3 2 1)
+
+ -- Function: -each-while (list pred fn)
+     Call FN with every item in LIST while (PRED item) is non-nil.
+     Return nil, used for side-effects only.
+
+          (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s)
+              => '(4 2)
+          (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s)
+              => '(2 1)
+
+ -- Function: -dotimes (num fn)
+     Repeatedly calls FN (presumably for side-effects) passing in
+     integers from 0 through NUM-1.
+
+          (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s)
+              => '(2 1 0)
+          (let (s) (--dotimes 5 (!cons it s)) s)
+              => '(4 3 2 1 0)
+
+
+File: dash.info,  Node: Destructive operations,  Next: Function combinators,  Prev: Side-effects,  Up: Functions
+
+2.15 Destructive operations
+===========================
+
+ -- Function: !cons (car cdr)
+     Destructive: Set CDR to the cons of CAR and CDR.
+
+          (let (l) (!cons 5 l) l)
+              => '(5)
+          (let ((l '(3))) (!cons 5 l) l)
+              => '(5 3)
+
+ -- Function: !cdr (list)
+     Destructive: Set LIST to the cdr of LIST.
+
+          (let ((l '(3))) (!cdr l) l)
+              => '()
+          (let ((l '(3 5))) (!cdr l) l)
+              => '(5)
+
+
+File: dash.info,  Node: Function combinators,  Prev: Destructive operations,  Up: Functions
+
+2.16 Function combinators
+=========================
+
+These combinators require Emacs 24 for its lexical scope. So they are
+offered in a separate package: `dash-functional`.
+
+ -- Function: -partial (fn &rest args)
+     Takes a function FN and fewer than the normal arguments to FN,
+     and returns a fn that takes a variable number of additional ARGS.
+     When called, the returned function calls FN with ARGS first and
+     then additional args.
+
+          (funcall (-partial '- 5) 3)
+              => 2
+          (funcall (-partial '+ 5 2) 3)
+              => 10
+
+ -- Function: -rpartial (fn &rest args)
+     Takes a function FN and fewer than the normal arguments to FN,
+     and returns a fn that takes a variable number of additional ARGS.
+     When called, the returned function calls FN with the additional
+     args first and then ARGS.
+
+          (funcall (-rpartial '- 5) 8)
+              => 3
+          (funcall (-rpartial '- 5 2) 10)
+              => 3
+
+ -- Function: -juxt (&rest fns)
+     Takes a list of functions and returns a fn that is the
+     juxtaposition of those fns. The returned fn takes a variable
+     number of args, and returns a list containing the result of
+     applying each fn to the args (left-to-right).
+
+          (funcall (-juxt '+ '-) 3 5)
+              => '(8 -2)
+          (-map (-juxt 'identity 'square) '(1 2 3))
+              => '((1 1) (2 4) (3 9))
+
+ -- Function: -compose (&rest fns)
+     Takes a list of functions and returns a fn that is the
+     composition of those fns. The returned fn takes a variable
+     number of arguments, and returns the result of applying each fn
+     to the result of applying the previous fn to the arguments
+     (right-to-left).
+
+          (funcall (-compose 'square '+) 2 3)
+              => (square (+ 2 3))
+          (funcall (-compose 'identity 'square) 3)
+              => (square 3)
+          (funcall (-compose 'square 'identity) 3)
+              => (square 3)
+
+ -- Function: -applify (fn)
+     Changes an n-arity function FN to a 1-arity function that
+     expects a list with n items as arguments
+
+          (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5)))
+              => '(3 6 15)
+          (-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5)))
+              => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+          (funcall (-applify '<) '(3 6))
+              => t
+
+ -- Function: -on (operator transformer)
+     Return a function of two arguments that first applies
+     TRANSFORMER to each of them and then applies OPERATOR on the
+     results (in the same order).
+
+     In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
+
+          (-sort (-on '< 'length) '((1 2 3) (1) (1 2)))
+              => '((1) (1 2) (1 2 3))
+          (-min-by (-on '> 'length) '((1 2 3) (4) (1 2)))
+              => '(4)
+          (-min-by (-on 'string-lessp 'int-to-string) '(2 100 22))
+              => 22
+
+ -- Function: -flip (func)
+     Swap the order of arguments for binary function FUNC.
+
+     In types: (a -> b -> c) -> b -> a -> c
+
+          (funcall (-flip '<) 2 1)
+              => t
+          (funcall (-flip '-) 3 8)
+              => 5
+          (-sort (-flip '<) '(4 3 6 1))
+              => '(6 4 3 1)
+
+ -- Function: -const (c)
+     Return a function that returns C ignoring any additional
+     arguments.
+
+     In types: a -> b -> a
+
+          (funcall (-const 2) 1 3 "foo")
+              => 2
+          (-map (-const 1) '("a" "b" "c" "d"))
+              => '(1 1 1 1)
+          (-sum (-map (-const 1) '("a" "b" "c" "d")))
+              => 4
+
+ -- Function: -cut (&rest params)
+     Take n-ary function and n arguments and specialize some of them.
+     Arguments denoted by <> will be left unspecialized.
+
+     See SRFI-26 for detailed description.
+
+          (funcall (-cut list 1 <> 3 <> 5) 2 4)
+              => '(1 2 3 4 5)
+          (-map (-cut funcall <> 5) '(1+ 1- (lambda (x) (/ 1.0 x))))
+              => '(6 4 0.2)
+          (-filter (-cut < <> 5) '(1 3 5 7 9))
+              => '(1 3)
+
+ -- Function: -not (pred)
+     Take an unary predicates PRED and return an unary predicate that
+     returns t if PRED returns nil and nil if PRED returns non-nil.
+
+          (funcall (-not 'even?) 5)
+              => t
+          (-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8))
+              => '(1 2 3 4)
+
+ -- Function: -orfn (&rest preds)
+     Take list of unary predicates PREDS and return an unary
+     predicate with argument x that returns non-nil if at least one of
+     the PREDS returns non-nil on x.
+
+     In types: [a -> Bool] -> a -> Bool
+
+          (-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10))
+              => '(1 2 3 4 6 8 10)
+          (funcall (-orfn 'stringp 'even?) "foo")
+              => t
+
+ -- Function: -andfn (&rest preds)
+     Take list of unary predicates PREDS and return an unary
+     predicate with argument x that returns non-nil if all of the
+     PREDS returns non-nil on x.
+
+     In types: [a -> Bool] -> a -> Bool
+
+          (funcall (-andfn (-cut < <> 10) 'even?) 6)
+              => t
+          (funcall (-andfn (-cut < <> 10) 'even?) 12)
+              => nil
+          (-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10))
+              => '(1 3 5)
+
+ -- Function: -iteratefn (fn n)
+     Return a function FN composed N times with itself.
+
+     FN is a unary function.  If you need to use a function of higher
+     arity, use `-applify' (*note -applify::) first to turn it into
+     an unary function.
+
+     With n = 0, this acts as identity function.
+
+     In types: (a -> a) -> Int -> a -> a.
+
+     This function satisfies the following law:
+
+     (funcall (-iteratefn fn n) init) = (-last-item (-iterate fn init
+     (1+ n))).
+
+          (funcall (-iteratefn (lambda (x) (* x x)) 3) 2)
+              => 256
+          (funcall (-iteratefn '1+ 3) 1)
+              => 4
+          (funcall (-iteratefn 'cdr 3) '(1 2 3 4 5))
+              => '(4 5)
+
+ -- Function: -fixfn (fn &optional equal-test halt-test)
+     Return a function that computes the (least) fixpoint of FN.
+
+     FN must be a unary function. The returned lambda takes a single
+     argument, X, the initial value for the fixpoint iteration. The
+     iteration halts when either of the following conditions is
+     satisified:
+
+     1. Iteration converges to the fixpoint, with equality being
+     tested using EQUAL-TEST. If EQUAL-TEST is not specified,
+     `equal' is used. For functions over the floating point
+     numbers, it may be necessary to provide an appropriate
+     appoximate comparsion test.
+
+     2. HALT-TEST returns a non-nil value. HALT-TEST defaults to a
+       simple counter that returns t after `-fixfn-max-iterations',
+         to guard against infinite iteration. Otherwise, HALT-TEST
+        must be a function that accepts a single argument, the
+     current value of X, and returns non-nil as long as iteration
+      should continue. In this way, a more sophisticated
+     convergence test may be supplied by the caller.
+
+     The return value of the lambda is either the fixpoint or, if
+     iteration halted before converging, a cons with car `halted' and
+     cdr the final output from HALT-TEST.
+
+     In types: (a -> a) -> a -> a.
+
+          (funcall (-fixfn 'cos 'approx-equal) 0.7)
+              => 0.7390851332151607
+          (funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0)
+              => 1.8555845286409378
+          (funcall (-fixfn 'sin 'approx-equal) 0.1)
+              => '(halted . t)
+
+ -- Function: -prodfn (&rest fns)
+     Take a list of n functions and return a function that takes a
+     list of length n, applying i-th function to i-th element of the
+     input list.  Returns a list of length n.
+
+     In types (for n=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
+
+     This function satisfies the following laws:
+
+     (-compose (-prodfn f g ...) (-prodfn f' g' ...)) = (-prodfn
+     (-compose f f') (-compose g g') ...)      (-prodfn f g ...) =
+     (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth
+     1)) ...)      (-compose (-prodfn f g ...) (-juxt f' g' ...)) =
+     (-juxt (-compose f f') (-compose g g') ...)      (-compose
+     (-partial 'nth n) (-prod f1 f2 ...)) = (-compose fn (-partial
+     'nth n))
+
+          (funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3))
+              => '(2 1 "3")
+          (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8)))
+              => '((2 1) (4 3) (6 5) (8 7))
+          (apply '+ (funcall (-prodfn 'length 'string-to-int) '((1 2 3) "15")))
+              => 18
+
+
+File: dash.info,  Node: Development,  Next: Index,  Prev: Functions,  Up: Top
+
+3 Development
+*************
+
+The dash repository is hosted on GitHub:
+`https://github.com/magnars/dash.el'
+
+* Menu:
+
+* Contribute::          How to contribute
+* Changes::             List of significant changes by version
+* Contributors::        List of contributors
+
+
+File: dash.info,  Node: Contribute,  Next: Changes,  Up: Development
+
+3.1 Contribute
+==============
+
+Yes, please do. Pure functions in the list manipulation realm only,
+please. There's a suite of tests in dev/examples.el, so remember to
+add tests for your function, or it might get broken later.
+
+   Run the tests with `./run-tests.sh'. Create the docs with
+`./create-docs.sh'. I highly recommend that you install these as a
+pre-commit hook, so that the tests are always running and the docs are
+always in sync:
+
+
+cp pre-commit.sh .git/hooks/pre-commit
+
+   Oh, and don't edit `README.md' directly, it is auto-generated.
+Change `readme-template.md' or `examples-to-docs.el' instead.  The
+same goes for the info manual.
+
+
+File: dash.info,  Node: Changes,  Next: Contributors,  Prev: Contribute,  Up: Development
+
+3.2 Changes
+===========
+
+Changes in 2.10:
+
+   * Add `-let' destructuring to `-if-let' and `-when-let' (Fredrik
+     Bergroth)
+
+Changes in 2.9:
+
+   * Add `-let', `-let*' and `-lambda' with destructuring
+
+   * Add `-tree-seq' and `-tree-map-nodes'
+
+   * Add `-non-nil'
+
+   * Add `-fix'
+
+   * Add `-fixfn' (dash-functional 1.2)
+
+   * Add `-copy' (Wilfred Hughes)
+
+Changes in 2.8:
+
+   * Add `-butlast'
+
+Changes in 2.7:
+
+   * `-zip' now supports more than two lists (Steve Lamb)
+
+   * Add `-cycle', `-pad', `-annotate', `-zip-fill' (Steve Lamb)
+
+   * Add `-table', `-table-flat' (finite cartesian product)
+
+   * Add `-flatten-n'
+
+   * `-slice' now supports "step" argument
+
+   * Add functional combinators `-iteratefn', `-prodfn'
+
+   * Add `-replace', `-splice', `-splice-list' which generalize
+     `-replace-at' and `-insert-at'
+
+   * Add `-compose', `-iteratefn' and `-prodfn' (dash-functional 1.1)
+
+Changes in 2.6:
+
+   * Add `-is-prefix-p', `-is-suffix-p', `-is-infix-p' (Matus Goljer)
+
+   * Add `-iterate', `-unfold' (Matus Goljer)
+
+   * Add `-split-on', `-split-when' (Matus Goljer)
+
+   * Add `-find-last-index' (Matus Goljer)
+
+   * Add `-list' (Johan Andersson)
+
+Changes in 2.5:
+
+   * Add `-same-items?' (Johan Andersson)
+
+   * A few bugfixes
+
+Changes in 2.4:
+
+   * Add `-snoc' (Matus Goljer)
+
+   * Add `-replace-at', `-update-at', `-remove-at', and
+     `-remove-at-indices' (Matus Goljer)
+
+Changes in 2.3:
+
+   * Add tree operations (Matus Goljer)
+
+   * Make font-lock optional
+
+Changes in 2.2:
+
+   * Add `-compose' (Christina Whyte)
+
+Changes in 2.1:
+
+   * Add indexing operations (Matus Goljer)
+
+Changes in 2.0:
+
+   * Split out `dash-functional.el' (Matus Goljer)
+
+   * Add `-andfn', `-orfn', `-not', `-cut', `-const', `-flip' and
+     `-on'. (Matus Goljer)
+
+   * Fix `-min', `-max', `-min-by' and `-max-by' (Matus Goljer)
+
+Changes in 1.8:
+
+   * Add `-first-item' and `-last-item' (Wilfred Hughes)
+
+Changes in 1.7:
+
+   * Add `-rotate' (Matus Goljer)
+
+Changes in 1.6:
+
+   * Add `-min', `-max', `-min-by' and `-max-by' (Johan Andersson)
+
+Changes in 1.5:
+
+   * Add `-sum' and `-product' (Johan Andersson)
+
+Changes in 1.4:
+
+   * Add `-sort'
+
+   * Add `-reduce-r' (Matus Goljer)
+
+   * Add `-reduce-r-from' (Matus Goljer)
+
+Changes in 1.3:
+
+   * Add `-partition-in-steps'
+
+   * Add `-partition-all-in-steps'
+
+Changes in 1.2:
+
+   * Add `-last' (Matus Goljer)
+
+   * Add `-insert-at' (Emanuel Evans)
+
+   * Add `-when-let' and `-if-let' (Emanuel Evans)
+
+   * Add `-when-let*' and `-if-let*' (Emanuel Evans)
+
+   * Some bugfixes
+
+
+File: dash.info,  Node: Contributors,  Prev: Changes,  Up: Development
+
+3.3 Contributors
+================
+
+   * Matus Goljer (https://github.com/Fuco1) contributed lots of
+     features and functions.
+
+   * Takafumi Arakaki (https://github.com/tkf) contributed
+     `-group-by'.
+
+   * tali713 (https://github.com/tali713) is the author of `-applify'.
+
+   * Víctor M. Valenzuela (https://github.com/vemv) contributed
+     `-repeat'.
+
+   * Nic Ferrier (https://github.com/nicferrier) contributed `-cons*'.
+
+   * Wilfred Hughes (https://github.com/Wilfred) contributed
+     `-slice', `-first-item' and `-last-item'.
+
+   * Emanuel Evans (https://github.com/shosti) contributed `-if-let',
+     `-when-let' and `-insert-at'.
+
+   * Johan Andersson (https://github.com/rejeep) contributed `-sum',
+     `-product' and `-same-items?'
+
+   * Christina Whyte (https://github.com/kurisuwhyte) contributed
+     `-compose'
+
+   * Steve Lamb (https://github.com/steventlamb) contributed
+     `-cycle', `-pad', `-annotate', `-zip-fill' and an n-ary version
+     of `-zip'.
+
+   * Fredrik Bergroth (https://github.com/fbergroth) made the
+     `-if-let' family use `-let' destructuring and improved script
+     for generating documentation.
+
+   * Mark Oteiza (https://github.com/holomorph) contributed the
+     script to create an info manual.
+
+   Thanks!
+
+
+File: dash.info,  Node: Index,  Prev: Development,  Up: Top
+
+Index
+*****
+
+ [index ]
+* Menu:
+
+* !cdr:                                  Destructive operations.
+                                                            (line  15)
+* !cons:                                 Destructive operations.
+                                                            (line   7)
+* -->:                                   Threading macros.  (line  33)
+* ->:                                    Threading macros.  (line   7)
+* ->>:                                   Threading macros.  (line  20)
+* -all?:                                 Predicates.        (line  19)
+* -andfn:                                Function combinators.
+                                                            (line 141)
+* -annotate:                             Maps.              (line  51)
+* -any?:                                 Predicates.        (line   7)
+* -applify:                              Function combinators.
+                                                            (line  57)
+* -butlast:                              Other list operations.
+                                                            (line 238)
+* -clone:                                Tree operations.   (line 124)
+* -compose:                              Function combinators.
+                                                            (line  43)
+* -concat:                               List to list.      (line  20)
+* -cons*:                                Other list operations.
+                                                            (line  29)
+* -const:                                Function combinators.
+                                                            (line  94)
+* -contains?:                            Predicates.        (line  58)
+* -copy:                                 Maps.              (line 104)
+* -count:                                Reductions.        (line  79)
+* -cut:                                  Function combinators.
+                                                            (line 107)
+* -cycle:                                Other list operations.
+                                                            (line 119)
+* -difference:                           Set operations.    (line  21)
+* -distinct:                             Set operations.    (line  45)
+* -dotimes:                              Side-effects.      (line  29)
+* -drop:                                 Sublist selection. (line  66)
+* -drop-while:                           Sublist selection. (line  85)
+* -each:                                 Side-effects.      (line   9)
+* -each-while:                           Side-effects.      (line  20)
+* -elem-index:                           Indexing.          (line  10)
+* -elem-indices:                         Indexing.          (line  22)
+* -filter:                               Sublist selection. (line   9)
+* -find-index:                           Indexing.          (line  33)
+* -find-indices:                         Indexing.          (line  57)
+* -find-last-index:                      Indexing.          (line  45)
+* -first:                                Other list operations.
+                                                            (line 185)
+* -first-item:                           Other list operations.
+                                                            (line 222)
+* -fix:                                  Other list operations.
+                                                            (line 275)
+* -fixfn:                                Function combinators.
+                                                            (line 178)
+* -flatten:                              List to list.      (line  31)
+* -flatten-n:                            List to list.      (line  44)
+* -flip:                                 Function combinators.
+                                                            (line  82)
+* -grade-down:                           Indexing.          (line  78)
+* -grade-up:                             Indexing.          (line  68)
+* -group-by:                             Partitioning.      (line 146)
+* -if-let:                               Binding.           (line  35)
+* -if-let*:                              Binding.           (line  46)
+* -insert-at:                            List to list.      (line  70)
+* -interleave:                           Other list operations.
+                                                            (line  67)
+* -interpose:                            Other list operations.
+                                                            (line  57)
+* -intersection:                         Set operations.    (line  33)
+* -is-infix?:                            Predicates.        (line 111)
+* -is-prefix?:                           Predicates.        (line  87)
+* -is-suffix?:                           Predicates.        (line  99)
+* -iterate:                              Unfolding.         (line  10)
+* -iteratefn:                            Function combinators.
+                                                            (line 155)
+* -juxt:                                 Function combinators.
+                                                            (line  32)
+* -keep:                                 List to list.      (line   9)
+* -lambda:                               Binding.           (line 179)
+* -last:                                 Other list operations.
+                                                            (line 212)
+* -last-item:                            Other list operations.
+                                                            (line 230)
+* -let:                                  Binding.           (line  60)
+* -let*:                                 Binding.           (line 159)
+* -list:                                 Other list operations.
+                                                            (line 262)
+* -map:                                  Maps.              (line  11)
+* -map-indexed:                          Maps.              (line  39)
+* -map-when:                             Maps.              (line  22)
+* -mapcat:                               Maps.              (line  93)
+* -max:                                  Reductions.        (line 131)
+* -max-by:                               Reductions.        (line 141)
+* -min:                                  Reductions.        (line 107)
+* -min-by:                               Reductions.        (line 117)
+* -non-nil:                              Sublist selection. (line  35)
+* -none?:                                Predicates.        (line  31)
+* -not:                                  Function combinators.
+                                                            (line 120)
+* -on:                                   Function combinators.
+                                                            (line  68)
+* -only-some?:                           Predicates.        (line  43)
+* -orfn:                                 Function combinators.
+                                                            (line 129)
+* -pad:                                  Other list operations.
+                                                            (line 130)
+* -partial:                              Function combinators.
+                                                            (line  10)
+* -partition:                            Partitioning.      (line  75)
+* -partition-all:                        Partitioning.      (line  87)
+* -partition-all-in-steps:               Partitioning.      (line 110)
+* -partition-by:                         Partitioning.      (line 122)
+* -partition-by-header:                  Partitioning.      (line 133)
+* -partition-in-steps:                   Partitioning.      (line  98)
+* -prodfn:                               Function combinators.
+                                                            (line 213)
+* -product:                              Reductions.        (line  97)
+* -reduce:                               Reductions.        (line  41)
+* -reduce-from:                          Reductions.        (line   9)
+* -reduce-r:                             Reductions.        (line  58)
+* -reduce-r-from:                        Reductions.        (line  25)
+* -remove:                               Sublist selection. (line  22)
+* -remove-at:                            List to list.      (line 107)
+* -remove-at-indices:                    List to list.      (line 120)
+* -repeat:                               Other list operations.
+                                                            (line  18)
+* -replace:                              List to list.      (line  56)
+* -replace-at:                           List to list.      (line  81)
+* -rotate:                               Other list operations.
+                                                            (line   9)
+* -rpartial:                             Function combinators.
+                                                            (line  21)
+* -same-items?:                          Predicates.        (line  73)
+* -select-by-indices:                    Sublist selection. (line  96)
+* -separate:                             Partitioning.      (line  64)
+* -slice:                                Sublist selection. (line  41)
+* -snoc:                                 Other list operations.
+                                                            (line  43)
+* -some:                                 Other list operations.
+                                                            (line 199)
+* -sort:                                 Other list operations.
+                                                            (line 248)
+* -splice:                               Maps.              (line  62)
+* -splice-list:                          Maps.              (line  82)
+* -split-at:                             Partitioning.      (line   9)
+* -split-on:                             Partitioning.      (line  29)
+* -split-when:                           Partitioning.      (line  47)
+* -split-with:                           Partitioning.      (line  18)
+* -sum:                                  Reductions.        (line  87)
+* -table:                                Other list operations.
+                                                            (line 141)
+* -table-flat:                           Other list operations.
+                                                            (line 160)
+* -take:                                 Sublist selection. (line  57)
+* -take-while:                           Sublist selection. (line  74)
+* -tree-map:                             Tree operations.   (line  29)
+* -tree-map-nodes:                       Tree operations.   (line  40)
+* -tree-mapreduce:                       Tree operations.   (line  86)
+* -tree-mapreduce-from:                  Tree operations.   (line 105)
+* -tree-reduce:                          Tree operations.   (line  54)
+* -tree-reduce-from:                     Tree operations.   (line  71)
+* -tree-seq:                             Tree operations.   (line   9)
+* -unfold:                               Unfolding.         (line  26)
+* -union:                                Set operations.    (line   9)
+* -update-at:                            List to list.      (line  94)
+* -when-let:                             Binding.           (line  10)
+* -when-let*:                            Binding.           (line  23)
+* -zip:                                  Other list operations.
+                                                            (line  94)
+* -zip-fill:                             Other list operations.
+                                                            (line 111)
+* -zip-with:                             Other list operations.
+                                                            (line  78)
+
+
+
+Tag Table:
+Node: Top947
+Node: Installation2423
+Node: Using in a package2992
+Node: Syntax highlighting of dash functions3356
+Node: Functions3740
+Node: Maps4941
+Ref: -map5237
+Ref: -map-when5575
+Ref: -map-indexed6149
+Ref: -annotate6551
+Ref: -splice7038
+Ref: -splice-list7804
+Ref: -mapcat8164
+Ref: -copy8537
+Node: Sublist selection8723
+Ref: -filter8916
+Ref: -remove9283
+Ref: -non-nil9638
+Ref: -slice9796
+Ref: -take10325
+Ref: -drop10577
+Ref: -take-while10776
+Ref: -drop-while11123
+Ref: -select-by-indices11476
+Node: List to list11983
+Ref: -keep12170
+Ref: -concat12558
+Ref: -flatten12852
+Ref: -flatten-n13204
+Ref: -replace13584
+Ref: -insert-at14036
+Ref: -replace-at14353
+Ref: -update-at14741
+Ref: -remove-at15221
+Ref: -remove-at-indices15698
+Node: Reductions16265
+Ref: -reduce-from16434
+Ref: -reduce-r-from17111
+Ref: -reduce17798
+Ref: -reduce-r18486
+Ref: -count19298
+Ref: -sum19520
+Ref: -product19706
+Ref: -min19912
+Ref: -min-by20135
+Ref: -max20651
+Ref: -max-by20873
+Node: Unfolding21394
+Ref: -iterate21633
+Ref: -unfold22075
+Node: Predicates22866
+Ref: -any?22990
+Ref: -all?23303
+Ref: -none?23618
+Ref: -only-some?23913
+Ref: -contains?24383
+Ref: -same-items?24755
+Ref: -is-prefix?25133
+Ref: -is-suffix?25449
+Ref: -is-infix?25765
+Node: Partitioning26112
+Ref: -split-at26300
+Ref: -split-with26583
+Ref: -split-on26983
+Ref: -split-when27647
+Ref: -separate28276
+Ref: -partition28715
+Ref: -partition-all29164
+Ref: -partition-in-steps29589
+Ref: -partition-all-in-steps30083
+Ref: -partition-by30565
+Ref: -partition-by-header30944
+Ref: -group-by31544
+Node: Indexing31974
+Ref: -elem-index32176
+Ref: -elem-indices32568
+Ref: -find-index32948
+Ref: -find-last-index33388
+Ref: -find-indices33845
+Ref: -grade-up34250
+Ref: -grade-down34651
+Node: Set operations35059
+Ref: -union35242
+Ref: -difference35673
+Ref: -intersection36077
+Ref: -distinct36501
+Node: Other list operations36809
+Ref: -rotate37034
+Ref: -repeat37327
+Ref: -cons*37587
+Ref: -snoc37971
+Ref: -interpose38377
+Ref: -interleave38672
+Ref: -zip-with39038
+Ref: -zip39726
+Ref: -zip-fill40373
+Ref: -cycle40694
+Ref: -pad41064
+Ref: -table41384
+Ref: -table-flat42167
+Ref: -first43156
+Ref: -some43519
+Ref: -last43882
+Ref: -first-item44213
+Ref: -last-item44410
+Ref: -butlast44603
+Ref: -sort44847
+Ref: -list45337
+Ref: -fix45665
+Node: Tree operations46199
+Ref: -tree-seq46395
+Ref: -tree-map47250
+Ref: -tree-map-nodes47690
+Ref: -tree-reduce48542
+Ref: -tree-reduce-from49417
+Ref: -tree-mapreduce50016
+Ref: -tree-mapreduce-from50860
+Ref: -clone52130
+Node: Threading macros52457
+Ref: ->52602
+Ref: ->>53092
+Ref: -->53586
+Node: Binding54101
+Ref: -when-let54305
+Ref: -when-let*54795
+Ref: -if-let55214
+Ref: -if-let*55605
+Ref: -let56112
+Ref: -let*59832
+Ref: -lambda60769
+Node: Side-effects61566
+Ref: -each61760
+Ref: -each-while62163
+Ref: -dotimes62521
+Node: Destructive operations62822
+Ref: !cons62995
+Ref: !cdr63202
+Node: Function combinators63398
+Ref: -partial63667
+Ref: -rpartial64060
+Ref: -juxt64460
+Ref: -compose64889
+Ref: -applify65443
+Ref: -on65887
+Ref: -flip66407
+Ref: -const66716
+Ref: -cut67057
+Ref: -not67510
+Ref: -orfn67821
+Ref: -andfn68254
+Ref: -iteratefn68747
+Ref: -fixfn69444
+Ref: -prodfn70999
+Node: Development72046
+Node: Contribute72395
+Node: Changes73116
+Node: Contributors75730
+Node: Index77068
+
+End Tag Table

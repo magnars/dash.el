@@ -391,6 +391,24 @@ Alias: `-find'"
 (defalias '-find '-first)
 (defalias '--find '--first)
 
+(defmacro --some (form list)
+  "Anaphoric form of `-some'."
+  (declare (debug (form form)))
+  (let ((n (make-symbol "needle")))
+    `(let (,n)
+       (--each-while ,list (not ,n)
+         (setq ,n ,form))
+       ,n)))
+
+(defun -some (pred list)
+  "Return (PRED x) for the first LIST item where (PRED x) is non-nil, else nil.
+
+Alias: `-any'"
+  (--some (funcall pred it) list))
+
+(defalias '-any '-some)
+(defalias '--any '--some)
+
 (defmacro --last (form list)
   "Anaphoric form of `-last'."
   (declare (debug (form form)))
@@ -1991,6 +2009,10 @@ structure such as plist or alist."
                              "--first"
                              "-find"
                              "--find"
+                             "-some"
+                             "--some"
+                             "-any"
+                             "--any"
                              "-last"
                              "--last"
                              "-first-item"

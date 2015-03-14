@@ -3580,6 +3580,12 @@ script for generating documentation.
 @item
 @uref{https://github.com/holomorph,Mark Oteiza} contributed the
 script to create an info manual.
+@item
+@uref{https://github.com/wasamasa,Vasilij Schneidermann} contributed
+@code{-some}.
+@item
+@uref{https://github.com/occidens,William West} made @code{-fixfn}
+more robust at handling floats.
 @end itemize
 
 Thanks!

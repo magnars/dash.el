@@ -34,6 +34,31 @@ Include this in your emacs settings to get syntax highlighting:
 
 ## Functions
 
+All functions and constructs in the library are prefixed with a dash (-).
+
+There are also anaphoric versions of functions where that makes sense,
+prefixed with two dashes instead of one.
+
+While `-map` takes a function to map over the list, you can also use
+the anaphoric form with double dashes - which will then be executed
+with `it` exposed as the list item. Here's an example:
+
+```el
+(-map (lambda (n) (* n n)) '(1 2 3 4)) ;; normal version
+
+(--map (* it it) '(1 2 3 4)) ;; anaphoric version
+```
+
+of course the original can also be written like
+
+```el
+(defun square (n) (* n n))
+
+(-map 'square '(1 2 3 4))
+```
+
+which demonstrates the usefulness of both versions.
+
 
 ### Maps
 
@@ -256,31 +281,6 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 * [-iteratefn](#-iteratefn-fn-n) `(fn n)`
 * [-fixfn](#-fixfn-fn-optional-equal-test-halt-test) `(fn &optional equal-test halt-test)`
 * [-prodfn](#-prodfn-rest-fns) `(&rest fns)`
-
-## Anaphoric functions
-
-There are also anaphoric versions of functions where that makes sense,
-prefixed with two dashes instead of one.
-
-While `-map` takes a function to map over the list, you can also use
-the anaphoric form with double dashes - which will then be executed
-with `it` exposed as the list item. Here's an example:
-
-```el
-(-map (lambda (n) (* n n)) '(1 2 3 4)) ;; normal version
-
-(--map (* it it) '(1 2 3 4)) ;; anaphoric version
-```
-
-of course the original can also be written like
-
-```el
-(defun square (n) (* n n))
-
-(-map 'square '(1 2 3 4))
-```
-
-which demonstrates the usefulness of both versions.
 
 
 ## Maps

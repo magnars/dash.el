@@ -38,6 +38,22 @@ new list."
     (--map-when (= it 2) 17 '(1 2 3 4)) => '(1 17 3 4)
     (-map-when (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) => '(1 2 0 4))
 
+  (defexamples -map-first
+    (-map-first 'even? 'square '(1 2 3 4)) => '(1 4 3 4)
+    (--map-first (> it 2) (* it it) '(1 2 3 4)) => '(1 2 9 4)
+    (--map-first (= it 2) 17 '(1 2 3 2)) => '(1 17 3 2)
+    (-map-first 'even? 'square '(1 3 5 7)) => '(1 3 5 7)
+    (-map-first 'even? 'square '(2)) => '(4)
+    (-map-first 'even? 'square nil) => nil)
+
+  (defexamples -map-last
+    (-map-last 'even? 'square '(1 2 3 4)) => '(1 2 3 16)
+    (--map-last (> it 2) (* it it) '(1 2 3 4)) => '(1 2 3 16)
+    (--map-last (= it 2) 17 '(1 2 3 2)) => '(1 2 3 17)
+    (-map-last 'even? 'square '(1 3 5 7)) => '(1 3 5 7)
+    (-map-last 'even? 'square '(2)) => '(4)
+    (-map-last 'even? 'square nil) => nil)
+
   (defexamples -map-indexed
     (-map-indexed (lambda (index item) (- item index)) '(1 2 3 4)) => '(1 1 1 1)
     (--map-indexed (- it it-index) '(1 2 3 4)) => '(1 1 1 1))
@@ -79,6 +95,20 @@ new list."
     (--remove (= 0 (% it 2)) '(1 2 3 4)) => '(1 3)
     (let ((mod 2)) (-remove (lambda (num) (= 0 (% num mod))) '(1 2 3 4))) => '(1 3)
     (let ((mod 2)) (--remove (= 0 (% it mod)) '(1 2 3 4))) => '(1 3))
+
+  (defexamples -remove-first
+    (-remove-first 'even? '(1 3 5 4 7 8 10)) => '(1 3 5 7 8 10)
+    (-remove-first 'stringp '(1 2 "first" "second" "third")) => '(1 2 "second" "third")
+    (--remove-first (> it 3) '(1 2 3 4 5 6 7 8 9 10)) => '(1 2 3 5 6 7 8 9 10)
+    (-remove-first 'even? '(2 3 4)) => '(3 4)
+    (-remove-first 'even? '(3 5 7 4)) => '(3 5 7)
+    (-remove-first 'even? '(2)) => nil
+    (-remove-first 'even? '(1 3 5 7)) => '(1 3 5 7))
+
+  (defexamples -remove-last
+    (-remove-last 'even? '(1 3 5 4 7 8 10 11)) => '(1 3 5 4 7 8 11)
+    (-remove-last 'stringp '(1 2 "last" "second" "third")) => '(1 2 "last" "second")
+    (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) => '(1 2 3 4 5 6 7 8 9))
 
   (defexamples -remove-item
     (-remove-item 3 '(1 2 3 2 3 4 5 3)) => '(1 2 2 4 5)
@@ -162,6 +192,16 @@ new list."
     (-replace 1 "1" '(1 2 3 4 3 2 1)) => '("1" 2 3 4 3 2 "1")
     (-replace "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) => '("a" "nice" "bar" "sentence" "about" "bar")
     (-replace 1 2 nil) => nil)
+
+  (defexamples -replace-first
+    (-replace-first 1 "1" '(1 2 3 4 3 2 1)) => '("1" 2 3 4 3 2 1)
+    (-replace-first "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) => '("a" "nice" "bar" "sentence" "about" "foo")
+    (-replace-first 1 2 nil) => nil)
+
+  (defexamples -replace-last
+    (-replace-last 1 "1" '(1 2 3 4 3 2 1)) => '(1 2 3 4 3 2 "1")
+    (-replace-last "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) => '("a" "nice" "foo" "sentence" "about" "bar")
+    (-replace-last 1 2 nil) => nil)
 
   (defexamples -insert-at
     (-insert-at 1 'x '(a b c)) => '(a x b c)

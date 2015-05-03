@@ -250,6 +250,50 @@ See also: @code{-update-at} (@pxref{-update-at})
 @end example
 @end defun
 
+@anchor{-map-first}
+@defun -map-first (pred rep list)
+Replace first item in @var{list} satisfying @var{pred} with result of @var{rep} called on this item.
+
+See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-first} (@pxref{-replace-first})
+
+@example
+@group
+(-map-first 'even? 'square '(1 2 3 4))
+    @result{} '(1 4 3 4)
+@end group
+@group
+(--map-first (> it 2) (* it it) '(1 2 3 4))
+    @result{} '(1 2 9 4)
+@end group
+@group
+(--map-first (= it 2) 17 '(1 2 3 2))
+    @result{} '(1 17 3 2)
+@end group
+@end example
+@end defun
+
+@anchor{-map-last}
+@defun -map-last (pred rep list)
+Replace first item in @var{list} satisfying @var{pred} with result of @var{rep} called on this item.
+
+See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-last} (@pxref{-replace-last})
+
+@example
+@group
+(-map-last 'even? 'square '(1 2 3 4))
+    @result{} '(1 2 3 16)
+@end group
+@group
+(--map-last (> it 2) (* it it) '(1 2 3 4))
+    @result{} '(1 2 3 16)
+@end group
+@group
+(--map-last (= it 2) 17 '(1 2 3 2))
+    @result{} '(1 2 3 17)
+@end group
+@end example
+@end defun
+
 @anchor{-map-indexed}
 @defun -map-indexed (fn list)
 Return a new list consisting of the result of (@var{fn} index item) for each item in @var{list}.
@@ -420,6 +464,54 @@ Alias: @code{-reject}
 @group
 (--remove (= 0 (% it 2)) '(1 2 3 4))
     @result{} '(1 3)
+@end group
+@end example
+@end defun
+
+@anchor{-remove-first}
+@defun -remove-first (pred list)
+Return a new list with the first item matching @var{pred} removed.
+
+Alias: @code{-reject-first}
+
+See also: @code{-remove} (@pxref{-remove}), @code{-map-first} (@pxref{-map-first})
+
+@example
+@group
+(-remove-first 'even? '(1 3 5 4 7 8 10))
+    @result{} '(1 3 5 7 8 10)
+@end group
+@group
+(-remove-first 'stringp '(1 2 "first" "second" "third"))
+    @result{} '(1 2 "second" "third")
+@end group
+@group
+(--remove-first (> it 3) '(1 2 3 4 5 6 7 8 9 10))
+    @result{} '(1 2 3 5 6 7 8 9 10)
+@end group
+@end example
+@end defun
+
+@anchor{-remove-last}
+@defun -remove-last (pred list)
+Return a new list with the last item matching @var{pred} removed.
+
+Alias: @code{-reject-last}
+
+See also: @code{-remove} (@pxref{-remove}), @code{-map-last} (@pxref{-map-last})
+
+@example
+@group
+(-remove-last 'even? '(1 3 5 4 7 8 10 11))
+    @result{} '(1 3 5 4 7 8 11)
+@end group
+@group
+(-remove-last 'stringp '(1 2 "last" "second" "third"))
+    @result{} '(1 2 "last" "second")
+@end group
+@group
+(--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10))
+    @result{} '(1 2 3 4 5 6 7 8 9)
 @end group
 @end example
 @end defun
@@ -690,6 +782,54 @@ See also: @code{-replace-at} (@pxref{-replace-at})
 @end group
 @group
 (-replace 1 2 nil)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-replace-first}
+@defun -replace-first (old new list)
+Replace the first occurence of @var{old} with @var{new} in @var{list}.
+
+Elements are compared using @code{equal}.
+
+See also: @code{-map-first} (@pxref{-map-first})
+
+@example
+@group
+(-replace-first 1 "1" '(1 2 3 4 3 2 1))
+    @result{} '("1" 2 3 4 3 2 1)
+@end group
+@group
+(-replace-first "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo"))
+    @result{} '("a" "nice" "bar" "sentence" "about" "foo")
+@end group
+@group
+(-replace-first 1 2 nil)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-replace-last}
+@defun -replace-last (old new list)
+Replace the last occurence of @var{old} with @var{new} in @var{list}.
+
+Elements are compared using @code{equal}.
+
+See also: @code{-map-last} (@pxref{-map-last})
+
+@example
+@group
+(-replace-last 1 "1" '(1 2 3 4 3 2 1))
+    @result{} '(1 2 3 4 3 2 "1")
+@end group
+@group
+(-replace-last "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo"))
+    @result{} '("a" "nice" "foo" "sentence" "about" "bar")
+@end group
+@group
+(-replace-last 1 2 nil)
     @result{} nil
 @end group
 @end example

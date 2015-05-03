@@ -45,6 +45,8 @@ new list.
 
 * [-map](#-map-fn-list) `(fn list)`
 * [-map-when](#-map-when-pred-rep-list) `(pred rep list)`
+* [-map-first](#-map-first-pred-rep-list) `(pred rep list)`
+* [-map-last](#-map-last-pred-rep-list) `(pred rep list)`
 * [-map-indexed](#-map-indexed-fn-list) `(fn list)`
 * [-annotate](#-annotate-fn-list) `(fn list)`
 * [-splice](#-splice-pred-fun-list) `(pred fun list)`
@@ -59,6 +61,8 @@ Functions returning a sublist of the original list.
 
 * [-filter](#-filter-pred-list) `(pred list)`
 * [-remove](#-remove-pred-list) `(pred list)`
+* [-remove-first](#-remove-first-pred-list) `(pred list)`
+* [-remove-last](#-remove-last-pred-list) `(pred list)`
 * [-remove-item](#-remove-item-item-list) `(item list)`
 * [-non-nil](#-non-nil-list) `(list)`
 * [-slice](#-slice-list-from-optional-to-step) `(list from &optional to step)`
@@ -78,6 +82,8 @@ Bag of various functions which modify input list.
 * [-flatten](#-flatten-l) `(l)`
 * [-flatten-n](#-flatten-n-num-list) `(num list)`
 * [-replace](#-replace-old-new-list) `(old new list)`
+* [-replace-first](#-replace-first-old-new-list) `(old new list)`
+* [-replace-last](#-replace-last-old-new-list) `(old new list)`
 * [-insert-at](#-insert-at-n-x-list) `(n x list)`
 * [-replace-at](#-replace-at-n-x-list) `(n x list)`
 * [-update-at](#-update-at-n-func-list) `(n func list)`
@@ -318,6 +324,30 @@ See also: [`-update-at`](#-update-at-n-func-list)
 (--map-when (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
 ```
 
+#### -map-first `(pred rep list)`
+
+Replace first item in `list` satisfying `pred` with result of `rep` called on this item.
+
+See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-first`](#-replace-first-old-new-list)
+
+```el
+(-map-first 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 4)
+(--map-first (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 4)
+(--map-first (= it 2) 17 '(1 2 3 2)) ;; => '(1 17 3 2)
+```
+
+#### -map-last `(pred rep list)`
+
+Replace first item in `list` satisfying `pred` with result of `rep` called on this item.
+
+See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-last`](#-replace-last-old-new-list)
+
+```el
+(-map-last 'even? 'square '(1 2 3 4)) ;; => '(1 2 3 16)
+(--map-last (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 3 16)
+(--map-last (= it 2) 17 '(1 2 3 2)) ;; => '(1 2 3 17)
+```
+
 #### -map-indexed `(fn list)`
 
 Return a new list consisting of the result of (`fn` index item) for each item in `list`.
@@ -417,6 +447,34 @@ Alias: `-reject`
 (-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
 (-remove 'even? '(1 2 3 4)) ;; => '(1 3)
 (--remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
+```
+
+#### -remove-first `(pred list)`
+
+Return a new list with the first item matching `pred` removed.
+
+Alias: `-reject-first`
+
+See also: [`-remove`](#-remove-pred-list), [`-map-first`](#-map-first-pred-rep-list)
+
+```el
+(-remove-first 'even? '(1 3 5 4 7 8 10)) ;; => '(1 3 5 7 8 10)
+(-remove-first 'stringp '(1 2 "first" "second" "third")) ;; => '(1 2 "second" "third")
+(--remove-first (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 5 6 7 8 9 10)
+```
+
+#### -remove-last `(pred list)`
+
+Return a new list with the last item matching `pred` removed.
+
+Alias: `-reject-last`
+
+See also: [`-remove`](#-remove-pred-list), [`-map-last`](#-map-last-pred-rep-list)
+
+```el
+(-remove-last 'even? '(1 3 5 4 7 8 10 11)) ;; => '(1 3 5 4 7 8 11)
+(-remove-last 'stringp '(1 2 "last" "second" "third")) ;; => '(1 2 "last" "second")
+(--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 5 6 7 8 9)
 ```
 
 #### -remove-item `(item list)`
@@ -568,6 +626,34 @@ See also: [`-replace-at`](#-replace-at-n-x-list)
 (-replace 1 "1" '(1 2 3 4 3 2 1)) ;; => '("1" 2 3 4 3 2 "1")
 (-replace "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => '("a" "nice" "bar" "sentence" "about" "bar")
 (-replace 1 2 nil) ;; => nil
+```
+
+#### -replace-first `(old new list)`
+
+Replace the first occurence of `old` with `new` in `list`.
+
+Elements are compared using `equal`.
+
+See also: [`-map-first`](#-map-first-pred-rep-list)
+
+```el
+(-replace-first 1 "1" '(1 2 3 4 3 2 1)) ;; => '("1" 2 3 4 3 2 1)
+(-replace-first "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => '("a" "nice" "bar" "sentence" "about" "foo")
+(-replace-first 1 2 nil) ;; => nil
+```
+
+#### -replace-last `(old new list)`
+
+Replace the last occurence of `old` with `new` in `list`.
+
+Elements are compared using `equal`.
+
+See also: [`-map-last`](#-map-last-pred-rep-list)
+
+```el
+(-replace-last 1 "1" '(1 2 3 4 3 2 1)) ;; => '(1 2 3 4 3 2 "1")
+(-replace-last "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => '("a" "nice" "foo" "sentence" "about" "bar")
+(-replace-last 1 2 nil) ;; => nil
 ```
 
 #### -insert-at `(n x list)`

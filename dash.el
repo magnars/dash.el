@@ -226,6 +226,44 @@ Alias: `-reject'"
 (defalias '-reject '-remove)
 (defalias '--reject '--remove)
 
+(defun -remove-first (pred list)
+  "Return a new list with the first item matching PRED removed.
+
+Alias: `-reject-first'
+
+See also: `-remove', `-map-first'"
+  (let (front)
+    (while (and list (not (funcall pred (car list))))
+      (push (car list) front)
+      (!cdr list))
+    (if list
+        (-concat (nreverse front) (cdr list))
+      (nreverse front))))
+
+(defmacro --remove-first (form list)
+  "Anaphoric form of `-remove-first'."
+  (declare (debug (form form)))
+  `(-remove-first (lambda (it) ,form) ,list))
+
+(defalias '-reject-first '-remove-first)
+(defalias '--reject-first '--remove-first)
+
+(defun -remove-last (pred list)
+  "Return a new list with the last item matching PRED removed.
+
+Alias: `-reject-last'
+
+See also: `-remove', `-map-last'"
+  (nreverse (-remove-first pred (nreverse list))))
+
+(defmacro --remove-last (form list)
+  "Anaphoric form of `-remove-last'."
+  (declare (debug (form form)))
+  `(-remove-last (lambda (it) ,form) ,list))
+
+(defalias '-reject-last '-remove-last)
+(defalias '--reject-last '--remove-last)
+
 (defun -remove-item (item list)
   "Remove all occurences of ITEM from LIST.
 
@@ -287,6 +325,32 @@ See also: `-update-at'"
 (defalias '-replace-where '-map-when)
 (defalias '--replace-where '--map-when)
 
+(defun -map-first (pred rep list)
+  "Replace first item in LIST satisfying PRED with result of REP called on this item.
+
+See also: `-map-when', `-replace-first'"
+  (let (front)
+    (while (and list (not (funcall pred (car list))))
+      (push (car list) front)
+      (!cdr list))
+    (if list
+        (-concat (nreverse front) (cons (funcall rep (car list)) (cdr list)))
+      (nreverse front))))
+
+(defmacro --map-first (pred rep list)
+  "Anaphoric form of `-map-first'."
+  `(-map-first (lambda (it) ,pred) (lambda (it) ,rep) ,list))
+
+(defun -map-last (pred rep list)
+  "Replace first item in LIST satisfying PRED with result of REP called on this item.
+
+See also: `-map-when', `-replace-last'"
+  (nreverse (-map-first pred rep (nreverse list))))
+
+(defmacro --map-last (pred rep list)
+  "Anaphoric form of `-map-last'."
+  `(-map-last (lambda (it) ,pred) (lambda (it) ,rep) ,list))
+
 (defun -replace (old new list)
   "Replace all OLD items in LIST with NEW.
 
@@ -294,6 +358,22 @@ Elements are compared using `equal'.
 
 See also: `-replace-at'"
   (--map-when (equal it old) new list))
+
+(defun -replace-first (old new list)
+  "Replace the first occurence of OLD with NEW in LIST.
+
+Elements are compared using `equal'.
+
+See also: `-map-first'"
+  (--map-first (equal old it) new list))
+
+(defun -replace-last (old new list)
+  "Replace the last occurence of OLD with NEW in LIST.
+
+Elements are compared using `equal'.
+
+See also: `-map-last'"
+  (--map-last (equal old it) new list))
 
 (defmacro --mapcat (form list)
   "Anaphoric form of `-mapcat'."
@@ -1991,6 +2071,14 @@ structure such as plist or alist."
                              "--remove"
                              "-reject"
                              "--reject"
+                             "-remove-first"
+                             "--remove-first"
+                             "-reject-first"
+                             "--reject-first"
+                             "-remove-last"
+                             "--remove-last"
+                             "-reject-last"
+                             "--reject-last"
                              "-remove-item"
                              "-non-nil"
                              "-keep"
@@ -2005,7 +2093,13 @@ structure such as plist or alist."
                              "--map-when"
                              "-replace-where"
                              "--replace-where"
+                             "-map-first"
+                             "--map-first"
+                             "-map-last"
+                             "--map-last"
                              "-replace"
+                             "-replace-first"
+                             "-replace-last"
                              "-flatten"
                              "-flatten-n"
                              "-concat"

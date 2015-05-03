@@ -1257,8 +1257,7 @@ sorts it in descending order."
         (n 0)
         (m match-form))
     (while (and (consp m)
-                (symbolp (car m))
-                (eq (aref (symbol-name (car m)) 0) ?_))
+                (dash--match-ignore-place-p (car m)))
       (setq n (1+ n)) (!cdr m))
     (cond
      ;; handle improper lists

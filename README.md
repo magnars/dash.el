@@ -59,6 +59,7 @@ Functions returning a sublist of the original list.
 
 * [-filter](#-filter-pred-list) `(pred list)`
 * [-remove](#-remove-pred-list) `(pred list)`
+* [-remove-item](#-remove-item-item-list) `(item list)`
 * [-non-nil](#-non-nil-list) `(list)`
 * [-slice](#-slice-list-from-optional-to-step) `(list from &optional to step)`
 * [-take](#-take-n-list) `(n list)`
@@ -416,6 +417,18 @@ Alias: `-reject`
 (-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
 (-remove 'even? '(1 2 3 4)) ;; => '(1 3)
 (--remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
+```
+
+#### -remove-item `(item list)`
+
+Remove all occurences of `item` from `list`.
+
+Comparison is done with `equal`.
+
+```el
+(-remove-item 3 '(1 2 3 2 3 4 5 3)) ;; => '(1 2 2 4 5)
+(-remove-item 'foo '(foo bar baz foo)) ;; => '(bar baz)
+(-remove-item "bob" '("alice" "bob" "eve" "bob" "dave")) ;; => '("alice" "eve" "dave")
 ```
 
 #### -non-nil `(list)`

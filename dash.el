@@ -226,6 +226,12 @@ Alias: `-reject'"
 (defalias '-reject '-remove)
 (defalias '--reject '--remove)
 
+(defun -remove-item (item list)
+  "Remove all occurences of ITEM from LIST.
+
+Comparison is done with `equal'."
+  (--remove (equal it item) list))
+
 (defmacro --keep (form list)
   "Anaphoric form of `-keep'."
   (declare (debug (form form)))
@@ -1983,6 +1989,7 @@ structure such as plist or alist."
                              "--remove"
                              "-reject"
                              "--reject"
+                             "-remove-item"
                              "-non-nil"
                              "-keep"
                              "--keep"

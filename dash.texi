@@ -424,6 +424,28 @@ Alias: @code{-reject}
 @end example
 @end defun
 
+@anchor{-remove-item}
+@defun -remove-item (item list)
+Remove all occurences of @var{item} from @var{list}.
+
+Comparison is done with @code{equal}.
+
+@example
+@group
+(-remove-item 3 '(1 2 3 2 3 4 5 3))
+    @result{} '(1 2 2 4 5)
+@end group
+@group
+(-remove-item 'foo '(foo bar baz foo))
+    @result{} '(bar baz)
+@end group
+@group
+(-remove-item "bob" '("alice" "bob" "eve" "bob" "dave"))
+    @result{} '("alice" "eve" "dave")
+@end group
+@end example
+@end defun
+
 @anchor{-non-nil}
 @defun -non-nil (list)
 Return all non-nil elements of @var{list}.

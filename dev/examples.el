@@ -17,8 +17,8 @@
 (defun approx-equal (u v)
   (or (= u v)
       (< (/ (abs (- u v))
-	    (max (abs u) (abs v)))
-	 epsilon)))
+        (max (abs u) (abs v)))
+     epsilon)))
 
 (def-example-group "Maps"
   "Functions in this category take a transforming function, which
@@ -79,6 +79,11 @@ new list."
     (--remove (= 0 (% it 2)) '(1 2 3 4)) => '(1 3)
     (let ((mod 2)) (-remove (lambda (num) (= 0 (% num mod))) '(1 2 3 4))) => '(1 3)
     (let ((mod 2)) (--remove (= 0 (% it mod)) '(1 2 3 4))) => '(1 3))
+
+  (defexamples -remove-item
+    (-remove-item 3 '(1 2 3 2 3 4 5 3)) => '(1 2 2 4 5)
+    (-remove-item 'foo '(foo bar baz foo)) => '(bar baz)
+    (-remove-item "bob" '("alice" "bob" "eve" "bob" "dave")) => '("alice" "eve" "dave"))
 
   (defexamples -non-nil
     (-non-nil '(1 nil 2 nil nil 3 4 nil 5 nil)) => '(1 2 3 4 5))

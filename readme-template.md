@@ -34,9 +34,7 @@ Include this in your emacs settings to get syntax highlighting:
 
 ## Functions
 
-[[ function-list ]]
-
-## Anaphoric functions
+All functions and constructs in the library are prefixed with a dash (-).
 
 There are also anaphoric versions of functions where that makes sense,
 prefixed with two dashes instead of one.
@@ -60,6 +58,8 @@ of course the original can also be written like
 ```
 
 which demonstrates the usefulness of both versions.
+
+[[ function-list ]]
 
 [[ function-docs ]]
 

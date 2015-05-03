@@ -589,6 +589,8 @@ Bag of various functions which modify input list.
 @defun -keep (fn list)
 Return a new list of the non-nil results of applying @var{fn} to the items in @var{list}.
 
+If you want to select the original items satisfying a predicate use @code{-filter} (@pxref{-filter}).
+
 @example
 @group
 (-keep 'cdr '((1 2 3) (4 5) (6)))

@@ -514,6 +514,8 @@ Bag of various functions which modify input list.
 
 Return a new list of the non-nil results of applying `fn` to the items in `list`.
 
+If you want to select the original items satisfying a predicate use [`-filter`](#-filter-pred-list).
+
 ```el
 (-keep 'cdr '((1 2 3) (4 5) (6))) ;; => '((2 3) (5))
 (-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) ;; => '(40 50 60)

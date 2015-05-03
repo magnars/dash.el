@@ -242,7 +242,9 @@ Comparison is done with `equal'."
        (nreverse ,r))))
 
 (defun -keep (fn list)
-  "Return a new list of the non-nil results of applying FN to the items in LIST."
+  "Return a new list of the non-nil results of applying FN to the items in LIST.
+
+If you want to select the original items satisfying a predicate use `-filter'."
   (--keep (funcall fn it) list))
 
 (defun -non-nil (list)

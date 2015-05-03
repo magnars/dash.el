@@ -817,6 +817,10 @@ new list."
     (-let [(_ _ _ a) (list 1 2 3 4 5)] a) => 4
     (-let [(_ _ _ (a b)) (list 1 2 3 (list 4 5))] (list a b)) => '(4 5)
     (-let [(_ a _ b) (list 1 2 3 4 5)] (list a b)) => '(2 4)
+    (-let [(_ a _ b _ c) (list 1 2 3 4 5 6)] (list a b c)) => '(2 4 6)
+    (-let [(_ a _ b _ _ _ c) (list 1 2 3 4 5 6 7 8)] (list a b c)) => '(2 4 8)
+    (-let [(_ a _ _ _ b _ c) (list 1 2 3 4 5 6 7 8)] (list a b c)) => '(2 6 8)
+    (-let [(_ _ _ a _ _ _ b _ _ _ c) (list 1 2 3 4 5 6 7 8 9 10 11 12)] (list a b c)) => '(4 8 12)
     (-let [(_ (a b) _ c) (list 1 (list 2 3) 4 5)] (list a b c)) => '(2 3 5)
     (-let [(_ (a b) _ . c) (list 1 (list 2 3) 4 5)] (list a b c)) => '(2 3 (5))
     (-let [(_ (a b) _ (c d)) (list 1 (list 2 3) 4 (list 5 6))] (list a b c d)) => '(2 3 5 6)

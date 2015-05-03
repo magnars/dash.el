@@ -1237,9 +1237,8 @@ All returned symbols are guaranteed to be unique."
    ((= skip-cdr 0)
     `(pop ,source))
    (t
-    `(progn
-       (setq ,source (nthcdr ,skip-cdr ,source))
-       (pop ,source)))))
+    `(prog1 ,(dash--match-cons-get-car skip-cdr source)
+       (setq ,source ,(dash--match-cons-get-cdr (1+ skip-cdr) source))))))
 
 (defun dash--match-cons-get-car (skip-cdr source)
   "Helper function generating idiomatic code to get nth car."

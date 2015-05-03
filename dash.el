@@ -1260,7 +1260,9 @@ sorts it in descending order."
                 (dash--match-ignore-place-p (car m)))
       (setq n (1+ n)) (!cdr m))
     (cond
-     ;; handle improper lists
+     ;; when we only have one pattern in the list, we don't have to
+     ;; create a temporary binding (--dash-source--) for the source
+     ;; and just use the input directly
      ((and (consp m)
            (not (cdr m)))
       (dash--match (car m) (dash--match-cons-get-car n source)))

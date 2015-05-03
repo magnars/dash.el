@@ -1550,7 +1550,9 @@ plist-like key-value pairs, similarly to &keys keyword of
 
 This binds N values from the list to a1 ... aN, then interprets
 the cdr as a plist (see key/value matching above)."
-  (declare (debug ((&rest (sexp form)) body))
+  (declare (debug ([&or (&rest (sexp form))
+                        (vector [&rest [sexp form]])]
+                   body))
            (indent 1))
   (if (vectorp varlist)
       `(let* ,(dash--match (aref varlist 0) (aref varlist 1))

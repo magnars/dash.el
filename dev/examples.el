@@ -791,10 +791,12 @@ new list."
     (-let [[a b c] "abcdef"] (list a b c)) => '(?a ?b ?c)
     (-let [[a (b [c]) d] [1 (2 [3 4]) 5 6]] (list a b c d)) => '(1 2 3 5)
     (-let [(a b c d) (list 1 2 3 4 5 6)] (list a b c d)) => '(1 2 3 4)
+    (-let [([a b]) (list (vector 1 2 3))] (list a b)) => '(1 2)
     ;; d is bound to nil. I don't think we want to error in such a case.
     ;; After all (car nil) => nil
     (-let [(a b c d) (list 1 2 3)] (list a b c d)) => '(1 2 3 nil)
     (-let [[a b c] [1 2 3 4]] (list a b c)) => '(1 2 3)
+    (-let [[a] [1 2 3 4]] a) => 1
     (-let [[a b &rest c] "abcdef"] (list a b c)) => '(?a ?b "cdef")
     (-let [[a b &rest c] [1 2 3 4 5 6]] (list a b c)) => '(1 2 [3 4 5 6])
     (-let [[a b &rest [c d]] [1 2 3 4 5 6]] (list a b c d)) => '(1 2 3 4)
@@ -872,7 +874,26 @@ new list."
     (-let [[(a _ b)] (vector (list 1 2 3 4))] (list a b)) => '(1 3)
     (-let [(&plist 'a a) (list 'a 1 'b 2)] a) => 1
     (-let [(&plist 'a [a b]) (list 'a [1 2] 'b 3)] (list a b)) => '(1 2)
-    (-let [(&plist 'a [a b] 'c c) (list 'a [1 2] 'c 3)] (list a b c)) => '(1 2 3))
+    (-let [(&plist 'a [a b] 'c c) (list 'a [1 2] 'c 3)] (list a b c)) => '(1 2 3)
+    ;; test the &as form
+    (-let (((items &as first . rest) (list 1 2 3))) (list first rest items)) => '(1 (2 3) (1 2 3))
+    (-let [(all &as [vect &as a b] bar) (list [1 2] 3)] (list a b bar vect all)) => '(1 2 3 [1 2] ([1 2] 3))
+    (-let [(all &as (list &as a b) bar) (list (list 1 2) 3)] (list a b bar list all)) => '(1 2 3 (1 2) ((1 2) 3))
+    (-let [(x &as [a b]) (list (vector 1 2 3))] (list a b x)) => '(1 2 ([1 2 3]))
+    (-let [(result &as [_ a] [_ b]) (list [1 2] [3 4])] (list a b result)) => '(2 4 ([1 2] [3 4]))
+    (-let [(result &as [fst &as _ a] [snd &as _ b]) (list [1 2] [3 4])] (list a b fst snd result)) => '(2 4 [1 2] [3 4] ([1 2] [3 4]))
+    (-let [[x &as a b &rest r] (vector 1 2 3)] (list a b r x)) => '(1 2 [3] [1 2 3])
+    (-let [[x &as a] (vector 1 2 3)] (list a x)) => '(1 [1 2 3])
+    (-let [[x &as _ _ a] (vector 1 2 3)] (list a x)) => '(3 [1 2 3])
+    (-let [[x &as _ _ a] (vector 1 2 (list 3 4))] (list a x)) => '((3 4) [1 2 (3 4)])
+    (-let [[x &as _ _ (a b)] (vector 1 2 (list 3 4))] (list a b x)) => '(3 4 [1 2 (3 4)])
+    (-let [(b &as beg . end) (cons 1 2)] (list beg end b)) => '(1 2 (1 . 2))
+    (-let [(plist &as &plist :a a :b b) (list :a 1 :b 2)] (list a b plist)) => '(1 2 (:a 1 :b 2))
+    (-let [(alist &as &alist :a a :b b) (list (cons :a 1) (cons :b 2))] (list a b alist)) => '(1 2 ((:a . 1) (:b . 2)))
+    (-let [(list &as _ _ _ a _ _ _ b _ _ _ c) (list 1 2 3 4 5 6 7 8 9 10 11 12)] (list a b c list)) => '(4 8 12 (1 2 3 4 5 6 7 8 9 10 11 12))
+    (-let (((x &as a b) (list 1 2))
+           ((y &as c d) (list 3 4)))
+      (list a b c d x y)) => '(1 2 3 4 (1 2) (3 4)))
 
   (defexamples -let*
     (-let* (((a . b) (cons 1 2))

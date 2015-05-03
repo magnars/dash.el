@@ -1915,6 +1915,46 @@ plist-like key-value pairs, similarly to &keys keyword of
 This binds `n` values from the list to a1 ... aN, then interprets
 the cdr as a plist (see key/value matching above).
 
+You can name the source using the syntax `symbol` &as `pattern`.
+This syntax works with lists (proper or improper), vectors and
+all types of maps.
+
+    (list &as a b c) (list 1 2 3)
+
+binds `a` to 1, `b` to 2, `c` to 3 and `list` to (1 2 3).
+
+Similarly:
+
+    (bounds &as beg . end) (cons 1 2)
+
+binds `beg` to 1, `end` to 2 and `bounds` to (1 . 2).
+
+    (items &as first . rest) (list 1 2 3)
+
+binds `first` to 1, `rest` to (2 3) and `items` to (1 2 3)
+
+    [vect &as _ b c] [1 2 3]
+
+binds `b` to 2, `c` to 3 and `vect` to [1 2 3] (_ avoids binding as usual).
+
+    (plist &as &plist :b b) (list :a 1 :b 2 :c 3)
+
+binds `b` to 2 and `plist` to (:a 1 :b 2 :c 3).  Same for &alist and &hash.
+
+This is especially useful when we want to capture the result of a
+computation and destructure at the same time.  Consider the
+form (function-returning-complex-structure) returning a list of
+two vectors with two items each.  We want to capture this entire
+result and pass it to another computation, but at the same time
+we want to get the second item from each vector.  We can achieve
+it with pattern
+
+    (result &as [_ a] [_ b]) (function-returning-complex-structure)
+
+Note: Clojure programmers may know this feature as the ":as
+binding".  The difference is that we put the &as at the front
+because we need to support improper list binding.
+
 ```el
 (-let (([a (b c) d] [1 (2 3) 4])) (list a b c d)) ;; => '(1 2 3 4)
 (-let [(a b c . d) (list 1 2 3 4 5 6)] (list a b c d)) ;; => '(1 2 3 (4 5 6))

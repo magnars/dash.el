@@ -1452,13 +1452,28 @@ Key-value stores are disambiguated by placing a token &plist,
     (dash--match-symbol match-form source))
    ((consp match-form)
     (cond
+     ;; Handle the "x &as" bindings first.
+     ((and (consp (cdr match-form))
+           (symbolp (car match-form))
+           (eq '&as (cadr match-form)))
+      (let ((s (car match-form)))
+        (cons (list s source)
+              (dash--match (cddr match-form) s))))
      ((memq (car match-form) '(&plist &alist &hash))
       (dash--match-kv match-form source))
      ((eq (car match-form) '&keys)
       (dash--match-kv (cons '&plist (cdr match-form)) source))
      (t (dash--match-cons match-form source))))
    ((vectorp match-form)
-    (dash--match-vector match-form source))))
+    ;; We support the &as binding in vectors too
+    (cond
+     ((and (> (length match-form) 2)
+           (symbolp (aref match-form 0))
+           (eq '&as (aref match-form 1)))
+      (let ((s (aref match-form 0)))
+        (cons (list s source)
+              (dash--match (dash--vector-tail match-form 2) s))))
+     (t (dash--match-vector match-form source))))))
 
 (defmacro -let* (varlist &rest body)
   "Bind variables according to VARLIST then eval BODY.
@@ -1565,7 +1580,47 @@ plist-like key-value pairs, similarly to &keys keyword of
   (a1 a2 ... aN &keys key1 b1 ... keyN bK)
 
 This binds N values from the list to a1 ... aN, then interprets
-the cdr as a plist (see key/value matching above)."
+the cdr as a plist (see key/value matching above).
+
+You can name the source using the syntax SYMBOL &as PATTERN.
+This syntax works with lists (proper or improper), vectors and
+all types of maps.
+
+  (list &as a b c) (list 1 2 3)
+
+binds A to 1, B to 2, C to 3 and LIST to (1 2 3).
+
+Similarly:
+
+  (bounds &as beg . end) (cons 1 2)
+
+binds BEG to 1, END to 2 and BOUNDS to (1 . 2).
+
+  (items &as first . rest) (list 1 2 3)
+
+binds FIRST to 1, REST to (2 3) and ITEMS to (1 2 3)
+
+  [vect &as _ b c] [1 2 3]
+
+binds B to 2, C to 3 and VECT to [1 2 3] (_ avoids binding as usual).
+
+  (plist &as &plist :b b) (list :a 1 :b 2 :c 3)
+
+binds B to 2 and PLIST to (:a 1 :b 2 :c 3).  Same for &alist and &hash.
+
+This is especially useful when we want to capture the result of a
+computation and destructure at the same time.  Consider the
+form (function-returning-complex-structure) returning a list of
+two vectors with two items each.  We want to capture this entire
+result and pass it to another computation, but at the same time
+we want to get the second item from each vector.  We can achieve
+it with pattern
+
+  (result &as [_ a] [_ b]) (function-returning-complex-structure)
+
+Note: Clojure programmers may know this feature as the \":as
+binding\".  The difference is that we put the &as at the front
+because we need to support improper list binding."
   (declare (debug ([&or (&rest (sexp form))
                         (vector [&rest [sexp form]])]
                    body))

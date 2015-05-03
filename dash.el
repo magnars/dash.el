@@ -1337,6 +1337,9 @@ SOURCE is a proper or improper list."
      ;; don't bind `s' if we only have one sub-pattern
      ((= (length match-form) 1)
       (dash--match (aref match-form 0) `(aref ,source 0)))
+     ;; if the source is a symbol, we don't need to re-bind it
+     ((symbolp source)
+      (dash--match-vector-1 match-form source))
      ;; don't bind `s' if we only have one sub-pattern which is not ignored
      ((let* ((ignored-places (mapcar 'dash--match-ignore-place-p match-form))
              (ignored-places-n (length (-remove 'null ignored-places))))
@@ -1394,6 +1397,9 @@ kv can be any key-value store, such as plist, alist or hash-table."
     (cond
      ;; don't bind `s' if we only have one sub-pattern (&type key val)
      ((= (length match-form) 3)
+      (dash--match-kv-1 (cdr match-form) source (car match-form)))
+     ;; if the source is a symbol, we don't need to re-bind it
+     ((symbolp source)
       (dash--match-kv-1 (cdr match-form) source (car match-form)))
      (t
       (cons (list s source) (dash--match-kv-1 (cdr match-form) s (car match-form)))))))

@@ -1216,6 +1216,16 @@ sorts it in descending order."
          (-sort comp)
          (-map 'cdr))))
 
+(defvar dash--source-counter 0
+  "Monotonic counter for generated symbols.")
+
+(defun dash--match-make-source-symbol ()
+  "Generate a new dash-source symbol.
+
+All returned symbols are guaranteed to be unique."
+  (prog1 (make-symbol (format "--dash-source-%d--" dash--source-counter))
+    (setq dash--source-counter (1+ dash--source-counter))))
+
 (defun dash--match-ignore-place-p (symbol)
   "Return non-nil if SYMBOL is a symbol and starts with _."
   (and (symbolp symbol)
@@ -1253,7 +1263,7 @@ sorts it in descending order."
 
 (defun dash--match-cons (match-form source)
   "Setup a cons matching environment and call the real matcher."
-  (let ((s (make-symbol "--dash-source--"))
+  (let ((s (dash--match-make-source-symbol))
         (n 0)
         (m match-form))
     (while (and (consp m)
@@ -1322,7 +1332,7 @@ SOURCE is a proper or improper list."
 
 (defun dash--match-vector (match-form source)
   "Setup a vector matching environment and call the real matcher."
-  (let ((s (make-symbol "--dash-source--")))
+  (let ((s (dash--match-make-source-symbol)))
     (cond
      ;; don't bind `s' if we only have one sub-pattern
      ((= (length match-form) 1)
@@ -1380,7 +1390,7 @@ is discarded."
   "Setup a kv matching environment and call the real matcher.
 
 kv can be any key-value store, such as plist, alist or hash-table."
-  (let ((s (make-symbol "--dash-source--")))
+  (let ((s (dash--match-make-source-symbol)))
     (cond
      ;; don't bind `s' if we only have one sub-pattern (&type key val)
      ((= (length match-form) 3)

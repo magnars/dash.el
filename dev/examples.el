@@ -70,7 +70,8 @@ new list."
 
   (defexamples -splice-list
     (-splice-list 'keywordp '(a b c) '(1 :foo 2)) => '(1 a b c 2)
-    (-splice-list 'keywordp nil '(1 :foo 2)) => '(1 2))
+    (-splice-list 'keywordp nil '(1 :foo 2)) => '(1 2)
+    (--splice-list (keywordp it) '(a b c) '(1 :foo 2)) => '(1 a b c 2))
 
   (defexamples -mapcat
     (-mapcat 'list '(1 2 3)) => '(1 2 3)

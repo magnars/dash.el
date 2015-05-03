@@ -439,7 +439,7 @@ See also: `-splice-list', `-insert-at'"
 See also: `-splice', `-insert-at'"
   (-splice pred (lambda (_) new-list) list))
 
-(defun --splice-list (pred new-list list)
+(defmacro --splice-list (pred new-list list)
   "Anaphoric form of `-splice-list'."
   `(-splice-list (lambda (it) ,pred) ,new-list ,list))
 

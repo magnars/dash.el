@@ -376,6 +376,10 @@ See also: @code{-splice} (@pxref{-splice}), @code{-insert-at} (@pxref{-insert-at
 (-splice-list 'keywordp nil '(1 :foo 2))
     @result{} '(1 2)
 @end group
+@group
+(--splice-list (keywordp it) '(a b c) '(1 :foo 2))
+    @result{} '(1 a b c 2)
+@end group
 @end example
 @end defun
 

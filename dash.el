@@ -915,31 +915,25 @@ other value (the body)."
 
 (defmacro --group-by (form list)
   "Anaphoric form of `-group-by'."
-  (declare (debug (form form)))
-  (let ((l (make-symbol "list"))
-        (v (make-symbol "value"))
-        (k (make-symbol "key"))
-        (r (make-symbol "result")))
-    `(let ((,l ,list)
-           ,r)
-       ;; Convert `list' to an alist and store it in `r'.
-       (while ,l
-         (let* ((,v (car ,l))
-                (it ,v)
-                (,k ,form)
-                (kv (assoc ,k ,r)))
-           (if kv
-               (setcdr kv (cons ,v (cdr kv)))
-             (push (list ,k ,v) ,r))
-           (setq ,l (cdr ,l))))
-       ;; Reverse lists in each group.
-       (let ((rest ,r))
-         (while rest
-           (let ((kv (car rest)))
-             (setcdr kv (nreverse (cdr kv))))
-           (setq rest (cdr rest))))
-       ;; Reverse order of keys.
-       (nreverse ,r))))
+  (declare (debug t))
+  (let ((n (make-symbol "n"))
+        (k (make-symbol "k"))
+        (grp (make-symbol "grp")))
+    `(nreverse
+      (-map
+       (lambda (,n)
+         (cons (car ,n)
+               (nreverse (cdr ,n))))
+       (--reduce-from
+        (let* ((,k (,@form))
+               (,grp (assoc ,k acc)))
+          (if ,grp
+              (setcdr ,grp (cons it (cdr ,grp)))
+            (push
+             (list ,k it)
+             acc))
+          acc)
+        nil ,list)))))
 
 (defun -group-by (fn list)
   "Separate LIST into an alist whose keys are FN applied to the

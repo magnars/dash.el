@@ -965,6 +965,8 @@ item, etc. If @var{list} contains no items, return @var{initial-value} and
 In the anaphoric form @code{--reduce-from}, the accumulated value is
 exposed as `acc`.
 
+See also: @code{-reduce} (@pxref{-reduce}), @code{-reduce-r} (@pxref{-reduce-r})
+
 @example
 @group
 (-reduce-from '- 10 '(1 2 3))
@@ -989,6 +991,8 @@ returned and @var{fn} is not called.
 
 Note: this function works the same as @code{-reduce-from} (@pxref{-reduce-from}) but the
 operation associates from right instead of from left.
+
+See also: @code{-reduce-r} (@pxref{-reduce-r}), @code{-reduce} (@pxref{-reduce})
 
 @example
 @group
@@ -1016,6 +1020,8 @@ reduce return the result of calling @var{fn} with no arguments. If
 
 In the anaphoric form @code{--reduce}, the accumulated value is
 exposed as `acc`.
+
+See also: @code{-reduce-from} (@pxref{-reduce-from}), @code{-reduce-r} (@pxref{-reduce-r})
 
 @example
 @group
@@ -1046,6 +1052,8 @@ accumulated value.
 
 Note: this function works the same as @code{-reduce} (@pxref{-reduce}) but the operation
 associates from right instead of from left.
+
+See also: @code{-reduce-r-from} (@pxref{-reduce-r-from}), @code{-reduce} (@pxref{-reduce})
 
 @example
 @group

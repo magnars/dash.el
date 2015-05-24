@@ -734,6 +734,8 @@ item, etc. If `list` contains no items, return `initial-value` and
 In the anaphoric form `--reduce-from`, the accumulated value is
 exposed as `acc`.
 
+See also: [`-reduce`](#-reduce-fn-list), [`-reduce-r`](#-reduce-r-fn-list)
+
 ```el
 (-reduce-from '- 10 '(1 2 3)) ;; => 4
 (-reduce-from (lambda (memo item) (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3)) ;; => "(((10 - 1) - 2) - 3)"
@@ -748,6 +750,8 @@ returned and `fn` is not called.
 
 Note: this function works the same as [`-reduce-from`](#-reduce-from-fn-initial-value-list) but the
 operation associates from right instead of from left.
+
+See also: [`-reduce-r`](#-reduce-r-fn-list), [`-reduce`](#-reduce-fn-list)
 
 ```el
 (-reduce-r-from '- 10 '(1 2 3)) ;; => -8
@@ -765,6 +769,8 @@ reduce return the result of calling `fn` with no arguments. If
 
 In the anaphoric form `--reduce`, the accumulated value is
 exposed as `acc`.
+
+See also: [`-reduce-from`](#-reduce-from-fn-initial-value-list), [`-reduce-r`](#-reduce-r-fn-list)
 
 ```el
 (-reduce '- '(1 2 3 4)) ;; => -8
@@ -785,6 +791,8 @@ accumulated value.
 
 Note: this function works the same as [`-reduce`](#-reduce-fn-list) but the operation
 associates from right instead of from left.
+
+See also: [`-reduce-r-from`](#-reduce-r-from-fn-initial-value-list), [`-reduce`](#-reduce-fn-list)
 
 ```el
 (-reduce-r '- '(1 2 3 4)) ;; => -2

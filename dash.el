@@ -133,7 +133,9 @@ item, etc. If LIST contains no items, return INITIAL-VALUE and
 FN is not called.
 
 In the anaphoric form `--reduce-from', the accumulated value is
-exposed as `acc`."
+exposed as `acc`.
+
+See also: `-reduce', `-reduce-r'"
   (--reduce-from (funcall fn acc it) initial-value list))
 
 (defmacro --reduce (form list)
@@ -153,7 +155,9 @@ reduce return the result of calling FN with no arguments. If
 LIST has only 1 item, it is returned and FN is not called.
 
 In the anaphoric form `--reduce', the accumulated value is
-exposed as `acc`."
+exposed as `acc`.
+
+See also: `-reduce-from', `-reduce-r'"
   (if list
       (-reduce-from fn (car list) (cdr list))
     (funcall fn)))
@@ -164,7 +168,9 @@ the resulting expression. If LIST is empty, INITIAL-VALUE is
 returned and FN is not called.
 
 Note: this function works the same as `-reduce-from' but the
-operation associates from right instead of from left."
+operation associates from right instead of from left.
+
+See also: `-reduce-r', `-reduce'"
   (if (not list) initial-value
     (funcall fn (car list) (-reduce-r-from fn initial-value (cdr list)))))
 
@@ -184,7 +190,9 @@ The first argument of FN is the new item, the second is the
 accumulated value.
 
 Note: this function works the same as `-reduce' but the operation
-associates from right instead of from left."
+associates from right instead of from left.
+
+See also: `-reduce-r-from', `-reduce'"
   (cond
    ((not list) (funcall fn))
    ((not (cdr list)) (car list))

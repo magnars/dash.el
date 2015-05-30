@@ -1674,7 +1674,9 @@ See `-let' for the description of destructuring mechanism."
 VARS and do THEN, otherwise do ELSE. VARS-VALS should be a list
 of (VAR VAL) pairs.
 
-Note: binding is done according to `-let*'."
+Note: binding is done according to `-let*'.  VALS are evaluated
+sequentially, and evaluation stops after the first nil VAL is
+encountered."
   (declare (debug ((&rest (sexp form)) form body))
            (indent 2))
   (->> vars-vals
@@ -1707,7 +1709,9 @@ otherwise do ELSE."
 VARS and execute body. VARS-VALS should be a list of (VAR VAL)
 pairs.
 
-Note: binding is done according to `-let*'."
+Note: binding is done according to `-let*'.  VALS are evaluated
+sequentially, and evaluation stops after the first nil VAL is
+encountered."
   (declare (debug ((&rest (sexp form)) body))
            (indent 1))
   `(-if-let* ,vars-vals (progn ,@body)))

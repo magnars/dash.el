@@ -1168,16 +1168,17 @@ second item in second form, etc."
                   (list form x)))
    (:else `(-> (-> ,x ,form) ,@more))))
 
-(defmacro ->> (x form &rest more)
+(defmacro ->> (x &optional form &rest more)
   "Thread the expr through the forms. Insert X as the last item
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
 last item in second form, etc."
-  (if (null more)
-      (if (listp form)
-          `(,(car form) ,@(cdr form) ,x)
-        (list form x))
-    `(->> (->> ,x ,form) ,@more)))
+  (cond
+   ((null form) x)
+   ((null more) (if (listp form)
+                    `(,@form ,x)
+                  (list form x)))
+   (:else `(->> (->> ,x ,form) ,@more))))
 
 (defmacro --> (x form &rest more)
   "Thread the expr through the forms. Insert X at the position

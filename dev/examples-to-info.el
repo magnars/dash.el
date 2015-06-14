@@ -86,9 +86,12 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
                 (s-replace "### " "@section " function)) "\n")
     (-let [(command-name signature docstring examples) function]
       (format (concat "@anchor{%s}\n"
-                      "@defun %s %s\n"
+                      (if (macrop command-name) "@defmac" "@defun")
+                      " %s %s\n"
                       "%s\n\n"
-                      "@example\n%s\n@end example\n@end defun\n")
+                      "@example\n%s\n@end example\n"
+                      "@end "
+                      (if (macrop command-name) "defmac" "defun") "\n")
               command-name
               command-name
               signature

@@ -733,7 +733,26 @@ new list."
   (defexamples -->
     (--> "def" (concat "abc" it "ghi")) => "abcdefghi"
     (--> "def" (concat "abc" it "ghi") (upcase it)) => "ABCDEFGHI"
-    (--> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI"))
+    (--> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI")
+
+  (defexamples -some->
+    (-some-> '(2 3 5)) => '(2 3 5)
+    (-some-> 5 square) => 25
+    (-some-> nil square) => nil
+    (-some-> 5 even? square) => nil)
+
+  (defexamples -some->>
+    (-some->> '(1 2 3) (-map 'square)) => '(1 4 9)
+    (-some->> '(1 3 5) (-last 'even?) (+ 100)) => nil
+    (-some->> '(2 4 6) (-last 'even?) (+ 100)) => 106
+    (-some->> '("A" "B" :c) (-filter 'stringp) (-reduce 'concat)) => "AB"
+    (-some->> '(:a :b :c) (-filter 'stringp) (-reduce 'concat)) => nil)
+
+  (defexamples -some-->
+    (-some--> "def" (concat "abc" it "ghi")) => "abcdefghi"
+    (-some--> nil (concat "abc" it "ghi")) => nil
+    (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) => nil
+    (-some--> '(2 4 6) (-filter 'even? it) (append it it) (-map 'square it)) => '(4 16 36 4 16 36)))
 
 (def-example-group "Binding"
   "Convenient versions of `let` and `let*` constructs combined with flow control."

@@ -240,6 +240,9 @@ Functions pretending lists are trees.
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [->>](#--x-form-rest-more) `(x form &rest more)`
 * [-->](#---x-form-rest-more) `(x form &rest more)`
+* [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
+* [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
+* [-some-->](#-some---x-optional-form-rest-more) `(x &optional form &rest more)`
 
 ### Binding
 
@@ -1767,6 +1770,39 @@ in second form, etc.
 (--> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
 ```
 
+#### -some-> `(x &optional form &rest more)`
+
+When expr is non-nil, thread it through the first form (via [`->`](#--x-optional-form-rest-more)),
+and when that result is non-nil, through the next form, etc.
+
+```el
+(-some-> '(2 3 5)) ;; => '(2 3 5)
+(-some-> 5 square) ;; => 25
+(-some-> nil square) ;; => nil
+```
+
+#### -some->> `(x &optional form &rest more)`
+
+When expr is non-nil, thread it through the first form (via [`->>`](#--x-optional-form-rest-more)),
+and when that result is non-nil, through the next form, etc.
+
+```el
+(-some->> '(1 2 3) (-map 'square)) ;; => '(1 4 9)
+(-some->> '(1 3 5) (-last 'even?) (+ 100)) ;; => nil
+(-some->> '(2 4 6) (-last 'even?) (+ 100)) ;; => 106
+```
+
+#### -some--> `(x &optional form &rest more)`
+
+When expr in non-nil, thread it through the first form (via [`-->`](#---x-form-rest-more)),
+and when that result is non-nil, through the next form, etc.
+
+```el
+(-some--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
+(-some--> nil (concat "abc" it "ghi")) ;; => nil
+(-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) ;; => nil
+```
+
 
 ## Binding
 
@@ -2436,6 +2472,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Mark Oteiza](https://github.com/holomorph) contributed the script to create an info manual.
  - [Vasilij Schneidermann](https://github.com/wasamasa) contributed `-some`.
  - [William West](https://github.com/occidens) made `-fixfn` more robust at handling floats.
+ - [Cam Saül](https://github.com/cammsaul) contributed `-some->`, `-some->>`, and `-some-->`.
 
 Thanks!
 

@@ -1191,6 +1191,33 @@ in second form, etc."
         (list form x))
     `(--> (--> ,x ,form) ,@more)))
 
+(defmacro -some-> (x &optional form &rest more)
+  "When expr is non-nil, thread it through the first form (via `->'),
+and when that result is non-nil, through the next form, etc."
+  (if (null form) x
+    (let ((result (make-symbol "result")))
+      `(-some-> (-when-let (,result ,x)
+                  (-> ,result ,form))
+                ,@more))))
+
+(defmacro -some->> (x &optional form &rest more)
+  "When expr is non-nil, thread it through the first form (via `->>'),
+and when that result is non-nil, through the next form, etc."
+  (if (null form) x
+    (let ((result (make-symbol "result")))
+      `(-some->> (-when-let (,result ,x)
+                   (->> ,result ,form))
+                 ,@more))))
+
+(defmacro -some--> (x &optional form &rest more)
+  "When expr in non-nil, thread it through the first form (via `-->'),
+and when that result is non-nil, through the next form, etc."
+  (if (null form) x
+    (let ((result (make-symbol "result")))
+      `(-some--> (-when-let (,result ,x)
+                   (--> ,result ,form))
+                 ,@more))))
+
 (defun -grade-up (comparator list)
   "Grade elements of LIST using COMPARATOR relation, yielding a
 permutation vector such that applying this permutation to LIST

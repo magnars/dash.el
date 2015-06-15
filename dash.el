@@ -1161,6 +1161,7 @@ as `(nth i list)` for all i from INDICES."
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
 second item in second form, etc."
+  (declare (debug (form form &rest form)))
   (cond
    ((null form) x)
    ((null more) (if (listp form)
@@ -1173,6 +1174,7 @@ second item in second form, etc."
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
 last item in second form, etc."
+  (declare (debug (form form &rest form)))
   (cond
    ((null form) x)
    ((null more) (if (listp form)
@@ -1185,6 +1187,7 @@ last item in second form, etc."
 signified by the token `it' in the first form. If there are more
 forms, insert the first form at the position signified by `it' in
 in second form, etc."
+  (declare (debug (form form &rest form)))
   (if (null more)
       (if (listp form)
           (--map-when (eq it 'it) x form)

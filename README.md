@@ -19,11 +19,11 @@ If you want the function combinators, then also:
 
 Add this to the big comment block at the top:
 
-    ;; Package-Requires: ((dash "2.10.0"))
+    ;; Package-Requires: ((dash "2.11.0"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "2.10.0") (dash-functional "1.2.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.11.0") (dash-functional "1.2.0") (emacs "24"))
 
 ## Syntax highlighting of dash functions
 
@@ -238,7 +238,7 @@ Functions pretending lists are trees.
 ### Threading macros
 
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
-* [->>](#--x-form-rest-more) `(x form &rest more)`
+* [->>](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-->](#---x-form-rest-more) `(x form &rest more)`
 
 ### Binding
@@ -338,7 +338,7 @@ See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-first`](#-replace-
 
 #### -map-last `(pred rep list)`
 
-Replace last item in `list` satisfying `pred` with result of `rep` called on this item.
+Replace first item in `list` satisfying `pred` with result of `rep` called on this item.
 
 See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-last`](#-replace-last-old-new-list)
 
@@ -397,6 +397,7 @@ See also: [`-splice`](#-splice-pred-fun-list), [`-insert-at`](#-insert-at-n-x-li
 ```el
 (-splice-list 'keywordp '(a b c) '(1 :foo 2)) ;; => '(1 a b c 2)
 (-splice-list 'keywordp nil '(1 :foo 2)) ;; => '(1 2)
+(--splice-list (keywordp it) '(a b c) '(1 :foo 2)) ;; => '(1 a b c 2)
 ```
 
 #### -mapcat `(fn list)`
@@ -1741,7 +1742,7 @@ second item in second form, etc.
 (-> '(2 3 5) (append '(8 13)) (-slice 1 -1)) ;; => '(3 5 8)
 ```
 
-#### ->> `(x form &rest more)`
+#### ->> `(x &optional form &rest more)`
 
 Thread the expr through the forms. Insert `x` as the last item
 in the first form, making a list of it if it is not a list
@@ -2319,6 +2320,10 @@ Oh, and don't edit `README.md` directly, it is auto-generated.
 Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
+
+### From 2.10 to 2.11
+
+- Lots of clean up wrt byte compilation, debug macros and tests
 
 ### From 2.9 to 2.10
 

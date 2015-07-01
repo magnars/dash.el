@@ -13,7 +13,7 @@
 
 @copying
 
-This manual is for @code{dash.el} version 2.10.0.
+This manual is for @code{dash.el} version 2.11.0.
 
 Copyright © 2012-2015 Magnar Sveen
 
@@ -124,13 +124,13 @@ Alternatively, you can just dump @verb{~dash.el~} or
 Add this to the big comment block at the top:
 
 @lisp
-;; Package-Requires: ((dash "2.10.0"))
+;; Package-Requires: ((dash "2.11.0"))
 @end lisp
 
 @noindent To get function combinators:
 
 @lisp
-;; Package-Requires: ((dash "2.10.0") (dash-functional "1.2.0") (emacs "24"))
+;; Package-Requires: ((dash "2.11.0") (dash-functional "1.2.0") (emacs "24"))
 @end lisp
 
 @node Syntax highlighting of dash functions
@@ -375,6 +375,10 @@ See also: @code{-splice} (@pxref{-splice}), @code{-insert-at} (@pxref{-insert-at
 @group
 (-splice-list 'keywordp nil '(1 :foo 2))
     @result{} '(1 2)
+@end group
+@group
+(--splice-list (keywordp it) '(a b c) '(1 :foo 2))
+    @result{} '(1 a b c 2)
 @end group
 @end example
 @end defun
@@ -2702,7 +2706,7 @@ second item in second form, etc.
 @end defun
 
 @anchor{->>}
-@defun ->> (x form &rest more)
+@defun ->> (x &optional form &rest more)
 Thread the expr through the forms. Insert @var{x} as the last item
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the

@@ -3,8 +3,8 @@
 (defun example-to-should (actual sym expected)
   (cond ((eq sym '=>)
          `(should (equal ,actual ,expected)))
-	((eq sym '~>)
-	 `(should (approx-equal ,actual ,expected)))
+        ((eq sym '~>)
+         `(should (approx-equal ,actual ,expected)))
         ((eq sym '!!>)
          `(should-error (eval ',actual) :type ',expected))
         (t

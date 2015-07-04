@@ -13,12 +13,12 @@
 ;; around differences in implementation between systems. Use the `~>'
 ;; symbol instead of `=>' to test the expected and actual values with
 ;; `approx-equal'
-(defvar epsilon 1e-15)
+(defvar dash--epsilon 1e-15)
 (defun approx-equal (u v)
   (or (= u v)
       (< (/ (abs (- u v))
         (max (abs u) (abs v)))
-     epsilon)))
+     dash--epsilon)))
 
 (def-example-group "Maps"
   "Functions in this category take a transforming function, which

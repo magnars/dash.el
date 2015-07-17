@@ -738,8 +738,8 @@ new list."
   (defexamples -some->
     (-some-> '(2 3 5)) => '(2 3 5)
     (-some-> 5 square) => 25
-    (-some-> nil square) => nil
-    (-some-> 5 even? square) => nil)
+    (-some-> 5 even? square) => nil
+    (-some-> nil square) => nil)
 
   (defexamples -some->>
     (-some->> '(1 2 3) (-map 'square)) => '(1 4 9)

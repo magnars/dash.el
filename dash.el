@@ -1584,10 +1584,10 @@ Vectors:
                    If the PATTERN is longer than SOURCE, an `error' is
                    thrown.
 
-  [a1 a2 a3 ... &rest rest] ) - as above, but bind the rest of
-                                the sequence to REST.  This is
-                                conceptually the same as improper list
-                                matching (a1 a2 ... aN . rest)
+  [a1 a2 a3 ... &rest rest] - as above, but bind the rest of
+                              the sequence to REST.  This is
+                              conceptually the same as improper list
+                              matching (a1 a2 ... aN . rest)
 
 Key/value stores:
 

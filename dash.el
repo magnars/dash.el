@@ -75,16 +75,19 @@ special values."
   "Anaphoric form of `-each-while'."
   (declare (debug (form form body))
            (indent 2))
-  (let ((l (make-symbol "list"))
-        (c (make-symbol "continue")))
+  (let ((l (make-symbol "list")))
     `(let ((,l ,list)
-           (,c t)
-           (it-index 0))
-       (while (and ,l ,c)
-         (let ((it (car ,l)))
-           (if (not ,pred) (setq ,c nil) ,@body))
-         (setq it-index (1+ it-index))
-         (!cdr ,l)))))
+           (it-index 0)
+           it)
+       (while ,l
+         (setq it (car ,l))
+         (if ,pred
+             (progn
+               ,@body
+               (setq it-index (1+ it-index))
+               (!cdr ,l))
+           ;; Force loop break.
+           (setq ,l nil))))))
 
 (defun -each-while (list pred fn)
   "Call FN with every item in LIST while (PRED item) is non-nil.

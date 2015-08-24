@@ -45,12 +45,12 @@
     (--each benchmarks
       (-let (((name details runner) it))
         (-let* ((all-results (funcall runner num-tries))
-                (best-result (--min-by (< (- (nth 0 other) (nth 2 other)) (- (nth 0 it) (nth 2 it))) all-results))
-                (total-time  (- (-sum (--map (nth 0 it) all-results )) (-sum (--map (nth 2 it) all-results )))))
+                (best-result (--min-by (< (nth 0 other) (nth 0 it)) all-results))
+                (total-time  (-sum (--map (nth 0 it) all-results))))
           (message "%3d/%d %-30sbest of %d tries: %.3f s%s; average: %.3f s"
                    (1+ it-index) num-benchmarks
                    (format "%s %s" name (or details ""))
-                   num-tries (- (nth 0 best-result) (nth 2 best-result))
+                   num-tries (nth 0 best-result)
                    (if (= (nth 1 best-result) 0)
                        ""
                      (format " (%d GC runs)" (nth 1 best-result)))

@@ -59,6 +59,12 @@
 
 
 (defvar benchmark--1000-integers (--map-indexed it-index (-repeat 1000 nil)))
+(defvar benchmark--10x10-integers (--map-indexed (--map-indexed it-index (-repeat 10 nil))
+                                                 (-repeat 10 nil)))
+(defvar benchmark--10x10x10-integers (--map-indexed (--map-indexed (--map-indexed it-index (-repeat 10 nil))
+                                                                   (-repeat 10 nil))
+                                                    (-repeat 10 nil)))
+
 
 (defbenchmark --each nil
               10000
@@ -72,3 +78,15 @@
 (defbenchmark --each-while <500
               10000
   (--each-while benchmark--1000-integers (< it 500)))
+
+(defbenchmark --flatten no-op
+              1000
+  (-flatten benchmark--1000-integers))
+
+(defbenchmark --flatten 2-levels
+              10000
+  (-flatten benchmark--10x10-integers))
+
+(defbenchmark --flatten 3-levels
+              1000
+  (-flatten benchmark--10x10x10-integers))

@@ -401,9 +401,18 @@ Thus function FN should return a list."
   "Take a nested list L and return its contents as a single, flat list.
 
 See also: `-flatten-n'"
-  (if (and (listp l) (listp (cdr l)))
-      (-mapcat '-flatten l)
+  (if (and (consp l) (listp (cdr l)))
+      ;; Collect elements in 'result' in reversed order.  Start with a
+      ;; dummy sentinel element, discard it when returning.
+      (cdr (nreverse (dash--do-flatten l (list nil))))
     (list l)))
+
+(defun dash--do-flatten (l result)
+  (--each l
+    (if (and (consp it) (listp (cdr it)))
+        (setq result (dash--do-flatten it result))
+      (!cons it result)))
+  result)
 
 (defmacro --iterate (form init n)
   "Anaphoric version of `-iterate'."

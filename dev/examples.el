@@ -179,7 +179,10 @@ new list."
   (defexamples -flatten
     (-flatten '((1))) => '(1)
     (-flatten '((1 (2 3) (((4 (5))))))) => '(1 2 3 4 5)
-    (-flatten '(1 2 (3 . 4))) => '(1 2 (3 . 4)))
+    (-flatten '(1 2 (3 . 4))) => '(1 2 (3 . 4))
+    (-flatten '(nil nil nil)) => nil
+    (-flatten '(nil (1) nil)) => '(1)
+    (-flatten '(nil (nil) nil)) => nil)
 
   (defexamples -flatten-n
     (-flatten-n 1 '((1 2) ((3 4) ((5 6))))) => '(1 2 (3 4) ((5 6)))

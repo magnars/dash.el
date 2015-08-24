@@ -58,10 +58,11 @@ special values."
            (indent 1))
   (let ((l (make-symbol "list")))
     `(let ((,l ,list)
-           (it-index 0))
+           (it-index 0)
+           it)
        (while ,l
-         (let ((it (car ,l)))
-           ,@body)
+         (setq it (car ,l))
+         ,@body
          (setq it-index (1+ it-index))
          (!cdr ,l)))))
 

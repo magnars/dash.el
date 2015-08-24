@@ -60,6 +60,11 @@
 
 (defvar benchmark--1000-integers (--map-indexed it-index (-repeat 1000 nil)))
 
+(defbenchmark --each nil
+              10000
+  (let (discarded)
+    (--each benchmark--1000-integers (setq discarded it))))
+
 (defbenchmark --each-while <0
               1000000
   (--each-while benchmark--1000-integers (< it 0)))

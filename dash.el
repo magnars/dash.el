@@ -470,7 +470,15 @@ See also: `-splice', `-insert-at'"
 The last 2 members of ARGS are used as the final cons of the
 result so if the final member of ARGS is not a list the result is
 a dotted list."
-  (-reduce-r 'cons args))
+  (if (cdr args)
+      (progn
+        ;; 'args' is already a new list, so just modify it in place.
+        (let ((scan args))
+          (while (cddr scan)
+            (!cdr scan))
+          (setcdr scan (cadr scan)))
+        args)
+    (car args)))
 
 (defun -snoc (list elem &rest elements)
   "Append ELEM to the end of the list.

@@ -66,6 +66,18 @@
                                                     (-repeat 10 nil)))
 
 
+(defbenchmark -cons* 3
+              300000
+  (-cons* 1 2 3))
+
+(defbenchmark -cons* 10
+              100000
+  (-cons* 1 2 3))
+
+(defbenchmark -cons* 1000
+              3000
+  (apply '-cons* benchmark--1000-integers))
+
 (defbenchmark --each nil
               10000
   (let (discarded)

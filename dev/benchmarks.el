@@ -91,6 +91,42 @@
               10000
   (--each-while benchmark--1000-integers (< it 500)))
 
+(defbenchmark --find-indices all
+              1000
+  (--find-indices (not (null it)) benchmark--1000-integers))
+
+(defbenchmark --find-indices even
+              1000
+  (--find-indices (= (% it 2) 0) benchmark--1000-integers))
+
+(defbenchmark --find-indices none
+              1000
+  (--find-indices (null it) benchmark--1000-integers))
+
+(defbenchmark --find-index =5
+              3000
+  (--find-index (= it 5) benchmark--1000-integers))
+
+(defbenchmark --find-index =500
+              3000
+  (--find-index (= it 500) benchmark--1000-integers))
+
+(defbenchmark --find-index =995
+              3000
+  (--find-index (= it 995) benchmark--1000-integers))
+
+(defbenchmark --find-last-index =5
+              3000
+  (--find-last-index (= it 5) benchmark--1000-integers))
+
+(defbenchmark --find-last-index =500
+              3000
+  (--find-last-index (= it 500) benchmark--1000-integers))
+
+(defbenchmark --find-last-index =995
+              3000
+  (--find-last-index (= it 995) benchmark--1000-integers))
+
 (defbenchmark --flatten no-op
               1000
   (-flatten benchmark--1000-integers))

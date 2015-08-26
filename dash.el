@@ -1148,8 +1148,11 @@ element ELEM, in ascending order."
 (defun -find-indices (pred list)
   "Return the indices of all elements in LIST satisfying the
 predicate PRED, in ascending order."
-  (let ((i 0))
-    (apply 'append (--map-indexed (when (funcall pred it) (list it-index)) list))))
+  (let (result)
+    (--each list
+      (when (funcall pred it)
+        (!cons it-index result)))
+    (nreverse result)))
 
 (defmacro --find-indices (form list)
   "Anaphoric version of `-find-indices'."
@@ -1160,7 +1163,15 @@ predicate PRED, in ascending order."
   "Take a predicate PRED and a LIST and return the index of the
 first element in the list satisfying the predicate, or nil if
 there is no such element."
-  (car (-find-indices pred list)))
+  (let ((index 0)
+        result)
+    (while list
+      (if (funcall pred (car list))
+          (setq result index
+                list   nil)
+        (setq index (1+ index))
+        (!cdr list)))
+    result))
 
 (defmacro --find-index (form list)
   "Anaphoric version of `-find-index'."
@@ -1171,7 +1182,13 @@ there is no such element."
   "Take a predicate PRED and a LIST and return the index of the
 last element in the list satisfying the predicate, or nil if
 there is no such element."
-  (-last-item (-find-indices pred list)))
+  ;; Reversing two times in place is actually much faster than doing
+  ;; it once with 'reverse', because this way there is nothing to GC.
+  (setq list (nreverse list))
+  (let ((from-end (-find-index pred list)))
+    (setq list (nreverse list))
+    (when from-end
+      (- (length list) 1 from-end))))
 
 (defmacro --find-last-index (form list)
   "Anaphoric version of `-find-last-index'."

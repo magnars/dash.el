@@ -381,7 +381,10 @@ new list."
     (-is-suffix? '(3 4 5) '(1 2 3 4 5)) => t
     (-is-suffix? '(1 2 3 4 5) '(3 4 5)) => nil
     (-is-suffix? '(3 5) '(1 2 3 4 5)) => nil
-    (-is-suffix? '(3 4 5) '(1 2 3 5)) => nil)
+    (-is-suffix? '(3 4 5) '(1 2 3 5)) => nil
+    (let ((l '(1 2 3)))
+      (list (-is-suffix? '(3) l)
+            l)) => '(t (1 2 3)))
 
   (defexamples -is-infix?
     (-is-infix? '(1 2 3) '(1 2 3 4 5)) => t

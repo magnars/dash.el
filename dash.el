@@ -1854,7 +1854,7 @@ Alias: `-is-prefix-p'"
   "Return non-nil if SUFFIX is suffix of LIST.
 
 Alias: `-is-suffix-p'"
-  (-is-prefix? (nreverse suffix) (nreverse list)))
+  (-is-prefix? (reverse suffix) (reverse list)))
 
 (defun -is-infix? (infix list)
   "Return non-nil if INFIX is infix of LIST.

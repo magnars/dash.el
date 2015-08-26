@@ -727,6 +727,14 @@ Return a new list with the concatenation of the elements in the supplied @var{li
 @defun -flatten (l)
 Take a nested list @var{l} and return its contents as a single, flat list.
 
+Note that because @code{nil} represents a list of zero elements (an
+empty list), any mention of nil in @var{l} will disappear after
+flattening.  If you need to preserve nils, consider @code{-flatten-n} (@pxref{-flatten-n})
+or map them to some unique symbol and then map them back.
+
+Conses of two atoms are considered "terminals", that is, they
+aren't flattened further.
+
 See also: @code{-flatten-n} (@pxref{-flatten-n})
 
 @example
@@ -2759,6 +2767,69 @@ in second form, etc.
 @end example
 @end defun
 
+@anchor{-some->}
+@defun -some-> (x &optional form &rest more)
+When expr is non-nil, thread it through the first form (via @code{->} (@pxref{->})),
+and when that result is non-nil, through the next form, etc.
+
+@example
+@group
+(-some-> '(2 3 5))
+    @result{} '(2 3 5)
+@end group
+@group
+(-some-> 5 square)
+    @result{} 25
+@end group
+@group
+(-some-> 5 even? square)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-some->>}
+@defun -some->> (x &optional form &rest more)
+When expr is non-nil, thread it through the first form (via @code{->>} (@pxref{->>})),
+and when that result is non-nil, through the next form, etc.
+
+@example
+@group
+(-some->> '(1 2 3) (-map 'square))
+    @result{} '(1 4 9)
+@end group
+@group
+(-some->> '(1 3 5) (-last 'even?) (+ 100))
+    @result{} nil
+@end group
+@group
+(-some->> '(2 4 6) (-last 'even?) (+ 100))
+    @result{} 106
+@end group
+@end example
+@end defun
+
+@anchor{-some-->}
+@defun -some--> (x &optional form &rest more)
+When expr in non-nil, thread it through the first form (via @code{-->} (@pxref{-->})),
+and when that result is non-nil, through the next form, etc.
+
+@example
+@group
+(-some--> "def" (concat "abc" it "ghi"))
+    @result{} "abcdefghi"
+@end group
+@group
+(-some--> nil (concat "abc" it "ghi"))
+    @result{} nil
+@end group
+@group
+(-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it))
+    @result{} nil
+@end group
+@end example
+@end defun
+
 
 @node Binding
 @section Binding
@@ -2796,7 +2867,9 @@ If all @var{vals} evaluate to true, bind them to their corresponding
 @var{vars} and execute body. @var{vars-vals} should be a list of (@var{var} @var{val})
 pairs.
 
-Note: binding is done according to @code{-let*} (@pxref{-let*}).
+Note: binding is done according to @code{-let*} (@pxref{-let*}).  @var{vals} are evaluated
+sequentially, and evaluation stops after the first nil @var{val} is
+encountered.
 
 @example
 @group
@@ -2835,7 +2908,9 @@ If all @var{vals} evaluate to true, bind them to their corresponding
 @var{vars} and do @var{then}, otherwise do @var{else}. @var{vars-vals} should be a list
 of (@var{var} @var{val}) pairs.
 
-Note: binding is done according to @code{-let*} (@pxref{-let*}).
+Note: binding is done according to @code{-let*} (@pxref{-let*}).  @var{vals} are evaluated
+sequentially, and evaluation stops after the first nil @var{val} is
+encountered.
 
 @example
 @group
@@ -2915,10 +2990,10 @@ Vectors:
                      If the @var{pattern} is longer than @var{source}, an @code{error} is
                      thrown.
 
-    [a1 a2 a3 ... &rest rest] ) - as above, but bind the rest of
-                                  the sequence to @var{rest}.  This is
-                                  conceptually the same as improper list
-                                  matching (a1 a2 ... aN . rest)
+    [a1 a2 a3 ... &rest rest] - as above, but bind the rest of
+                                the sequence to @var{rest}.  This is
+                                conceptually the same as improper list
+                                matching (a1 a2 ... aN . rest)
 
 Key/value stores:
 

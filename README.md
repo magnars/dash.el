@@ -598,6 +598,14 @@ Return a new list with the concatenation of the elements in the supplied `lists`
 
 Take a nested list `l` and return its contents as a single, flat list.
 
+Note that because `nil` represents a list of zero elements (an
+empty list), any mention of nil in `l` will disappear after
+flattening.  If you need to preserve nils, consider [`-flatten-n`](#-flatten-n-num-list)
+or map them to some unique symbol and then map them back.
+
+Conses of two atoms are considered "terminals", that is, they
+aren't flattened further.
+
 See also: [`-flatten-n`](#-flatten-n-num-list)
 
 ```el
@@ -1787,7 +1795,7 @@ and when that result is non-nil, through the next form, etc.
 ```el
 (-some-> '(2 3 5)) ;; => '(2 3 5)
 (-some-> 5 square) ;; => 25
-(-some-> nil square) ;; => nil
+(-some-> 5 even? square) ;; => nil
 ```
 
 #### -some->> `(x &optional form &rest more)`
@@ -1837,7 +1845,9 @@ If all `vals` evaluate to true, bind them to their corresponding
 `vars` and execute body. `vars-vals` should be a list of (`var` `val`)
 pairs.
 
-Note: binding is done according to [`-let*`](#-let-varlist-rest-body).
+Note: binding is done according to [`-let*`](#-let-varlist-rest-body).  `vals` are evaluated
+sequentially, and evaluation stops after the first nil `val` is
+encountered.
 
 ```el
 (-when-let* ((x 5) (y 3) (z (+ y 4))) (+ x y z)) ;; => 15
@@ -1862,7 +1872,9 @@ If all `vals` evaluate to true, bind them to their corresponding
 `vars` and do `then`, otherwise do `else`. `vars-vals` should be a list
 of (`var` `val`) pairs.
 
-Note: binding is done according to [`-let*`](#-let-varlist-rest-body).
+Note: binding is done according to [`-let*`](#-let-varlist-rest-body).  `vals` are evaluated
+sequentially, and evaluation stops after the first nil `val` is
+encountered.
 
 ```el
 (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") ;; => 15
@@ -1932,10 +1944,10 @@ Vectors:
                      If the `pattern` is longer than `source`, an `error` is
                      thrown.
 
-    [a1 a2 a3 ... &rest rest] ) - as above, but bind the rest of
-                                  the sequence to `rest`.  This is
-                                  conceptually the same as improper list
-                                  matching (a1 a2 ... aN . rest)
+    [a1 a2 a3 ... &rest rest] - as above, but bind the rest of
+                                the sequence to `rest`.  This is
+                                conceptually the same as improper list
+                                matching (a1 a2 ... aN . rest)
 
 Key/value stores:
 

@@ -93,6 +93,44 @@ Return nil, used for side-effects only."
 
 (put '-each-while 'lisp-indent-function 2)
 
+(defmacro --each-r (list &rest body)
+  "Anaphoric form of `-each-r'."
+  (declare (debug (form body))
+           (indent 1))
+  (let ((v (make-symbol "vector")))
+    `(let* ((,v (vconcat ,list))
+            (it-index (length ,v))
+            it)
+       (while (> it-index 0)
+         (setq it-index (1- it-index))
+         (setq it (aref ,v it-index))
+         ,@body))))
+
+(defun -each-r (list fn)
+  "Call FN with every item in LIST in reversed order.
+ Return nil, used for side-effects only."
+  (--each-r list (funcall fn it)))
+
+(defmacro --each-r-while (list pred &rest body)
+  "Anaphoric form of `-each-r-while'."
+  (declare (debug (form form body))
+           (indent 2))
+  (let ((v (make-symbol "vector")))
+    `(let* ((,v (vconcat ,list))
+            (it-index (length ,v))
+            it)
+       (while (> it-index 0)
+         (setq it-index (1- it-index))
+         (setq it (aref ,v it-index))
+         (if (not ,pred)
+             (setq it-index -1)
+           ,@body)))))
+
+(defun -each-r-while (list pred fn)
+  "Call FN with every item in reversed LIST while (PRED item) is non-nil.
+Return nil, used for side-effects only."
+  (--each-r-while list (funcall pred it) (funcall fn it)))
+
 (defmacro --dotimes (num &rest body)
   "Repeatedly executes BODY (presumably for side-effects) with `it` bound to integers from 0 through NUM-1."
   (declare (debug (form body))

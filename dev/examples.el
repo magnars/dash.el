@@ -1214,6 +1214,16 @@ new list."
     (let (s) (-each-indexed '(a b c) (lambda (index item) (setq s (cons (list item index) s)))) s) => '((c 2) (b 1) (a 0))
     (let (s) (--each-indexed '(a b c) (setq s (cons (list it it-index) s))) s) => '((c 2) (b 1) (a 0)))
 
+  (defexamples -each-r
+    (let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s))))) => nil
+    (let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(1 2 3)
+    (let (s) (--each-r '(1 2 3) (setq s (cons it s))) s) => '(1 2 3)
+    (let (s) (--each-r (reverse (three-letters)) (setq s (cons it s))) s) => '("C" "B" "A"))
+
+  (defexamples -each-r-while
+    (let (s) (-each-r-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) => '(6)
+    (let (s) (--each-r-while '(1 2 3 4) (>= it 3) (!cons it s)) s) => '(3 4))
+
   (defexamples -dotimes
     (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) => '(2 1 0)
     (let (s) (--dotimes 5 (!cons it s)) s) => '(4 3 2 1 0))

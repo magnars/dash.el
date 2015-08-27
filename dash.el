@@ -130,6 +130,11 @@ Return nil, used for side-effects only."
   (declare (debug (form body))
            (indent 1))
   (let ((v (make-symbol "vector")))
+    ;; Implementation note: building vector is considerably faster
+    ;; than building a reversed list (vector takes less memory, so
+    ;; there is less GC), plus length comes naturally.  In-place
+    ;; 'nreverse' would be faster still, but BODY would be able to see
+    ;; that, even if modification was reversed before we return.
     `(let* ((,v (vconcat ,list))
             (it-index (length ,v))
             it)

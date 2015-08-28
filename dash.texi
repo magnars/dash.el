@@ -15,7 +15,7 @@
 
 This manual is for @code{dash.el} version 2.11.0.
 
-Copyright © 2012-2015 Magnar Sveen
+Copyright © 2012-2015 Free Software Foundation, Inc.
 
 @quotation
 This program is free software; you can redistribute it and/or modify

@@ -1783,8 +1783,7 @@ Alias: `-uniq'"
   "Return a new list containing the elements of LIST1 and elements of LIST2 that are not in LIST1.
 The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
-  (let (result)
-    (--each list (!cons it result))
+  (let ((result (reverse list)))
     (--each list2 (unless (-contains? result it) (!cons it result)))
     (nreverse result)))
 

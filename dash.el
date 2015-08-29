@@ -1792,11 +1792,10 @@ or with `-compare-fn' if that's non-nil."
                           -compare-fn
                         'equal)))
     (if (memq -compare-fn '(eq eql equal))
-        (progn
-          (--each list2 (unless (-contains? result it) (!cons it result))))
-      (let ((ht (make-hash-table :test -compare-fn)))
-        (--each list (puthash it it ht ))
-        (--each list2 (unless (gethash it ht) (!cons it result)))))
+        (let ((ht (make-hash-table :test -compare-fn)))
+          (--each list (puthash it t ht))
+          (--each list2 (unless (gethash it ht) (!cons it result))))
+      (--each list2 (unless (-contains? result it) (!cons it result))))
     (nreverse result)))
 
 (defun -intersection (list list2)

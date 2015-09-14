@@ -292,6 +292,13 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 * [-fixfn](#-fixfn-fn-optional-equal-test-halt-test) `(fn &optional equal-test halt-test)`
 * [-prodfn](#-prodfn-rest-fns) `(&rest fns)`
 
+### Other functions
+
+
+This category contains miscellaneous functions.
+
+* [-alter-with](#-alter-with-func-func2-rest-body) `(func func2 &rest body)`
+
 
 ## Maps
 
@@ -2346,6 +2353,20 @@ This function satisfies the following laws:
 (funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3)) ;; => '(2 1 "3")
 (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) ;; => '((2 1) (4 3) (6 5) (8 7))
 (apply '+ (funcall (-prodfn 'length 'string-to-int) '((1 2 3) "15"))) ;; => 18
+```
+
+
+## Other functions
+
+
+This category contains miscellaneous functions.
+
+#### -alter-with `(func func2 &rest body)`
+
+Alter `func``s implementation with `func2` temporarily. And eveluate `body`.
+
+```el
+(-alter-with '+ '- (+ 1 1)) ;; => 0
 ```
 
 

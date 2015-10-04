@@ -58,10 +58,11 @@ special values."
            (indent 1))
   (let ((l (make-symbol "list")))
     `(let ((,l ,list)
-           (it-index 0))
+           (it-index 0)
+           it)
        (while ,l
-         (let ((it (car ,l)))
-           ,@body)
+         (setq it (car ,l))
+         ,@body
          (setq it-index (1+ it-index))
          (!cdr ,l)))))
 
@@ -75,16 +76,19 @@ special values."
   "Anaphoric form of `-each-while'."
   (declare (debug (form form body))
            (indent 2))
-  (let ((l (make-symbol "list"))
-        (c (make-symbol "continue")))
+  (let ((l (make-symbol "list")))
     `(let ((,l ,list)
-           (,c t)
-           (it-index 0))
-       (while (and ,l ,c)
-         (let ((it (car ,l)))
-           (if (not ,pred) (setq ,c nil) ,@body))
-         (setq it-index (1+ it-index))
-         (!cdr ,l)))))
+           (it-index 0)
+           it)
+       (while ,l
+         (setq it (car ,l))
+         (if ,pred
+             (progn
+               ,@body
+               (setq it-index (1+ it-index))
+               (!cdr ,l))
+           ;; Force loop break.
+           (setq ,l nil))))))
 
 (defun -each-while (list pred fn)
   "Call FN with every item in LIST while (PRED item) is non-nil.
@@ -406,8 +410,17 @@ aren't flattened further.
 
 See also: `-flatten-n'"
   (if (and (listp l) (listp (cdr l)))
-      (-mapcat '-flatten l)
+      ;; Collect elements in 'result' in reversed order.  Start with a
+      ;; dummy sentinel element, discard it when returning.
+      (cdr (nreverse (dash--do-flatten l (list nil))))
     (list l)))
+
+(defun dash--do-flatten (l result)
+  (--each l
+    (if (and (listp it) (listp (cdr it)))
+        (setq result (dash--do-flatten it result))
+      (!cons it result)))
+  result)
 
 (defmacro --iterate (form init n)
   "Anaphoric version of `-iterate'."
@@ -465,7 +478,15 @@ See also: `-splice', `-insert-at'"
 The last 2 members of ARGS are used as the final cons of the
 result so if the final member of ARGS is not a list the result is
 a dotted list."
-  (-reduce-r 'cons args))
+  (if (cdr args)
+      (progn
+        ;; 'args' is already a new list, so just modify it in place.
+        (let ((scan args))
+          (while (cddr scan)
+            (!cdr scan))
+          (setcdr scan (cadr scan)))
+        args)
+    (car args)))
 
 (defun -snoc (list elem &rest elements)
   "Append ELEM to the end of the list.
@@ -1135,8 +1156,11 @@ element ELEM, in ascending order."
 (defun -find-indices (pred list)
   "Return the indices of all elements in LIST satisfying the
 predicate PRED, in ascending order."
-  (let ((i 0))
-    (apply 'append (--map-indexed (when (funcall pred it) (list it-index)) list))))
+  (let (result)
+    (--each list
+      (when (funcall pred it)
+        (!cons it-index result)))
+    (nreverse result)))
 
 (defmacro --find-indices (form list)
   "Anaphoric version of `-find-indices'."
@@ -1147,7 +1171,15 @@ predicate PRED, in ascending order."
   "Take a predicate PRED and a LIST and return the index of the
 first element in the list satisfying the predicate, or nil if
 there is no such element."
-  (car (-find-indices pred list)))
+  (let ((index 0)
+        result)
+    (while list
+      (if (funcall pred (car list))
+          (setq result index
+                list   nil)
+        (setq index (1+ index))
+        (!cdr list)))
+    result))
 
 (defmacro --find-index (form list)
   "Anaphoric version of `-find-index'."
@@ -1158,7 +1190,13 @@ there is no such element."
   "Take a predicate PRED and a LIST and return the index of the
 last element in the list satisfying the predicate, or nil if
 there is no such element."
-  (-last-item (-find-indices pred list)))
+  ;; Reversing two times in place is actually much faster than doing
+  ;; it once with 'reverse', because this way there is nothing to GC.
+  (setq list (nreverse list))
+  (let ((from-end (-find-index pred list)))
+    (setq list (nreverse list))
+    (when from-end
+      (- (length list) 1 from-end))))
 
 (defmacro --find-last-index (form list)
   "Anaphoric version of `-find-last-index'."

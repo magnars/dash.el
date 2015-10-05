@@ -1459,7 +1459,7 @@ Valid values are &plist, &alist and &hash."
                    (let* ((k (car kv))
                           (v (cadr kv))
                           (getter (cond
-                                   ((eq type '&plist)
+                                   ((or (eq type '&plist) (eq type '&keys))
                                     `(plist-get ,source ,k))
                                    ((eq type '&alist)
                                     `(cdr (assoc ,k ,source)))
@@ -1497,10 +1497,8 @@ Key-value stores are disambiguated by placing a token &plist,
       (let ((s (car match-form)))
         (cons (list s source)
               (dash--match (cddr match-form) s))))
-     ((memq (car match-form) '(&plist &alist &hash))
+     ((memq (car match-form) '(&keys &plist &alist &hash))
       (dash--match-kv match-form source))
-     ((eq (car match-form) '&keys)
-      (dash--match-kv (cons '&plist (cdr match-form)) source))
      (t (dash--match-cons match-form source))))
    ((vectorp match-form)
     ;; We support the &as binding in vectors too

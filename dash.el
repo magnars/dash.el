@@ -1341,8 +1341,8 @@ SOURCE is a proper or improper list."
        ((cdr match-form)
         (cond
          ((and (symbolp (car match-form))
-               (eq (car match-form) '&keys))
-          (dash--match-kv (cons '&plist (cdr match-form)) (dash--match-cons-get-cdr skip-cdr source)))
+               (memq (car match-form) '(&keys &plist &alist &hash)))
+          (dash--match-kv match-form (dash--match-cons-get-cdr skip-cdr source)))
          ((dash--match-ignore-place-p (car match-form))
           (dash--match-cons-1 (cdr match-form) source
                               (plist-put props :skip-cdr (1+ skip-cdr))))

@@ -347,7 +347,7 @@ See also: `-map-when', `-replace-first'"
 
 (defmacro --map-first (pred rep list)
   "Anaphoric form of `-map-first'."
-  `(-map-first (lambda (it) ,pred) (lambda (it) ,rep) ,list))
+  `(-map-first (lambda (it) ,pred) (lambda (it) (ignore it) ,rep) ,list))
 
 (defun -map-last (pred rep list)
   "Replace first item in LIST satisfying PRED with result of REP called on this item.
@@ -357,7 +357,7 @@ See also: `-map-when', `-replace-last'"
 
 (defmacro --map-last (pred rep list)
   "Anaphoric form of `-map-last'."
-  `(-map-last (lambda (it) ,pred) (lambda (it) ,rep) ,list))
+  `(-map-last (lambda (it) ,pred) (lambda (it) (ignore it) ,rep) ,list))
 
 (defun -replace (old new list)
   "Replace all OLD items in LIST with NEW.
@@ -828,8 +828,7 @@ This function can be thought of as a generalization of
   "Private: Used by -partition-all-in-steps and -partition-in-steps."
   (when (< step 1)
     (error "Step must be a positive number, or you're looking at some juicy infinite loops."))
-  (let ((result nil)
-        (len 0))
+  (let ((result nil))
     (while list
       (!cons (-take n list) result)
       (setq list (-drop step list)))
@@ -1054,11 +1053,9 @@ element of LIST paired with the unmodified element of LIST."
 (defun dash--table-carry (lists restore-lists &optional re)
   "Helper for `-table' and `-table-flat'.
 
-If a list overflows, carry to the right and reset the list.
-
-Return how many lists were re-seted."
-  (while (and (not (car lists))
-              (not (equal lists '(nil))))
+If a list overflows, carry to the right and reset the list."
+  (while (not (or (car lists)
+                  (equal lists '(nil))))
     (setcar lists (car restore-lists))
     (pop (cadr lists))
     (!cdr lists)
@@ -1081,6 +1078,7 @@ order.  The dimension of the result is (length lists).
 See also: `-table-flat'"
   (let ((restore-lists (copy-sequence lists))
         (last-list (last lists))
+        ;; FIXME: Why not just use (make-list (length lists) nil)?
         (re (--map nil (number-sequence 1 (length lists)))))
     (while (car last-list)
       (let ((item (apply fn (-map 'car lists))))
@@ -1135,8 +1133,7 @@ element ELEM, in ascending order."
 (defun -find-indices (pred list)
   "Return the indices of all elements in LIST satisfying the
 predicate PRED, in ascending order."
-  (let ((i 0))
-    (apply 'append (--map-indexed (when (funcall pred it) (list it-index)) list))))
+  (apply 'append (--map-indexed (when (funcall pred it) (list it-index)) list)))
 
 (defmacro --find-indices (form list)
   "Anaphoric version of `-find-indices'."
@@ -1767,6 +1764,12 @@ body."
            (indent 1))
   `(--if-let ,val (progn ,@body)))
 
+(defvar -compare-fn nil
+  "Tests for equality use this function or `equal' if this is nil.
+It should only be set using dynamic scope with a let, like:
+
+  (let ((-compare-fn #'=)) (-union numbers1 numbers2 numbers3)")
+
 (defun -distinct (list)
   "Return a new list with all duplicates removed.
 The test for equality is done with `equal',
@@ -1809,12 +1812,6 @@ or with `-compare-fn' if that's non-nil."
 The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
   (--filter (not (-contains? list2 it)) list))
-
-(defvar -compare-fn nil
-  "Tests for equality use this function or `equal' if this is nil.
-It should only be set using dynamic scope with a let, like:
-
-  (let ((-compare-fn =)) (-union numbers1 numbers2 numbers3)")
 
 (defun -contains? (list element)
   "Return non-nil if LIST contains ELEMENT.

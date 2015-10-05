@@ -1,7 +1,26 @@
-;; -*- lexical-binding: t -*-
+;;; examples.el --- Examples/tests for dash.el's API  -*- lexical-binding: t -*-
+
+;; Copyright (C) 2015 Free Software Foundation, Inc.
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
 
 ;; Only the first three examples per function are shown in the docs,
 ;; so make those good.
+
+;;; Code:
 
 (require 'dash)
 
@@ -1093,3 +1112,5 @@ new list."
 ;; Local Variables:
 ;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => \\| !!> \\| ~>" (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
 ;; End:
+
+;;; examples.el ends here

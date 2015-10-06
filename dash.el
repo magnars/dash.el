@@ -1078,8 +1078,7 @@ order.  The dimension of the result is (length lists).
 See also: `-table-flat'"
   (let ((restore-lists (copy-sequence lists))
         (last-list (last lists))
-        ;; FIXME: Why not just use (make-list (length lists) nil)?
-        (re (--map nil (number-sequence 1 (length lists)))))
+        (re (make-list (length lists) nil)))
     (while (car last-list)
       (let ((item (apply fn (-map 'car lists))))
         (push item (car re))

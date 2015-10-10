@@ -1102,14 +1102,18 @@ of the result.  This is equivalent to calling:
 but the implementation here is much more efficient.
 
 See also: `-flatten-n', `-table'"
-  (let ((restore-lists (copy-sequence lists))
-        (last-list (last lists))
-        re)
-    (while (car last-list)
-      (push (apply fn (-map 'car lists)) re)
-      (pop (car lists))
-      (dash--table-carry lists restore-lists))
-    (nreverse re)))
+  (when lists                           ;Just in case.
+    (let* ((list1 (pop lists))
+           (restore-lists (copy-sequence lists))
+           (last-list (last lists))
+           re)
+      (while (car last-list)
+        (let ((tail (-map #'car lists)))
+          (dolist (head list1)
+            (push (apply fn head tail) re)))
+        (pop (car lists))
+        (dash--table-carry lists restore-lists))
+      (nreverse re))))
 
 (defun -partial (fn &rest args)
   "Take a function FN and fewer than the normal arguments to FN,

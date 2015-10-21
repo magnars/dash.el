@@ -25,6 +25,13 @@ To get function combinators:
 
     ;; Package-Requires: ((dash "2.12.0") (dash-functional "1.2.0") (emacs "24"))
 
+## Upcoming breaking change!
+
+- For backward compatibility reasons `-zip` return a cons-cell instead of a list
+  with two elements when called on two lists. This is a clunky API, and in an
+  upcoming 2.0 release of Dash it will always return a list. If you rely on the
+  cons-cell return value, use `-zip-pair` instead.
+
 ## Syntax highlighting of dash functions
 
 Font lock of dash functions in emacs lisp buffers is now optional.

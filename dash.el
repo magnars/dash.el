@@ -1009,7 +1009,10 @@ second elements of each list, and so on. The lengths of the returned
 groupings are equal to the length of the shortest input list.
 
 If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists. "
+of cons cells. Otherwise, return the groupings as a list of lists.
+
+Please note! This distinction is being removed in an upcoming 2.0
+release of Dash. If you rely on this behavior, use -zip-pair instead."
   (let (results)
     (while (-none? 'null lists)
       (setq results (cons (mapcar 'car lists) results))
@@ -1020,6 +1023,8 @@ of cons cells. Otherwise, return the groupings as a list of lists. "
         ;; a cons cell if two lists were provided
         (--map (cons (car it) (cadr it)) results)
       results)))
+
+(defalias '-zip-pair '-zip)
 
 (defun -zip-fill (fill-value &rest lists)
   "Zip LISTS, with FILL-VALUE padded onto the shorter lists. The

@@ -93,7 +93,7 @@ File: dash.info,  Node: Installation,  Next: Functions,  Prev: Top,  Up: Top
 **************
 
 It's available on marmalade (http://marmalade-repo.org/) and Melpa
-(http://melpa.milkbox.net/); use `M-x package-install':
+(https://melpa.org/); use `M-x package-install':
 
 `M-x package-install <RET> dash'
      Install the dash library.

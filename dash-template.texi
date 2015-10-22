@@ -82,7 +82,7 @@ Development
 @chapter Installation
 
 It's available on @uref{http://marmalade-repo.org/,marmalade} and
-@uref{http://melpa.milkbox.net/,Melpa}; use @code{M-x
+@uref{https://melpa.org/,Melpa}; use @code{M-x
 package-install}:
 
 @table @kbd

@@ -2517,7 +2517,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Mark Oteiza](https://github.com/holomorph) contributed the script to create an info manual.
  - [Vasilij Schneidermann](https://github.com/wasamasa) contributed `-some`.
  - [William West](https://github.com/occidens) made `-fixfn` more robust at handling floats.
- - [Cam Saül](https://github.com/cammsaul) contributed `-some->`, `-some->>`, and `-some-->`.
+ - [Cam Saül](https://github.com/camsaul) contributed `-some->`, `-some->>`, and `-some-->`.
 
 Thanks!
 

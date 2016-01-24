@@ -1296,7 +1296,7 @@ Operations pretending lists are sets.
 
 #### -union `(list list2)`
 
-Return a new list containing the elements of `list1` and elements of `list2` that are not in `list1`.
+Return a new list containing the elements of `list` and elements of `list2` that are not in `list`.
 The test for equality is done with `equal`,
 or with `-compare-fn` if that's non-nil.
 

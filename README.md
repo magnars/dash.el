@@ -442,6 +442,8 @@ Return a new list of the items in `list` for which `pred` returns a non-nil valu
 
 Alias: `-select`
 
+See also: [`-keep`](#-keep-fn-list)
+
 ```el
 (-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(2 4)
 (-filter 'even? '(1 2 3 4)) ;; => '(2 4)
@@ -1237,6 +1239,8 @@ Take a predicate `pred` and a `list` and return the index of the
 first element in the list satisfying the predicate, or nil if
 there is no such element.
 
+See also [`-first`](#-first-pred-list).
+
 ```el
 (-find-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 0
 (--find-index (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => 3
@@ -1248,6 +1252,8 @@ there is no such element.
 Take a predicate `pred` and a `list` and return the index of the
 last element in the list satisfying the predicate, or nil if
 there is no such element.
+
+See also [`-last`](#-last-pred-list).
 
 ```el
 (-find-last-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 7

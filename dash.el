@@ -1159,7 +1159,9 @@ predicate PRED, in ascending order."
 (defun -find-index (pred list)
   "Take a predicate PRED and a LIST and return the index of the
 first element in the list satisfying the predicate, or nil if
-there is no such element."
+there is no such element.
+
+See also `-first'."
   (car (-find-indices pred list)))
 
 (defmacro --find-index (form list)
@@ -1170,7 +1172,9 @@ there is no such element."
 (defun -find-last-index (pred list)
   "Take a predicate PRED and a LIST and return the index of the
 last element in the list satisfying the predicate, or nil if
-there is no such element."
+there is no such element.
+
+See also `-last'."
   (-last-item (-find-indices pred list)))
 
 (defmacro --find-last-index (form list)

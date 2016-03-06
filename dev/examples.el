@@ -179,7 +179,15 @@ new list."
   (defexamples -select-by-indices
     (-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r")) => '("c" "o" "l" "o" "r")
     (-select-by-indices '(2 1 0) '("a" "b" "c")) => '("c" "b" "a")
-    (-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l")) => '("f" "a" "r" "f" "a" "l" "l" "a")))
+    (-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l")) => '("f" "a" "r" "f" "a" "l" "l" "a"))
+
+  (defexamples -select-columns
+    (-select-columns '(0 2) '((1 2 3) (a b c) (:a :b :c))) => '((1 3) (a c) (:a :c))
+    (-select-columns '(1) '((1 2 3) (a b c) (:a :b :c))) => '((2) (b) (:b))
+    (-select-columns nil '((1 2 3) (a b c) (:a :b :c))) => '(nil nil nil))
+
+  (defexamples -select-column
+    (-select-column 1 '((1 2 3) (a b c) (:a :b :c))) => '(2 b :b)))
 
 (def-example-group "List to list"
   "Bag of various functions which modify input list."

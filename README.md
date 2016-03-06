@@ -103,6 +103,8 @@ Functions returning a sublist of the original list.
 * [-take-while](#-take-while-pred-list) `(pred list)`
 * [-drop-while](#-drop-while-pred-list) `(pred list)`
 * [-select-by-indices](#-select-by-indices-indices-list) `(indices list)`
+* [-select-columns](#-select-columns-columns-table) `(columns table)`
+* [-select-column](#-select-column-column-table) `(column table)`
 
 ### List to list
 
@@ -573,6 +575,39 @@ as `(nth i list)` for all i from `indices`.
 (-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r")) ;; => '("c" "o" "l" "o" "r")
 (-select-by-indices '(2 1 0) '("a" "b" "c")) ;; => '("c" "b" "a")
 (-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l")) ;; => '("f" "a" "r" "f" "a" "l" "l" "a")
+```
+
+#### -select-columns `(columns table)`
+
+Select `columns` from `table`.
+
+`table` is a list of lists where each element represents one row.
+It is assumed each row has the same length.
+
+Each row is transformed such that only the specified `columns` are
+selected.
+
+See also: [`-select-column`](#-select-column-column-table), [`-select-by-indices`](#-select-by-indices-indices-list)
+
+```el
+(-select-columns '(0 2) '((1 2 3) (a b c) (:a :b :c))) ;; => '((1 3) (a c) (:a :c))
+(-select-columns '(1) '((1 2 3) (a b c) (:a :b :c))) ;; => '((2) (b) (:b))
+(-select-columns nil '((1 2 3) (a b c) (:a :b :c))) ;; => '(nil nil nil)
+```
+
+#### -select-column `(column table)`
+
+Select `column` from `table`.
+
+`table` is a list of lists where each element represents one row.
+It is assumed each row has the same length.
+
+The single selected column is returned as a list.
+
+See also: [`-select-columns`](#-select-columns-columns-table), [`-select-by-indices`](#-select-by-indices-indices-list)
+
+```el
+(-select-column 1 '((1 2 3) (a b c) (:a :b :c))) ;; => '(2 b :b)
 ```
 
 

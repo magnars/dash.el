@@ -71,6 +71,19 @@ special values."
          (setq it-index (1+ it-index))
          (!cdr ,l)))))
 
+(defmacro -doto (eval-initial-value &rest forms)
+  "Take a target form, then many forms to call with the target form in the
+second position. Returns the target form."
+  (declare (indent 1))
+  (let ((retval (gensym)))
+    `(let ((,retval ,eval-initial-value))
+       ,@(mapcar (lambda (form)
+                   (if (sequencep form)
+                       `(,(-first-item form) ,retval ,@(rest form))
+                     `(funcall form ,retval)))
+                 forms)
+       ,retval)))
+
 (defun -each (list fn)
   "Call FN with every item in LIST. Return nil, used for side-effects only."
   (--each list (funcall fn it)))

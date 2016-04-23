@@ -273,6 +273,7 @@ Functions iterating over lists for side-effect only.
 
 * [-each](#-each-list-fn) `(list fn)`
 * [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
+* [-each-indexed](#-each-indexed-list-fn) `(list fn)`
 * [-dotimes](#-dotimes-num-fn) `(num fn)`
 
 ### Destructive operations
@@ -365,6 +366,8 @@ See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-last`](#-replace-l
 Return a new list consisting of the result of (`fn` index item) for each item in `list`.
 
 In the anaphoric form `--map-indexed`, the index is exposed as `it-index`.
+
+See also: [`-each-indexed`](#-each-indexed-list-fn).
 
 ```el
 (-map-indexed (lambda (index item) (- item index)) '(1 2 3 4)) ;; => '(1 1 1 1)
@@ -2135,6 +2138,19 @@ Return nil, used for side-effects only.
 ```el
 (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(4 2)
 (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) ;; => '(2 1)
+```
+
+#### -each-indexed `(list fn)`
+
+Call (`fn` index item) for each item in `list`.
+
+In the anaphoric form `--each-indexed`, the index is exposed as `it-index`.
+
+See also: [`-map-indexed`](#-map-indexed-fn-list).
+
+```el
+(let (s) (-each-indexed '(a b c) (lambda (index item) (setq s (cons (list item index) s)))) s) ;; => '((c 2) (b 1) (a 0))
+(let (s) (--each-indexed '(a b c) (setq s (cons (list it it-index) s))) s) ;; => '((c 2) (b 1) (a 0))
 ```
 
 #### -dotimes `(num fn)`

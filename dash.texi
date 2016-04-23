@@ -300,6 +300,8 @@ Return a new list consisting of the result of (@var{fn} index item) for each ite
 
 In the anaphoric form @code{--map-indexed}, the index is exposed as `it-index`.
 
+See also: @code{-each-indexed} (@pxref{-each-indexed}).
+
 @example
 @group
 (-map-indexed (lambda (index item) (- item index)) '(1 2 3 4))
@@ -3177,6 +3179,26 @@ Return nil, used for side-effects only.
 @group
 (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s)
     @result{} '(2 1)
+@end group
+@end example
+@end defun
+
+@anchor{-each-indexed}
+@defun -each-indexed (list fn)
+Call (@var{fn} index item) for each item in @var{list}.
+
+In the anaphoric form @code{--each-indexed}, the index is exposed as `it-index`.
+
+See also: @code{-map-indexed} (@pxref{-map-indexed}).
+
+@example
+@group
+(let (s) (-each-indexed '(a b c) (lambda (index item) (setq s (cons (list item index) s)))) s)
+    @result{} '((c 2) (b 1) (a 0))
+@end group
+@group
+(let (s) (--each-indexed '(a b c) (setq s (cons (list it it-index) s))) s)
+    @result{} '((c 2) (b 1) (a 0))
 @end group
 @end example
 @end defun

@@ -79,7 +79,7 @@ argument. Returns the target form."
     `(let ((,retval ,eval-initial-value))
        ,@(mapcar (lambda (form)
                    (if (sequencep form)
-                       `(,(-first-item form) ,retval ,@(rest form))
+                       `(,(-first-item form) ,retval ,@(cdr form))
                      `(funcall form ,retval)))
                  forms)
        ,retval)))

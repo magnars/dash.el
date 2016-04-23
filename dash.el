@@ -72,10 +72,10 @@ special values."
          (!cdr ,l)))))
 
 (defmacro -doto (eval-initial-value &rest forms)
-  "Take a target form, then many forms to call with the target form in the
-second position. Returns the target form."
+  "Take a target form, then many forms to call with the target form as the first
+argument. Returns the target form."
   (declare (indent 1))
-  (let ((retval (gensym)))
+  (let ((retval (make-symbol "value")))
     `(let ((,retval ,eval-initial-value))
        ,@(mapcar (lambda (form)
                    (if (sequencep form)

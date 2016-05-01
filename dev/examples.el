@@ -1002,6 +1002,10 @@ new list."
     (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) => '(4 2)
     (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) => '(2 1))
 
+  (defexamples -each-indexed
+    (let (s) (-each-indexed '(a b c) (lambda (index item) (setq s (cons (list item index) s)))) s) => '((c 2) (b 1) (a 0))
+    (let (s) (--each-indexed '(a b c) (setq s (cons (list it it-index) s))) s) => '((c 2) (b 1) (a 0)))
+
   (defexamples -dotimes
     (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) => '(2 1 0)
     (let (s) (--dotimes 5 (!cons it s)) s) => '(4 3 2 1 0)))

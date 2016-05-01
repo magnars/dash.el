@@ -69,6 +69,9 @@ new list."
     (-map-last 'even? 'square '(1 2 3 4)) => '(1 2 3 16)
     (--map-last (> it 2) (* it it) '(1 2 3 4)) => '(1 2 3 16)
     (--map-last (= it 2) 17 '(1 2 3 2)) => '(1 2 3 17)
+    ;; the next two tests assert that the input list is not modified #158
+    (let ((l '(1 2 3))) (list (--map-last (< it 2) (number-to-string it) l) l)) => '(("1" 2 3) (1 2 3))
+    (let ((l '(1 2 3))) (list (--map-last (< it 3) (number-to-string it) l) l)) => '((1 "2" 3) (1 2 3))
     (-map-last 'even? 'square '(1 3 5 7)) => '(1 3 5 7)
     (-map-last 'even? 'square '(2)) => '(4)
     (-map-last 'even? 'square nil) => nil)

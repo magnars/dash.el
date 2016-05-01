@@ -131,7 +131,10 @@ new list."
   (defexamples -remove-last
     (-remove-last 'even? '(1 3 5 4 7 8 10 11)) => '(1 3 5 4 7 8 11)
     (-remove-last 'stringp '(1 2 "last" "second" "third")) => '(1 2 "last" "second")
-    (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) => '(1 2 3 4 5 6 7 8 9))
+    (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) => '(1 2 3 4 5 6 7 8 9)
+    ;; the next two tests assert that the input list is not modified #158
+    (let ((l '(1 2 3))) (list (--remove-last (< it 2) l) l)) => '((2 3) (1 2 3))
+    (let ((l '(1 2 3))) (list (--remove-last (< it 4) l) l)) => '((1 2) (1 2 3)))
 
   (defexamples -remove-item
     (-remove-item 3 '(1 2 3 2 3 4 5 3)) => '(1 2 2 4 5)

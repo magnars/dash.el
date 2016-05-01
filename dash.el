@@ -270,7 +270,7 @@ See also: `-remove', `-map-first'"
 Alias: `-reject-last'
 
 See also: `-remove', `-map-last'"
-  (nreverse (-remove-first pred (nreverse list))))
+  (nreverse (-remove-first pred (reverse list))))
 
 (defmacro --remove-last (form list)
   "Anaphoric form of `-remove-last'."

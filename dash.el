@@ -555,11 +555,8 @@ Alias: `-any'"
 
 (defun -butlast (list)
   "Return a list of all items in list except for the last."
-  (let (result)
-    (while (cdr list)
-      (!cons (car list) result)
-      (!cdr list))
-    (nreverse result)))
+  ;; no alias as we don't want magic optional argument
+  (butlast list))
 
 (defmacro --count (pred list)
   "Anaphoric form of `-count'."

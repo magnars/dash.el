@@ -673,7 +673,9 @@ section is returned.  Defaults to 1."
     (nreverse new-list)))
 
 (defun -take (n list)
-  "Return a new list of the first N items in LIST, or all items if there are fewer than N."
+  "Return a new list of the first N items in LIST, or all items if there are fewer than N.
+
+See also: `-take-last'"
   (let (result)
     (--dotimes n
       (when list
@@ -681,7 +683,23 @@ section is returned.  Defaults to 1."
         (!cdr list)))
     (nreverse result)))
 
-(defalias '-drop 'nthcdr "Return the tail of LIST without the first N items.")
+(defun -take-last (n list)
+  "Return the last N items of LIST in order.
+
+See also: `-take'"
+  (copy-sequence (last list n)))
+
+(defalias '-drop 'nthcdr
+  "Return the tail of LIST without the first N items.
+
+See also: `-drop-last'")
+
+(defun -drop-last (n list)
+  "Remove the last N items of LIST and return a copy.
+
+See also: `-drop'"
+  ;; No alias because we don't want magic optional argument
+  (butlast list n))
 
 (defmacro --take-while (form list)
   "Anaphoric form of `-take-while'."

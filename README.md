@@ -99,7 +99,9 @@ Functions returning a sublist of the original list.
 * [-non-nil](#-non-nil-list) `(list)`
 * [-slice](#-slice-list-from-optional-to-step) `(list from &optional to step)`
 * [-take](#-take-n-list) `(n list)`
+* [-take-last](#-take-last-n-list) `(n list)`
 * [-drop](#-drop-n-list) `(n list)`
+* [-drop-last](#-drop-last-n-list) `(n list)`
 * [-take-while](#-take-while-pred-list) `(pred list)`
 * [-drop-while](#-drop-while-pred-list) `(pred list)`
 * [-select-by-indices](#-select-by-indices-indices-list) `(indices list)`
@@ -535,18 +537,45 @@ section is returned.  Defaults to 1.
 
 Return a new list of the first `n` items in `list`, or all items if there are fewer than `n`.
 
+See also: [`-take-last`](#-take-last-n-list)
+
 ```el
 (-take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
 (-take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
+```
+
+#### -take-last `(n list)`
+
+Return the last `n` items of `list` in order.
+
+See also: [`-take`](#-take-n-list)
+
+```el
+(-take-last 3 '(1 2 3 4 5)) ;; => '(3 4 5)
+(-take-last 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
+(-take-last 1 '(1 2 3 4 5)) ;; => '(5)
 ```
 
 #### -drop `(n list)`
 
 Return the tail of `list` without the first `n` items.
 
+See also: [`-drop-last`](#-drop-last-n-list)
+
 ```el
 (-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
 (-drop 17 '(1 2 3 4 5)) ;; => '()
+```
+
+#### -drop-last `(n list)`
+
+Remove the last `n` items of `list` and return a copy.
+
+See also: [`-drop`](#-drop-n-list)
+
+```el
+(-drop-last 3 '(1 2 3 4 5)) ;; => '(1 2)
+(-drop-last 17 '(1 2 3 4 5)) ;; => '()
 ```
 
 #### -take-while `(pred list)`

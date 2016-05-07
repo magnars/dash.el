@@ -168,9 +168,21 @@ new list."
     (-take 3 '(1 2 3 4 5)) => '(1 2 3)
     (-take 17 '(1 2 3 4 5)) => '(1 2 3 4 5))
 
+  (defexamples -take-last
+    (-take-last 3 '(1 2 3 4 5)) => '(3 4 5)
+    (-take-last 17 '(1 2 3 4 5)) => '(1 2 3 4 5)
+    (-take-last 1 '(1 2 3 4 5)) => '(5)
+    (let ((l '(1 2 3 4 5)))
+      (setcar (-take-last 2 l) 1)
+      l) => '(1 2 3 4 5))
+
   (defexamples -drop
     (-drop 3 '(1 2 3 4 5)) => '(4 5)
     (-drop 17 '(1 2 3 4 5)) => '())
+
+  (defexamples -drop-last
+    (-drop-last 3 '(1 2 3 4 5)) => '(1 2)
+    (-drop-last 17 '(1 2 3 4 5)) => '())
 
   (defexamples -take-while
     (-take-while 'even? '(1 2 3 4)) => '()

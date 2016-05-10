@@ -72,8 +72,10 @@ special values."
          (!cdr ,l)))))
 
 (defmacro -doto (eval-initial-value &rest forms)
-  "Take a target form, then many forms to call with the target form as the first
-argument. Returns the target form."
+  "Evals a form, then inserts that form as the 2nd argument to other forms.
+The EVAL-INITIAL-VALUE form is evaluated once. Its result is
+passed to FORMS, which are then evaluated sequentially. Returns
+the target form."
   (declare (indent 1))
   (let ((retval (make-symbol "value")))
     `(let ((,retval ,eval-initial-value))

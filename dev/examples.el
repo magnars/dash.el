@@ -1020,7 +1020,11 @@ new list."
 
   (defexamples -dotimes
     (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) => '(2 1 0)
-    (let (s) (--dotimes 5 (!cons it s)) s) => '(4 3 2 1 0)))
+    (let (s) (--dotimes 5 (!cons it s)) s) => '(4 3 2 1 0))
+
+  (defexamples -doto
+    (-doto '(1 2 3) (!cdr) (!cdr)) => '(3)
+    (-doto '(1 . 2) (setcar 3) (setcdr 4)) => '(3 . 4)))
 
 (def-example-group "Destructive operations" nil
   (defexamples !cons

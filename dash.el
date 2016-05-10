@@ -72,7 +72,7 @@ special values."
          (!cdr ,l)))))
 
 (defmacro -doto (eval-initial-value &rest forms)
-  "Evals a form, then inserts that form as the 2nd argument to other forms.
+  "Eval a form, then insert that form as the 2nd argument to other forms.
 The EVAL-INITIAL-VALUE form is evaluated once. Its result is
 passed to FORMS, which are then evaluated sequentially. Returns
 the target form."

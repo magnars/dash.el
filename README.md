@@ -277,6 +277,7 @@ Functions iterating over lists for side-effect only.
 * [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
 * [-each-indexed](#-each-indexed-list-fn) `(list fn)`
 * [-dotimes](#-dotimes-num-fn) `(num fn)`
+* [-doto](#-doto-eval-initial-value-rest-forms) `(eval-initial-value &rest forms)`
 
 ### Destructive operations
 
@@ -2189,6 +2190,18 @@ Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 t
 ```el
 (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) ;; => '(2 1 0)
 (let (s) (--dotimes 5 (!cons it s)) s) ;; => '(4 3 2 1 0)
+```
+
+#### -doto `(eval-initial-value &rest forms)`
+
+Eval a form, then insert that form as the 2nd argument to other forms.
+The `eval-initial-value` form is evaluated once. Its result is
+passed to `forms`, which are then evaluated sequentially. Returns
+the target form.
+
+```el
+(-doto '(1 2 3) (!cdr) (!cdr)) ;; => '(3)
+(-doto '(1 . 2) (setcar 3) (setcdr 4)) ;; => '(3 . 4)
 ```
 
 

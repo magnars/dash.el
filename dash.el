@@ -1866,7 +1866,7 @@ Alias: `-uniq'"
 (defalias '-uniq '-distinct)
 
 (defun -union (list list2)
-  "Return a new list containing the elements of LIST1 and elements of LIST2 that are not in LIST1.
+  "Return a new list containing the elements of LIST and elements of LIST2 that are not in LIST.
 The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
   ;; We fall back to iteration implementation if the comparison

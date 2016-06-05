@@ -1370,7 +1370,7 @@ Operations pretending lists are sets.
 
 #### -union `(list list2)`
 
-Return a new list containing the elements of `list1` and elements of `list2` that are not in `list1`.
+Return a new list containing the elements of `list` and elements of `list2` that are not in `list`.
 The test for equality is done with `equal`,
 or with `-compare-fn` if that's non-nil.
 
@@ -2345,7 +2345,7 @@ See `srfi-26` for detailed description.
 
 #### -not `(pred)`
 
-Take an unary predicates `pred` and return an unary predicate
+Take a unary predicate `pred` and return a unary predicate
 that returns t if `pred` returns nil and nil if `pred` returns
 non-nil.
 
@@ -2356,7 +2356,7 @@ non-nil.
 
 #### -orfn `(&rest preds)`
 
-Take list of unary predicates `preds` and return an unary
+Take list of unary predicates `preds` and return a unary
 predicate with argument x that returns non-nil if at least one of
 the `preds` returns non-nil on x.
 
@@ -2369,7 +2369,7 @@ In types: [a -> Bool] -> a -> Bool
 
 #### -andfn `(&rest preds)`
 
-Take list of unary predicates `preds` and return an unary
+Take list of unary predicates `preds` and return a unary
 predicate with argument x that returns non-nil if all of the
 `preds` returns non-nil on x.
 
@@ -2386,7 +2386,7 @@ In types: [a -> Bool] -> a -> Bool
 Return a function `fn` composed `n` times with itself.
 
 `fn` is a unary function.  If you need to use a function of higher
-arity, use [`-applify`](#-applify-fn) first to turn it into an unary function.
+arity, use [`-applify`](#-applify-fn) first to turn it into a unary function.
 
 With n = 0, this acts as identity function.
 

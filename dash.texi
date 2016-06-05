@@ -13,9 +13,9 @@
 
 @copying
 
-This manual is for @code{dash.el} version 2.12.0.
+This manual is for @code{dash.el} version 2.12.1.
 
-Copyright © 2012-2015 Free Software Foundation, Inc.
+Copyright © 2012-2015 Magnar Sveen
 
 @quotation
 This program is free software; you can redistribute it and/or modify
@@ -124,13 +124,13 @@ Alternatively, you can just dump @verb{~dash.el~} or
 Add this to the big comment block at the top:
 
 @lisp
-;; Package-Requires: ((dash "2.12.0"))
+;; Package-Requires: ((dash "2.12.1"))
 @end lisp
 
 @noindent To get function combinators:
 
 @lisp
-;; Package-Requires: ((dash "2.12.0") (dash-functional "1.2.0") (emacs "24"))
+;; Package-Requires: ((dash "2.12.1") (dash-functional "1.2.0") (emacs "24"))
 @end lisp
 
 @node Syntax highlighting of dash functions
@@ -436,6 +436,8 @@ Return a new list of the items in @var{list} for which @var{pred} returns a non-
 
 Alias: @code{-select}
 
+See also: @code{-keep} (@pxref{-keep})
+
 @example
 @group
 (-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4))
@@ -586,6 +588,8 @@ section is returned.  Defaults to 1.
 @defun -take (n list)
 Return a new list of the first @var{n} items in @var{list}, or all items if there are fewer than @var{n}.
 
+See also: @code{-take-last} (@pxref{-take-last})
+
 @example
 @group
 (-take 3 '(1 2 3 4 5))
@@ -598,9 +602,33 @@ Return a new list of the first @var{n} items in @var{list}, or all items if ther
 @end example
 @end defun
 
+@anchor{-take-last}
+@defun -take-last (n list)
+Return the last @var{n} items of @var{list} in order.
+
+See also: @code{-take} (@pxref{-take})
+
+@example
+@group
+(-take-last 3 '(1 2 3 4 5))
+    @result{} '(3 4 5)
+@end group
+@group
+(-take-last 17 '(1 2 3 4 5))
+    @result{} '(1 2 3 4 5)
+@end group
+@group
+(-take-last 1 '(1 2 3 4 5))
+    @result{} '(5)
+@end group
+@end example
+@end defun
+
 @anchor{-drop}
 @defun -drop (n list)
 Return the tail of @var{list} without the first @var{n} items.
+
+See also: @code{-drop-last} (@pxref{-drop-last})
 
 @example
 @group
@@ -609,6 +637,24 @@ Return the tail of @var{list} without the first @var{n} items.
 @end group
 @group
 (-drop 17 '(1 2 3 4 5))
+    @result{} '()
+@end group
+@end example
+@end defun
+
+@anchor{-drop-last}
+@defun -drop-last (n list)
+Remove the last @var{n} items of @var{list} and return a copy.
+
+See also: @code{-drop} (@pxref{-drop})
+
+@example
+@group
+(-drop-last 3 '(1 2 3 4 5))
+    @result{} '(1 2)
+@end group
+@group
+(-drop-last 17 '(1 2 3 4 5))
     @result{} '()
 @end group
 @end example
@@ -671,6 +717,53 @@ as `(nth i list)` for all i from @var{indices}.
 @group
 (-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l"))
     @result{} '("f" "a" "r" "f" "a" "l" "l" "a")
+@end group
+@end example
+@end defun
+
+@anchor{-select-columns}
+@defun -select-columns (columns table)
+Select @var{columns} from @var{table}.
+
+@var{table} is a list of lists where each element represents one row.
+It is assumed each row has the same length.
+
+Each row is transformed such that only the specified @var{columns} are
+selected.
+
+See also: @code{-select-column} (@pxref{-select-column}), @code{-select-by-indices} (@pxref{-select-by-indices})
+
+@example
+@group
+(-select-columns '(0 2) '((1 2 3) (a b c) (:a :b :c)))
+    @result{} '((1 3) (a c) (:a :c))
+@end group
+@group
+(-select-columns '(1) '((1 2 3) (a b c) (:a :b :c)))
+    @result{} '((2) (b) (:b))
+@end group
+@group
+(-select-columns nil '((1 2 3) (a b c) (:a :b :c)))
+    @result{} '(nil nil nil)
+@end group
+@end example
+@end defun
+
+@anchor{-select-column}
+@defun -select-column (column table)
+Select @var{column} from @var{table}.
+
+@var{table} is a list of lists where each element represents one row.
+It is assumed each row has the same length.
+
+The single selected column is returned as a list.
+
+See also: @code{-select-columns} (@pxref{-select-columns}), @code{-select-by-indices} (@pxref{-select-by-indices})
+
+@example
+@group
+(-select-column 1 '((1 2 3) (a b c) (:a :b :c)))
+    @result{} '(2 b :b)
 @end group
 @end example
 @end defun
@@ -1542,7 +1635,7 @@ Return a list of ((-take-while @var{pred} @var{list}) (-drop-while @var{pred} @v
 @end defun
 
 @anchor{-split-on}
-@defun -split-on (item list)
+@defmac -split-on (item list)
 Split the @var{list} each time @var{item} is found.
 
 Unlike @code{-partition-by} (@pxref{-partition-by}), the @var{item} is discarded from the results.
@@ -1566,7 +1659,7 @@ See also @code{-split-when} (@pxref{-split-when})
     @result{} '(("a" "b") ("d" "e"))
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-split-when}
 @defun -split-when (fn list)
@@ -1821,6 +1914,8 @@ Take a predicate @var{pred} and a @var{list} and return the index of the
 first element in the list satisfying the predicate, or nil if
 there is no such element.
 
+See also @code{-first} (@pxref{-first}).
+
 @example
 @group
 (-find-index 'even? '(2 4 1 6 3 3 5 8))
@@ -1842,6 +1937,8 @@ there is no such element.
 Take a predicate @var{pred} and a @var{list} and return the index of the
 last element in the list satisfying the predicate, or nil if
 there is no such element.
+
+See also @code{-last} (@pxref{-last}).
 
 @example
 @group
@@ -1926,7 +2023,7 @@ Operations pretending lists are sets.
 
 @anchor{-union}
 @defun -union (list list2)
-Return a new list containing the elements of @var{list1} and elements of @var{list2} that are not in @var{list1}.
+Return a new list containing the elements of @var{list} and elements of @var{list2} that are not in @var{list}.
 The test for equality is done with @code{equal},
 or with @code{-compare-fn} if that's non-nil.
 
@@ -2177,7 +2274,10 @@ second elements of each list, and so on. The lengths of the returned
 groupings are equal to the length of the shortest input list.
 
 If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists. 
+of cons cells. Otherwise, return the groupings as a list of lists.
+
+Please note! This distinction is being removed in an upcoming 2.0
+release of Dash. If you rely on this behavior, use -zip-pair instead.
 
 @example
 @group
@@ -2701,7 +2801,7 @@ structure such as plist or alist.
 @section Threading macros
 
 @anchor{->}
-@defun -> (x &optional form &rest more)
+@defmac -> (x &optional form &rest more)
 Thread the expr through the forms. Insert @var{x} as the second item
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
@@ -2721,10 +2821,10 @@ second item in second form, etc.
     @result{} '(3 5 8)
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{->>}
-@defun ->> (x &optional form &rest more)
+@defmac ->> (x &optional form &rest more)
 Thread the expr through the forms. Insert @var{x} as the last item
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
@@ -2744,10 +2844,10 @@ last item in second form, etc.
     @result{} 14
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-->}
-@defun --> (x form &rest more)
+@defmac --> (x form &rest more)
 Thread the expr through the forms. Insert @var{x} at the position
 signified by the token @code{it} in the first form. If there are more
 forms, insert the first form at the position signified by @code{it} in
@@ -2767,10 +2867,10 @@ in second form, etc.
     @result{} "ABCDEFGHI"
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-some->}
-@defun -some-> (x &optional form &rest more)
+@defmac -some-> (x &optional form &rest more)
 When expr is non-nil, thread it through the first form (via @code{->} (@pxref{->})),
 and when that result is non-nil, through the next form, etc.
 
@@ -2788,10 +2888,10 @@ and when that result is non-nil, through the next form, etc.
     @result{} nil
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-some->>}
-@defun -some->> (x &optional form &rest more)
+@defmac -some->> (x &optional form &rest more)
 When expr is non-nil, thread it through the first form (via @code{->>} (@pxref{->>})),
 and when that result is non-nil, through the next form, etc.
 
@@ -2809,10 +2909,10 @@ and when that result is non-nil, through the next form, etc.
     @result{} 106
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-some-->}
-@defun -some--> (x &optional form &rest more)
+@defmac -some--> (x &optional form &rest more)
 When expr in non-nil, thread it through the first form (via @code{-->} (@pxref{-->})),
 and when that result is non-nil, through the next form, etc.
 
@@ -2830,7 +2930,7 @@ and when that result is non-nil, through the next form, etc.
     @result{} nil
 @end group
 @end example
-@end defun
+@end defmac
 
 
 @node Binding
@@ -2841,7 +2941,7 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 
 
 @anchor{-when-let}
-@defun -when-let (var-val &rest body)
+@defmac -when-let (var-val &rest body)
 If @var{val} evaluates to non-nil, bind it to @var{var} and execute body.
 @var{var-val} should be a (@var{var} @var{val}) pair.
 
@@ -2861,10 +2961,10 @@ Note: binding is done according to @code{-let} (@pxref{-let}).
     @result{} nil
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-when-let*}
-@defun -when-let* (vars-vals &rest body)
+@defmac -when-let* (vars-vals &rest body)
 If all @var{vals} evaluate to true, bind them to their corresponding
 @var{vars} and execute body. @var{vars-vals} should be a list of (@var{var} @var{val})
 pairs.
@@ -2883,10 +2983,10 @@ encountered.
     @result{} nil
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-if-let}
-@defun -if-let (var-val then &rest else)
+@defmac -if-let (var-val then &rest else)
 If @var{val} evaluates to non-nil, bind it to @var{var} and do @var{then},
 otherwise do @var{else}. @var{var-val} should be a (@var{var} @var{val}) pair.
 
@@ -2902,10 +3002,10 @@ Note: binding is done according to @code{-let} (@pxref{-let}).
     @result{} t
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-if-let*}
-@defun -if-let* (vars-vals then &rest else)
+@defmac -if-let* (vars-vals then &rest else)
 If all @var{vals} evaluate to true, bind them to their corresponding
 @var{vars} and do @var{then}, otherwise do @var{else}. @var{vars-vals} should be a list
 of (@var{var} @var{val}) pairs.
@@ -2928,10 +3028,10 @@ encountered.
     @result{} 7
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-let}
-@defun -let (varlist &rest body)
+@defmac -let (varlist &rest body)
 Bind variables according to @var{varlist} then eval @var{body}.
 
 @var{varlist} is a list of lists of the form (@var{pattern} @var{source}).  Each
@@ -3074,10 +3174,10 @@ because we need to support improper list binding.
     @result{} '(1 2)
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-let*}
-@defun -let* (varlist &rest body)
+@defmac -let* (varlist &rest body)
 Bind variables according to @var{varlist} then eval @var{body}.
 
 @var{varlist} is a list of lists of the form (@var{pattern} @var{source}).  Each
@@ -3104,10 +3204,10 @@ See @code{-let} (@pxref{-let}) for the list of all possible patterns.
     @result{} '(1 a b c (a b c))
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-lambda}
-@defun -lambda (match-form &rest body)
+@defmac -lambda (match-form &rest body)
 Return a lambda which destructures its input as @var{match-form} and executes @var{body}.
 
 Note that you have to enclose the @var{match-form} in a pair of parens,
@@ -3136,7 +3236,7 @@ See @code{-let} (@pxref{-let}) for the description of destructuring mechanism.
     @result{} '(2 3 5 6)
 @end group
 @end example
-@end defun
+@end defmac
 
 
 @node Side-effects
@@ -3219,12 +3319,31 @@ Repeatedly calls @var{fn} (presumably for side-effects) passing in integers from
 @end example
 @end defun
 
+@anchor{-doto}
+@defmac -doto (eval-initial-value &rest forms)
+Eval a form, then insert that form as the 2nd argument to other forms.
+The @var{eval-initial-value} form is evaluated once. Its result is
+passed to @var{forms}, which are then evaluated sequentially. Returns
+the target form.
+
+@example
+@group
+(-doto '(1 2 3) (!cdr) (!cdr))
+    @result{} '(3)
+@end group
+@group
+(-doto '(1 . 2) (setcar 3) (setcdr 4))
+    @result{} '(3 . 4)
+@end group
+@end example
+@end defmac
+
 
 @node Destructive operations
 @section Destructive operations
 
 @anchor{!cons}
-@defun !cons (car cdr)
+@defmac !cons (car cdr)
 Destructive: Set @var{cdr} to the cons of @var{car} and @var{cdr}.
 
 @example
@@ -3237,10 +3356,10 @@ Destructive: Set @var{cdr} to the cons of @var{car} and @var{cdr}.
     @result{} '(5 3)
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{!cdr}
-@defun !cdr (list)
+@defmac !cdr (list)
 Destructive: Set @var{list} to the cdr of @var{list}.
 
 @example
@@ -3253,7 +3372,7 @@ Destructive: Set @var{list} to the cdr of @var{list}.
     @result{} '(5)
 @end group
 @end example
-@end defun
+@end defmac
 
 
 @node Function combinators
@@ -3434,7 +3553,7 @@ In types: a -> b -> a
 @end defun
 
 @anchor{-cut}
-@defun -cut (&rest params)
+@defmac -cut (&rest params)
 Take n-ary function and n arguments and specialize some of them.
 Arguments denoted by <> will be left unspecialized.
 
@@ -3454,11 +3573,11 @@ See @var{srfi-26} for detailed description.
     @result{} '(1 3)
 @end group
 @end example
-@end defun
+@end defmac
 
 @anchor{-not}
 @defun -not (pred)
-Take an unary predicates @var{pred} and return an unary predicate
+Take a unary predicate @var{pred} and return a unary predicate
 that returns t if @var{pred} returns nil and nil if @var{pred} returns
 non-nil.
 
@@ -3476,7 +3595,7 @@ non-nil.
 
 @anchor{-orfn}
 @defun -orfn (&rest preds)
-Take list of unary predicates @var{preds} and return an unary
+Take list of unary predicates @var{preds} and return a unary
 predicate with argument x that returns non-nil if at least one of
 the @var{preds} returns non-nil on x.
 
@@ -3496,7 +3615,7 @@ In types: [a -> Bool] -> a -> Bool
 
 @anchor{-andfn}
 @defun -andfn (&rest preds)
-Take list of unary predicates @var{preds} and return an unary
+Take list of unary predicates @var{preds} and return a unary
 predicate with argument x that returns non-nil if all of the
 @var{preds} returns non-nil on x.
 
@@ -3523,7 +3642,7 @@ In types: [a -> Bool] -> a -> Bool
 Return a function @var{fn} composed @var{n} times with itself.
 
 @var{fn} is a unary function.  If you need to use a function of higher
-arity, use @code{-applify} (@pxref{-applify}) first to turn it into an unary function.
+arity, use @code{-applify} (@pxref{-applify}) first to turn it into a unary function.
 
 With n = 0, this acts as identity function.
 

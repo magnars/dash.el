@@ -2340,7 +2340,7 @@ See `srfi-26` for detailed description.
 ```el
 (funcall (-cut list 1 <> 3 <> 5) 2 4) ;; => '(1 2 3 4 5)
 (-map (-cut funcall <> 5) '(1+ 1- (lambda (x) (/ 1.0 x)))) ;; => '(6 4 0.2)
-(-filter (-cut < <> 5) '(1 3 5 7 9)) ;; => '(1 3)
+(-map (-cut <> 1 2 3) (list 'list 'vector 'string)) ;; => '((1 2 3) [1 2 3] "")
 ```
 
 #### -not `(pred)`

@@ -2254,6 +2254,8 @@ structure such as plist or alist."
        (let ((new-keywords '(
                              "-each"
                              "--each"
+                             "-each-indexed"
+                             "--each-indexed"
                              "-each-while"
                              "--each-while"
                              "-dotimes"

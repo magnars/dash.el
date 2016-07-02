@@ -1260,6 +1260,7 @@ See also: `-select-columns', `-select-by-indices'"
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
 second item in second form, etc."
+  (declare (debug (form &rest [&or symbolp (sexp &rest form)])))
   (cond
    ((null form) x)
    ((null more) (if (listp form)
@@ -1272,6 +1273,7 @@ second item in second form, etc."
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
 last item in second form, etc."
+  (declare (debug ->))
   (cond
    ((null form) x)
    ((null more) (if (listp form)
@@ -1284,6 +1286,7 @@ last item in second form, etc."
 signified by the token `it' in the first form. If there are more
 forms, insert the first form at the position signified by `it' in
 in second form, etc."
+  (declare (debug ->))
   (if (null more)
       (if (listp form)
           (--map-when (eq it 'it) x form)
@@ -1293,6 +1296,7 @@ in second form, etc."
 (defmacro -some-> (x &optional form &rest more)
   "When expr is non-nil, thread it through the first form (via `->'),
 and when that result is non-nil, through the next form, etc."
+  (declare (debug ->))
   (if (null form) x
     (let ((result (make-symbol "result")))
       `(-some-> (-when-let (,result ,x)
@@ -1302,6 +1306,7 @@ and when that result is non-nil, through the next form, etc."
 (defmacro -some->> (x &optional form &rest more)
   "When expr is non-nil, thread it through the first form (via `->>'),
 and when that result is non-nil, through the next form, etc."
+  (declare (debug ->))
   (if (null form) x
     (let ((result (make-symbol "result")))
       `(-some->> (-when-let (,result ,x)
@@ -1311,6 +1316,7 @@ and when that result is non-nil, through the next form, etc."
 (defmacro -some--> (x &optional form &rest more)
   "When expr in non-nil, thread it through the first form (via `-->'),
 and when that result is non-nil, through the next form, etc."
+  (declare (debug ->))
   (if (null form) x
     (let ((result (make-symbol "result")))
       `(-some--> (-when-let (,result ,x)

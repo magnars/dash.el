@@ -19,11 +19,11 @@ If you want the function combinators, then also:
 
 Add this to the big comment block at the top:
 
-    ;; Package-Requires: ((dash "2.12.1"))
+    ;; Package-Requires: ((dash "2.13.0"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "2.12.1") (dash-functional "1.2.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.13.0") (dash-functional "1.2.0") (emacs "24"))
 
 ## Upcoming breaking change!
 
@@ -2638,7 +2638,7 @@ Thanks!
 
 ## License
 
-Copyright (C) 2012-2014 Magnar Sveen
+Copyright (C) 2012-2016 Free Software Foundation, Inc.
 
 Authors: Magnar Sveen <magnars@gmail.com>
 Keywords: lists

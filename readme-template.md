@@ -98,7 +98,23 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
-- Added lexical binding pragma to dash.el
+### From 2.12 to 2.13
+
+- `-let` now supports `&alist` in destructuring.
+- Various performance improvements.
+- `-zip` will change in future so it always returns lists. Added
+  `-zip-pair` for users who explicitly want the old behavior.
+- Added lexical binding pragma to dash.el, fixes
+  [#130](https://github.com/magnars/dash.el/issues/130) in Emacs 24+.
+- Added `-select-column` and `-select-columns`.
+- Fixed an issue with `-map-last` and `--remove-last` where they
+  modified their inputs
+  ([#158](https://github.com/magnars/dash.el/issues/158)).
+- Added `-each-indexed` and `--each-indexed`.
+- Added `-take-last` and `-drop-last`.
+- Added `-doto` macro.
+- `-cut <>` is now treated as a function, consistent with SRFI 26
+  ([#185](https://github.com/magnars/dash.el/issues/185))
 
 ### From 2.11 to 2.12
 

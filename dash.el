@@ -357,7 +357,7 @@ See also: `-each-indexed'."
        (nreverse ,r))))
 
 (defun -map-when (pred rep list)
-  "Return a new list where the elements in LIST that does not match the PRED function
+  "Return a new list where the elements in LIST that do not match the PRED function
 are unchanged, and where the elements in LIST that do match the PRED function are mapped
 through the REP function.
 

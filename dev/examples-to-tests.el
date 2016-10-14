@@ -21,6 +21,9 @@
 
 ;;; Code:
 
+(when (require 'undercover nil t)
+  (undercover "dash*.el"))
+
 (require 'ert)
 
 (defun example-to-should (actual sym expected)

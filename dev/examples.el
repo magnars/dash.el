@@ -22,8 +22,6 @@
 
 ;;; Code:
 
-(when (require 'undercover nil t)
-  (undercover "dash*.el"))
 (require 'dash)
 
 (defun even? (num) (= 0 (% num 2)))

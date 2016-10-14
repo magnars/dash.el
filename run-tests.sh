@@ -13,15 +13,12 @@ if [ -z "$ERT_SELECTOR" ] ; then
 fi
 
 cask exec emacs -batch \
-       $([[ $EVM_EMACS == "emacs-23.4-travis" ]] && echo -l dev/ert.el) \
        -l dash.el \
        -l dash-functional.el \
        -l dev/examples-to-tests.el \
        -l dev/examples.el \
        --eval "(ert-run-tests-batch-and-exit (quote ${ERT_SELECTOR}))"
 
-if [[ $EVM_EMACS != "emacs-23.4-travis" ]]; then
-    emacs -Q --batch \
-           --eval '(setq byte-compile-error-on-warn t)' \
-           -f batch-byte-compile dash.el
-fi
+emacs -Q --batch \
+      --eval '(setq byte-compile-error-on-warn t)' \
+      -f batch-byte-compile dash.el

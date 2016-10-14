@@ -16,7 +16,7 @@ if [ -z "$ERT_SELECTOR" ] ; then
     ERT_SELECTOR="nil"
 fi
 
-$EMACS -batch \
+cask exec $EMACS -batch \
        $([[ $EMACS == "emacs23" ]] && echo -l dev/ert.el) \
        -l dash.el \
        -l dash-functional.el \

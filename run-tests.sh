@@ -23,3 +23,8 @@ cask exec emacs -batch \
 emacs -Q --batch \
       --eval '(setq byte-compile-error-on-warn t)' \
       -f batch-byte-compile dash.el
+
+emacs -Q --batch \
+      -L . \
+      --eval '(setq byte-compile-error-on-warn t)' \
+      -f batch-byte-compile dash-functional.el

@@ -12,9 +12,10 @@ if [ -z "$ERT_SELECTOR" ] ; then
     ERT_SELECTOR="nil"
 fi
 
+rm -f *.elc
+
 cask exec emacs -batch \
-       -l dash.el \
-       -l dash-functional.el \
+       -L . \
        -l dev/examples-to-tests.el \
        -l dev/examples.el \
        --eval "(ert-run-tests-batch-and-exit (quote ${ERT_SELECTOR}))"

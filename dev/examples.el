@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 'dash-functional)
 
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))

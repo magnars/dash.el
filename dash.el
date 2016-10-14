@@ -1284,7 +1284,8 @@ If a list overflows, carry to the right and reset the list."
   (while (not (or (car lists)
                   (equal lists '(nil))))
     (setcar lists (car restore-lists))
-    (pop (cadr lists))
+    ;; moral equivalent to (pop (cadr lists))
+    (setcar (cdr lists) (cdr (cadr lists)))
     (!cdr lists)
     (!cdr restore-lists)
     (when re

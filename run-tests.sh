@@ -20,6 +20,8 @@ cask exec emacs -batch \
        -l dev/examples.el \
        --eval "(ert-run-tests-batch-and-exit (quote ${ERT_SELECTOR}))"
 
+cat /tmp/undercover_coveralls_report
+
 emacs -Q --batch \
       --eval '(setq byte-compile-error-on-warn t)' \
       -f batch-byte-compile dash.el

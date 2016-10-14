@@ -24,7 +24,7 @@
 
 (require 'dash)
 (when (require 'undercover nil t)
-  (undercover "dash.el" "dash-functional.el"))
+  (undercover "dash*.el"))
 
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))

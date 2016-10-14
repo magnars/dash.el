@@ -22,7 +22,7 @@
 ;;; Code:
 
 (when (require 'undercover nil t)
-  (undercover "dash.el" "dash-functional.el"))
+  (undercover "*.el"))
 
 (require 'ert)
 

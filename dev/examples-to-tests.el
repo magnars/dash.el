@@ -24,7 +24,7 @@
 (when (require 'undercover nil t)
   (undercover "*.el"))
 
-(require 'dash-functional)
+;; (require 'dash-functional)
 (require 'dash)
 
 (require 'ert)

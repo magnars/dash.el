@@ -22,7 +22,7 @@
 
 ;;; Code:
 
-(require 'dash-functional)
+;; (require 'dash-functional)
 (require 'dash)
 
 (defun even? (num) (= 0 (% num 2)))

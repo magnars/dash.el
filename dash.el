@@ -310,6 +310,7 @@ See also: `-remove', `-map-last'"
   "Remove all occurences of ITEM from LIST.
 
 Comparison is done with `equal'."
+  (declare (pure t) (side-effect-free t))
   (--remove (equal it item) list))
 
 (defmacro --keep (form list)
@@ -329,6 +330,7 @@ If you want to select the original items satisfying a predicate use `-filter'."
 
 (defun -non-nil (list)
   "Return all non-nil elements of LIST."
+  (declare (pure t) (side-effect-free t))
   (-remove 'null list))
 
 (defmacro --map-indexed (form list)
@@ -401,6 +403,7 @@ See also: `-map-when', `-replace-last'"
 Elements are compared using `equal'.
 
 See also: `-replace-at'"
+  (declare (pure t) (side-effect-free t))
   (--map-when (equal it old) new list))
 
 (defun -replace-first (old new list)
@@ -409,6 +412,7 @@ See also: `-replace-at'"
 Elements are compared using `equal'.
 
 See also: `-map-first'"
+  (declare (pure t) (side-effect-free t))
   (--map-first (equal old it) new list))
 
 (defun -replace-last (old new list)
@@ -417,6 +421,7 @@ See also: `-map-first'"
 Elements are compared using `equal'.
 
 See also: `-map-last'"
+  (declare (pure t) (side-effect-free t))
   (--map-last (equal old it) new list))
 
 (defmacro --mapcat (form list)
@@ -441,6 +446,7 @@ Conses of two atoms are considered \"terminals\", that is, they
 aren't flattened further.
 
 See also: `-flatten-n'"
+  (declare (pure t) (side-effect-free t))
   (if (and (listp l) (listp (cdr l)))
       (-mapcat '-flatten l)
     (list l)))
@@ -454,10 +460,12 @@ See also: `-flatten-n'"
   "Flatten NUM levels of a nested LIST.
 
 See also: `-flatten'"
+  (declare (pure t) (side-effect-free t))
   (-last-item (--iterate (--mapcat (-list it) it) list (1+ num))))
 
 (defun -concat (&rest lists)
   "Return a new list with the concatenation of the elements in the supplied LISTS."
+  (declare (pure t) (side-effect-free t))
   (apply 'append lists))
 
 (defalias '-copy 'copy-sequence
@@ -501,6 +509,7 @@ See also: `-splice', `-insert-at'"
 The last 2 members of ARGS are used as the final cons of the
 result so if the final member of ARGS is not a list the result is
 a dotted list."
+  (declare (pure t) (side-effect-free t))
   (-reduce-r 'cons args))
 
 (defun -snoc (list elem &rest elements)
@@ -567,11 +576,13 @@ Alias: `-any'"
 
 (defun -last-item (list)
   "Return the last item of LIST, or nil on an empty list."
+  (declare (pure t) (side-effect-free t))
   (car (last list)))
 
 (defun -butlast (list)
   "Return a list of all items in list except for the last."
   ;; no alias as we don't want magic optional argument
+  (declare (pure t) (side-effect-free t))
   (butlast list))
 
 (defmacro --count (pred list)
@@ -587,6 +598,7 @@ Alias: `-any'"
   (--count (funcall pred it) list))
 
 (defun ---truthy? (val)
+  (declare (pure t) (side-effect-free t))
   (not (null val)))
 
 (defmacro --any? (form list)
@@ -670,6 +682,7 @@ modulo the length of the list.
 
 If STEP is a number, only each STEPth item in the resulting
 section is returned.  Defaults to 1."
+  (declare (pure t) (side-effect-free t))
   (let ((length (length list))
         (new-list nil))
     ;; to defaults to the end of the list
@@ -692,6 +705,7 @@ section is returned.  Defaults to 1."
   "Return a new list of the first N items in LIST, or all items if there are fewer than N.
 
 See also: `-take-last'"
+  (declare (pure t) (side-effect-free t))
   (let (result)
     (--dotimes n
       (when list
@@ -703,6 +717,7 @@ See also: `-take-last'"
   "Return the last N items of LIST in order.
 
 See also: `-take'"
+  (declare (pure t) (side-effect-free t))
   (copy-sequence (last list n)))
 
 (defalias '-drop 'nthcdr
@@ -715,6 +730,7 @@ See also: `-drop-last'")
 
 See also: `-drop'"
   ;; No alias because we don't want magic optional argument
+  (declare (pure t) (side-effect-free t))
   (butlast list n))
 
 (defmacro --take-while (form list)
@@ -744,6 +760,7 @@ See also: `-drop'"
 
 (defun -split-at (n list)
   "Return a list of ((-take N LIST) (-drop N LIST)), in no more than one pass through the list."
+  (declare (pure t) (side-effect-free t))
   (let (result)
     (--dotimes n
       (when list
@@ -754,6 +771,7 @@ See also: `-drop'"
 (defun -rotate (n list)
   "Rotate LIST N places to the right.  With N negative, rotate to the left.
 The time complexity is O(n)."
+  (declare (pure t) (side-effect-free t))
   (if (> n 0)
       (append (last list n) (butlast list n))
     (append (-drop (- n) list) (-take (- n) list))))
@@ -762,6 +780,7 @@ The time complexity is O(n)."
   "Return a list with X inserted into LIST at position N.
 
 See also: `-splice', `-splice-list'"
+  (declare (pure t) (side-effect-free t))
   (let ((split-list (-split-at n list)))
     (nconc (car split-list) (cons x (cadr split-list)))))
 
@@ -769,6 +788,7 @@ See also: `-splice', `-splice-list'"
   "Return a list with element at Nth position in LIST replaced with X.
 
 See also: `-replace'"
+  (declare (pure t) (side-effect-free t))
   (let ((split-list (-split-at n list)))
     (nconc (car split-list) (cons x (cdr (cadr split-list))))))
 
@@ -788,6 +808,7 @@ See also: `-map-when'"
   "Return a list with element at Nth position in LIST removed.
 
 See also: `-remove-at-indices', `-remove'"
+  (declare (pure t) (side-effect-free t))
   (-remove-at-indices (list n) list))
 
 (defun -remove-at-indices (indices list)
@@ -796,6 +817,7 @@ elements selected as `(nth i list)` for all i
 from INDICES.
 
 See also: `-remove-at', `-remove'"
+  (declare (pure t) (side-effect-free t))
   (let* ((indices (-sort '< indices))
          (diffs (cons (car indices) (-map '1- (-zip-with '- (cdr indices) indices))))
          r)
@@ -888,12 +910,14 @@ This function can be thought of as a generalization of
 (defun -partition-all-in-steps (n step list)
   "Return a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
 The last groups may contain less than N items."
+  (declare (pure t) (side-effect-free t))
   (nreverse (---partition-all-in-steps-reversed n step list)))
 
 (defun -partition-in-steps (n step list)
   "Return a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
 If there are not enough items to make the last group N-sized,
 those items are discarded."
+  (declare (pure t) (side-effect-free t))
   (let ((result (---partition-all-in-steps-reversed n step list)))
     (while (and result (< (length (car result)) n))
       (!cdr result))
@@ -902,12 +926,14 @@ those items are discarded."
 (defun -partition-all (n list)
   "Return a new list with the items in LIST grouped into N-sized sublists.
 The last group may contain less than N items."
+  (declare (pure t) (side-effect-free t))
   (-partition-all-in-steps n n list))
 
 (defun -partition (n list)
   "Return a new list with the items in LIST grouped into N-sized sublists.
 If there are not enough items to make the last group N-sized,
 those items are discarded."
+  (declare (pure t) (side-effect-free t))
   (-partition-in-steps n n list))
 
 (defmacro --partition-by (form list)
@@ -1008,6 +1034,7 @@ elements of LIST.  Keys are compared by `equal'."
 
 (defun -interpose (sep list)
   "Return a new list of all elements in LIST separated by SEP."
+  (declare (pure t) (side-effect-free t))
   (let (result)
     (when list
       (!cons (car list) result)
@@ -1019,6 +1046,7 @@ elements of LIST.  Keys are compared by `equal'."
 
 (defun -interleave (&rest lists)
   "Return a new list of the first item in each list, then the second etc."
+  (declare (pure t) (side-effect-free t))
   (let (result)
     (while (-none? 'null lists)
       (--each lists (!cons (car it) result))
@@ -1064,6 +1092,7 @@ of cons cells. Otherwise, return the groupings as a list of lists.
 
 Please note! This distinction is being removed in an upcoming 2.0
 release of Dash. If you rely on this behavior, use -zip-pair instead."
+  (declare (pure t) (side-effect-free t))
   (let (results)
     (while (-none? 'null lists)
       (setq results (cons (mapcar 'car lists) results))
@@ -1081,11 +1110,13 @@ release of Dash. If you rely on this behavior, use -zip-pair instead."
   "Zip LISTS, with FILL-VALUE padded onto the shorter lists. The
 lengths of the returned groupings are equal to the length of the
 longest input list."
+  (declare (pure t) (side-effect-free t))
   (apply '-zip (apply '-pad (cons fill-value lists))))
 
 (defun -cycle (list)
   "Return an infinite copy of LIST that will cycle through the
 elements and repeat from the beginning."
+  (declare (pure t) (side-effect-free t))
   (let ((newlist (-map 'identity list)))
     (nconc newlist newlist)))
 
@@ -1182,11 +1213,13 @@ then additional args."
   "Return the index of the first element in the given LIST which
 is equal to the query element ELEM, or nil if there is no
 such element."
+  (declare (pure t) (side-effect-free t))
   (car (-elem-indices elem list)))
 
 (defun -elem-indices (elem list)
   "Return the indices of all elements in LIST equal to the query
 element ELEM, in ascending order."
+  (declare (pure t) (side-effect-free t))
   (-find-indices (-partial 'equal elem) list))
 
 (defun -find-indices (pred list)
@@ -1227,6 +1260,7 @@ See also `-last'."
 (defun -select-by-indices (indices list)
   "Return a list whose elements are elements from LIST selected
 as `(nth i list)` for all i from INDICES."
+  (declare (pure t) (side-effect-free t))
   (let (r)
     (--each indices
       (!cons (nth it list) r))
@@ -1242,6 +1276,7 @@ Each row is transformed such that only the specified COLUMNS are
 selected.
 
 See also: `-select-column', `-select-by-indices'"
+  (declare (pure t) (side-effect-free t))
   (--map (-select-by-indices columns it) table))
 
 (defun -select-column (column table)
@@ -1253,6 +1288,7 @@ It is assumed each row has the same length.
 The single selected column is returned as a list.
 
 See also: `-select-columns', `-select-by-indices'"
+  (declare (pure t) (side-effect-free t))
   (--mapcat (-select-by-indices (list column) it) table))
 
 (defmacro -> (x &optional form &rest more)
@@ -1943,6 +1979,7 @@ Alias: `-same-items-p'"
   "Return non-nil if PREFIX is prefix of LIST.
 
 Alias: `-is-prefix-p'"
+  (declare (pure t) (side-effect-free t))
   (--each-while list (equal (car prefix) it)
     (!cdr prefix))
   (not prefix))
@@ -1951,6 +1988,7 @@ Alias: `-is-prefix-p'"
   "Return non-nil if SUFFIX is suffix of LIST.
 
 Alias: `-is-suffix-p'"
+  (declare (pure t) (side-effect-free t))
   (-is-prefix? (reverse suffix) (reverse list)))
 
 (defun -is-infix? (infix list)
@@ -1959,6 +1997,7 @@ Alias: `-is-suffix-p'"
 This operation runs in O(n^2) time
 
 Alias: `-is-infix-p'"
+  (declare (pure t) (side-effect-free t))
   (let (done)
     (while (and (not done) list)
       (setq done (-is-prefix? infix list))
@@ -1986,30 +2025,36 @@ if the first element should sort before the second."
 
 If first item of ARGS is already a list, simply return ARGS.  If
 not, return a list with ARGS as elements."
+  (declare (pure t) (side-effect-free t))
   (let ((arg (car args)))
     (if (listp arg) arg args)))
 
 (defun -repeat (n x)
   "Return a list with X repeated N times.
 Return nil if N is less than 1."
+  (declare (pure t) (side-effect-free t))
   (let (ret)
     (--dotimes n (!cons x ret))
     ret))
 
 (defun -sum (list)
   "Return the sum of LIST."
+  (declare (pure t) (side-effect-free t))
   (apply '+ list))
 
 (defun -product (list)
   "Return the product of LIST."
+  (declare (pure t) (side-effect-free t))
   (apply '* list))
 
 (defun -max (list)
   "Return the largest value from LIST of numbers or markers."
+  (declare (pure t) (side-effect-free t))
   (apply 'max list))
 
 (defun -min (list)
   "Return the smallest value from LIST of numbers or markers."
+  (declare (pure t) (side-effect-free t))
   (apply 'min list))
 
 (defun -max-by (comparator list)
@@ -2094,11 +2139,13 @@ the new seed."
 (defun -cons-pair? (con)
   "Return non-nil if CON is true cons pair.
 That is (A . B) where B is not a list."
+  (declare (pure t) (side-effect-free t))
   (and (listp con)
        (not (listp (cdr con)))))
 
 (defun -cons-to-list (con)
   "Convert a cons pair to a list with `car' and `cdr' of the pair respectively."
+  (declare (pure t) (side-effect-free t))
   (list (car con) (cdr con)))
 
 (defun -value-to-list (val)
@@ -2108,6 +2155,7 @@ If the value is a cons pair, make a list with two elements, `car'
 and `cdr' of the pair respectively.
 
 If the value is anything else, wrap it in a list."
+  (declare (pure t) (side-effect-free t))
   (cond
    ((-cons-pair? val) (-cons-to-list val))
    (t (list val))))
@@ -2252,6 +2300,7 @@ Non-branch nodes are simply copied."
 The new list has the same elements and structure but all cons are
 replaced with new ones.  This is useful when you need to clone a
 structure such as plist or alist."
+  (declare (pure t) (side-effect-free t))
   (-tree-map 'identity list))
 
 (defun dash-enable-font-lock ()

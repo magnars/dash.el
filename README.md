@@ -1517,7 +1517,7 @@ groupings are equal to the length of the shortest input list.
 If two lists are provided as arguments, return the groupings as a list
 of cons cells. Otherwise, return the groupings as a list of lists.
 
-Please note! This distinction is being removed in an upcoming 2.0
+Please note! This distinction is being removed in an upcoming 3.0
 release of Dash. If you rely on this behavior, use -zip-pair instead.
 
 ```el

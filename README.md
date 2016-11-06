@@ -327,7 +327,7 @@ Return a new list consisting of the result of applying `fn` to the items in `lis
 
 #### -map-when `(pred rep list)`
 
-Return a new list where the elements in `list` that does not match the `pred` function
+Return a new list where the elements in `list` that do not match the `pred` function
 are unchanged, and where the elements in `list` that do match the `pred` function are mapped
 through the `rep` function.
 
@@ -433,6 +433,8 @@ Thus function `fn` should return a list.
 #### -copy `(arg)`
 
 Create a shallow copy of `list`.
+
+(fn `list`)
 
 ```el
 (-copy '(1 2 3)) ;; => '(1 2 3)
@@ -563,6 +565,8 @@ See also: [`-take`](#-take-n-list)
 Return the tail of `list` without the first `n` items.
 
 See also: [`-drop-last`](#-drop-last-n-list)
+
+(fn `n` `list`)
 
 ```el
 (-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
@@ -1659,6 +1663,8 @@ Return the last x in `list` where (`pred` x) is non-nil, else nil.
 #### -first-item `(list)`
 
 Return the first item of `list`, or nil on an empty list.
+
+(fn `list`)
 
 ```el
 (-first-item '(1 2 3)) ;; => 1

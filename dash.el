@@ -1119,6 +1119,19 @@ longest input list."
   (declare (pure t) (side-effect-free t))
   (apply '-zip (apply '-pad (cons fill-value lists))))
 
+(defun -unzip (lists)
+  "Unzip LISTS.
+
+This works just like `-zip' but takes a list of lists instead of
+a variable number of arguments, such that
+
+  (-unzip (-zip L1 L2 L3 ...))
+
+is identity (given that the lists are the same length).
+
+See also: `-zip'"
+  (apply '-zip lists))
+
 (defun -cycle (list)
   "Return an infinite copy of LIST that will cycle through the
 elements and repeat from the beginning."

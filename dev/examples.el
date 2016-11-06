@@ -620,6 +620,10 @@ new list."
   (defexamples -zip-fill
     (-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9)) => '((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0)))
 
+  (defexamples -unzip
+    (-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g"))) => '((1 2 3) (a b c) ("e" "f" "g"))
+    (-unzip '((1 2) (3 4) (5 6) (7 8) (9 10))) => '((1 3 5 7 9) (2 4 6 8 10)))
+
   (defexamples -cycle
     (-take 5 (-cycle '(1 2 3))) => '(1 2 3 1 2)
     (-take 7 (-cycle '(1 "and" 3))) => '(1 "and" 3 1 "and" 3 1)

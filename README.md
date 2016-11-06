@@ -218,6 +218,7 @@ Other list functions not fit to be classified elsewhere.
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
 * [-zip](#-zip-rest-lists) `(&rest lists)`
 * [-zip-fill](#-zip-fill-fill-value-rest-lists) `(fill-value &rest lists)`
+* [-unzip](#-unzip-lists) `(lists)`
 * [-cycle](#-cycle-list) `(list)`
 * [-pad](#-pad-fill-value-rest-lists) `(fill-value &rest lists)`
 * [-table](#-table-fn-rest-lists) `(fn &rest lists)`
@@ -1534,6 +1535,24 @@ longest input list.
 
 ```el
 (-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9)) ;; => '((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
+```
+
+#### -unzip `(lists)`
+
+Unzip `lists`.
+
+This works just like [`-zip`](#-zip-rest-lists) but takes a list of lists instead of
+a variable number of arguments, such that
+
+    (-unzip (-zip `l1` `l2` `l3` ...))
+
+is identity (given that the lists are the same length).
+
+See also: [`-zip`](#-zip-rest-lists)
+
+```el
+(-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g"))) ;; => '((1 2 3) (a b c) ("e" "f" "g"))
+(-unzip '((1 2) (3 4) (5 6) (7 8) (9 10))) ;; => '((1 3 5 7 9) (2 4 6 8 10))
 ```
 
 #### -cycle `(list)`

@@ -647,6 +647,8 @@ new list."
     (-table-flat 'list '(1 2 3) '(a b c)) => '((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
     (-table-flat '* '(1 2 3) '(1 2 3)) => '(1 2 3 2 4 6 3 6 9)
     (apply '-table-flat 'list (-repeat 3 '(1 2))) => '((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2))
+    (-table-flat '+ '(2)) => '(2)
+    (-table-flat '- '(2 4)) => '(-2 -4)
 
     ;; flatten law tests
     (-flatten-n 1 (-table 'list '(1 2 3) '(a b c))) => '((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))

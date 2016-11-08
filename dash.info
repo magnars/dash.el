@@ -1534,7 +1534,7 @@ Other list functions not fit to be classified elsewhere.
      The results are flattened, ignoring the tensor structure of the
      result.  This is equivalent to calling:
 
-     (-flatten-n (1- (length lists)) (-table fn lists))
+     (-flatten-n (1- (length lists)) (apply ’-table fn lists))
 
      but the implementation here is much more efficient.
 
@@ -2908,69 +2908,69 @@ Ref: -cycle48368
 Ref: -pad48741
 Ref: -table49064
 Ref: -table-flat49853
-Ref: -first50852
-Ref: -some51226
-Ref: -last51596
-Ref: -first-item51930
-Ref: -last-item52145
-Ref: -butlast52340
-Ref: -sort52587
-Ref: -list53076
-Ref: -fix53407
-Node: Tree operations53947
-Ref: -tree-seq54143
-Ref: -tree-map55001
-Ref: -tree-map-nodes55444
-Ref: -tree-reduce56294
-Ref: -tree-reduce-from57176
-Ref: -tree-mapreduce57777
-Ref: -tree-mapreduce-from58637
-Ref: -clone59923
-Node: Threading macros60251
-Ref: ->60396
-Ref: ->>60887
-Ref: -->61392
-Ref: -some->61918
-Ref: -some->>62292
-Ref: -some-->62728
-Node: Binding63199
-Ref: -when-let63411
-Ref: -when-let*63905
-Ref: -if-let64428
-Ref: -if-let*64823
-Ref: -let65440
-Ref: -let*70235
-Ref: -lambda71175
-Node: Side-effects71972
-Ref: -each72166
-Ref: -each-while72573
-Ref: -each-indexed72933
-Ref: -dotimes73444
-Ref: -doto73747
-Node: Destructive operations74175
-Ref: !cons74348
-Ref: !cdr74554
-Node: Function combinators74749
-Ref: -partial75023
-Ref: -rpartial75419
-Ref: -juxt75822
-Ref: -compose76254
-Ref: -applify76807
-Ref: -on77254
-Ref: -flip77777
-Ref: -const78089
-Ref: -cut78428
-Ref: -not78914
-Ref: -orfn79224
-Ref: -andfn79658
-Ref: -iteratefn80153
-Ref: -fixfn80856
-Ref: -prodfn82419
-Node: Development83481
-Node: Contribute83830
-Node: Changes84578
-Node: Contributors87576
-Node: Index89195
+Ref: -first50861
+Ref: -some51235
+Ref: -last51605
+Ref: -first-item51939
+Ref: -last-item52154
+Ref: -butlast52349
+Ref: -sort52596
+Ref: -list53085
+Ref: -fix53416
+Node: Tree operations53956
+Ref: -tree-seq54152
+Ref: -tree-map55010
+Ref: -tree-map-nodes55453
+Ref: -tree-reduce56303
+Ref: -tree-reduce-from57185
+Ref: -tree-mapreduce57786
+Ref: -tree-mapreduce-from58646
+Ref: -clone59932
+Node: Threading macros60260
+Ref: ->60405
+Ref: ->>60896
+Ref: -->61401
+Ref: -some->61927
+Ref: -some->>62301
+Ref: -some-->62737
+Node: Binding63208
+Ref: -when-let63420
+Ref: -when-let*63914
+Ref: -if-let64437
+Ref: -if-let*64832
+Ref: -let65449
+Ref: -let*70244
+Ref: -lambda71184
+Node: Side-effects71981
+Ref: -each72175
+Ref: -each-while72582
+Ref: -each-indexed72942
+Ref: -dotimes73453
+Ref: -doto73756
+Node: Destructive operations74184
+Ref: !cons74357
+Ref: !cdr74563
+Node: Function combinators74758
+Ref: -partial75032
+Ref: -rpartial75428
+Ref: -juxt75831
+Ref: -compose76263
+Ref: -applify76816
+Ref: -on77263
+Ref: -flip77786
+Ref: -const78098
+Ref: -cut78437
+Ref: -not78923
+Ref: -orfn79233
+Ref: -andfn79667
+Ref: -iteratefn80162
+Ref: -fixfn80865
+Ref: -prodfn82428
+Node: Development83490
+Node: Contribute83839
+Node: Changes84587
+Node: Contributors87585
+Node: Index89204
 
 End Tag Table
 

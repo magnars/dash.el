@@ -2421,7 +2421,7 @@ combinations created by taking one element from each list in
 order.  The results are flattened, ignoring the tensor structure
 of the result.  This is equivalent to calling:
 
-    (-flatten-n (1- (length lists)) (-table fn lists))
+    (-flatten-n (1- (length lists)) (apply '-table fn lists))
 
 but the implementation here is much more efficient.
 

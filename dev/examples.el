@@ -672,11 +672,13 @@ new list."
 
   (defexamples -first-item
     (-first-item '(1 2 3)) => 1
-    (-first-item nil) => nil)
+    (-first-item nil) => nil
+    (let ((list (list 1 2 3))) (setf (-first-item list) 5) list) => '(5 2 3))
 
   (defexamples -last-item
     (-last-item '(1 2 3)) => 3
-    (-last-item nil) => nil)
+    (-last-item nil) => nil
+    (let ((list (list 1 2 3))) (setf (-last-item list) 5) list) => '(1 2 5))
 
   (defexamples -butlast
     (-butlast '(1 2 3)) => '(1 2)

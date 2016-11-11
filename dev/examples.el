@@ -565,6 +565,15 @@ new list."
     (-intersection '(1 2 3) '(4 5 6)) => '()
     (-intersection '(1 2 3 4) '(3 4 5 6)) => '(3 4))
 
+  (defexamples -powerset
+    (-powerset '()) => '(nil)
+    (-powerset '(x y z)) => '((x y z) (x y) (x z) (x) (y z) (y) (z) nil))
+
+  (defexamples -permutations
+    (-permutations '()) => '(nil)
+    (-permutations '(1 2)) => '((1 2) (2 1))
+    (-permutations '(a b c)) => '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a)))
+
   (defexamples -distinct
     (-distinct '()) => '()
     (-distinct '(1 2 2 4)) => '(1 2 4)))

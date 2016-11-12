@@ -578,14 +578,18 @@ Alias: `-any'"
 
 \(fn LIST)")
 
-(gv-define-simple-setter -first-item setcar)
+(defsetf -first-item (x) (val) `(setcar ,x ,val))
+;; TODO: when we drop e23 support replace with the following form
+;; (gv-define-simple-setter -first-item setcar)
 
 (defun -last-item (list)
   "Return the last item of LIST, or nil on an empty list."
   (declare (pure t) (side-effect-free t))
   (car (last list)))
 
-(gv-define-setter -last-item (val x) `(setcar (last ,x) ,val))
+(defsetf -last-item (x) (val) `(setcar (last ,x) ,val))
+;; TODO: when we drop e23 support replace with the following form
+;; (gv-define-setter -last-item (val x) `(setcar (last ,x) ,val))
 
 (defun -butlast (list)
   "Return a list of all items in list except for the last."

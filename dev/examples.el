@@ -1055,6 +1055,12 @@ new list."
       (funcall (-rpartial '- 5) 8) => 3
       (funcall (-rpartial '- 5 2) 10) => 3)
 
+    (defexamples -npartial
+      (funcall (-npartial 1 (lambda (a b c) (+ a (* b c))) 5) 2 3) => 17
+      (funcall (-npartial 2 (lambda (a b c d) (+ a (* b c) d)) 3) 2 4 5) => 19
+      (funcall (-npartial -1 #'concat "last " "words.") "These " "are " "the ") => "These are the last words."
+      (funcall (-npartial 3 (lambda (a b c d e f) (concat a b c d e f ".")) "penultimate " "words ") "I'll " "put " "the " "here") => "I'll put the penultimate words here.")
+
     (defexamples -juxt
       (funcall (-juxt '+ '-) 3 5) => '(8 -2)
       (-map (-juxt 'identity 'square) '(1 2 3)) => '((1 1) (2 4) (3 9)))

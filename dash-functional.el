@@ -45,6 +45,28 @@ When called, the returned function calls FN with the additional
 args first and then ARGS."
   (lambda (&rest args-before) (apply fn (append args-before args))))
 
+(defun -npartial (n fn &rest args)
+  "Takes an offset N, a function FN and fewer than the normal
+arguments to FN, and returns a function which takes a variable
+number of additional ARGS, similar to `-partial' and
+`-rpartial'.
+
+ARGS will be spliced in after the Nth element in the additional
+args. If N is negative, -1 is taken to be the final item, -2, the
+penultimate item, etc.
+
+This function satisfies the following laws:
+
+    (-npartial 0 ...) ≡ (-partial ...)
+    (-npartial -1 ...) ≡ (-rpartial ...)"
+  (lambda (&rest args-around) (apply fn (if (< n 0)
+                                            (append (-drop-last (1+ n) args-around)
+                                                    args
+                                                    (-take-last (1+ n) args-around))
+                                          (append (-take n args-around)
+                                                  args
+                                                  (-drop n args-around))))))
+
 (defun -juxt (&rest fns)
   "Takes a list of functions and returns a fn that is the
 juxtaposition of those fns. The returned fn takes a variable

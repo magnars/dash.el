@@ -439,6 +439,9 @@ script to create an info manual.
 @item
 @uref{https://github.com/occidens,William West} made @code{-fixfn}
 more robust at handling floats.
+@item
+@uref{https://github.com/daantjie,Daniel Oosthuizen} added @code{-npartial}
+for arbitrary partial application.
 @end itemize
 
 Thanks!

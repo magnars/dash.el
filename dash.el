@@ -1959,6 +1959,22 @@ The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil."
   (--filter (not (-contains? list2 it)) list))
 
+(defun -powerset (list)
+  "Return the power set of LIST."
+  (if (null list) '(())
+    (let ((last (-powerset (cdr list))))
+      (append (mapcar (lambda (x) (cons (car list) x)) last)
+              last))))
+
+(defun -permutations (list)
+  "Return the permutations of LIST."
+  (if (null list) '(())
+    (apply #'append
+           (mapcar (lambda (x)
+                     (mapcar (lambda (perm) (cons x perm))
+                             (-permutations (remove x list))))
+                   list))))
+
 (defun -contains? (list element)
   "Return non-nil if LIST contains ELEMENT.
 

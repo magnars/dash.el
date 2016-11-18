@@ -578,14 +578,26 @@ Alias: `-any'"
 
 \(fn LIST)")
 
-(gv-define-simple-setter -first-item setcar)
+;; TODO: emacs23 support, when dropped remove the condition
+(eval-when-compile
+  (require 'cl)
+  (if (fboundp 'gv-define-simple-setter)
+      (gv-define-simple-setter -first-item setcar)
+    (require 'cl)
+    (with-no-warnings
+      (defsetf -first-item (x) (val) `(setcar ,x ,val)))))
 
 (defun -last-item (list)
   "Return the last item of LIST, or nil on an empty list."
   (declare (pure t) (side-effect-free t))
   (car (last list)))
 
-(gv-define-setter -last-item (val x) `(setcar (last ,x) ,val))
+;; TODO: emacs23 support, when dropped remove the condition
+(eval-when-compile
+  (if (fboundp 'gv-define-setter)
+      (gv-define-setter -last-item (val x) `(setcar (last ,x) ,val))
+    (with-no-warnings
+      (defsetf -last-item (x) (val) `(setcar (last ,x) ,val)))))
 
 (defun -butlast (list)
   "Return a list of all items in list except for the last."

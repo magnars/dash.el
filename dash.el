@@ -1350,7 +1350,7 @@ last item in second form, etc."
 signified by the token `it' in the first form. If there are more
 forms, insert the first form at the position signified by `it' in
 in second form, etc."
-  (declare (debug ->))
+  (declare (debug (form &rest [&or symbolp (sexp &rest [&or "it" form])])))
   (if (null more)
       (if (listp form)
           (--map-when (eq it 'it) x form)

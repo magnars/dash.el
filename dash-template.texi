@@ -125,7 +125,7 @@ Font lock of dash functions in emacs lisp buffers is now optional.
 Include this in your emacs settings to get syntax highlighting:
 
 @lisp
-(eval-after-load "dash" '(dash-enable-font-lock))
+(eval-after-load 'dash '(dash-enable-font-lock))
 @end lisp
 
 @node Functions

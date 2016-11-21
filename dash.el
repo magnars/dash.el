@@ -2353,7 +2353,7 @@ structure such as plist or alist."
 
 (defun dash-enable-font-lock ()
   "Add syntax highlighting to dash functions, macros and magic values."
-  (eval-after-load "lisp-mode"
+  (eval-after-load 'lisp-mode
     '(progn
        (let ((new-keywords '(
                              "-each"

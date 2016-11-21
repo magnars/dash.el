@@ -37,7 +37,7 @@ To get function combinators:
 Font lock of dash functions in emacs lisp buffers is now optional.
 Include this in your emacs settings to get syntax highlighting:
 
-    (eval-after-load "dash" '(dash-enable-font-lock))
+    (eval-after-load 'dash '(dash-enable-font-lock))
 
 ## Functions
 

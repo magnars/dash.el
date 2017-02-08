@@ -1168,6 +1168,15 @@ new list."
              (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
                     (funcall (-prodfn (-compose f ff) (-compose g gg)) input3)))) => t)))
 
+(def-example-group "Other functions"
+  "This category contains miscellaneous functions."
+  (defexamples -alter-with
+    ;; Alter the implementation of function 1 temporarily with function 2,
+    ;; and evaluate body.
+    ;; Restore the implementation back after -alter-with exit.
+    (-alter-with '+ '- (+ 1 1)) => 0
+    ))
+
 ;; Local Variables:
 ;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => \\| !!> \\| ~>" (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
 ;; End:

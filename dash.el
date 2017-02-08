@@ -2356,6 +2356,16 @@ structure such as plist or alist."
   (declare (pure t) (side-effect-free t))
   (-tree-map 'identity list))
 
+(defmacro -alter-with (func func2 &rest body)
+  "Alter FUNC's implementation with FUNC2 temporarily. And eveluate BODY."
+  (declare (debug t) (indent 1))
+  `(let ((imp (symbol-function ,func)))
+     (unwind-protect
+         (progn
+           (fset ,func (symbol-function ,func2))
+           ,@body)
+       (fset ,func imp))))
+
 (defun dash-enable-font-lock ()
   "Add syntax highlighting to dash functions, macros and magic values."
   (eval-after-load 'lisp-mode

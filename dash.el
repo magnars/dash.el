@@ -578,6 +578,11 @@ Alias: `-any'"
 
 \(fn LIST)")
 
+;; Ensure that calls to `-first-item' are compiled to a single opcode,
+;; just like `car'.
+(put '-first-item 'byte-opcode 'byte-car)
+(put '-first-item 'byte-compile 'byte-compile-one-arg)
+
 ;; TODO: emacs23 support, when dropped remove the condition
 (eval-when-compile
   (require 'cl)

@@ -2356,6 +2356,16 @@ structure such as plist or alist."
   (declare (pure t) (side-effect-free t))
   (-tree-map 'identity list))
 
+(defun -frequencies (list &optional fn)
+  "Return an alist indicating the frequency of values in LIST.
+If FN is non-nil, count frequencies of values from FN applied to
+elements of LIST."
+  (unless fn (setq fn #'identity))
+  (mapcar (-lambda ((value . items))
+          (cons value (length items)))
+        (-group-by fn
+                   list)))
+
 (defun dash-enable-font-lock ()
   "Add syntax highlighting to dash functions, macros and magic values."
   (eval-after-load 'lisp-mode

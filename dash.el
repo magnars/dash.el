@@ -2154,6 +2154,23 @@ N is the length of the returned list."
         (push (funcall fun (car r)) r))
       (nreverse r))))
 
+(defun -iota (count &optional start step)
+  "Return a list containing COUNT numbers.
+Starts from START and adds STEP each time.  The default START is
+zero, the default STEP is 1.
+This function takes its name from the corresponding primitive in
+the APL language."
+  (if (or (not (integerp count)) (< count 0))
+      (signal 'wrong-type-argument count))
+  (if (and step (zerop step)) (make-list count start)
+    (let ((res '())
+          (x (or start 0))
+          (dx (or step 1)))
+      (while (<= 0 (setq count (1- count)))
+        (push x res)
+        (setq x (+ x dx)))
+      (nreverse res))))
+
 (defun -fix (fn list)
   "Compute the (least) fixpoint of FN with initial input LIST.
 

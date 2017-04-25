@@ -614,6 +614,10 @@ new list."
     (-interleave '(1 2 3) '("a" "b")) => '(1 "a" 2 "b")
     (-interleave '(1 2 3) '("a" "b" "c" "d")) => '(1 "a" 2 "b" 3 "c"))
 
+  (defexamples -iota
+    (-iota 6) => '(0 1 2 3 4 5)
+    (-iota 4 2.5 -2) => '(2.5 0.5 -1.5 -3.5))
+
   (defexamples -zip-with
     (-zip-with '+ '(1 2 3) '(4 5 6)) => '(5 7 9)
     (-zip-with 'cons '(1 2 3) '(4 5 6)) => '((1 . 4) (2 . 5) (3 . 6))

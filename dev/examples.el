@@ -1149,10 +1149,10 @@ new list."
     (defexamples -prodfn
       (funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3)) => '(2 1 "3")
       (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) => '((2 1) (4 3) (6 5) (8 7))
-      (apply '+ (funcall (-prodfn 'length 'string-to-int) '((1 2 3) "15"))) => 18
+      (apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15"))) => 18
       (let ((f '1+)
             (g '1-)
-            (ff 'string-to-int)
+            (ff 'string-to-number)
             (gg 'length)
             (input '(1 2))
             (input2 "foo")

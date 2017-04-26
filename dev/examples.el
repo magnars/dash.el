@@ -616,7 +616,8 @@ new list."
 
   (defexamples -iota
     (-iota 6) => '(0 1 2 3 4 5)
-    (-iota 4 2.5 -2) => '(2.5 0.5 -1.5 -3.5))
+    (-iota 4 2.5 -2) => '(2.5 0.5 -1.5 -3.5)
+    (-iota -1) !!> wrong-type-argument)
 
   (defexamples -zip-with
     (-zip-with '+ '(1 2 3) '(4 5 6)) => '(5 7 9)

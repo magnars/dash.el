@@ -388,7 +388,7 @@ See also: `-map-when', `-replace-first'"
   `(-map-first (lambda (it) ,pred) (lambda (it) (ignore it) ,rep) ,list))
 
 (defun -map-last (pred rep list)
-  "Replace first item in LIST satisfying PRED with result of REP called on this item.
+  "Replace last item in LIST satisfying PRED with result of REP called on this item.
 
 See also: `-map-when', `-replace-last'"
   (nreverse (-map-first pred rep (reverse list))))

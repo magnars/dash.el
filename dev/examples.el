@@ -801,7 +801,17 @@ new list."
   (defexamples -->
     (--> "def" (concat "abc" it "ghi")) => "abcdefghi"
     (--> "def" (concat "abc" it "ghi") (upcase it)) => "ABCDEFGHI"
-    (--> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI")
+    (--> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI"
+    (--> "def" upcase) => "DEF"
+    (--> 3 (car (list it))) => 3)
+
+  (defexamples -as->
+    (-as-> 3 my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) my-var)) => '(8)
+    (-as-> 3 my-var 1+) => 4
+    (-as-> 3 my-var) => 3
+    (-as-> "def" string (concat "abc" string "ghi")) => "abcdefghi"
+    (-as-> "def" string (concat "abc" string "ghi") upcase) => "ABCDEFGHI"
+    (-as-> "def" string (concat "abc" string "ghi") (upcase string)) => "ABCDEFGHI")
 
   (defexamples -some->
     (-some-> '(2 3 5)) => '(2 3 5)

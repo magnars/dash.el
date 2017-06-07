@@ -1844,7 +1844,9 @@ has the usual semantics of `lambda'.  Furthermore, these get
 translated into normal lambda, so there is no performance
 penalty.
 
-See `-let' for the description of destructuring mechanism."
+See `-let' for the description of destructuring mechanism.
+
+Alias: `-fn'"
   (declare (doc-string 2) (indent defun)
            (debug (&define sexp
                            [&optional stringp]
@@ -1863,6 +1865,8 @@ See `-let' for the description of destructuring mechanism."
       ;; We should find a way to optimize that.  Not critical however.
       `(lambda ,(--map (cadr it) inputs)
          (-let* ,inputs ,@body))))))
+
+(defmacro '-fn '-lambda)
 
 (defmacro -if-let* (vars-vals then &rest else)
   "If all VALS evaluate to true, bind them to their corresponding

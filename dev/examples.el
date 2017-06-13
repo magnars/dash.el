@@ -803,7 +803,23 @@ new list."
     (--> "def" (concat "abc" it "ghi") (upcase it)) => "ABCDEFGHI"
     (--> "def" (concat "abc" it "ghi") upcase) => "ABCDEFGHI"
     (--> "def" upcase) => "DEF"
-    (--> 3 (car (list it))) => 3)
+    (--> 3 (car (list it))) => 3
+
+    (--> '(1 2 3 4) (--map (1+ it) it)) => '(2 3 4 5)
+    (--map (--> it (1+ it)) '(1 2 3 4)) => '(2 3 4 5)
+
+    (--filter (--> it (equal 0 (mod it 2))) '(1 2 3 4)) => '(2 4)
+    (--> '(1 2 3 4) (--filter (equal 0 (mod it 2)) it)) => '(2 4)
+
+    (--annotate (--> it (< 1 it)) '(0 1 2 3)) => '((nil . 0)
+                                                   (nil . 1)
+                                                   (t . 2)
+                                                   (t . 3))
+
+    (--> '(0 1 2 3) (--annotate (< 1 it) it)) => '((nil . 0)
+                                                   (nil . 1)
+                                                   (t . 2)
+                                                   (t . 3)))
 
   (defexamples -as->
     (-as-> 3 my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) my-var)) => '(8)

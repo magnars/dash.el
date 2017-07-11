@@ -274,7 +274,7 @@ See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-first} (@pxref{-r
 
 @anchor{-map-last}
 @defun -map-last (pred rep list)
-Replace first item in @var{list} satisfying @var{pred} with result of @var{rep} called on this item.
+Replace last item in @var{list} satisfying @var{pred} with result of @var{rep} called on this item.
 
 See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-last} (@pxref{-replace-last})
 
@@ -2091,6 +2091,42 @@ or with @code{-compare-fn} if that's non-nil.
 @end example
 @end defun
 
+@anchor{-powerset}
+@defun -powerset (list)
+Return the power set of @var{list}.
+
+@example
+@group
+(-powerset '())
+    @result{} '(nil)
+@end group
+@group
+(-powerset '(x y z))
+    @result{} '((x y z) (x y) (x z) (x) (y z) (y) (z) nil)
+@end group
+@end example
+@end defun
+
+@anchor{-permutations}
+@defun -permutations (list)
+Return the permutations of @var{list}.
+
+@example
+@group
+(-permutations '())
+    @result{} '(nil)
+@end group
+@group
+(-permutations '(1 2))
+    @result{} '((1 2) (2 1))
+@end group
+@group
+(-permutations '(a b c))
+    @result{} '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
+@end group
+@end example
+@end defun
+
 @anchor{-distinct}
 @defun -distinct (list)
 Return a new list with all duplicates removed.
@@ -2524,6 +2560,10 @@ Return the first item of @var{list}, or nil on an empty list.
 (-first-item nil)
     @result{} nil
 @end group
+@group
+(let ((list (list 1 2 3))) (setf (-first-item list) 5) list)
+    @result{} '(5 2 3)
+@end group
 @end example
 @end defun
 
@@ -2539,6 +2579,10 @@ Return the last item of @var{list}, or nil on an empty list.
 @group
 (-last-item nil)
     @result{} nil
+@end group
+@group
+(let ((list (list 1 2 3))) (setf (-last-item list) 5) list)
+    @result{} '(1 2 5)
 @end group
 @end example
 @end defun
@@ -2878,11 +2922,12 @@ last item in second form, etc.
 @end defmac
 
 @anchor{-->}
-@defmac --> (x form &rest more)
-Thread the expr through the forms. Insert @var{x} at the position
-signified by the token @code{it} in the first form. If there are more
-forms, insert the first form at the position signified by @code{it} in
-in second form, etc.
+@defmac --> (x &rest forms)
+Starting with the value of @var{x}, thread each expression through @var{forms}.
+
+Insert @var{x} at the position signified by the token @code{it} in the first
+form.  If there are more forms, insert the first form at the position
+signified by @code{it} in in second form, etc.
 
 @example
 @group
@@ -2896,6 +2941,29 @@ in second form, etc.
 @group
 (--> "def" (concat "abc" it "ghi") upcase)
     @result{} "ABCDEFGHI"
+@end group
+@end example
+@end defmac
+
+@anchor{-as->}
+@defmac -as-> (value variable &rest forms)
+Starting with @var{value}, thread @var{variable} through @var{forms}.
+
+In the first form, bind @var{variable} to @var{value}.  In the second form, bind
+@var{variable} to the result of the first form, and so forth.
+
+@example
+@group
+(-as-> 3 my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) my-var))
+    @result{} '(8)
+@end group
+@group
+(-as-> 3 my-var 1+)
+    @result{} 4
+@end group
+@group
+(-as-> 3 my-var)
+    @result{} 3
 @end group
 @end example
 @end defmac
@@ -3768,7 +3836,7 @@ This function satisfies the following laws:
     @result{} '((2 1) (4 3) (6 5) (8 7))
 @end group
 @group
-(apply '+ (funcall (-prodfn 'length 'string-to-int) '((1 2 3) "15")))
+(apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15")))
     @result{} 18
 @end group
 @end example

@@ -202,6 +202,8 @@ Operations pretending lists are sets.
 * [-union](#-union-list-list2) `(list list2)`
 * [-difference](#-difference-list-list2) `(list list2)`
 * [-intersection](#-intersection-list-list2) `(list list2)`
+* [-powerset](#-powerset-list) `(list)`
+* [-permutations](#-permutations-list) `(list)`
 * [-distinct](#-distinct-list) `(list)`
 
 ### Other list operations
@@ -251,7 +253,8 @@ Functions pretending lists are trees.
 
 * [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [->>](#--x-optional-form-rest-more) `(x &optional form &rest more)`
-* [-->](#---x-form-rest-more) `(x form &rest more)`
+* [-->](#---x-rest-forms) `(x &rest forms)`
+* [-as->](#-as--value-variable-rest-forms) `(value variable &rest forms)`
 * [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some-->](#-some---x-optional-form-rest-more) `(x &optional form &rest more)`
@@ -1409,6 +1412,25 @@ or with `-compare-fn` if that's non-nil.
 (-intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
 ```
 
+#### -powerset `(list)`
+
+Return the power set of `list`.
+
+```el
+(-powerset '()) ;; => '(nil)
+(-powerset '(x y z)) ;; => '((x y z) (x y) (x z) (x) (y z) (y) (z) nil)
+```
+
+#### -permutations `(list)`
+
+Return the permutations of `list`.
+
+```el
+(-permutations '()) ;; => '(nil)
+(-permutations '(1 2)) ;; => '((1 2) (2 1))
+(-permutations '(a b c)) ;; => '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
+```
+
 #### -distinct `(list)`
 
 Return a new list with all duplicates removed.
@@ -1669,6 +1691,7 @@ Return the first item of `list`, or nil on an empty list.
 ```el
 (-first-item '(1 2 3)) ;; => 1
 (-first-item nil) ;; => nil
+(let ((list (list 1 2 3))) (setf (-first-item list) 5) list) ;; => '(5 2 3)
 ```
 
 #### -last-item `(list)`
@@ -1678,6 +1701,7 @@ Return the last item of `list`, or nil on an empty list.
 ```el
 (-last-item '(1 2 3)) ;; => 3
 (-last-item nil) ;; => nil
+(let ((list (list 1 2 3))) (setf (-last-item list) 5) list) ;; => '(1 2 5)
 ```
 
 #### -butlast `(list)`
@@ -1883,17 +1907,31 @@ last item in second form, etc.
 (->> '(1 2 3) (-map 'square) (-reduce '+)) ;; => 14
 ```
 
-#### --> `(x form &rest more)`
+#### --> `(x &rest forms)`
 
-Thread the expr through the forms. Insert `x` at the position
-signified by the token `it` in the first form. If there are more
-forms, insert the first form at the position signified by `it` in
-in second form, etc.
+Starting with the value of `x`, thread each expression through `forms`.
+
+Insert `x` at the position signified by the token `it` in the first
+form.  If there are more forms, insert the first form at the position
+signified by `it` in in second form, etc.
 
 ```el
 (--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
 (--> "def" (concat "abc" it "ghi") (upcase it)) ;; => "ABCDEFGHI"
 (--> "def" (concat "abc" it "ghi") upcase) ;; => "ABCDEFGHI"
+```
+
+#### -as-> `(value variable &rest forms)`
+
+Starting with `value`, thread `variable` through `forms`.
+
+In the first form, bind `variable` to `value`.  In the second form, bind
+`variable` to the result of the first form, and so forth.
+
+```el
+(-as-> 3 my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) my-var)) ;; => '(8)
+(-as-> 3 my-var 1+) ;; => 4
+(-as-> 3 my-var) ;; => 3
 ```
 
 #### -some-> `(x &optional form &rest more)`
@@ -1920,7 +1958,7 @@ and when that result is non-nil, through the next form, etc.
 
 #### -some--> `(x &optional form &rest more)`
 
-When expr in non-nil, thread it through the first form (via [`-->`](#---x-form-rest-more)),
+When expr in non-nil, thread it through the first form (via [`-->`](#---x-rest-forms)),
 and when that result is non-nil, through the next form, etc.
 
 ```el
@@ -2479,7 +2517,7 @@ This function satisfies the following laws:
 ```el
 (funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3)) ;; => '(2 1 "3")
 (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) ;; => '((2 1) (4 3) (6 5) (8 7))
-(apply '+ (funcall (-prodfn 'length 'string-to-int) '((1 2 3) "15"))) ;; => 18
+(apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15"))) ;; => 18
 ```
 
 
@@ -2660,6 +2698,10 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Cam Saül](https://github.com/camsaul) contributed `-some->`, `-some->>`, and `-some-->`.
 
 Thanks!
+
+New contributors are welcome. To ensure that dash.el can be
+distributed with ELPA or Emacs, we would request that all contributors
+assign copyright to the Free Software Foundation.
 
 ## License
 

@@ -248,6 +248,10 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 Thanks!
 
+New contributors are welcome. To ensure that dash.el can be
+distributed with ELPA or Emacs, we would request that all contributors
+assign copyright to the Free Software Foundation.
+
 ## License
 
 Copyright (C) 2012-2016 Free Software Foundation, Inc.

@@ -1897,9 +1897,11 @@ encountered."
 
 (defmacro -if-let (var-val then &rest else)
   "If VAL evaluates to non-nil, bind it to VAR and do THEN,
-otherwise do ELSE. VAR-VAL should be a (VAR VAL) pair.
+otherwise do ELSE.
 
-Note: binding is done according to `-let'."
+Note: binding is done according to `-let'.
+
+\(fn (VAR VAL) THEN &rest ELSE)"
   (declare (debug ((sexp form) form body))
            (indent 2))
   `(-if-let* (,var-val) ,then ,@else))
@@ -1925,9 +1927,10 @@ encountered."
 
 (defmacro -when-let (var-val &rest body)
   "If VAL evaluates to non-nil, bind it to VAR and execute body.
-VAR-VAL should be a (VAR VAL) pair.
 
-Note: binding is done according to `-let'."
+Note: binding is done according to `-let'.
+
+\(fn (VAR VAL) &rest BODY)"
   (declare (debug ((sexp form) body))
            (indent 1))
   `(-if-let ,var-val (progn ,@body)))

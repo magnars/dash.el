@@ -506,6 +506,37 @@ new list."
     (--partition-by-header (> it 0) '(1 2 0 1 0 1 2 3 0)) => '((1 2 0) (1 0) (1 2 3 0))
     (-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1)) => '((2 1 1 1) (4 1 3 5) (6 6 1)))
 
+  (defexamples -partition-after-pred
+    (-partition-after-pred #'oddp '()) => '()
+    (-partition-after-pred #'oddp '(1)) => '((1))
+    (-partition-after-pred #'oddp '(0 1)) => '((0 1))
+    (-partition-after-pred #'oddp '(1 1)) => '((1) (1))
+    (-partition-after-pred #'oddp '(0 0 0 1 0 1 1 0 1)) => '((0 0 0 1) (0 1) (1) (0 1)))
+
+  (defexamples -partition-before-pred
+    (-partition-before-pred #'oddp '()) => '()
+    (-partition-before-pred #'oddp '(1)) => '((1))
+    (-partition-before-pred #'oddp '(0 1)) => '((0) (1))
+    (-partition-before-pred #'oddp '(1 1)) => '((1) (1))
+    (-partition-before-pred #'oddp '(0 1 0)) => '((0) (1 0))
+    (-partition-before-pred #'oddp '(0 0 0 1 0 1 1 0 1)) => '((0 0 0) (1 0) (1) (1 0) (1)))
+
+  (defexamples -partition-before-item
+    (-partition-before-item 3 '()) => '()
+    (-partition-before-item 3 '(1)) => '((1))
+    (-partition-before-item 3 '(3)) => '((3))
+    (-partition-before-item 3 '(1 3)) => '((1) (3))
+    (-partition-before-item 3 '(1 3 4)) => '((1) (3 4))
+    (-partition-before-item 3 '(1 2 3 2 3 3 4)) => '((1 2) (3 2) (3) (3 4)))
+
+  (defexamples -partition-after-item
+    (-partition-after-item 3 '()) => '()
+    (-partition-after-item 3 '(1)) => '((1))
+    (-partition-after-item 3 '(3)) => '((3))
+    (-partition-after-item 3 '(3 1)) => '((3) (1))
+    (-partition-after-item 3 '(3 1 3)) => '((3) (1 3))
+    (-partition-after-item 3 '(3 2 3 3 4 5 3 2)) => '((3) (2 3) (3) (4 5 3) (2)))
+
   (defexamples -group-by
     (-group-by 'even? '()) => '()
     (-group-by 'even? '(1 1 2 2 2 3 4 6 8)) => '((nil . (1 1 3)) (t . (2 2 2 4 6 8)))

@@ -208,7 +208,7 @@ new list."
     (-select-column 1 '((1 2 3) (a b c) (:a :b :c))) => '(2 b :b)))
 
 (def-example-group "List to list"
-  "Bag of various functions which modify input list."
+  "Functions returning a modified copy of the input list."
 
   (defexamples -keep
     (-keep 'cdr '((1 2 3) (4 5) (6))) => '((2 3) (5))

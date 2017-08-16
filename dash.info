@@ -544,7 +544,7 @@ File: dash.info,  Node: List to list,  Next: Reductions,  Prev: Sublist selectio
 2.3 List to list
 ================
 
-Bag of various functions which modify input list.
+Functions returning a modified copy of the input list.
 
  -- Function: -keep (fn list)
      Return a new list of the non-nil results of applying FN to the

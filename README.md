@@ -111,7 +111,7 @@ Functions returning a sublist of the original list.
 ### List to list
 
 
-Bag of various functions which modify input list.
+Functions returning a modified copy of the input list.
 
 * [-keep](#-keep-fn-list) `(fn list)`
 * [-concat](#-concat-rest-lists) `(&rest lists)`

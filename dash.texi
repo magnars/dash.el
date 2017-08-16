@@ -777,7 +777,7 @@ See also: @code{-select-columns} (@pxref{-select-columns}), @code{-select-by-ind
 @section List to list
 
 
-Bag of various functions which modify input list.
+Functions returning a modified copy of the input list.
 
 
 @anchor{-keep}

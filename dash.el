@@ -1758,21 +1758,17 @@ Note: `it' need not be used in each form."
   "Grade elements of LIST using COMPARATOR relation, yielding a
 permutation vector such that applying this permutation to LIST
 sorts it in ascending order."
-  ;; ugly hack to "fix" lack of lexical scope
-  (let ((comp `(lambda (it other) (funcall ',comparator (car it) (car other)))))
-    (->> (--map-indexed (cons it it-index) list)
-         (-sort comp)
-         (-map 'cdr))))
+  (->> (--map-indexed (cons it it-index) list)
+       (-sort (lambda (it other) (funcall comparator (car it) (car other))))
+       (-map 'cdr)))
 
 (defun -grade-down (comparator list)
   "Grade elements of LIST using COMPARATOR relation, yielding a
 permutation vector such that applying this permutation to LIST
 sorts it in descending order."
-  ;; ugly hack to "fix" lack of lexical scope
-  (let ((comp `(lambda (it other) (funcall ',comparator (car other) (car it)))))
-    (->> (--map-indexed (cons it it-index) list)
-         (-sort comp)
-         (-map 'cdr))))
+  (->> (--map-indexed (cons it it-index) list)
+       (-sort (lambda (it other) (funcall comparator (car other) (car it))))
+       (-map 'cdr)))
 
 (defvar dash--source-counter 0
   "Monotonic counter for generated symbols.")

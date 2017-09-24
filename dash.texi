@@ -2631,6 +2631,8 @@ Return the last x in @var{list} where (@var{pred} x) is non-nil, else nil.
 @defun -first-item (list)
 Return the first item of @var{list}, or nil on an empty list.
 
+See also: @code{-second-item} (@pxref{-second-item}), @code{-last-item} (@pxref{-last-item}).
+
 (fn @var{list})
 
 @example
@@ -2645,6 +2647,82 @@ Return the first item of @var{list}, or nil on an empty list.
 @group
 (let ((list (list 1 2 3))) (setf (-first-item list) 5) list)
     @result{} '(5 2 3)
+@end group
+@end example
+@end defun
+
+@anchor{-second-item}
+@defun -second-item (arg1)
+Return the second item of @var{list}, or nil if @var{list} is too short.
+
+See also: @code{-third-item} (@pxref{-third-item}).
+
+(fn @var{list})
+
+@example
+@group
+(-second-item '(1 2 3))
+    @result{} 2
+@end group
+@group
+(-second-item nil)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-third-item}
+@defun -third-item (arg1)
+Return the third item of @var{list}, or nil if @var{list} is too short.
+
+See also: @code{-fourth-item} (@pxref{-fourth-item}).
+
+(fn @var{list})
+
+@example
+@group
+(-third-item '(1 2 3))
+    @result{} 3
+@end group
+@group
+(-third-item nil)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-fourth-item}
+@defun -fourth-item (list)
+Return the fourth item of @var{list}, or nil if @var{list} is too short.
+
+See also: @code{-fifth-item} (@pxref{-fifth-item}).
+
+@example
+@group
+(-fourth-item '(1 2 3 4))
+    @result{} 4
+@end group
+@group
+(-fourth-item nil)
+    @result{} nil
+@end group
+@end example
+@end defun
+
+@anchor{-fifth-item}
+@defun -fifth-item (list)
+Return the fifth item of @var{list}, or nil if @var{list} is too short.
+
+See also: @code{-last-item} (@pxref{-last-item}).
+
+@example
+@group
+(-fifth-item '(1 2 3 4 5))
+    @result{} 5
+@end group
+@group
+(-fifth-item nil)
+    @result{} nil
 @end group
 @end example
 @end defun

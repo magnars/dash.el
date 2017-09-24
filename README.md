@@ -233,6 +233,10 @@ Other list functions not fit to be classified elsewhere.
 * [-some](#-some-pred-list) `(pred list)`
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
+* [-second-item](#-second-item-arg1) `(arg1)`
+* [-third-item](#-third-item-arg1) `(arg1)`
+* [-fourth-item](#-fourth-item-list) `(list)`
+* [-fifth-item](#-fifth-item-list) `(list)`
 * [-last-item](#-last-item-list) `(list)`
 * [-butlast](#-butlast-list) `(list)`
 * [-sort](#-sort-comparator-list) `(comparator list)`
@@ -1732,12 +1736,62 @@ Return the last x in `list` where (`pred` x) is non-nil, else nil.
 
 Return the first item of `list`, or nil on an empty list.
 
+See also: [`-second-item`](#-second-item-arg1), [`-last-item`](#-last-item-list).
+
 (fn `list`)
 
 ```el
 (-first-item '(1 2 3)) ;; => 1
 (-first-item nil) ;; => nil
 (let ((list (list 1 2 3))) (setf (-first-item list) 5) list) ;; => '(5 2 3)
+```
+
+#### -second-item `(arg1)`
+
+Return the second item of `list`, or nil if `list` is too short.
+
+See also: [`-third-item`](#-third-item-arg1).
+
+(fn `list`)
+
+```el
+(-second-item '(1 2 3)) ;; => 2
+(-second-item nil) ;; => nil
+```
+
+#### -third-item `(arg1)`
+
+Return the third item of `list`, or nil if `list` is too short.
+
+See also: [`-fourth-item`](#-fourth-item-list).
+
+(fn `list`)
+
+```el
+(-third-item '(1 2 3)) ;; => 3
+(-third-item nil) ;; => nil
+```
+
+#### -fourth-item `(list)`
+
+Return the fourth item of `list`, or nil if `list` is too short.
+
+See also: [`-fifth-item`](#-fifth-item-list).
+
+```el
+(-fourth-item '(1 2 3 4)) ;; => 4
+(-fourth-item nil) ;; => nil
+```
+
+#### -fifth-item `(list)`
+
+Return the fifth item of `list`, or nil if `list` is too short.
+
+See also: [`-last-item`](#-last-item-list).
+
+```el
+(-fifth-item '(1 2 3 4 5)) ;; => 5
+(-fifth-item nil) ;; => nil
 ```
 
 #### -last-item `(list)`

@@ -25,6 +25,8 @@
 (require 'dash-functional)
 (require 'help-fns)
 
+(setq text-quoting-style 'grave)
+
 (defvar functions '())
 
 (defun example-to-string (example)

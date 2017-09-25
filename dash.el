@@ -629,7 +629,7 @@ Alias: `-any'"
 (defmacro --any? (form list)
   "Anaphoric form of `-any?'."
   (declare (debug (form form)))
-  `(---truthy? (--first ,form ,list)))
+  `(---truthy? (--some ,form ,list)))
 
 (defun -any? (pred list)
   "Return t if (PRED x) is non-nil for any x in LIST, else nil.

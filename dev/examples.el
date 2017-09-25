@@ -384,6 +384,8 @@ new list."
   (defexamples -any?
     (-any? 'even? '(1 2 3)) => t
     (-any? 'even? '(1 3 5)) => nil
+    (-any? 'null '(1 3 5)) => nil
+    (-any? 'null '(1 3 ())) => t
     (--any? (= 0 (% it 2)) '(1 2 3)) => t)
 
   (defexamples -all?
@@ -698,10 +700,14 @@ new list."
   (defexamples -first
     (-first 'even? '(1 2 3)) => 2
     (-first 'even? '(1 3 5)) => nil
+    (-first 'null '(1 3 5)) => nil
+    (-first 'null '(1 3 ())) => nil
     (--first (> it 2) '(1 2 3)) => 3)
 
   (defexamples -some
     (-some 'even? '(1 2 3)) => t
+    (-some 'null '(1 2 3)) => nil
+    (-some 'null '(1 2 ())) => t
     (--some (member 'foo it) '((foo bar) (baz))) => '(foo bar)
     (--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3))) => 2)
 

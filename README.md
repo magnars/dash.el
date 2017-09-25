@@ -179,6 +179,10 @@ Functions partitioning the input list into a list of lists.
 * [-partition-all-in-steps](#-partition-all-in-steps-n-step-list) `(n step list)`
 * [-partition-by](#-partition-by-fn-list) `(fn list)`
 * [-partition-by-header](#-partition-by-header-fn-list) `(fn list)`
+* [-partition-after-pred](#-partition-after-pred-pred-list) `(pred list)`
+* [-partition-before-pred](#-partition-before-pred-pred-list) `(pred list)`
+* [-partition-before-item](#-partition-before-item-item-list) `(item list)`
+* [-partition-after-item](#-partition-after-item-item-list) `(item list)`
 * [-group-by](#-group-by-fn-list) `(fn list)`
 
 ### Indexing
@@ -372,7 +376,7 @@ See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-last`](#-replace-l
 
 Return a new list consisting of the result of (`fn` index item) for each item in `list`.
 
-In the anaphoric form `--map-indexed`, the index is exposed as `it-index`.
+In the anaphoric form `--map-indexed`, the index is exposed as symbol `it-index`.
 
 See also: [`-each-indexed`](#-each-indexed-list-fn).
 
@@ -655,7 +659,7 @@ See also: [`-select-columns`](#-select-columns-columns-table), [`-select-by-indi
 ## List to list
 
 
-Bag of various functions which modify input list.
+Functions returning a modified copy of the input list.
 
 #### -keep `(fn list)`
 
@@ -828,7 +832,7 @@ item, etc. If `list` contains no items, return `initial-value` and
 `fn` is not called.
 
 In the anaphoric form `--reduce-from`, the accumulated value is
-exposed as `acc`.
+exposed as symbol `acc`.
 
 See also: [`-reduce`](#-reduce-fn-list), [`-reduce-r`](#-reduce-r-fn-list)
 
@@ -864,7 +868,7 @@ reduce return the result of calling `fn` with no arguments. If
 `list` has only 1 item, it is returned and `fn` is not called.
 
 In the anaphoric form `--reduce`, the accumulated value is
-exposed as `acc`.
+exposed as symbol `acc`.
 
 See also: [`-reduce-from`](#-reduce-from-fn-initial-value-list), [`-reduce-r`](#-reduce-r-fn-list)
 
@@ -1025,7 +1029,7 @@ Alias: `-any-p`, `-some?`, `-some-p`
 ```el
 (-any? 'even? '(1 2 3)) ;; => t
 (-any? 'even? '(1 3 5)) ;; => nil
-(--any? (= 0 (% it 2)) '(1 2 3)) ;; => t
+(-any? 'null '(1 3 5)) ;; => nil
 ```
 
 #### -all? `(pred list)`
@@ -1267,6 +1271,46 @@ other value (the body).
 (--partition-by-header (= it 1) '(1 2 3 1 2 1 2 3 4)) ;; => '((1 2 3) (1 2) (1 2 3 4))
 (--partition-by-header (> it 0) '(1 2 0 1 0 1 2 3 0)) ;; => '((1 2 0) (1 0) (1 2 3 0))
 (-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1)) ;; => '((2 1 1 1) (4 1 3 5) (6 6 1))
+```
+
+#### -partition-after-pred `(pred list)`
+
+Partition directly after each time `pred` is true on an element of `list`.
+
+```el
+(-partition-after-pred (function oddp) '()) ;; => '()
+(-partition-after-pred (function oddp) '(1)) ;; => '((1))
+(-partition-after-pred (function oddp) '(0 1)) ;; => '((0 1))
+```
+
+#### -partition-before-pred `(pred list)`
+
+Partition directly before each time `pred` is true on an element of `list`.
+
+```el
+(-partition-before-pred (function oddp) '()) ;; => '()
+(-partition-before-pred (function oddp) '(1)) ;; => '((1))
+(-partition-before-pred (function oddp) '(0 1)) ;; => '((0) (1))
+```
+
+#### -partition-before-item `(item list)`
+
+Partition directly before each time `item` appears in `list`.
+
+```el
+(-partition-before-item 3 '()) ;; => '()
+(-partition-before-item 3 '(1)) ;; => '((1))
+(-partition-before-item 3 '(3)) ;; => '((3))
+```
+
+#### -partition-after-item `(item list)`
+
+Partition directly after each time `item` appears in `list`.
+
+```el
+(-partition-after-item 3 '()) ;; => '()
+(-partition-after-item 3 '(1)) ;; => '((1))
+(-partition-after-item 3 '(3)) ;; => '((3))
 ```
 
 #### -group-by `(fn list)`
@@ -1526,8 +1570,8 @@ function is applied pairwise taking as first argument element of
 `list1` and as second argument element of `list2` at corresponding
 position.
 
-The anaphoric form `--zip-with` binds the elements from `list1` as `it`,
-and the elements from `list2` as `other`.
+The anaphoric form `--zip-with` binds the elements from `list1` as symbol `it`,
+and the elements from `list2` as symbol `other`.
 
 ```el
 (-zip-with '+ '(1 2 3) '(4 5 6)) ;; => '(5 7 9)
@@ -1657,7 +1701,7 @@ Alias: `-find`
 ```el
 (-first 'even? '(1 2 3)) ;; => 2
 (-first 'even? '(1 3 5)) ;; => nil
-(--first (> it 2) '(1 2 3)) ;; => 3
+(-first 'null '(1 3 5)) ;; => nil
 ```
 
 #### -some `(pred list)`
@@ -1668,8 +1712,8 @@ Alias: `-any`
 
 ```el
 (-some 'even? '(1 2 3)) ;; => t
-(--some (member 'foo it) '((foo bar) (baz))) ;; => '(foo bar)
-(--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3))) ;; => 2
+(-some 'null '(1 2 3)) ;; => nil
+(-some 'null '(1 2 nil)) ;; => t
 ```
 
 #### -last `(pred list)`
@@ -1911,7 +1955,7 @@ last item in second form, etc.
 
 Starting with the value of `x`, thread each expression through `forms`.
 
-Insert `x` at the position signified by the token `it` in the first
+Insert `x` at the position signified by the symbol `it` in the first
 form.  If there are more forms, insert the first form at the position
 signified by `it` in in second form, etc.
 
@@ -1976,9 +2020,10 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 #### -when-let `(var-val &rest body)`
 
 If `val` evaluates to non-nil, bind it to `var` and execute body.
-`var-val` should be a (`var` `val`) pair.
 
 Note: binding is done according to [`-let`](#-let-varlist-rest-body).
+
+(fn (`var` `val`) &rest `body`)
 
 ```el
 (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2)) ;; => 5
@@ -2004,9 +2049,11 @@ encountered.
 #### -if-let `(var-val then &rest else)`
 
 If `val` evaluates to non-nil, bind it to `var` and do `then`,
-otherwise do `else`. `var-val` should be a (`var` `val`) pair.
+otherwise do `else`.
 
 Note: binding is done according to [`-let`](#-let-varlist-rest-body).
+
+(fn (`var` `val`) `then` &rest `else`)
 
 ```el
 (-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7) ;; => 7
@@ -2237,7 +2284,7 @@ Return nil, used for side-effects only.
 
 Call (`fn` index item) for each item in `list`.
 
-In the anaphoric form `--each-indexed`, the index is exposed as `it-index`.
+In the anaphoric form `--each-indexed`, the index is exposed as symbol `it-index`.
 
 See also: [`-map-indexed`](#-map-indexed-fn-list).
 

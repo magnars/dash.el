@@ -1,4 +1,4 @@
-This is dash.info, produced by makeinfo version 6.1 from dash.texi.
+This is dash.info, produced by makeinfo version 6.5 from dash.texi.
 
 This manual is for ‘dash.el’ version 2.12.1.
 
@@ -253,7 +253,7 @@ The results are collected in order and returned as new list.
      each item in LIST.
 
      In the anaphoric form ‘--map-indexed’, the index is exposed as
-     ‘it-index‘.
+     symbol ‘it-index’.
 
      See also: ‘-each-indexed’ (*note -each-indexed::).
 
@@ -726,7 +726,7 @@ Functions reducing lists into single value.
      not called.
 
      In the anaphoric form ‘--reduce-from’, the accumulated value is
-     exposed as ‘acc‘.
+     exposed as symbol ‘acc’.
 
      See also: ‘-reduce’ (*note -reduce::), ‘-reduce-r’ (*note
      -reduce-r::)
@@ -765,7 +765,7 @@ Functions reducing lists into single value.
      LIST has only 1 item, it is returned and FN is not called.
 
      In the anaphoric form ‘--reduce’, the accumulated value is
-     exposed as ‘acc‘.
+     exposed as symbol ‘acc’.
 
      See also: ‘-reduce-from’ (*note -reduce-from::), ‘-reduce-r’
      (*note -reduce-r::)
@@ -935,8 +935,8 @@ File: dash.info,  Node: Predicates,  Next: Partitioning,  Prev: Unfolding,  Up: 
               ⇒ t
           (-any? 'even? '(1 3 5))
               ⇒ nil
-          (--any? (= 0 (% it 2)) '(1 2 3))
-              ⇒ t
+          (-any? 'null '(1 3 5))
+              ⇒ nil
 
  -- Function: -all? (pred list)
      Return t if (PRED x) is non-nil for all x in LIST, else nil.
@@ -1188,6 +1188,48 @@ Functions partitioning the input list into a list of lists.
               ⇒ '((1 2 0) (1 0) (1 2 3 0))
           (-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1))
               ⇒ '((2 1 1 1) (4 1 3 5) (6 6 1))
+
+ -- Function: -partition-after-pred (pred list)
+     Partition directly after each time PRED is true on an element of
+     LIST.
+
+          (-partition-after-pred (function oddp) '())
+              ⇒ '()
+          (-partition-after-pred (function oddp) '(1))
+              ⇒ '((1))
+          (-partition-after-pred (function oddp) '(0 1))
+              ⇒ '((0 1))
+
+ -- Function: -partition-before-pred (pred list)
+     Partition directly before each time PRED is true on an element of
+     LIST.
+
+          (-partition-before-pred (function oddp) '())
+              ⇒ '()
+          (-partition-before-pred (function oddp) '(1))
+              ⇒ '((1))
+          (-partition-before-pred (function oddp) '(0 1))
+              ⇒ '((0) (1))
+
+ -- Function: -partition-before-item (item list)
+     Partition directly before each time ITEM appears in LIST.
+
+          (-partition-before-item 3 '())
+              ⇒ '()
+          (-partition-before-item 3 '(1))
+              ⇒ '((1))
+          (-partition-before-item 3 '(3))
+              ⇒ '((3))
+
+ -- Function: -partition-after-item (item list)
+     Partition directly after each time ITEM appears in LIST.
+
+          (-partition-after-item 3 '())
+              ⇒ '()
+          (-partition-after-item 3 '(1))
+              ⇒ '((1))
+          (-partition-after-item 3 '(3))
+              ⇒ '((3))
 
  -- Function: -group-by (fn list)
      Separate LIST into an alist whose keys are FN applied to the
@@ -1449,7 +1491,7 @@ Other list functions not fit to be classified elsewhere.
      position.
 
      The anaphoric form ‘--zip-with’ binds the elements from LIST1 as
-     ‘it‘, and the elements from LIST2 as ‘other‘.
+     symbol ‘it’, and the elements from LIST2 as symbol ‘other’.
 
           (-zip-with '+ '(1 2 3) '(4 5 6))
               ⇒ '(5 7 9)
@@ -1581,8 +1623,8 @@ Other list functions not fit to be classified elsewhere.
               ⇒ 2
           (-first 'even? '(1 3 5))
               ⇒ nil
-          (--first (> it 2) '(1 2 3))
-              ⇒ 3
+          (-first 'null '(1 3 5))
+              ⇒ nil
 
  -- Function: -some (pred list)
      Return (PRED x) for the first LIST item where (PRED x) is
@@ -1592,10 +1634,10 @@ Other list functions not fit to be classified elsewhere.
 
           (-some 'even? '(1 2 3))
               ⇒ t
-          (--some (member 'foo it) '((foo bar) (baz)))
-              ⇒ '(foo bar)
-          (--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3)))
-              ⇒ 2
+          (-some 'null '(1 2 3))
+              ⇒ nil
+          (-some 'null '(1 2 nil))
+              ⇒ t
 
  -- Function: -last (pred list)
      Return the last x in LIST where (PRED x) is non-nil, else nil.
@@ -1842,9 +1884,9 @@ File: dash.info,  Node: Threading macros,  Next: Binding,  Prev: Tree operations
      Starting with the value of X, thread each expression through
      FORMS.
 
-     Insert X at the position signified by the token ‘it’ in the first
-     form.  If there are more forms, insert the first form at the
-     position signified by ‘it’ in in second form, etc.
+     Insert X at the position signified by the symbol ‘it’ in the
+     first form.  If there are more forms, insert the first form at
+     the position signified by ‘it’ in in second form, etc.
 
           (--> "def" (concat "abc" it "ghi"))
               ⇒ "abcdefghi"
@@ -1913,9 +1955,10 @@ control.
 
  -- Macro: -when-let (var-val &rest body)
      If VAL evaluates to non-nil, bind it to VAR and execute body.
-     VAR-VAL should be a (VAR VAL) pair.
 
      Note: binding is done according to ‘-let’ (*note -let::).
+
+     (fn (VAR VAL) &rest BODY)
 
           (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2))
               ⇒ 5
@@ -1940,9 +1983,11 @@ control.
 
  -- Macro: -if-let (var-val then &rest else)
      If VAL evaluates to non-nil, bind it to VAR and do THEN,
-     otherwise do ELSE.  VAR-VAL should be a (VAR VAL) pair.
+     otherwise do ELSE.
 
      Note: binding is done according to ‘-let’ (*note -let::).
+
+     (fn (VAR VAL) THEN &rest ELSE)
 
           (-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7)
               ⇒ 7
@@ -2174,7 +2219,7 @@ Functions iterating over lists for side-effect only.
      Call (FN index item) for each item in LIST.
 
      In the anaphoric form ‘--each-indexed’, the index is exposed as
-     ‘it-index‘.
+     symbol ‘it-index’.
 
      See also: ‘-map-indexed’ (*note -map-indexed::).
 
@@ -2713,9 +2758,9 @@ Index
                                                             (line  81)
 * -grade-down:                           Indexing.          (line  81)
 * -grade-up:                             Indexing.          (line  71)
-* -group-by:                             Partitioning.      (line 145)
-* -if-let:                               Binding.           (line  36)
-* -if-let*:                              Binding.           (line  47)
+* -group-by:                             Partitioning.      (line 187)
+* -if-let:                               Binding.           (line  37)
+* -if-let*:                              Binding.           (line  50)
 * -insert-at:                            List to list.      (line 109)
 * -interleave:                           Other list operations.
                                                             (line  66)
@@ -2731,13 +2776,13 @@ Index
 * -juxt:                                 Function combinators.
                                                             (line  31)
 * -keep:                                 List to list.      (line   8)
-* -lambda:                               Binding.           (line 217)
+* -lambda:                               Binding.           (line 220)
 * -last:                                 Other list operations.
                                                             (line 232)
 * -last-item:                            Other list operations.
                                                             (line 254)
-* -let:                                  Binding.           (line  63)
-* -let*:                                 Binding.           (line 197)
+* -let:                                  Binding.           (line  66)
+* -let*:                                 Binding.           (line 200)
 * -list:                                 Other list operations.
                                                             (line 287)
 * -map:                                  Maps.              (line  10)
@@ -2764,8 +2809,12 @@ Index
 * -partial:                              Function combinators.
                                                             (line   9)
 * -partition:                            Partitioning.      (line  74)
+* -partition-after-item:                 Partitioning.      (line 177)
+* -partition-after-pred:                 Partitioning.      (line 145)
 * -partition-all:                        Partitioning.      (line  86)
 * -partition-all-in-steps:               Partitioning.      (line 109)
+* -partition-before-item:                Partitioning.      (line 167)
+* -partition-before-pred:                Partitioning.      (line 156)
 * -partition-by:                         Partitioning.      (line 121)
 * -partition-by-header:                  Partitioning.      (line 132)
 * -partition-in-steps:                   Partitioning.      (line  97)
@@ -2836,7 +2885,7 @@ Index
                                                             (line 122)
 * -update-at:                            List to list.      (line 133)
 * -when-let:                             Binding.           (line   9)
-* -when-let*:                            Binding.           (line  22)
+* -when-let*:                            Binding.           (line  23)
 * -zip:                                  Other list operations.
                                                             (line  93)
 * -zip-fill:                             Other list operations.
@@ -2858,173 +2907,177 @@ Ref: -map-when5595
 Ref: -map-first6178
 Ref: -map-last6656
 Ref: -map-indexed7129
-Ref: -annotate7602
-Ref: -splice8092
-Ref: -splice-list8873
-Ref: -mapcat9335
-Ref: -copy9711
-Node: Sublist selection9915
-Ref: -filter10108
-Ref: -remove10526
-Ref: -remove-first10888
-Ref: -remove-last11415
-Ref: -remove-item11936
-Ref: -non-nil12330
-Ref: -slice12489
-Ref: -take13021
-Ref: -take-last13329
-Ref: -drop13652
-Ref: -drop-last13925
-Ref: -take-while14185
-Ref: -drop-while14535
-Ref: -select-by-indices14891
-Ref: -select-columns15405
-Ref: -select-column16110
-Node: List to list16573
-Ref: -keep16760
-Ref: -concat17263
-Ref: -flatten17560
-Ref: -flatten-n18319
-Ref: -replace18706
-Ref: -replace-first19169
-Ref: -replace-last19665
-Ref: -insert-at20154
-Ref: -replace-at20481
-Ref: -update-at20876
-Ref: -remove-at21367
-Ref: -remove-at-indices21855
-Node: Reductions22437
-Ref: -reduce-from22606
-Ref: -reduce-r-from23385
-Ref: -reduce24170
-Ref: -reduce-r24971
-Ref: -count25887
-Ref: -sum26111
-Ref: -product26300
-Ref: -min26509
-Ref: -min-by26735
-Ref: -max27258
-Ref: -max-by27483
-Node: Unfolding28011
-Ref: -iterate28250
-Ref: -unfold28695
-Node: Predicates29503
-Ref: -any?29627
-Ref: -all?29955
-Ref: -none?30285
-Ref: -only-some?30587
-Ref: -contains?31072
-Ref: -same-items?31461
-Ref: -is-prefix?31846
-Ref: -is-suffix?32169
-Ref: -is-infix?32492
-Node: Partitioning32846
-Ref: -split-at33034
-Ref: -split-with33319
-Ref: -split-on33722
-Ref: -split-when34398
-Ref: -separate35038
-Ref: -partition35480
-Ref: -partition-all35932
-Ref: -partition-in-steps36360
-Ref: -partition-all-in-steps36857
-Ref: -partition-by37342
-Ref: -partition-by-header37724
-Ref: -group-by38328
-Node: Indexing38765
-Ref: -elem-index38967
-Ref: -elem-indices39362
-Ref: -find-index39745
-Ref: -find-last-index40234
-Ref: -find-indices40738
-Ref: -grade-up41146
-Ref: -grade-down41549
-Node: Set operations41959
-Ref: -union42142
-Ref: -difference42584
-Ref: -intersection43001
-Ref: -powerset43438
-Ref: -permutations43651
-Ref: -distinct43951
-Node: Other list operations44275
-Ref: -rotate44500
-Ref: -repeat44795
-Ref: -cons*45058
-Ref: -snoc45445
-Ref: -interpose45858
-Ref: -interleave46156
-Ref: -zip-with46525
-Ref: -zip47228
-Ref: -zip-fill48034
-Ref: -unzip48357
-Ref: -cycle48891
-Ref: -pad49264
-Ref: -table49587
-Ref: -table-flat50377
-Ref: -first51386
-Ref: -some51760
-Ref: -last52130
-Ref: -first-item52464
-Ref: -last-item52777
-Ref: -butlast53069
-Ref: -sort53316
-Ref: -list53804
-Ref: -fix54135
-Node: Tree operations54675
-Ref: -tree-seq54871
-Ref: -tree-map55729
-Ref: -tree-map-nodes56172
-Ref: -tree-reduce57027
-Ref: -tree-reduce-from57909
-Ref: -tree-mapreduce58510
-Ref: -tree-mapreduce-from59370
-Ref: -clone60656
-Node: Threading macros60984
-Ref: ->61129
-Ref: ->>61621
-Ref: -->62126
-Ref: -as->62686
-Ref: -some->63141
-Ref: -some->>63515
-Ref: -some-->63951
-Node: Binding64422
-Ref: -when-let64634
-Ref: -when-let*65128
-Ref: -if-let65656
-Ref: -if-let*66051
-Ref: -let66668
-Ref: -let*71461
-Ref: -lambda72402
-Node: Side-effects73204
-Ref: -each73398
-Ref: -each-while73805
-Ref: -each-indexed74165
-Ref: -dotimes74676
-Ref: -doto74979
-Node: Destructive operations75406
-Ref: !cons75579
-Ref: !cdr75785
-Node: Function combinators75980
-Ref: -partial76254
-Ref: -rpartial76649
-Ref: -juxt77051
-Ref: -compose77483
-Ref: -applify78041
-Ref: -on78488
-Ref: -flip79011
-Ref: -const79323
-Ref: -cut79667
-Ref: -not80153
-Ref: -orfn80463
-Ref: -andfn80897
-Ref: -iteratefn81392
-Ref: -fixfn82095
-Ref: -prodfn83664
-Node: Development84730
-Node: Contribute85079
-Node: Changes85827
-Node: Contributors88826
-Node: Index90450
+Ref: -annotate7609
+Ref: -splice8099
+Ref: -splice-list8880
+Ref: -mapcat9342
+Ref: -copy9718
+Node: Sublist selection9922
+Ref: -filter10115
+Ref: -remove10533
+Ref: -remove-first10895
+Ref: -remove-last11422
+Ref: -remove-item11943
+Ref: -non-nil12337
+Ref: -slice12496
+Ref: -take13028
+Ref: -take-last13336
+Ref: -drop13659
+Ref: -drop-last13932
+Ref: -take-while14192
+Ref: -drop-while14542
+Ref: -select-by-indices14898
+Ref: -select-columns15412
+Ref: -select-column16117
+Node: List to list16580
+Ref: -keep16772
+Ref: -concat17275
+Ref: -flatten17572
+Ref: -flatten-n18331
+Ref: -replace18718
+Ref: -replace-first19181
+Ref: -replace-last19677
+Ref: -insert-at20166
+Ref: -replace-at20493
+Ref: -update-at20888
+Ref: -remove-at21379
+Ref: -remove-at-indices21867
+Node: Reductions22449
+Ref: -reduce-from22618
+Ref: -reduce-r-from23404
+Ref: -reduce24189
+Ref: -reduce-r24997
+Ref: -count25913
+Ref: -sum26137
+Ref: -product26326
+Ref: -min26535
+Ref: -min-by26761
+Ref: -max27284
+Ref: -max-by27509
+Node: Unfolding28037
+Ref: -iterate28276
+Ref: -unfold28721
+Node: Predicates29529
+Ref: -any?29653
+Ref: -all?29973
+Ref: -none?30303
+Ref: -only-some?30605
+Ref: -contains?31090
+Ref: -same-items?31479
+Ref: -is-prefix?31864
+Ref: -is-suffix?32187
+Ref: -is-infix?32510
+Node: Partitioning32864
+Ref: -split-at33052
+Ref: -split-with33337
+Ref: -split-on33740
+Ref: -split-when34416
+Ref: -separate35056
+Ref: -partition35498
+Ref: -partition-all35950
+Ref: -partition-in-steps36378
+Ref: -partition-all-in-steps36875
+Ref: -partition-by37360
+Ref: -partition-by-header37742
+Ref: -partition-after-pred38346
+Ref: -partition-before-pred38717
+Ref: -partition-before-item39095
+Ref: -partition-after-item39406
+Ref: -group-by39712
+Node: Indexing40149
+Ref: -elem-index40351
+Ref: -elem-indices40746
+Ref: -find-index41129
+Ref: -find-last-index41618
+Ref: -find-indices42122
+Ref: -grade-up42530
+Ref: -grade-down42933
+Node: Set operations43343
+Ref: -union43526
+Ref: -difference43968
+Ref: -intersection44385
+Ref: -powerset44822
+Ref: -permutations45035
+Ref: -distinct45335
+Node: Other list operations45659
+Ref: -rotate45884
+Ref: -repeat46179
+Ref: -cons*46442
+Ref: -snoc46829
+Ref: -interpose47242
+Ref: -interleave47540
+Ref: -zip-with47909
+Ref: -zip48626
+Ref: -zip-fill49432
+Ref: -unzip49755
+Ref: -cycle50289
+Ref: -pad50662
+Ref: -table50985
+Ref: -table-flat51775
+Ref: -first52784
+Ref: -some53156
+Ref: -last53465
+Ref: -first-item53799
+Ref: -last-item54112
+Ref: -butlast54404
+Ref: -sort54651
+Ref: -list55139
+Ref: -fix55470
+Node: Tree operations56010
+Ref: -tree-seq56206
+Ref: -tree-map57064
+Ref: -tree-map-nodes57507
+Ref: -tree-reduce58362
+Ref: -tree-reduce-from59244
+Ref: -tree-mapreduce59845
+Ref: -tree-mapreduce-from60705
+Ref: -clone61991
+Node: Threading macros62319
+Ref: ->62464
+Ref: ->>62956
+Ref: -->63461
+Ref: -as->64022
+Ref: -some->64477
+Ref: -some->>64851
+Ref: -some-->65287
+Node: Binding65758
+Ref: -when-let65970
+Ref: -when-let*66455
+Ref: -if-let66983
+Ref: -if-let*67378
+Ref: -let67995
+Ref: -let*72788
+Ref: -lambda73729
+Node: Side-effects74531
+Ref: -each74725
+Ref: -each-while75132
+Ref: -each-indexed75492
+Ref: -dotimes76010
+Ref: -doto76313
+Node: Destructive operations76740
+Ref: !cons76913
+Ref: !cdr77119
+Node: Function combinators77314
+Ref: -partial77588
+Ref: -rpartial77983
+Ref: -juxt78385
+Ref: -compose78817
+Ref: -applify79375
+Ref: -on79822
+Ref: -flip80345
+Ref: -const80657
+Ref: -cut81001
+Ref: -not81487
+Ref: -orfn81797
+Ref: -andfn82231
+Ref: -iteratefn82726
+Ref: -fixfn83429
+Ref: -prodfn84998
+Node: Development86064
+Node: Contribute86413
+Node: Changes87161
+Node: Contributors90160
+Node: Index91784
 
 End Tag Table
 

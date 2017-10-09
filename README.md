@@ -460,7 +460,7 @@ Return a new list of the items in `list` for which `pred` returns a non-nil valu
 
 Alias: `-select`
 
-See also: [`-keep`](#-keep-fn-list)
+See also: [`-keep`](#-keep-fn-list), [`-remove`](#-remove-pred-list).
 
 ```el
 (-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(2 4)
@@ -473,6 +473,8 @@ See also: [`-keep`](#-keep-fn-list)
 Return a new list of the items in `list` for which `pred` returns nil.
 
 Alias: `-reject`
+
+See also: [`-filter`](#-filter-pred-list).
 
 ```el
 (-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)

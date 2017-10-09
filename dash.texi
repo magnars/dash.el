@@ -438,7 +438,7 @@ Return a new list of the items in @var{list} for which @var{pred} returns a non-
 
 Alias: @code{-select}
 
-See also: @code{-keep} (@pxref{-keep})
+See also: @code{-keep} (@pxref{-keep}), @code{-remove} (@pxref{-remove}).
 
 @example
 @group
@@ -461,6 +461,8 @@ See also: @code{-keep} (@pxref{-keep})
 Return a new list of the items in @var{list} for which @var{pred} returns nil.
 
 Alias: @code{-reject}
+
+See also: @code{-filter} (@pxref{-filter}).
 
 @example
 @group

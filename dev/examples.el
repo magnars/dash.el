@@ -723,6 +723,26 @@ new list."
     (-first-item nil) => nil
     (let ((list (list 1 2 3))) (setf (-first-item list) 5) list) => '(5 2 3))
 
+  (defexamples -second-item
+    (-second-item '(1 2 3)) => 2
+    (-second-item nil) => nil)
+
+  (defexamples -third-item
+    (-third-item '(1 2 3)) => 3
+    (-third-item nil) => nil)
+
+  (defexamples -third-item
+    (-third-item '(1 2 3)) => 3
+    (-third-item nil) => nil)
+
+  (defexamples -fourth-item
+    (-fourth-item '(1 2 3 4)) => 4
+    (-fourth-item nil) => nil)
+
+  (defexamples -fifth-item
+    (-fifth-item '(1 2 3 4 5)) => 5
+    (-fifth-item nil) => nil)
+
   (defexamples -last-item
     (-last-item '(1 2 3)) => 3
     (-last-item nil) => nil

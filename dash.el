@@ -582,12 +582,42 @@ Alias: `-any'"
 (defalias '-first-item 'car
   "Return the first item of LIST, or nil on an empty list.
 
+See also: `-second-item', `-last-item'.
+
 \(fn LIST)")
 
 ;; Ensure that calls to `-first-item' are compiled to a single opcode,
 ;; just like `car'.
 (put '-first-item 'byte-opcode 'byte-car)
 (put '-first-item 'byte-compile 'byte-compile-one-arg)
+
+(defalias '-second-item 'cadr
+  "Return the second item of LIST, or nil if LIST is too short.
+
+See also: `-third-item'.
+
+\(fn LIST)")
+
+(defalias '-third-item 'caddr
+  "Return the third item of LIST, or nil if LIST is too short.
+
+See also: `-fourth-item'.
+
+\(fn LIST)")
+
+(defun -fourth-item (list)
+  "Return the fourth item of LIST, or nil if LIST is too short.
+
+See also: `-fifth-item'."
+  (declare (pure t) (side-effect-free t))
+  (car (cdr (cdr (cdr list)))))
+
+(defun -fifth-item (list)
+  "Return the fifth item of LIST, or nil if LIST is too short.
+
+See also: `-last-item'."
+  (declare (pure t) (side-effect-free t))
+  (car (cdr (cdr (cdr (cdr list))))))
 
 ;; TODO: emacs23 support, when dropped remove the condition
 (eval-when-compile

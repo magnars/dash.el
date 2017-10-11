@@ -731,10 +731,6 @@ new list."
     (-third-item '(1 2 3)) => 3
     (-third-item nil) => nil)
 
-  (defexamples -third-item
-    (-third-item '(1 2 3)) => 3
-    (-third-item nil) => nil)
-
   (defexamples -fourth-item
     (-fourth-item '(1 2 3 4)) => 4
     (-fourth-item nil) => nil)

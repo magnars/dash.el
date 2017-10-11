@@ -256,6 +256,13 @@ new list."
     (-insert-at 1 'x '(a b c)) => '(a x b c)
     (-insert-at 12 'x '(a b c)) => '(a b c x))
 
+  (defexamples -insert-sorted
+    (-insert-sorted '< 4 '(1 2 3 5 6 7)) => '(1 2 3 4 5 6 7)
+    (-insert-sorted (lambda (a b) (< (car a) (car b))) '(3 . "new") '((1) (2) (3 . "old"))) => '((1) (2) (3 . "new") (3 . "old"))
+    (-insert-sorted '< 1 '(2 3 5 6 7)) => '(1 2 3 5 6 7)
+    (-insert-sorted '< 8 '(2 3 5 6 7)) => '(2 3 5 6 7 8)
+    (-insert-sorted '< 1 nil) => '(1))
+
   (defexamples -replace-at
     (-replace-at 0 9 '(0 1 2 3 4 5)) => '(9 1 2 3 4 5)
     (-replace-at 1 9 '(0 1 2 3 4 5)) => '(0 9 2 3 4 5)

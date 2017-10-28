@@ -342,10 +342,20 @@ new list."
     (-sum '(1)) => 1
     (-sum '(1 2 3 4)) => 10)
 
+  (defexamples -running-sum
+    (-running-sum '()) => nil
+    (-running-sum '(1)) => '(1)
+    (-running-sum '(1 2 3 4)) => '(1 3 6 10))
+
   (defexamples -product
     (-product '()) => 1
     (-product '(1)) => 1
     (-product '(1 2 3 4)) => 24)
+
+  (defexamples -running-product
+    (-running-product '()) => nil
+    (-running-product '(1)) => '(1)
+    (-running-product '(1 2 3 4)) => '(1 2 6 24))
 
   (defexamples -min
     (-min '(0)) => 0

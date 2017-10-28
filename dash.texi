@@ -1216,6 +1216,26 @@ Return the sum of @var{list}.
 @end example
 @end defun
 
+@anchor{-running-sum}
+@defun -running-sum (list)
+Return a list with running sums of items in @var{list}.
+
+@example
+@group
+(-running-sum '())
+    @result{} nil
+@end group
+@group
+(-running-sum '(1))
+    @result{} '(1)
+@end group
+@group
+(-running-sum '(1 2 3 4))
+    @result{} '(1 3 6 10)
+@end group
+@end example
+@end defun
+
 @anchor{-product}
 @defun -product (list)
 Return the product of @var{list}.
@@ -1232,6 +1252,26 @@ Return the product of @var{list}.
 @group
 (-product '(1 2 3 4))
     @result{} 24
+@end group
+@end example
+@end defun
+
+@anchor{-running-product}
+@defun -running-product (list)
+Return a list with running products of items in @var{list}.
+
+@example
+@group
+(-running-product '())
+    @result{} nil
+@end group
+@group
+(-running-product '(1))
+    @result{} '(1)
+@end group
+@group
+(-running-product '(1 2 3 4))
+    @result{} '(1 2 6 24)
 @end group
 @end example
 @end defun

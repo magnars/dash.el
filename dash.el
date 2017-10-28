@@ -2189,10 +2189,20 @@ Return nil if N is less than 1."
   (declare (pure t) (side-effect-free t))
   (apply '+ list))
 
+(defun -running-sum (list)
+  "Return a list with running sums of items in LIST."
+  (declare (pure t) (side-effect-free t))
+  (-map '-sum (-inits list)))
+
 (defun -product (list)
   "Return the product of LIST."
   (declare (pure t) (side-effect-free t))
   (apply '* list))
+
+(defun -running-product (list)
+  "Return a list with running products of items in LIST."
+  (declare (pure t) (side-effect-free t))
+  (-map '-product (-inits list)))
 
 (defun -max (list)
   "Return the largest value from LIST of numbers or markers."
@@ -2651,7 +2661,9 @@ structure such as plist or alist."
                              "-list"
                              "-repeat"
                              "-sum"
+                             "-running-sum"
                              "-product"
+                             "-running-product"
                              "-max"
                              "-min"
                              "-max-by"

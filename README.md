@@ -137,7 +137,9 @@ Functions reducing lists into single value.
 * [-reduce-r](#-reduce-r-fn-list) `(fn list)`
 * [-count](#-count-pred-list) `(pred list)`
 * [-sum](#-sum-list) `(list)`
+* [-running-sum](#-running-sum-list) `(list)`
 * [-product](#-product-list) `(list)`
+* [-running-product](#-running-product-list) `(list)`
 * [-min](#-min-list) `(list)`
 * [-min-by](#-min-by-comparator-list) `(comparator list)`
 * [-max](#-max-list) `(list)`
@@ -927,6 +929,16 @@ Return the sum of `list`.
 (-sum '(1 2 3 4)) ;; => 10
 ```
 
+#### -running-sum `(list)`
+
+Return a list with running sums of items in `list`.
+
+```el
+(-running-sum '()) ;; => nil
+(-running-sum '(1)) ;; => '(1)
+(-running-sum '(1 2 3 4)) ;; => '(1 3 6 10)
+```
+
 #### -product `(list)`
 
 Return the product of `list`.
@@ -935,6 +947,16 @@ Return the product of `list`.
 (-product '()) ;; => 1
 (-product '(1)) ;; => 1
 (-product '(1 2 3 4)) ;; => 24
+```
+
+#### -running-product `(list)`
+
+Return a list with running products of items in `list`.
+
+```el
+(-running-product '()) ;; => nil
+(-running-product '(1)) ;; => '(1)
+(-running-product '(1 2 3 4)) ;; => '(1 2 6 24)
 ```
 
 #### -min `(list)`

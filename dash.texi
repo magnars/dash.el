@@ -1376,6 +1376,46 @@ Return a list with running products of items in @var{list}.
 @end example
 @end defun
 
+@anchor{-inits}
+@defun -inits (list)
+Return all prefixes of @var{list}.
+
+@example
+@group
+(-inits '(1 2 3 4))
+    @result{} '(nil (1) (1 2) (1 2 3) (1 2 3 4))
+@end group
+@group
+(-inits nil)
+    @result{} '(nil)
+@end group
+@group
+(-inits '(1))
+    @result{} '(nil (1))
+@end group
+@end example
+@end defun
+
+@anchor{-tails}
+@defun -tails (list)
+Return all suffixes of @var{list}
+
+@example
+@group
+(-tails '(1 2 3 4))
+    @result{} '((1 2 3 4) (2 3 4) (3 4) (4) nil)
+@end group
+@group
+(-tails nil)
+    @result{} '(nil)
+@end group
+@group
+(-tails '(1))
+    @result{} '((1) nil)
+@end group
+@end example
+@end defun
+
 @anchor{-min}
 @defun -min (list)
 Return the smallest value from @var{list} of numbers or markers.
@@ -2345,46 +2385,6 @@ Return the permutations of @var{list}.
 @group
 (-permutations '(a b c))
     @result{} '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
-@end group
-@end example
-@end defun
-
-@anchor{-inits}
-@defun -inits (list)
-Return all prefixes of @var{list}.
-
-@example
-@group
-(-inits '(1 2 3 4))
-    @result{} '(nil (1) (1 2) (1 2 3) (1 2 3 4))
-@end group
-@group
-(-inits nil)
-    @result{} '(nil)
-@end group
-@group
-(-inits '(1))
-    @result{} '(nil (1))
-@end group
-@end example
-@end defun
-
-@anchor{-tails}
-@defun -tails (list)
-Return all suffixes of @var{list}
-
-@example
-@group
-(-tails '(1 2 3 4))
-    @result{} '((1 2 3 4) (2 3 4) (3 4) (4) nil)
-@end group
-@group
-(-tails nil)
-    @result{} '(nil)
-@end group
-@group
-(-tails '(1))
-    @result{} '((1) nil)
 @end group
 @end example
 @end defun

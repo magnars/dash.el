@@ -377,6 +377,16 @@ new list."
     (-running-product '(1)) => '(1)
     (-running-product '()) !!> error)
 
+  (defexamples -inits
+    (-inits '(1 2 3 4)) => '(nil (1) (1 2) (1 2 3) (1 2 3 4))
+    (-inits nil) => '(nil)
+    (-inits '(1)) => '(nil (1)))
+
+  (defexamples -tails
+    (-tails '(1 2 3 4)) => '((1 2 3 4) (2 3 4) (3 4) (4) nil)
+    (-tails nil) => '(nil)
+    (-tails '(1)) => '((1) nil))
+
   (defexamples -min
     (-min '(0)) => 0
     (-min '(3 2 1)) => 1
@@ -636,16 +646,6 @@ new list."
     (-permutations '()) => '(nil)
     (-permutations '(1 2)) => '((1 2) (2 1))
     (-permutations '(a b c)) => '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a)))
-
-  (defexamples -inits
-    (-inits '(1 2 3 4)) => '(nil (1) (1 2) (1 2 3) (1 2 3 4))
-    (-inits nil) => '(nil)
-    (-inits '(1)) => '(nil (1)))
-
-  (defexamples -tails
-    (-tails '(1 2 3 4)) => '((1 2 3 4) (2 3 4) (3 4) (4) nil)
-    (-tails nil) => '(nil)
-    (-tails '(1)) => '((1) nil))
 
   (defexamples -distinct
     (-distinct '()) => '()

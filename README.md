@@ -144,6 +144,8 @@ Functions reducing lists into single value.
 * [-running-sum](#-running-sum-list) `(list)`
 * [-product](#-product-list) `(list)`
 * [-running-product](#-running-product-list) `(list)`
+* [-inits](#-inits-list) `(list)`
+* [-tails](#-tails-list) `(list)`
 * [-min](#-min-list) `(list)`
 * [-min-by](#-min-by-comparator-list) `(comparator list)`
 * [-max](#-max-list) `(list)`
@@ -214,8 +216,6 @@ Operations pretending lists are sets.
 * [-intersection](#-intersection-list-list2) `(list list2)`
 * [-powerset](#-powerset-list) `(list)`
 * [-permutations](#-permutations-list) `(list)`
-* [-inits](#-inits-list) `(list)`
-* [-tails](#-tails-list) `(list)`
 * [-distinct](#-distinct-list) `(list)`
 
 ### Other list operations
@@ -1023,6 +1023,26 @@ Return a list with running products of items in `list`.
 (-running-product '()) ;; Error
 ```
 
+#### -inits `(list)`
+
+Return all prefixes of `list`.
+
+```el
+(-inits '(1 2 3 4)) ;; => '(nil (1) (1 2) (1 2 3) (1 2 3 4))
+(-inits nil) ;; => '(nil)
+(-inits '(1)) ;; => '(nil (1))
+```
+
+#### -tails `(list)`
+
+Return all suffixes of `list`
+
+```el
+(-tails '(1 2 3 4)) ;; => '((1 2 3 4) (2 3 4) (3 4) (4) nil)
+(-tails nil) ;; => '(nil)
+(-tails '(1)) ;; => '((1) nil)
+```
+
 #### -min `(list)`
 
 Return the smallest value from `list` of numbers or markers.
@@ -1567,26 +1587,6 @@ Return the permutations of `list`.
 (-permutations '()) ;; => '(nil)
 (-permutations '(1 2)) ;; => '((1 2) (2 1))
 (-permutations '(a b c)) ;; => '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
-```
-
-#### -inits `(list)`
-
-Return all prefixes of `list`.
-
-```el
-(-inits '(1 2 3 4)) ;; => '(nil (1) (1 2) (1 2 3) (1 2 3 4))
-(-inits nil) ;; => '(nil)
-(-inits '(1)) ;; => '(nil (1))
-```
-
-#### -tails `(list)`
-
-Return all suffixes of `list`
-
-```el
-(-tails '(1 2 3 4)) ;; => '((1 2 3 4) (2 3 4) (3 4) (4) nil)
-(-tails nil) ;; => '(nil)
-(-tails '(1)) ;; => '((1) nil)
 ```
 
 #### -distinct `(list)`

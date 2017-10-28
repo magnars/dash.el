@@ -333,6 +333,26 @@ new list."
     (-reduce-r '+ '(1)) => 1
     (--reduce-r (format "%s-%s" it acc) '()) => "nil-nil")
 
+  (defexamples -reductions-from
+    (-reductions-from (lambda (a i) (format "(%s FN %s)" a i)) "INIT" '(1 2 3 4)) => '("INIT" "(INIT FN 1)" "((INIT FN 1) FN 2)" "(((INIT FN 1) FN 2) FN 3)" "((((INIT FN 1) FN 2) FN 3) FN 4)")
+    (-reductions-from 'max 0 '(2 1 4 3)) => '(0 2 2 4 4)
+    (-reductions-from '* 1 '(1 2 3 4)) => '(1 1 2 6 24))
+
+  (defexamples -reductions-r-from
+    (-reductions-r-from (lambda (i a) (format "(%s FN %s)" i a)) "INIT" '(1 2 3 4)) => '("(1 FN (2 FN (3 FN (4 FN INIT))))" "(2 FN (3 FN (4 FN INIT)))" "(3 FN (4 FN INIT))" "(4 FN INIT)" "INIT")
+    (-reductions-r-from 'max 0 '(2 1 4 3)) => '(4 4 4 3 0)
+    (-reductions-r-from '* 1 '(1 2 3 4)) => '(24 24 12 4 1))
+
+  (defexamples -reductions
+    (-reductions (lambda (a i) (format "(%s FN %s)" a i)) '(1 2 3 4)) => '(1 "(1 FN 2)" "((1 FN 2) FN 3)" "(((1 FN 2) FN 3) FN 4)")
+    (-reductions '+ '(1 2 3 4)) => '(1 3 6 10)
+    (-reductions '* '(1 2 3 4)) => '(1 2 6 24))
+
+  (defexamples -reductions-r
+    (-reductions-r (lambda (i a) (format "(%s FN %s)" i a)) '(1 2 3 4)) => '("(1 FN (2 FN (3 FN 4)))" "(2 FN (3 FN 4))" "(3 FN 4)" 4)
+    (-reductions-r '+ '(1 2 3 4)) => '(10 9 7 4)
+    (-reductions-r '* '(1 2 3 4)) => '(24 24 12 4))
+
   (defexamples -count
     (-count 'even? '(1 2 3 4 5)) => 2
     (--count (< it 4) '(1 2 3 4)) => 3)

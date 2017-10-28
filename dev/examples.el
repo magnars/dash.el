@@ -607,6 +607,16 @@ new list."
     (-permutations '(1 2)) => '((1 2) (2 1))
     (-permutations '(a b c)) => '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a)))
 
+  (defexamples -inits
+    (-inits '(1 2 3 4)) => '((1) (1 2) (1 2 3) (1 2 3 4))
+    (-inits nil) => nil
+    (-inits '(1)) => '((1)))
+
+  (defexamples -tails
+    (-tails '(1 2 3 4)) => '((1 2 3 4) (2 3 4) (3 4) (4))
+    (-tails nil) => nil
+    (-tails '(1)) => '((1)))
+
   (defexamples -distinct
     (-distinct '()) => '()
     (-distinct '(1 2 2 4)) => '(1 2 4)))

@@ -2209,6 +2209,46 @@ Return the permutations of @var{list}.
 @end example
 @end defun
 
+@anchor{-inits}
+@defun -inits (list)
+Return all non-empty prefixes of @var{list}.
+
+@example
+@group
+(-inits '(1 2 3 4))
+    @result{} '((1) (1 2) (1 2 3) (1 2 3 4))
+@end group
+@group
+(-inits nil)
+    @result{} nil
+@end group
+@group
+(-inits '(1))
+    @result{} '((1))
+@end group
+@end example
+@end defun
+
+@anchor{-tails}
+@defun -tails (list)
+Return all non-empty suffixes of @var{list}
+
+@example
+@group
+(-tails '(1 2 3 4))
+    @result{} '((1 2 3 4) (2 3 4) (3 4) (4))
+@end group
+@group
+(-tails nil)
+    @result{} nil
+@end group
+@group
+(-tails '(1))
+    @result{} '((1))
+@end group
+@end example
+@end defun
+
 @anchor{-distinct}
 @defun -distinct (list)
 Return a new list with all duplicates removed.

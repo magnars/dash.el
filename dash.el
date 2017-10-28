@@ -2075,6 +2075,17 @@ or with `-compare-fn' if that's non-nil."
                              (-permutations (remove x list))))
                    list))))
 
+(defun -inits (list)
+  "Return all non-empty prefixes of LIST."
+  (nreverse (-map 'reverse (-tails (nreverse list)))))
+
+(defun -tails (list)
+  "Return all non-empty suffixes of LIST"
+  (-reduce-r-from
+   (lambda (it acc)
+     (cons (cons it (car acc)) acc))
+   nil list))
+
 (defun -contains? (list element)
   "Return non-nil if LIST contains ELEMENT.
 

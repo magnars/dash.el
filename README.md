@@ -208,6 +208,8 @@ Operations pretending lists are sets.
 * [-intersection](#-intersection-list-list2) `(list list2)`
 * [-powerset](#-powerset-list) `(list)`
 * [-permutations](#-permutations-list) `(list)`
+* [-inits](#-inits-list) `(list)`
+* [-tails](#-tails-list) `(list)`
 * [-distinct](#-distinct-list) `(list)`
 
 ### Other list operations
@@ -1479,6 +1481,26 @@ Return the permutations of `list`.
 (-permutations '()) ;; => '(nil)
 (-permutations '(1 2)) ;; => '((1 2) (2 1))
 (-permutations '(a b c)) ;; => '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
+```
+
+#### -inits `(list)`
+
+Return all non-empty prefixes of `list`.
+
+```el
+(-inits '(1 2 3 4)) ;; => '((1) (1 2) (1 2 3) (1 2 3 4))
+(-inits nil) ;; => nil
+(-inits '(1)) ;; => '((1))
+```
+
+#### -tails `(list)`
+
+Return all non-empty suffixes of `list`
+
+```el
+(-tails '(1 2 3 4)) ;; => '((1 2 3 4) (2 3 4) (3 4) (4))
+(-tails nil) ;; => nil
+(-tails '(1)) ;; => '((1))
 ```
 
 #### -distinct `(list)`

@@ -2222,9 +2222,13 @@ Return nil if N is less than 1."
   (apply '+ list))
 
 (defun -running-sum (list)
-  "Return a list with running sums of items in LIST."
+  "Return a list with running sums of items in LIST.
+
+LIST must be non-empty."
   (declare (pure t) (side-effect-free t))
-  (-map '-sum (-inits list)))
+  (unless (consp list)
+    (error "LIST must be non-empty"))
+  (-reductions '+ list))
 
 (defun -product (list)
   "Return the product of LIST."
@@ -2232,9 +2236,13 @@ Return nil if N is less than 1."
   (apply '* list))
 
 (defun -running-product (list)
-  "Return a list with running products of items in LIST."
+  "Return a list with running products of items in LIST.
+
+LIST must be non-empty."
   (declare (pure t) (side-effect-free t))
-  (-map '-product (-inits list)))
+  (unless (consp list)
+    (error "LIST must be non-empty"))
+  (-reductions '* list))
 
 (defun -max (list)
   "Return the largest value from LIST of numbers or markers."

@@ -148,11 +148,11 @@ will increment indefinitely.
 
 The closure accepts any number of arguments, which are discarded."
   (let ((inc (or inc 1))
-    (n (or beg 0)))
+        (n (or beg 0)))
     (lambda (&rest _)
       (when (or (not end) (< n end))
-    (prog1 n
-      (setq n (+ n inc)))))))
+        (prog1 n
+          (setq n (+ n inc)))))))
 
 (defvar -fixfn-max-iterations 1000
   "The default maximum number of iterations performed by `-fixfn'

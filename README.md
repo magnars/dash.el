@@ -238,6 +238,7 @@ Other list functions not fit to be classified elsewhere.
 * [-table](#-table-fn-rest-lists) `(fn &rest lists)`
 * [-table-flat](#-table-flat-fn-rest-lists) `(fn &rest lists)`
 * [-first](#-first-pred-list) `(pred list)`
+* [-keep-first](#-keep-first-pred-list) `(pred list)`
 * [-some](#-some-pred-list) `(pred list)`
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
@@ -1816,6 +1817,17 @@ Alias: `-find`
 (-first 'even? '(1 2 3)) ;; => 2
 (-first 'even? '(1 3 5)) ;; => nil
 (-first 'null '(1 3 5)) ;; => nil
+```
+
+#### -keep-first `(pred list)`
+
+Return the first result for an x in `list` where (`pred` x) is non-nil, else nil.
+
+See also: [`-keep`](#-keep-fn-list), [`-first`](#-first-pred-list).
+
+```el
+(-keep-first (lambda (n) (and (> n 1) (* n 1.0))) '(1 2 3)) ;; => 2.0
+(--keep-first (and (even? (car it)) (cdr it)) '((1 . "one") (2 . "two"))) ;; => "two"
 ```
 
 #### -some `(pred list)`

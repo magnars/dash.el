@@ -2042,6 +2042,21 @@ execute body."
            (indent 1))
   `(--if-let ,val (progn ,@body)))
 
+(defmacro --keep-first (form list)
+  "Anaphoric form of `-keep-first'."
+  (declare (debug (form form)))
+  (let ((n (make-symbol "needle")))
+    `(let (,n)
+       (--each-while ,list (not ,n)
+         (--when-let ,form (setq ,n it)))
+       ,n)))
+
+(defun -keep-first (pred list)
+  "Return the first result for an x in LIST where (PRED x) is non-nil, else nil.
+
+See also: `-keep', `-first'."
+  (--keep-first (funcall pred it) list))
+
 (defvar -compare-fn nil
   "Tests for equality use this function or `equal' if this is nil.
 It should only be set using dynamic scope with a let, like:

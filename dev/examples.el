@@ -746,6 +746,10 @@ new list."
     (-first 'null '(1 3 ())) => nil
     (--first (> it 2) '(1 2 3)) => 3)
 
+  (defexamples -keep-first
+    (-keep-first (lambda (n) (and (> n 1) (* n 1.0))) '(1 2 3)) => 2.0
+    (--keep-first (and (even? (car it)) (cdr it)) '((1 . "one") (2 . "two"))) => "two")
+
   (defexamples -some
     (-some 'even? '(1 2 3)) => t
     (-some 'null '(1 2 3)) => nil

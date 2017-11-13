@@ -2321,6 +2321,10 @@ Key/value stores:
                                   `source` hash table to aK.  If the
                                   value is not found, aK is nil.
 
+    (&obj key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                 `source` `eieio` object to aK.  If the
+                                 value is not found, aK is nil.
+
 Further, special keyword &keys supports "inline" matching of
 plist-like key-value pairs, similarly to &keys keyword of
 `cl-defun`.

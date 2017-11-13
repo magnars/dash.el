@@ -1738,7 +1738,9 @@ Valid values are &plist, &alist and &hash."
                                    ((eq type '&alist)
                                     `(cdr (assoc ,k ,source)))
                                    ((eq type '&hash)
-                                    `(gethash ,k ,source)))))
+                                    `(gethash ,k ,source))
+                                   ((eq type '&obj)
+                                    `(oref ,source ,k)))))
                      (cond
                       ((symbolp v)
                        (list (list v getter)))
@@ -1771,7 +1773,7 @@ Key-value stores are disambiguated by placing a token &plist,
       (let ((s (car match-form)))
         (cons (list s source)
               (dash--match (cddr match-form) s))))
-     ((memq (car match-form) '(&keys &plist &alist &hash))
+     ((memq (car match-form) '(&keys &plist &alist &hash &obj))
       (dash--match-kv match-form source))
      (t (dash--match-cons match-form source))))
    ((vectorp match-form)
@@ -1882,6 +1884,11 @@ Key/value stores:
   (&hash key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                 SOURCE hash table to aK.  If the
                                 value is not found, aK is nil.
+
+  (&obj key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                               SOURCE EIEIO object to aK.  If the
+                               value is not found, aK is nil.
+                               Only works on Emacs 24 and later.
 
 Further, special keyword &keys supports \"inline\" matching of
 plist-like key-value pairs, similarly to &keys keyword of

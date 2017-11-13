@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 'eieio)
 
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))
@@ -1110,6 +1111,16 @@ new list."
     (-let (((x &as a b) (list 1 2))
            ((y &as c d) (list 3 4)))
       (list a b c d x y)) => '(1 2 3 4 (1 2) (3 4)))
+
+  (unless (version< emacs-version "24")
+    ;; This fails on Emacs 23 with "Lisp nesting exceeds `max-lisp-eval-depth'".
+    (defexamples -let-eieio
+      (-let (((&obj :slot1 one :slot2 two) (progn
+                                             (defclass -let-test-class ()
+                                               ((slot1 :initarg :slot1)
+                                                (slot2 :initarg :slot2)))
+                                             (make-instance '-let-test-class :slot1 1 :slot2 2))))
+        (list one two)) => '(1 2)))
 
   (defexamples -let*
     (-let* (((a . b) (cons 1 2))

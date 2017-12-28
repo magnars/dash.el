@@ -23,6 +23,7 @@
 ;;; Code:
 
 (require 'dash)
+(require 'dash-functional)
 (eval-when-compile
   (unless (fboundp 'def-example-group)
     (require 'examples-to-tests "dev/examples-to-tests")))
@@ -39,8 +40,8 @@
 (defun approx-equal (u v)
   (or (= u v)
       (< (/ (abs (- u v))
-        (max (abs u) (abs v)))
-     dash--epsilon)))
+            (max (abs u) (abs v)))
+         dash--epsilon)))
 
 (def-example-group "Maps"
   "Functions in this category take a transforming function, which

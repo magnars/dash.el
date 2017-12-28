@@ -1,6 +1,6 @@
 ;;; examples.el --- Examples/tests for dash.el's API  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2015 Free Software Foundation, Inc.
+;; Copyright (C) 2015, 2017 Free Software Foundation, Inc.
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@
 ;;; Code:
 
 (require 'dash)
+(eval-when-compile
+  (unless (fboundp 'def-example-group)
+    (require 'examples-to-tests "dev/examples-to-tests")))
 
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))

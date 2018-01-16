@@ -938,6 +938,16 @@ Functions reducing lists into single value.
           (-tails '(1))
               ⇒ '((1) nil)
 
+ -- Function: -common-prefix (&rest lists)
+     Return the longest common prefix of LISTS.
+
+          (-common-prefix '(1))
+              ⇒ '(1)
+          (-common-prefix '(1 2) nil '(1 2))
+              ⇒ nil
+          (-common-prefix '(1 2) '(1 2 3) '(1 2 3 4))
+              ⇒ '(1 2)
+
  -- Function: -min (list)
      Return the smallest value from LIST of numbers or markers.
 
@@ -2871,6 +2881,7 @@ Index
 * -butlast:                              Other list operations.
                                                             (line 311)
 * -clone:                                Tree operations.   (line 123)
+* -common-prefix:                        Reductions.        (line 225)
 * -compose:                              Function combinators.
                                                             (line  42)
 * -concat:                               List to list.      (line  22)
@@ -2953,10 +2964,10 @@ Index
 * -map-last:                             Maps.              (line  52)
 * -map-when:                             Maps.              (line  21)
 * -mapcat:                               Maps.              (line 124)
-* -max:                                  Reductions.        (line 249)
-* -max-by:                               Reductions.        (line 259)
-* -min:                                  Reductions.        (line 225)
-* -min-by:                               Reductions.        (line 235)
+* -max:                                  Reductions.        (line 259)
+* -max-by:                               Reductions.        (line 269)
+* -min:                                  Reductions.        (line 235)
+* -min-by:                               Reductions.        (line 245)
 * -non-nil:                              Sublist selection. (line  80)
 * -none?:                                Predicates.        (line  30)
 * -not:                                  Function combinators.
@@ -3131,138 +3142,139 @@ Ref: -product29402
 Ref: -running-product29611
 Ref: -inits29924
 Ref: -tails30172
-Ref: -min30419
-Ref: -min-by30645
-Ref: -max31168
-Ref: -max-by31393
-Node: Unfolding31921
-Ref: -iterate32160
-Ref: -unfold32605
-Node: Predicates33413
-Ref: -any?33537
-Ref: -all?33857
-Ref: -none?34187
-Ref: -only-some?34489
-Ref: -contains?34974
-Ref: -same-items?35363
-Ref: -is-prefix?35748
-Ref: -is-suffix?36071
-Ref: -is-infix?36394
-Node: Partitioning36748
-Ref: -split-at36936
-Ref: -split-with37221
-Ref: -split-on37624
-Ref: -split-when38300
-Ref: -separate38940
-Ref: -partition39382
-Ref: -partition-all39834
-Ref: -partition-in-steps40262
-Ref: -partition-all-in-steps40759
-Ref: -partition-by41244
-Ref: -partition-by-header41626
-Ref: -partition-after-pred42230
-Ref: -partition-before-pred42601
-Ref: -partition-before-item42979
-Ref: -partition-after-item43290
-Ref: -group-by43596
-Node: Indexing44033
-Ref: -elem-index44235
-Ref: -elem-indices44630
-Ref: -find-index45013
-Ref: -find-last-index45502
-Ref: -find-indices46006
-Ref: -grade-up46414
-Ref: -grade-down46817
-Node: Set operations47227
-Ref: -union47410
-Ref: -difference47852
-Ref: -intersection48269
-Ref: -powerset48706
-Ref: -permutations48919
-Ref: -distinct49219
-Node: Other list operations49543
-Ref: -rotate49768
-Ref: -repeat50063
-Ref: -cons*50326
-Ref: -snoc50713
-Ref: -interpose51126
-Ref: -interleave51424
-Ref: -zip-with51793
-Ref: -zip52510
-Ref: -zip-fill53316
-Ref: -unzip53639
-Ref: -cycle54173
-Ref: -pad54546
-Ref: -table54869
-Ref: -table-flat55659
-Ref: -first56668
-Ref: -some57040
-Ref: -last57349
-Ref: -first-item57683
-Ref: -second-item58099
-Ref: -third-item58379
-Ref: -fourth-item58657
-Ref: -fifth-item58923
-Ref: -last-item59185
-Ref: -butlast59477
-Ref: -sort59724
-Ref: -list60212
-Ref: -fix60543
-Node: Tree operations61083
-Ref: -tree-seq61279
-Ref: -tree-map62137
-Ref: -tree-map-nodes62580
-Ref: -tree-reduce63435
-Ref: -tree-reduce-from64317
-Ref: -tree-mapreduce64918
-Ref: -tree-mapreduce-from65778
-Ref: -clone67064
-Node: Threading macros67392
-Ref: ->67537
-Ref: ->>68029
-Ref: -->68534
-Ref: -as->69095
-Ref: -some->69550
-Ref: -some->>69924
-Ref: -some-->70360
-Node: Binding70831
-Ref: -when-let71043
-Ref: -when-let*71528
-Ref: -if-let72056
-Ref: -if-let*72451
-Ref: -let73068
-Ref: -let*77861
-Ref: -lambda78802
-Node: Side-effects79604
-Ref: -each79798
-Ref: -each-while80205
-Ref: -each-indexed80565
-Ref: -dotimes81083
-Ref: -doto81386
-Node: Destructive operations81813
-Ref: !cons81986
-Ref: !cdr82192
-Node: Function combinators82387
-Ref: -partial82661
-Ref: -rpartial83056
-Ref: -juxt83458
-Ref: -compose83890
-Ref: -applify84448
-Ref: -on84895
-Ref: -flip85418
-Ref: -const85730
-Ref: -cut86074
-Ref: -not86560
-Ref: -orfn86870
-Ref: -andfn87304
-Ref: -iteratefn87799
-Ref: -fixfn88502
-Ref: -prodfn90071
-Node: Development91137
-Node: Contribute91486
-Node: Changes92234
-Node: Contributors95233
-Node: Index96857
+Ref: -common-prefix30419
+Ref: -min30713
+Ref: -min-by30939
+Ref: -max31462
+Ref: -max-by31687
+Node: Unfolding32215
+Ref: -iterate32454
+Ref: -unfold32899
+Node: Predicates33707
+Ref: -any?33831
+Ref: -all?34151
+Ref: -none?34481
+Ref: -only-some?34783
+Ref: -contains?35268
+Ref: -same-items?35657
+Ref: -is-prefix?36042
+Ref: -is-suffix?36365
+Ref: -is-infix?36688
+Node: Partitioning37042
+Ref: -split-at37230
+Ref: -split-with37515
+Ref: -split-on37918
+Ref: -split-when38594
+Ref: -separate39234
+Ref: -partition39676
+Ref: -partition-all40128
+Ref: -partition-in-steps40556
+Ref: -partition-all-in-steps41053
+Ref: -partition-by41538
+Ref: -partition-by-header41920
+Ref: -partition-after-pred42524
+Ref: -partition-before-pred42895
+Ref: -partition-before-item43273
+Ref: -partition-after-item43584
+Ref: -group-by43890
+Node: Indexing44327
+Ref: -elem-index44529
+Ref: -elem-indices44924
+Ref: -find-index45307
+Ref: -find-last-index45796
+Ref: -find-indices46300
+Ref: -grade-up46708
+Ref: -grade-down47111
+Node: Set operations47521
+Ref: -union47704
+Ref: -difference48146
+Ref: -intersection48563
+Ref: -powerset49000
+Ref: -permutations49213
+Ref: -distinct49513
+Node: Other list operations49837
+Ref: -rotate50062
+Ref: -repeat50357
+Ref: -cons*50620
+Ref: -snoc51007
+Ref: -interpose51420
+Ref: -interleave51718
+Ref: -zip-with52087
+Ref: -zip52804
+Ref: -zip-fill53610
+Ref: -unzip53933
+Ref: -cycle54467
+Ref: -pad54840
+Ref: -table55163
+Ref: -table-flat55953
+Ref: -first56962
+Ref: -some57334
+Ref: -last57643
+Ref: -first-item57977
+Ref: -second-item58393
+Ref: -third-item58673
+Ref: -fourth-item58951
+Ref: -fifth-item59217
+Ref: -last-item59479
+Ref: -butlast59771
+Ref: -sort60018
+Ref: -list60506
+Ref: -fix60837
+Node: Tree operations61377
+Ref: -tree-seq61573
+Ref: -tree-map62431
+Ref: -tree-map-nodes62874
+Ref: -tree-reduce63729
+Ref: -tree-reduce-from64611
+Ref: -tree-mapreduce65212
+Ref: -tree-mapreduce-from66072
+Ref: -clone67358
+Node: Threading macros67686
+Ref: ->67831
+Ref: ->>68323
+Ref: -->68828
+Ref: -as->69389
+Ref: -some->69844
+Ref: -some->>70218
+Ref: -some-->70654
+Node: Binding71125
+Ref: -when-let71337
+Ref: -when-let*71822
+Ref: -if-let72350
+Ref: -if-let*72745
+Ref: -let73362
+Ref: -let*78155
+Ref: -lambda79096
+Node: Side-effects79898
+Ref: -each80092
+Ref: -each-while80499
+Ref: -each-indexed80859
+Ref: -dotimes81377
+Ref: -doto81680
+Node: Destructive operations82107
+Ref: !cons82280
+Ref: !cdr82486
+Node: Function combinators82681
+Ref: -partial82955
+Ref: -rpartial83350
+Ref: -juxt83752
+Ref: -compose84184
+Ref: -applify84742
+Ref: -on85189
+Ref: -flip85712
+Ref: -const86024
+Ref: -cut86368
+Ref: -not86854
+Ref: -orfn87164
+Ref: -andfn87598
+Ref: -iteratefn88093
+Ref: -fixfn88796
+Ref: -prodfn90365
+Node: Development91431
+Node: Contribute91780
+Node: Changes92528
+Node: Contributors95527
+Node: Index97151
 
 End Tag Table
 

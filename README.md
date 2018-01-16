@@ -146,6 +146,7 @@ Functions reducing lists into single value.
 * [-running-product](#-running-product-list) `(list)`
 * [-inits](#-inits-list) `(list)`
 * [-tails](#-tails-list) `(list)`
+* [-common-prefix](#-common-prefix-rest-lists) `(&rest lists)`
 * [-min](#-min-list) `(list)`
 * [-min-by](#-min-by-comparator-list) `(comparator list)`
 * [-max](#-max-list) `(list)`
@@ -1041,6 +1042,16 @@ Return all suffixes of `list`
 (-tails '(1 2 3 4)) ;; => '((1 2 3 4) (2 3 4) (3 4) (4) nil)
 (-tails nil) ;; => '(nil)
 (-tails '(1)) ;; => '((1) nil)
+```
+
+#### -common-prefix `(&rest lists)`
+
+Return the longest common prefix of `lists`.
+
+```el
+(-common-prefix '(1)) ;; => '(1)
+(-common-prefix '(1 2) nil '(1 2)) ;; => nil
+(-common-prefix '(1 2) '(1 2 3) '(1 2 3 4)) ;; => '(1 2)
 ```
 
 #### -min `(list)`
@@ -2907,6 +2918,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Vasilij Schneidermann](https://github.com/wasamasa) contributed `-some`.
  - [William West](https://github.com/occidens) made `-fixfn` more robust at handling floats.
  - [Cam Saül](https://github.com/camsaul) contributed `-some->`, `-some->>`, and `-some-->`.
+ - [Basil L. Contovounesios](https://github.com/basil-conto) contributed `-common-prefix`.
 
 Thanks!
 

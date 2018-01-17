@@ -245,6 +245,7 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
  - [Vasilij Schneidermann](https://github.com/wasamasa) contributed `-some`.
  - [William West](https://github.com/occidens) made `-fixfn` more robust at handling floats.
  - [Cam Saül](https://github.com/camsaul) contributed `-some->`, `-some->>`, and `-some-->`.
+ - [Basil L. Contovounesios](https://github.com/basil-conto) contributed `-common-prefix`.
 
 Thanks!
 

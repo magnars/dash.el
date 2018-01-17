@@ -387,6 +387,15 @@ new list."
     (-tails nil) => '(nil)
     (-tails '(1)) => '((1) nil))
 
+  (defexamples -common-prefix
+    (-common-prefix '(1)) => '(1)
+    (-common-prefix '(1 2) () '(1 2)) => ()
+    (-common-prefix '(1 2) '(1 2 3) '(1 2 3 4)) => '(1 2)
+    (-common-prefix '(())) => '(())
+    (-common-prefix () ()) => ()
+    (-common-prefix ()) => ()
+    (-common-prefix) => ())
+
   (defexamples -min
     (-min '(0)) => 0
     (-min '(3 2 1)) => 1

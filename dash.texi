@@ -1416,6 +1416,26 @@ Return all suffixes of @var{list}
 @end example
 @end defun
 
+@anchor{-common-prefix}
+@defun -common-prefix (&rest lists)
+Return the longest common prefix of @var{lists}.
+
+@example
+@group
+(-common-prefix '(1))
+    @result{} '(1)
+@end group
+@group
+(-common-prefix '(1 2) nil '(1 2))
+    @result{} nil
+@end group
+@group
+(-common-prefix '(1 2) '(1 2 3) '(1 2 3 4))
+    @result{} '(1 2)
+@end group
+@end example
+@end defun
+
 @anchor{-min}
 @defun -min (list)
 Return the smallest value from @var{list} of numbers or markers.

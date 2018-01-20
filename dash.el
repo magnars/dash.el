@@ -205,7 +205,7 @@ Return nil, used for side-effects only."
   "Return the result of applying FN to INITIAL-VALUE and the
 first item in LIST, then applying FN to that result and the 2nd
 item, etc. If LIST contains no items, return INITIAL-VALUE and
-FN is not called.
+do not call FN.
 
 In the anaphoric form `--reduce-from', the accumulated value is
 exposed as symbol `acc'.
@@ -225,9 +225,9 @@ See also: `-reduce', `-reduce-r'"
 (defun -reduce (fn list)
   "Return the result of applying FN to the first 2 items in LIST,
 then applying FN to that result and the 3rd item, etc. If LIST
-contains no items, FN must accept no arguments as well, and
-reduce return the result of calling FN with no arguments. If
-LIST has only 1 item, it is returned and FN is not called.
+contains no items, return the result of calling FN with no
+arguments. If LIST contains a single item, return that item
+and do not call FN.
 
 In the anaphoric form `--reduce', the accumulated value is
 exposed as symbol `acc'.
@@ -236,6 +236,11 @@ See also: `-reduce-from', `-reduce-r'"
   (if list
       (-reduce-from fn (car list) (cdr list))
     (funcall fn)))
+
+(defmacro --reduce-r-from (form initial-value list)
+  "Anaphoric version of `-reduce-r-from'."
+  (declare (debug (form form form)))
+  `(--reduce-from ,form ,initial-value (reverse ,list)))
 
 (defun -reduce-r-from (fn initial-value list)
   "Replace conses with FN, nil with INITIAL-VALUE and evaluate
@@ -246,20 +251,18 @@ Note: this function works the same as `-reduce-from' but the
 operation associates from right instead of from left.
 
 See also: `-reduce-r', `-reduce'"
-  (if (not list) initial-value
-    (funcall fn (car list) (-reduce-r-from fn initial-value (cdr list)))))
+  (--reduce-r-from (funcall fn it acc) initial-value list))
 
-(defmacro --reduce-r-from (form initial-value list)
-  "Anaphoric version of `-reduce-r-from'."
-  (declare (debug (form form form)))
-  `(-reduce-r-from (lambda (&optional it acc) ,form) ,initial-value ,list))
+(defmacro --reduce-r (form list)
+  "Anaphoric version of `-reduce-r'."
+  (declare (debug (form form)))
+  `(--reduce ,form (reverse ,list)))
 
 (defun -reduce-r (fn list)
   "Replace conses with FN and evaluate the resulting expression.
-The final nil is ignored. If LIST contains no items, FN must
-accept no arguments as well, and reduce return the result of
-calling FN with no arguments. If LIST has only 1 item, it is
-returned and FN is not called.
+The final nil is ignored. If LIST contains no items, return the
+result of calling FN with no arguments. If LIST contains a single
+item, return that item and do not call FN.
 
 The first argument of FN is the new item, the second is the
 accumulated value.
@@ -268,15 +271,9 @@ Note: this function works the same as `-reduce' but the operation
 associates from right instead of from left.
 
 See also: `-reduce-r-from', `-reduce'"
-  (cond
-   ((not list) (funcall fn))
-   ((not (cdr list)) (car list))
-   (t (funcall fn (car list) (-reduce-r fn (cdr list))))))
-
-(defmacro --reduce-r (form list)
-  "Anaphoric version of `-reduce-r'."
-  (declare (debug (form form)))
-  `(-reduce-r (lambda (&optional it acc) ,form) ,list))
+  (if list
+      (--reduce-r (funcall fn it acc) list)
+    (funcall fn)))
 
 (defun -reductions-from (fn init list)
   "Return a list of the intermediate values of the reduction.

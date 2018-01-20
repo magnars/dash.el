@@ -303,34 +303,40 @@ new list."
 
   (defexamples -reduce-from
     (-reduce-from '- 10 '(1 2 3)) => 4
-    (-reduce-from (lambda (memo item)
-                    (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3)) => "(((10 - 1) - 2) - 3)"
-                    (--reduce-from (concat acc " " it) "START" '("a" "b" "c")) => "START a b c"
-                    (-reduce-from '+ 7 '()) => 7
-                    (-reduce-from '+ 7 '(1)) => 8)
+    (-reduce-from (lambda (memo item) (format "(%s - %d)" memo item)) "10" '(1 2 3)) => "(((10 - 1) - 2) - 3)"
+    (--reduce-from (concat acc " " it) "START" '("a" "b" "c")) => "START a b c"
+    (--reduce-from (- acc it) 10 '(1 2 3)) => 4
+    (--reduce-from (- acc it) 10 '(1)) => 9
+    (--reduce-from (- acc it) 10 '()) => 10
+    (-reduce-from '- 7 '(1)) => 6
+    (-reduce-from '- 7 '()) => 7)
 
   (defexamples -reduce-r-from
     (-reduce-r-from '- 10 '(1 2 3)) => -8
-    (-reduce-r-from (lambda (item memo)
-                      (concat "(" (int-to-string item) " - " memo ")")) "10" '(1 2 3)) => "(1 - (2 - (3 - 10)))"
-                      (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) => "a b c END"
-                      (-reduce-r-from '+ 7 '()) => 7
-                      (-reduce-r-from '+ 7 '(1)) => 8)
+    (-reduce-r-from (lambda (item memo) (format "(%d - %s)" item memo)) "10" '(1 2 3)) => "(1 - (2 - (3 - 10)))"
+    (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) => "a b c END"
+    (--reduce-r-from (- it acc) 10 '(1 2 3)) => -8
+    (--reduce-r-from (- it acc) 10 '(1)) => -9
+    (--reduce-r-from (- it acc) 10 '()) => 10
+    (-reduce-r-from '- 7 '(1)) => -6
+    (-reduce-r-from '- 7 '()) => 7)
 
   (defexamples -reduce
     (-reduce '- '(1 2 3 4)) => -8
-    (-reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) => "1-2-3"
-    (--reduce (format "%s-%s" acc it) '(1 2 3)) => "1-2-3"
-    (-reduce '+ '()) => 0
-    (-reduce '+ '(1)) => 1
+    (-reduce 'list '(1 2 3 4)) => '(((1 2) 3) 4)
+    (--reduce (format "%s-%d" acc it) '(1 2 3)) => "1-2-3"
+    (-reduce '- '()) => 0
+    (-reduce '- '(1)) => 1
+    (--reduce (- acc it) '(1)) => 1
     (--reduce (format "%s-%s" acc it) '()) => "nil-nil")
 
   (defexamples -reduce-r
     (-reduce-r '- '(1 2 3 4)) => -2
-    (-reduce-r (lambda (item memo) (format "%s-%s" memo item)) '(1 2 3)) => "3-2-1"
-    (--reduce-r (format "%s-%s" acc it) '(1 2 3)) => "3-2-1"
+    (-reduce-r (lambda (item memo) (format "%s-%d" memo item)) '(1 2 3)) => "3-2-1"
+    (--reduce-r (format "%s-%d" acc it) '(1 2 3)) => "3-2-1"
     (-reduce-r '+ '()) => 0
-    (-reduce-r '+ '(1)) => 1
+    (-reduce-r '- '(1)) => 1
+    (--reduce (- it acc) '(1)) => 1
     (--reduce-r (format "%s-%s" it acc) '()) => "nil-nil")
 
   (defexamples -reductions-from

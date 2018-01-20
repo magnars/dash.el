@@ -1286,9 +1286,9 @@ new list."
     (defexamples -on
       (-sort (-on '< 'length) '((1 2 3) (1) (1 2))) => '((1) (1 2) (1 2 3))
       (-min-by (-on '> 'length) '((1 2 3) (4) (1 2))) => '(4)
-      (-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) => 22
+      (-min-by (-on 'string-lessp 'number-to-string) '(2 100 22)) => 22
       (-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) => '(3)
-      (-sort (-on 'string-lessp 'int-to-string) '(10 12 1 2 22)) => '(1 10 12 2 22)
+      (-sort (-on 'string-lessp 'number-to-string) '(10 12 1 2 22)) => '(1 10 12 2 22)
       (funcall (-on '+ '1+) 1 2) => 5
       (funcall (-on '+ 'identity) 1 2) => 3
       (funcall (-on '* 'length) '(1 2 3) '(4 5)) => 6
@@ -1350,7 +1350,7 @@ new list."
       (funcall (-fixfn 'sin 'approx-equal) 0.1) => '(halted . t))
 
     (defexamples -prodfn
-      (funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3)) => '(2 1 "3")
+      (funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3)) => '(2 1 "3")
       (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) => '((2 1) (4 3) (6 5) (8 7))
       (apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15"))) => 18
       (let ((f '1+)

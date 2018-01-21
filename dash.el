@@ -289,7 +289,7 @@ See also: `-reductions', `-reductions-r', `-reduce-r'"
 See `-reduce' for explanation of the arguments.
 
 See also: `-reductions-from', `-reductions-r', `-reduce-r'"
-  (-reductions-from fn (car list) (cdr list)))
+  (and list (-reductions-from fn (car list) (cdr list))))
 
 (defun -reductions-r-from (fn init list)
   "Return a list of the intermediate values of the reduction.
@@ -305,7 +305,11 @@ See also: `-reductions-r', `-reductions', `-reduce'"
 See `-reduce-r' for explanation of the arguments.
 
 See also: `-reductions-r-from', `-reductions', `-reduce'"
-  (-reductions-r-from fn (-last-item list) (-butlast list)))
+  (when list
+    (let ((rev (reverse list)))
+      (--reduce-from (cons (funcall fn it (car acc)) acc)
+                     (list (car rev))
+                     (cdr rev)))))
 
 (defmacro --filter (form list)
   "Anaphoric form of `-filter'.

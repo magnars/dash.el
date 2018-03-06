@@ -1,4 +1,4 @@
-# <img align="right" src="https://raw.github.com/magnars/dash.el/master/rainbow-dash.png"> dash.el [![Build Status](https://secure.travis-ci.org/magnars/dash.el.png)](http://travis-ci.org/magnars/dash.el)
+# <img align="right" src="https://raw.github.com/magnars/dash.el/master/rainbow-dash.png"> dash.el [![Build Status](https://secure.travis-ci.org/magnars/dash.el.png)](http://travis-ci.org/magnars/dash.el) [![Coverage Status](https://coveralls.io/repos/github/magnars/dash.el/badge.svg)](https://coveralls.io/github/magnars/dash.el)
 
 A modern list api for Emacs. No 'cl required.
 

@@ -651,7 +651,8 @@ See also: `-last-item'."
   (declare (pure t) (side-effect-free t))
   (car (cdr (cdr (cdr (cdr list))))))
 
-;; TODO: emacs23 support, when dropped remove the condition
+;; TODO: gv was introduced in 24.3, so we can remove the if statement
+;; when support for earlier versions is dropped
 (eval-when-compile
   (require 'cl)
   (if (fboundp 'gv-define-simple-setter)
@@ -665,7 +666,8 @@ See also: `-last-item'."
   (declare (pure t) (side-effect-free t))
   (car (last list)))
 
-;; TODO: emacs23 support, when dropped remove the condition
+;; TODO: gv was introduced in 24.3, so we can remove the if statement
+;; when support for earlier versions is dropped
 (eval-when-compile
   (if (fboundp 'gv-define-setter)
       (gv-define-setter -last-item (val x) `(setcar (last ,x) ,val))

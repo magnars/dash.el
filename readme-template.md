@@ -98,6 +98,25 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 2.13 to 2.14
+
+This release retires Emacs 23 support.  We will still try to keep
+things compatible but no future guarantees are made.
+
+- Added edebug support for threading macros (@Wilfred)
+- Added `-unzip`
+- Added gv setters for `-first-item` and `-last-item`
+- Added `-powerset` and `-permutations` (@holomorph)
+- Added `-as->` for threading a named variable (@zck)
+- Added `-partition-after-pred`, `-partition-before-pred`, `-partition-after-item`, `-partition-before-item` (@zck)
+- Fixed a bug in `-any-p` and friends testing for `null` on lists containing `nil` (#239)
+- Fixed infinite loop bug in `-zip` and `-interleave` when called with empty input.
+- Added `-second-item` through to `-fifth-item` as an alternative to `nth` (@Wilfred)
+- Added `-tails` and `-inits`
+- Added `-running-sum` and `-running-product`
+- Added `-reductions[-r][-from]` family of functions (like `-reduce` but collecting intermediate results)
+- Added `-common-prefix` (@basil-conto)
+
 ### From 2.12 to 2.13
 
 - `-let` now supports `&alist` in destructuring.

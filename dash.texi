@@ -3573,6 +3573,10 @@ Key/value stores:
                                   @var{source} hash table to aK.  If the
                                   value is not found, aK is nil.
 
+    (&obj key0 a0 ... keyN aN) - bind value mapped by keyK in the
+                                 @var{source} @var{eieio} object to aK.  If the
+                                 value is not found, aK is nil.
+
 Further, special keyword &keys supports "inline" matching of
 plist-like key-value pairs, similarly to &keys keyword of
 @code{cl-defun}.

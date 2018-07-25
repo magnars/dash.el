@@ -1,4 +1,4 @@
-This is dash.info, produced by makeinfo version 6.5 from dash.texi.
+This is dash.info, produced by makeinfo version 6.1 from dash.texi.
 
 This manual is for ‘dash.el’ version 2.12.1.
 
@@ -2354,6 +2354,33 @@ control.
           (funcall (-lambda ((_ . a) (_ . b)) (-concat a b)) '(1 2 3) '(4 5 6))
               ⇒ '(2 3 5 6)
 
+ -- Macro: -setq (&rest forms)
+     Bind each MATCH-FORM to the value of its VAL.
+
+     MATCH-FORM destructuring is done according to the rules of ‘-let’
+     (*note -let::).
+
+     This macro allows you to bind multiple variables by destructuring
+     the value, so for example:
+
+     (-setq (a b) x (&plist :c c) plist)
+
+     expands roughly speaking to the following code
+
+     (setq a (car x) b (cadr x) c (plist-get plist :c))
+
+     Care is taken to only evaluate each VAL once so that in case of
+     multiple assignments it does not cause unexpected side effects.
+
+     (fn [MATCH-FORM VAL]...)
+
+          (progn (-setq a 1) a)
+              ⇒ 1
+          (progn (-setq (a b) (list 1 2)) (list a b))
+              ⇒ '(1 2)
+          (progn (-setq (&plist :c c) (list :c "c")) c)
+              ⇒ "c"
+
 
 File: dash.info,  Node: Side-effects,  Next: Destructive operations,  Prev: Binding,  Up: Functions
 
@@ -3029,6 +3056,7 @@ Index
 * -select-column:                        Sublist selection. (line 199)
 * -select-columns:                       Sublist selection. (line 180)
 * -separate:                             Partitioning.      (line  63)
+* -setq:                                 Binding.           (line 243)
 * -slice:                                Sublist selection. (line  86)
 * -snoc:                                 Other list operations.
                                                             (line  42)
@@ -3245,36 +3273,37 @@ Ref: -if-let*72745
 Ref: -let73362
 Ref: -let*78155
 Ref: -lambda79096
-Node: Side-effects79898
-Ref: -each80092
-Ref: -each-while80499
-Ref: -each-indexed80859
-Ref: -dotimes81377
-Ref: -doto81680
-Node: Destructive operations82107
-Ref: !cons82280
-Ref: !cdr82486
-Node: Function combinators82681
-Ref: -partial82955
-Ref: -rpartial83350
-Ref: -juxt83752
-Ref: -compose84184
-Ref: -applify84742
-Ref: -on85189
-Ref: -flip85712
-Ref: -const86024
-Ref: -cut86368
-Ref: -not86854
-Ref: -orfn87164
-Ref: -andfn87598
-Ref: -iteratefn88093
-Ref: -fixfn88796
-Ref: -prodfn90365
-Node: Development91431
-Node: Contribute91780
-Node: Changes92528
-Node: Contributors95527
-Node: Index97151
+Ref: -setq79898
+Node: Side-effects80714
+Ref: -each80908
+Ref: -each-while81315
+Ref: -each-indexed81675
+Ref: -dotimes82193
+Ref: -doto82496
+Node: Destructive operations82923
+Ref: !cons83096
+Ref: !cdr83302
+Node: Function combinators83497
+Ref: -partial83771
+Ref: -rpartial84166
+Ref: -juxt84568
+Ref: -compose85000
+Ref: -applify85558
+Ref: -on86005
+Ref: -flip86528
+Ref: -const86840
+Ref: -cut87184
+Ref: -not87670
+Ref: -orfn87980
+Ref: -andfn88414
+Ref: -iteratefn88909
+Ref: -fixfn89612
+Ref: -prodfn91181
+Node: Development92247
+Node: Contribute92596
+Node: Changes93344
+Node: Contributors96343
+Node: Index97967
 
 End Tag Table
 

@@ -3700,6 +3700,45 @@ See @code{-let} (@pxref{-let}) for the description of destructuring mechanism.
 @end example
 @end defmac
 
+@anchor{-setq}
+@defmac -setq (&rest forms)
+Bind each @var{match-form} to the value of its @var{val}.
+
+@var{match-form} destructuring is done according to the rules of @code{-let} (@pxref{-let}).
+
+This macro allows you to bind multiple variables by destructuring
+the value, so for example:
+
+    (-setq (a b) x
+           (&plist :c c) plist)
+
+expands roughly speaking to the following code
+
+    (setq a (car x)
+          b (cadr x)
+          c (plist-get plist :c))
+
+Care is taken to only evaluate each @var{val} once so that in case of
+multiple assignments it does not cause unexpected side effects.
+
+(fn [@var{match-form} @var{val}]...)
+
+@example
+@group
+(progn (-setq a 1) a)
+    @result{} 1
+@end group
+@group
+(progn (-setq (a b) (list 1 2)) (list a b))
+    @result{} '(1 2)
+@end group
+@group
+(progn (-setq (&plist :c c) (list :c "c")) c)
+    @result{} "c"
+@end group
+@end example
+@end defmac
+
 
 @node Side-effects
 @section Side-effects

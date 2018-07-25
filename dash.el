@@ -1978,6 +1978,60 @@ See `-let' for the description of destructuring mechanism."
       `(lambda ,(--map (cadr it) inputs)
          (-let* ,inputs ,@body))))))
 
+(defmacro -setq (&rest forms)
+  "Bind each MATCH-FORM to the value of its VAL.
+
+MATCH-FORM destructuring is done according to the rules of `-let'.
+
+This macro allows you to bind multiple variables by destructuring
+the value, so for example:
+
+  (-setq (a b) x
+         (&plist :c c) plist)
+
+expands roughly speaking to the following code
+
+  (setq a (car x)
+        b (cadr x)
+        c (plist-get plist :c))
+
+Care is taken to only evaluate each VAL once so that in case of
+multiple assignments it does not cause unexpected side effects.
+
+(fn [MATCH-FORM VAL]...)"
+  (declare (debug (&rest sexp form))
+           (indent 1))
+  (when (= (mod (length forms) 2) 1)
+    (error "Odd number of arguments"))
+  (let* ((forms-and-sources
+          ;; First get all the necessary mappings with all the
+          ;; intermediate bindings.
+          (-map (lambda (x) (dash--match (car x) (cadr x)))
+                (-partition 2 forms)))
+         ;; To preserve the logic of dynamic scoping we must ensure
+         ;; that we `setq' the variables outside of the `let*' form
+         ;; which holds the destructured intermediate values.  For
+         ;; this we generate for each variable a placeholder which is
+         ;; bound to (lexically) the result of the destructuring.
+         ;; Then outside of the helper `let*' form we bind all the
+         ;; original variables to their respective placeholders.
+         ;; TODO: There is a lot of room for possible optimization,
+         ;; for start playing with `special-variable-p' to eliminate
+         ;; unnecessary re-binding.
+         (variables-to-placeholders
+          (-mapcat
+           (lambda (bindings)
+             (-map
+              (lambda (binding)
+                (let ((var (car binding)))
+                  (list var (make-symbol (concat "--dash-binding-" (symbol-name var) "--")))))
+              (--filter (not (string-prefix-p "--" (symbol-name (car it)))) bindings)))
+           forms-and-sources)))
+    `(let ,(-map 'cadr variables-to-placeholders)
+       (let* ,(-flatten-n 1 forms-and-sources)
+         (setq ,@(-flatten (-map 'reverse variables-to-placeholders))))
+       (setq ,@(-flatten variables-to-placeholders)))))
+
 (defmacro -if-let* (vars-vals then &rest else)
   "If all VALS evaluate to true, bind them to their corresponding
 VARS and do THEN, otherwise do ELSE. VARS-VALS should be a list

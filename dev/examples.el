@@ -1146,7 +1146,17 @@ new list."
     (funcall (-lambda ((a) (b)) (+ a b)) '(1 2 3) '(4 5 6)) => 5
     (-lambda a t) !!> wrong-type-argument
     (funcall (-lambda (a b) (+ a b)) 1 2) => 3
-    (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6))
+    (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6)
+
+  (defexamples -setq
+    (progn (-setq a 1) a) => 1
+    (progn (-setq (a b) (list 1 2)) (list a b)) => '(1 2)
+    (progn (-setq (&plist :c c) (list :c "c")) c) => "c"
+    (progn (-setq a 1 b 2) (list a b)) => '(1 2)
+    (progn (-setq (&plist :a a) (list :a (list :b 1))
+                  (&plist :b b) a) b) => 1
+    (-setq (a b (&plist 'x x 'y y)) (list 1 2 (list 'x 3 'y 4))
+           z x) => 3))
 
 (def-example-group "Side-effects"
   "Functions iterating over lists for side-effect only."

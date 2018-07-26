@@ -288,6 +288,7 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 * [-let](#-let-varlist-rest-body) `(varlist &rest body)`
 * [-let*](#-let-varlist-rest-body) `(varlist &rest body)`
 * [-lambda](#-lambda-match-form-rest-body) `(match-form &rest body)`
+* [-setq](#-setq-rest-forms) `(&rest forms)`
 
 ### Side-effects
 
@@ -2427,6 +2428,35 @@ See [`-let`](#-let-varlist-rest-body) for the description of destructuring mecha
 (-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6))) ;; => '(3 7 11)
 (-map (-lambda ([x y]) (+ x y)) '([1 2] [3 4] [5 6])) ;; => '(3 7 11)
 (funcall (-lambda ((_ . a) (_ . b)) (-concat a b)) '(1 2 3) '(4 5 6)) ;; => '(2 3 5 6)
+```
+
+#### -setq `(&rest forms)`
+
+Bind each `match-form` to the value of its `val`.
+
+`match-form` destructuring is done according to the rules of [`-let`](#-let-varlist-rest-body).
+
+This macro allows you to bind multiple variables by destructuring
+the value, so for example:
+
+    (-setq (a b) x
+           (&plist :c c) plist)
+
+expands roughly speaking to the following code
+
+    (setq a (car x)
+          b (cadr x)
+          c (plist-get plist :c))
+
+Care is taken to only evaluate each `val` once so that in case of
+multiple assignments it does not cause unexpected side effects.
+
+(fn [`match-form` `val`]...)
+
+```el
+(progn (-setq a 1) a) ;; => 1
+(progn (-setq (a b) (list 1 2)) (list a b)) ;; => '(1 2)
+(progn (-setq (&plist :c c) (list :c "c")) c) ;; => "c"
 ```
 
 

@@ -2088,7 +2088,7 @@ expands roughly speaking to the following code
 Care is taken to only evaluate each VAL once so that in case of
 multiple assignments it does not cause unexpected side effects.
 
-(fn [MATCH-FORM VAL]...)"
+\(fn [MATCH-FORM VAL]...)"
   (declare (debug (&rest sexp form))
            (indent 1))
   (when (= (mod (length forms) 2) 1)

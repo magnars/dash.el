@@ -31,12 +31,12 @@
 
 (defun example-to-string (example)
   (-let* (((actual sym expected) example)
-	  (comment
-	   (cond
-	    ((eq sym '=>) (format "=> %S" expected))
-	    ((eq sym '~>) (format "~> %S" expected))
-	    ((eq sym '!!>) (format "Error"))
-	    (t (error "Invalid test case: %S" `(,actual ,sym ,expected))))))
+      (comment
+       (cond
+        ((eq sym '=>) (format "=> %S" expected))
+        ((eq sym '~>) (format "~> %S" expected))
+        ((eq sym '!!>) (format "Error"))
+        (t (error "Invalid test case: %S" `(,actual ,sym ,expected))))))
     (--> comment
       (format "%S ;; %s" actual it)
       (replace-regexp-in-string "\\\\\\?" "?" it)

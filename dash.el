@@ -1618,7 +1618,7 @@ SOURCE is a proper or improper list."
         (cond
          ((and (symbolp (car match-form))
                (memq (car match-form) '(&keys &plist &alist &hash)))
-          (dash--match-kv match-form (dash--match-cons-get-cdr skip-cdr source)))
+          (dash--match-kv (dash--match-kv-normalize-match-form match-form) (dash--match-cons-get-cdr skip-cdr source)))
          ((dash--match-ignore-place-p (car match-form))
           (dash--match-cons-1 (cdr match-form) source
                               (plist-put props :skip-cdr (1+ skip-cdr))))
@@ -1702,6 +1702,47 @@ is discarded."
         (setq i (1+ i))))
     (-flatten-n 1 (nreverse re))))
 
+(defun dash--match-kv-normalize-match-form (pattern)
+  "Normalize kv PATTERN.
+
+This method normalizes PATTERN to the format expected by
+`dash--match-kv'.  See `-let' for the specification."
+  (let ((normalized (list (car pattern)))
+        (skip nil)
+        (fill-placeholder (make-symbol "--dash-fill-placeholder--")))
+    (-each (apply '-zip (-pad fill-placeholder (cdr pattern) (cddr pattern)))
+      (lambda (pair)
+        (let ((current (car pair))
+              (next (cdr pair)))
+          (if skip
+              (setq skip nil)
+            (if (or (eq fill-placeholder next)
+                    (not (or (and (symbolp next)
+                                  (not (keywordp next))
+                                  (not (eq next t))
+                                  (not (eq next nil)))
+                             (and (consp next)
+                                  (not (eq (car next) 'quote)))
+                             (vectorp next))))
+                (progn
+                  (cond
+                   ((keywordp current)
+                    (push current normalized)
+                    (push (intern (substring (symbol-name current) 1)) normalized))
+                   ((stringp current)
+                    (push current normalized)
+                    (push (intern current) normalized))
+                   ((and (consp current)
+                         (eq (car current) 'quote))
+                    (push current normalized)
+                    (push (cadr current) normalized))
+                   (t (error "-let: found key `%s' in kv destructuring but its pattern `%s' is invalid and can not be derived from the key" current next)))
+                  (setq skip nil))
+              (push current normalized)
+              (push next normalized)
+              (setq skip t))))))
+    (nreverse normalized)))
+
 (defun dash--match-kv (match-form source)
   "Setup a kv matching environment and call the real matcher.
 
@@ -1774,7 +1815,7 @@ Key-value stores are disambiguated by placing a token &plist,
         (cons (list s source)
               (dash--match (cddr match-form) s))))
      ((memq (car match-form) '(&keys &plist &alist &hash))
-      (dash--match-kv match-form source))
+      (dash--match-kv (dash--match-kv-normalize-match-form match-form) source))
      (t (dash--match-cons match-form source))))
    ((vectorp match-form)
     ;; We support the &as binding in vectors too
@@ -1876,14 +1917,17 @@ Key/value stores:
   (&plist key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                  SOURCE plist to aK.  If the
                                  value is not found, aK is nil.
+                                 Uses `plist-get' to fetch values.
 
   (&alist key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                  SOURCE alist to aK.  If the
                                  value is not found, aK is nil.
+                                 Uses `assoc' to fetch values.
 
   (&hash key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                 SOURCE hash table to aK.  If the
                                 value is not found, aK is nil.
+                                Uses `gethash' to fetch values.
 
 Further, special keyword &keys supports \"inline\" matching of
 plist-like key-value pairs, similarly to &keys keyword of
@@ -1893,6 +1937,36 @@ plist-like key-value pairs, similarly to &keys keyword of
 
 This binds N values from the list to a1 ... aN, then interprets
 the cdr as a plist (see key/value matching above).
+
+A shorthand notation for kv-destructuring exists which allows the
+patterns be optionally left out and derived from the key name in
+the following fashion:
+
+- a key :foo is converted into `foo' pattern,
+- a key 'bar is converted into `bar' pattern,
+- a key \"baz\" is converted into `baz' pattern.
+
+That is, the entire value under the key is bound to the derived
+variable without any further destructuring.
+
+This is possible only when the form following the key is not a
+valid pattern (i.e. not a symbol, a cons cell or a vector).
+Otherwise the matching proceeds as usual and in case of an
+invalid spec fails with an error.
+
+Thus the patterns are normalized as follows:
+
+   ;; derive all the missing patterns
+   (&plist :foo 'bar \"baz\") => (&plist :foo foo 'bar bar \"baz\" baz)
+
+   ;; we can specify some but not others
+   (&plist :foo 'bar explicit-bar) => (&plist :foo foo 'bar explicit-bar)
+
+   ;; nothing happens, we store :foo in x
+   (&plist :foo x) => (&plist :foo x)
+
+   ;; nothing happens, we match recursively
+   (&plist :foo (a b c)) => (&plist :foo (a b c))
 
 You can name the source using the syntax SYMBOL &as PATTERN.
 This syntax works with lists (proper or improper), vectors and

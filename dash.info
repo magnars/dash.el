@@ -2245,13 +2245,16 @@ control.
      Key/value stores:
 
      (&plist key0 a0 ...  keyN aN) - bind value mapped by keyK in the
-     SOURCE plist to aK. If the value is not found, aK is nil.
+     SOURCE plist to aK. If the value is not found, aK is nil.  Uses
+     ‘plist-get’ to fetch values.
 
      (&alist key0 a0 ...  keyN aN) - bind value mapped by keyK in the
-     SOURCE alist to aK. If the value is not found, aK is nil.
+     SOURCE alist to aK. If the value is not found, aK is nil.  Uses
+     ‘assoc’ to fetch values.
 
      (&hash key0 a0 ...  keyN aN) - bind value mapped by keyK in the
      SOURCE hash table to aK. If the value is not found, aK is nil.
+     Uses ‘gethash’ to fetch values.
 
      Further, special keyword &keys supports "inline" matching of
      plist-like key-value pairs, similarly to &keys keyword of
@@ -2261,6 +2264,36 @@ control.
 
      This binds N values from the list to a1 ...  aN, then interprets
      the cdr as a plist (see key/value matching above).
+
+     A shorthand notation for kv-destructuring exists which allows the
+     patterns be optionally left out and derived from the key name in
+     the following fashion:
+
+     - a key :foo is converted into ‘foo’ pattern, - a key ’bar is
+     converted into ‘bar’ pattern, - a key "baz" is converted into
+     ‘baz’ pattern.
+
+     That is, the entire value under the key is bound to the derived
+     variable without any further destructuring.
+
+     This is possible only when the form following the key is not a
+     valid pattern (i.e.  not a symbol, a cons cell or a vector).
+     Otherwise the matching proceeds as usual and in case of an
+     invalid spec fails with an error.
+
+     Thus the patterns are normalized as follows:
+
+     ;; derive all the missing patterns (&plist :foo ’bar "baz") =>
+     (&plist :foo foo ’bar bar "baz" baz)
+
+     ;; we can specify some but not others (&plist :foo ’bar
+     explicit-bar) => (&plist :foo foo ’bar explicit-bar)
+
+     ;; nothing happens, we store :foo in x (&plist :foo x) => (&plist
+     :foo x)
+
+     ;; nothing happens, we match recursively (&plist :foo (a b c)) =>
+     (&plist :foo (a b c))
 
      You can name the source using the syntax SYMBOL &as PATTERN.
      This syntax works with lists (proper or improper), vectors and
@@ -2976,13 +3009,13 @@ Index
 * -juxt:                                 Function combinators.
                                                             (line  31)
 * -keep:                                 List to list.      (line   8)
-* -lambda:                               Binding.           (line 220)
+* -lambda:                               Binding.           (line 253)
 * -last:                                 Other list operations.
                                                             (line 232)
 * -last-item:                            Other list operations.
                                                             (line 301)
 * -let:                                  Binding.           (line  66)
-* -let*:                                 Binding.           (line 200)
+* -let*:                                 Binding.           (line 233)
 * -list:                                 Other list operations.
                                                             (line 334)
 * -map:                                  Maps.              (line  10)
@@ -3056,7 +3089,7 @@ Index
 * -select-column:                        Sublist selection. (line 199)
 * -select-columns:                       Sublist selection. (line 180)
 * -separate:                             Partitioning.      (line  63)
-* -setq:                                 Binding.           (line 243)
+* -setq:                                 Binding.           (line 276)
 * -slice:                                Sublist selection. (line  86)
 * -snoc:                                 Other list operations.
                                                             (line  42)
@@ -3271,39 +3304,39 @@ Ref: -when-let*71822
 Ref: -if-let72350
 Ref: -if-let*72745
 Ref: -let73362
-Ref: -let*78155
-Ref: -lambda79096
-Ref: -setq79898
-Node: Side-effects80714
-Ref: -each80908
-Ref: -each-while81315
-Ref: -each-indexed81675
-Ref: -dotimes82193
-Ref: -doto82496
-Node: Destructive operations82923
-Ref: !cons83096
-Ref: !cdr83302
-Node: Function combinators83497
-Ref: -partial83771
-Ref: -rpartial84166
-Ref: -juxt84568
-Ref: -compose85000
-Ref: -applify85558
-Ref: -on86005
-Ref: -flip86528
-Ref: -const86840
-Ref: -cut87184
-Ref: -not87670
-Ref: -orfn87980
-Ref: -andfn88414
-Ref: -iteratefn88909
-Ref: -fixfn89612
-Ref: -prodfn91181
-Node: Development92247
-Node: Contribute92596
-Node: Changes93344
-Node: Contributors96343
-Node: Index97967
+Ref: -let*79450
+Ref: -lambda80391
+Ref: -setq81193
+Node: Side-effects82009
+Ref: -each82203
+Ref: -each-while82610
+Ref: -each-indexed82970
+Ref: -dotimes83488
+Ref: -doto83791
+Node: Destructive operations84218
+Ref: !cons84391
+Ref: !cdr84597
+Node: Function combinators84792
+Ref: -partial85066
+Ref: -rpartial85461
+Ref: -juxt85863
+Ref: -compose86295
+Ref: -applify86853
+Ref: -on87300
+Ref: -flip87823
+Ref: -const88135
+Ref: -cut88479
+Ref: -not88965
+Ref: -orfn89275
+Ref: -andfn89709
+Ref: -iteratefn90204
+Ref: -fixfn90907
+Ref: -prodfn92476
+Node: Development93542
+Node: Contribute93891
+Node: Changes94639
+Node: Contributors97638
+Node: Index99262
 
 End Tag Table
 

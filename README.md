@@ -2324,14 +2324,17 @@ Key/value stores:
     (&plist key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                    `source` plist to aK.  If the
                                    value is not found, aK is nil.
+                                   Uses `plist-get` to fetch values.
 
     (&alist key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                    `source` alist to aK.  If the
                                    value is not found, aK is nil.
+                                   Uses `assoc` to fetch values.
 
     (&hash key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                   `source` hash table to aK.  If the
                                   value is not found, aK is nil.
+                                  Uses `gethash` to fetch values.
 
 Further, special keyword &keys supports "inline" matching of
 plist-like key-value pairs, similarly to &keys keyword of
@@ -2341,6 +2344,36 @@ plist-like key-value pairs, similarly to &keys keyword of
 
 This binds `n` values from the list to a1 ... aN, then interprets
 the cdr as a plist (see key/value matching above).
+
+`a` shorthand notation for kv-destructuring exists which allows the
+patterns be optionally left out and derived from the key name in
+the following fashion:
+
+- a key :foo is converted into `foo` pattern,
+- a key 'bar is converted into `bar` pattern,
+- a key "baz" is converted into `baz` pattern.
+
+That is, the entire value under the key is bound to the derived
+variable without any further destructuring.
+
+This is possible only when the form following the key is not a
+valid pattern (i.e. not a symbol, a cons cell or a vector).
+Otherwise the matching proceeds as usual and in case of an
+invalid spec fails with an error.
+
+Thus the patterns are normalized as follows:
+
+     ;; derive all the missing patterns
+     (&plist :foo 'bar "baz") => (&plist :foo foo 'bar bar "baz" baz)
+
+     ;; we can specify some but not others
+     (&plist :foo 'bar explicit-bar) => (&plist :foo foo 'bar explicit-bar)
+
+     ;; nothing happens, we store :foo in x
+     (&plist :foo x) => (&plist :foo x)
+
+     ;; nothing happens, we match recursively
+     (&plist :foo (a b c)) => (&plist :foo (a b c))
 
 You can name the source using the syntax `symbol` &as `pattern`.
 This syntax works with lists (proper or improper), vectors and

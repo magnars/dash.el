@@ -1100,6 +1100,11 @@ new list."
     (-let (((_ _ . (&alist 'a a 'c c)) (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)))) (list a c)) => '(b d)
     (-let (((x y (&alist 'a a 'c c)) (list 1 2 '((a . b) (e . f) (g . h) (c . d))))) (list x y a c)) => '(1 2 b d)
     (-let (((_ _ . ((&alist 'a a 'c c))) (list 1 2 '((a . b) (e . f) (g . h) (c . d))))) (list a c)) => '(b d)
+    ;; test bindings with no explicit val
+    (-let (a) a) => nil
+    (-let ((a)) a) => nil
+    (-let (a b) (list a b)) => '(nil nil)
+    (-let ((a) (b)) (list a b)) => '(nil nil)
     ;; auto-derived match forms for kv destructuring
     ;;; test that we normalize all the supported kv stores
     (-let (((&plist :foo :bar) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
@@ -1164,7 +1169,12 @@ new list."
       (-let* (((a . b) a)
               ((c . d) b)) ;; b here comes from above binding
         (list a b c d))) => '(1 (2 3) 2 (3))
-    (-let* ((a "foo") (b a)) (list a b)) => '("foo" "foo"))
+    (-let* ((a "foo") (b a)) (list a b)) => '("foo" "foo")
+    ;; test bindings with no explicit val
+    (-let* (a) a) => nil
+    (-let* ((a)) a) => nil
+    (-let* (a b) (list a b)) => '(nil nil)
+    (-let* ((a) (b)) (list a b)) => '(nil nil))
 
   (defexamples -lambda
     (-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6))) => '(3 7 11)

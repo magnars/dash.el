@@ -3837,6 +3837,44 @@ See also: @code{-map-indexed} (@pxref{-map-indexed}).
 @end example
 @end defun
 
+@anchor{-each-r}
+@defun -each-r (list fn)
+Call @var{fn} with every item in @var{list} in reversed order.
+ Return nil, used for side-effects only.
+
+@example
+@group
+(let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))))
+    @result{} nil
+@end group
+@group
+(let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))) s)
+    @result{} '(1 2 3)
+@end group
+@group
+(let (s) (--each-r '(1 2 3) (setq s (cons it s))) s)
+    @result{} '(1 2 3)
+@end group
+@end example
+@end defun
+
+@anchor{-each-r-while}
+@defun -each-r-while (list pred fn)
+Call @var{fn} with every item in reversed @var{list} while (@var{pred} item) is non-nil.
+Return nil, used for side-effects only.
+
+@example
+@group
+(let (s) (-each-r-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s)
+    @result{} '(6)
+@end group
+@group
+(let (s) (--each-r-while '(1 2 3 4) (>= it 3) (!cons it s)) s)
+    @result{} '(3 4)
+@end group
+@end example
+@end defun
+
 @anchor{-dotimes}
 @defun -dotimes (num fn)
 Repeatedly calls @var{fn} (presumably for side-effects) passing in integers from 0 through @var{num-1}.

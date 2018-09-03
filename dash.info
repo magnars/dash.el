@@ -2455,6 +2455,26 @@ Functions iterating over lists for side-effect only.
           (let (s) (--each-indexed '(a b c) (setq s (cons (list it it-index) s))) s)
               ⇒ '((c 2) (b 1) (a 0))
 
+ -- Function: -each-r (list fn)
+     Call FN with every item in LIST in reversed order.  Return nil,
+     used for side-effects only.
+
+          (let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))))
+              ⇒ nil
+          (let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))) s)
+              ⇒ '(1 2 3)
+          (let (s) (--each-r '(1 2 3) (setq s (cons it s))) s)
+              ⇒ '(1 2 3)
+
+ -- Function: -each-r-while (list pred fn)
+     Call FN with every item in reversed LIST while (PRED item) is
+     non-nil.  Return nil, used for side-effects only.
+
+          (let (s) (-each-r-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s)
+              ⇒ '(6)
+          (let (s) (--each-r-while '(1 2 3 4) (>= it 3) (!cons it s)) s)
+              ⇒ '(3 4)
+
  -- Function: -dotimes (num fn)
      Repeatedly calls FN (presumably for side-effects) passing in
      integers from 0 through NUM-1.
@@ -2958,13 +2978,15 @@ Index
                                                             (line 139)
 * -difference:                           Set operations.    (line  20)
 * -distinct:                             Set operations.    (line  62)
-* -dotimes:                              Side-effects.      (line  41)
-* -doto:                                 Side-effects.      (line  50)
+* -dotimes:                              Side-effects.      (line  61)
+* -doto:                                 Side-effects.      (line  70)
 * -drop:                                 Sublist selection. (line 125)
 * -drop-last:                            Sublist selection. (line 137)
 * -drop-while:                           Sublist selection. (line 158)
 * -each:                                 Side-effects.      (line   8)
 * -each-indexed:                         Side-effects.      (line  28)
+* -each-r:                               Side-effects.      (line  41)
+* -each-r-while:                         Side-effects.      (line  52)
 * -each-while:                           Side-effects.      (line  19)
 * -elem-index:                           Indexing.          (line   9)
 * -elem-indices:                         Indexing.          (line  21)
@@ -3311,32 +3333,34 @@ Node: Side-effects82009
 Ref: -each82203
 Ref: -each-while82610
 Ref: -each-indexed82970
-Ref: -dotimes83488
-Ref: -doto83791
-Node: Destructive operations84218
-Ref: !cons84391
-Ref: !cdr84597
-Node: Function combinators84792
-Ref: -partial85066
-Ref: -rpartial85461
-Ref: -juxt85863
-Ref: -compose86295
-Ref: -applify86853
-Ref: -on87300
-Ref: -flip87823
-Ref: -const88135
-Ref: -cut88479
-Ref: -not88965
-Ref: -orfn89275
-Ref: -andfn89709
-Ref: -iteratefn90204
-Ref: -fixfn90907
-Ref: -prodfn92476
-Node: Development93542
-Node: Contribute93891
-Node: Changes94639
-Node: Contributors97638
-Node: Index99262
+Ref: -each-r83488
+Ref: -each-r-while83921
+Ref: -dotimes84296
+Ref: -doto84599
+Node: Destructive operations85026
+Ref: !cons85199
+Ref: !cdr85405
+Node: Function combinators85600
+Ref: -partial85874
+Ref: -rpartial86269
+Ref: -juxt86671
+Ref: -compose87103
+Ref: -applify87661
+Ref: -on88108
+Ref: -flip88631
+Ref: -const88943
+Ref: -cut89287
+Ref: -not89773
+Ref: -orfn90083
+Ref: -andfn90517
+Ref: -iteratefn91012
+Ref: -fixfn91715
+Ref: -prodfn93284
+Node: Development94350
+Node: Contribute94699
+Node: Changes95447
+Node: Contributors98446
+Node: Index100070
 
 End Tag Table
 

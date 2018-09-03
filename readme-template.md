@@ -265,6 +265,7 @@ things compatible but no future guarantees are made.
  - [William West](https://github.com/occidens) made `-fixfn` more robust at handling floats.
  - [Cam Saül](https://github.com/camsaul) contributed `-some->`, `-some->>`, and `-some-->`.
  - [Basil L. Contovounesios](https://github.com/basil-conto) contributed `-common-prefix`.
+ - [Paul Pogonyshev](https://github.com/doublep) contributed `-each-r` and `-each-r-while`.
 
 Thanks!
 

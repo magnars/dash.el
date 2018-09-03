@@ -298,6 +298,8 @@ Functions iterating over lists for side-effect only.
 * [-each](#-each-list-fn) `(list fn)`
 * [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
 * [-each-indexed](#-each-indexed-list-fn) `(list fn)`
+* [-each-r](#-each-r-list-fn) `(list fn)`
+* [-each-r-while](#-each-r-while-list-pred-fn) `(list pred fn)`
 * [-dotimes](#-dotimes-num-fn) `(num fn)`
 * [-doto](#-doto-eval-initial-value-rest-forms) `(eval-initial-value &rest forms)`
 
@@ -2531,6 +2533,27 @@ See also: [`-map-indexed`](#-map-indexed-fn-list).
 (let (s) (--each-indexed '(a b c) (setq s (cons (list it it-index) s))) s) ;; => '((c 2) (b 1) (a 0))
 ```
 
+#### -each-r `(list fn)`
+
+Call `fn` with every item in `list` in reversed order.
+ Return nil, used for side-effects only.
+
+```el
+(let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
+(let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(1 2 3)
+(let (s) (--each-r '(1 2 3) (setq s (cons it s))) s) ;; => '(1 2 3)
+```
+
+#### -each-r-while `(list pred fn)`
+
+Call `fn` with every item in reversed `list` while (`pred` item) is non-nil.
+Return nil, used for side-effects only.
+
+```el
+(let (s) (-each-r-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(6)
+(let (s) (--each-r-while '(1 2 3 4) (>= it 3) (!cons it s)) s) ;; => '(3 4)
+```
+
 #### -dotimes `(num fn)`
 
 Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 through `num-1`.
@@ -3001,6 +3024,7 @@ things compatible but no future guarantees are made.
  - [William West](https://github.com/occidens) made `-fixfn` more robust at handling floats.
  - [Cam Saül](https://github.com/camsaul) contributed `-some->`, `-some->>`, and `-some-->`.
  - [Basil L. Contovounesios](https://github.com/basil-conto) contributed `-common-prefix`.
+ - [Paul Pogonyshev](https://github.com/doublep) contributed `-each-r` and `-each-r-while`.
 
 Thanks!
 

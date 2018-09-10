@@ -2310,6 +2310,10 @@ or with `-compare-fn' if that's non-nil."
   (--reduce (--take-while (and acc (equal (pop acc) it)) it)
             lists))
 
+(defun -common-suffix (&rest lists)
+  "Return the longest common suffix of LISTS."
+  (nreverse (apply #'-common-prefix (mapcar #'reverse lists))))
+
 (defun -contains? (list element)
   "Return non-nil if LIST contains ELEMENT.
 
@@ -2904,6 +2908,7 @@ structure such as plist or alist."
                              "-inits"
                              "-tails"
                              "-common-prefix"
+                             "-common-suffix"
                              "-contains?"
                              "-contains-p"
                              "-same-items?"

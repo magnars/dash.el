@@ -847,7 +847,7 @@ Functions reducing lists into single value.
 Return the result of applying `fn` to `initial-value` and the
 first item in `list`, then applying `fn` to that result and the 2nd
 item, etc. If `list` contains no items, return `initial-value` and
-`fn` is not called.
+do not call `fn`.
 
 In the anaphoric form `--reduce-from`, the accumulated value is
 exposed as symbol `acc`.
@@ -856,7 +856,7 @@ See also: [`-reduce`](#-reduce-fn-list), [`-reduce-r`](#-reduce-r-fn-list)
 
 ```el
 (-reduce-from '- 10 '(1 2 3)) ;; => 4
-(-reduce-from (lambda (memo item) (concat "(" memo " - " (int-to-string item) ")")) "10" '(1 2 3)) ;; => "(((10 - 1) - 2) - 3)"
+(-reduce-from (lambda (memo item) (format "(%s - %d)" memo item)) "10" '(1 2 3)) ;; => "(((10 - 1) - 2) - 3)"
 (--reduce-from (concat acc " " it) "START" '("a" "b" "c")) ;; => "START a b c"
 ```
 
@@ -873,7 +873,7 @@ See also: [`-reduce-r`](#-reduce-r-fn-list), [`-reduce`](#-reduce-fn-list)
 
 ```el
 (-reduce-r-from '- 10 '(1 2 3)) ;; => -8
-(-reduce-r-from (lambda (item memo) (concat "(" (int-to-string item) " - " memo ")")) "10" '(1 2 3)) ;; => "(1 - (2 - (3 - 10)))"
+(-reduce-r-from (lambda (item memo) (format "(%d - %s)" item memo)) "10" '(1 2 3)) ;; => "(1 - (2 - (3 - 10)))"
 (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) ;; => "a b c END"
 ```
 
@@ -881,9 +881,9 @@ See also: [`-reduce-r`](#-reduce-r-fn-list), [`-reduce`](#-reduce-fn-list)
 
 Return the result of applying `fn` to the first 2 items in `list`,
 then applying `fn` to that result and the 3rd item, etc. If `list`
-contains no items, `fn` must accept no arguments as well, and
-reduce return the result of calling `fn` with no arguments. If
-`list` has only 1 item, it is returned and `fn` is not called.
+contains no items, return the result of calling `fn` with no
+arguments. If `list` contains a single item, return that item
+and do not call `fn`.
 
 In the anaphoric form `--reduce`, the accumulated value is
 exposed as symbol `acc`.
@@ -892,17 +892,16 @@ See also: [`-reduce-from`](#-reduce-from-fn-initial-value-list), [`-reduce-r`](#
 
 ```el
 (-reduce '- '(1 2 3 4)) ;; => -8
-(-reduce (lambda (memo item) (format "%s-%s" memo item)) '(1 2 3)) ;; => "1-2-3"
-(--reduce (format "%s-%s" acc it) '(1 2 3)) ;; => "1-2-3"
+(-reduce 'list '(1 2 3 4)) ;; => '(((1 2) 3) 4)
+(--reduce (format "%s-%d" acc it) '(1 2 3)) ;; => "1-2-3"
 ```
 
 #### -reduce-r `(fn list)`
 
 Replace conses with `fn` and evaluate the resulting expression.
-The final nil is ignored. If `list` contains no items, `fn` must
-accept no arguments as well, and reduce return the result of
-calling `fn` with no arguments. If `list` has only 1 item, it is
-returned and `fn` is not called.
+The final nil is ignored. If `list` contains no items, return the
+result of calling `fn` with no arguments. If `list` contains a single
+item, return that item and do not call `fn`.
 
 The first argument of `fn` is the new item, the second is the
 accumulated value.
@@ -914,8 +913,8 @@ See also: [`-reduce-r-from`](#-reduce-r-from-fn-initial-value-list), [`-reduce`]
 
 ```el
 (-reduce-r '- '(1 2 3 4)) ;; => -2
-(-reduce-r (lambda (item memo) (format "%s-%s" memo item)) '(1 2 3)) ;; => "3-2-1"
-(--reduce-r (format "%s-%s" acc it) '(1 2 3)) ;; => "3-2-1"
+(-reduce-r (lambda (item memo) (format "%s-%d" memo item)) '(1 2 3)) ;; => "3-2-1"
+(--reduce-r (format "%s-%d" acc it) '(1 2 3)) ;; => "3-2-1"
 ```
 
 #### -reductions-from `(fn init list)`
@@ -927,7 +926,7 @@ See [`-reduce-from`](#-reduce-from-fn-initial-value-list) for explanation of the
 See also: [`-reductions`](#-reductions-fn-list), [`-reductions-r`](#-reductions-r-fn-list), [`-reduce-r`](#-reduce-r-fn-list)
 
 ```el
-(-reductions-from (lambda (a i) (format "(%s FN %s)" a i)) "INIT" '(1 2 3 4)) ;; => '("INIT" "(INIT FN 1)" "((INIT FN 1) FN 2)" "(((INIT FN 1) FN 2) FN 3)" "((((INIT FN 1) FN 2) FN 3) FN 4)")
+(-reductions-from (lambda (a i) (format "(%s FN %d)" a i)) "INIT" '(1 2 3 4)) ;; => '("INIT" "(INIT FN 1)" "((INIT FN 1) FN 2)" "(((INIT FN 1) FN 2) FN 3)" "((((INIT FN 1) FN 2) FN 3) FN 4)")
 (-reductions-from 'max 0 '(2 1 4 3)) ;; => '(0 2 2 4 4)
 (-reductions-from '* 1 '(1 2 3 4)) ;; => '(1 1 2 6 24)
 ```
@@ -941,7 +940,7 @@ See [`-reduce-r-from`](#-reduce-r-from-fn-initial-value-list) for explanation of
 See also: [`-reductions-r`](#-reductions-r-fn-list), [`-reductions`](#-reductions-fn-list), [`-reduce`](#-reduce-fn-list)
 
 ```el
-(-reductions-r-from (lambda (i a) (format "(%s FN %s)" i a)) "INIT" '(1 2 3 4)) ;; => '("(1 FN (2 FN (3 FN (4 FN INIT))))" "(2 FN (3 FN (4 FN INIT)))" "(3 FN (4 FN INIT))" "(4 FN INIT)" "INIT")
+(-reductions-r-from (lambda (i a) (format "(%d FN %s)" i a)) "INIT" '(1 2 3 4)) ;; => '("(1 FN (2 FN (3 FN (4 FN INIT))))" "(2 FN (3 FN (4 FN INIT)))" "(3 FN (4 FN INIT))" "(4 FN INIT)" "INIT")
 (-reductions-r-from 'max 0 '(2 1 4 3)) ;; => '(4 4 4 3 0)
 (-reductions-r-from '* 1 '(1 2 3 4)) ;; => '(24 24 12 4 1)
 ```
@@ -955,7 +954,7 @@ See [`-reduce`](#-reduce-fn-list) for explanation of the arguments.
 See also: [`-reductions-from`](#-reductions-from-fn-init-list), [`-reductions-r`](#-reductions-r-fn-list), [`-reduce-r`](#-reduce-r-fn-list)
 
 ```el
-(-reductions (lambda (a i) (format "(%s FN %s)" a i)) '(1 2 3 4)) ;; => '(1 "(1 FN 2)" "((1 FN 2) FN 3)" "(((1 FN 2) FN 3) FN 4)")
+(-reductions (lambda (a i) (format "(%s FN %d)" a i)) '(1 2 3 4)) ;; => '(1 "(1 FN 2)" "((1 FN 2) FN 3)" "(((1 FN 2) FN 3) FN 4)")
 (-reductions '+ '(1 2 3 4)) ;; => '(1 3 6 10)
 (-reductions '* '(1 2 3 4)) ;; => '(1 2 6 24)
 ```
@@ -969,7 +968,7 @@ See [`-reduce-r`](#-reduce-r-fn-list) for explanation of the arguments.
 See also: [`-reductions-r-from`](#-reductions-r-from-fn-init-list), [`-reductions`](#-reductions-fn-list), [`-reduce`](#-reduce-fn-list)
 
 ```el
-(-reductions-r (lambda (i a) (format "(%s FN %s)" i a)) '(1 2 3 4)) ;; => '("(1 FN (2 FN (3 FN 4)))" "(2 FN (3 FN 4))" "(3 FN 4)" 4)
+(-reductions-r (lambda (i a) (format "(%d FN %s)" i a)) '(1 2 3 4)) ;; => '("(1 FN (2 FN (3 FN 4)))" "(2 FN (3 FN 4))" "(3 FN 4)" 4)
 (-reductions-r '+ '(1 2 3 4)) ;; => '(10 9 7 4)
 (-reductions-r '* '(1 2 3 4)) ;; => '(24 24 12 4)
 ```
@@ -1406,9 +1405,9 @@ other value (the body).
 Partition directly after each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-after-pred (function oddp) '()) ;; => '()
-(-partition-after-pred (function oddp) '(1)) ;; => '((1))
-(-partition-after-pred (function oddp) '(0 1)) ;; => '((0 1))
+(-partition-after-pred #'oddp '()) ;; => '()
+(-partition-after-pred #'oddp '(1)) ;; => '((1))
+(-partition-after-pred #'oddp '(0 1)) ;; => '((0 1))
 ```
 
 #### -partition-before-pred `(pred list)`
@@ -1416,9 +1415,9 @@ Partition directly after each time `pred` is true on an element of `list`.
 Partition directly before each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-before-pred (function oddp) '()) ;; => '()
-(-partition-before-pred (function oddp) '(1)) ;; => '((1))
-(-partition-before-pred (function oddp) '(0 1)) ;; => '((0) (1))
+(-partition-before-pred #'oddp '()) ;; => '()
+(-partition-before-pred #'oddp '(1)) ;; => '((1))
+(-partition-before-pred #'oddp '(0 1)) ;; => '((0) (1))
 ```
 
 #### -partition-before-item `(item list)`
@@ -2659,7 +2658,7 @@ expects a list with n items as arguments
 
 ```el
 (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => '(3 6 15)
-(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
 (funcall (-applify '<) '(3 6)) ;; => t
 ```
 
@@ -2674,7 +2673,7 @@ In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
 ```el
 (-sort (-on '< 'length) '((1 2 3) (1) (1 2))) ;; => '((1) (1 2) (1 2 3))
 (-min-by (-on '> 'length) '((1 2 3) (4) (1 2))) ;; => '(4)
-(-min-by (-on 'string-lessp 'int-to-string) '(2 100 22)) ;; => 22
+(-min-by (-on 'string-lessp 'number-to-string) '(2 100 22)) ;; => 22
 ```
 
 #### -flip `(func)`
@@ -2823,7 +2822,7 @@ This function satisfies the following laws:
     (-compose (-partial 'nth n) (-prod f1 f2 ...)) = (-compose fn (-partial 'nth n))
 
 ```el
-(funcall (-prodfn '1+ '1- 'int-to-string) '(1 2 3)) ;; => '(2 1 "3")
+(funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3)) ;; => '(2 1 "3")
 (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) ;; => '((2 1) (4 3) (6 5) (8 7))
 (apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15"))) ;; => 18
 ```

@@ -389,12 +389,27 @@ new list."
 
   (defexamples -common-prefix
     (-common-prefix '(1)) => '(1)
-    (-common-prefix '(1 2) () '(1 2)) => ()
+    (-common-prefix '(1 2) '(3 4) '(1 2)) => ()
     (-common-prefix '(1 2) '(1 2 3) '(1 2 3 4)) => '(1 2)
+    (-common-prefix () '(1 2) '(1 2)) => ()
+    (-common-prefix '(1 2) '(1 2) ()) => ()
+    (-common-prefix '(1) '(1)) => '(1)
     (-common-prefix '(())) => '(())
     (-common-prefix () ()) => ()
     (-common-prefix ()) => ()
     (-common-prefix) => ())
+
+  (defexamples -common-suffix
+    (-common-suffix '(1)) => '(1)
+    (-common-suffix '(1 2) '(3 4) '(1 2)) => ()
+    (-common-suffix '(1 2 3 4) '(2 3 4) '(3 4)) => '(3 4)
+    (-common-suffix () '(1 2) '(1 2)) => ()
+    (-common-suffix '(1 2) '(1 2) ()) => ()
+    (-common-suffix '(1) '(1)) => '(1)
+    (-common-suffix '(())) => '(())
+    (-common-suffix () ()) => ()
+    (-common-suffix ()) => ()
+    (-common-suffix) => ())
 
   (defexamples -min
     (-min '(0)) => 0

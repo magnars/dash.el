@@ -28,6 +28,11 @@
 (defun square (num) (* num num))
 (defun three-letters () '("A" "B" "C"))
 
+(defun dash-expand:&hash-or-plist (key source)
+  "Sample destructoring which works with plists and hash-tables."
+  `(if (hash-table-p ,source) (gethash ,key ,source)
+     (plist-get ,source ,key)))
+
 ;; Allow approximate comparison of floating-point results, to work
 ;; around differences in implementation between systems. Use the `~>'
 ;; symbol instead of `=>' to test the expected and actual values with
@@ -1142,7 +1147,8 @@ new list."
       (puthash :foo 1 hash)
       (puthash :bar 2 hash)
       (-let (((&hash :foo :bar) hash)) (list foo bar))) => '(1 2)
-      (-let (((_ &keys :foo :bar) (list 'ignored :foo 1 :bar 2))) (list foo bar)) => '(1 2)
+    (-let (((&hash :foo (&hash? :bar)) (make-hash-table)))) => nil
+    (-let (((_ &keys :foo :bar) (list 'ignored :foo 1 :bar 2))) (list foo bar)) => '(1 2)
     ;;; go over all the variations of match-form derivation
     (-let (((&plist :foo foo :bar) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
     (-let (((&plist :foo foo :bar bar) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
@@ -1181,7 +1187,12 @@ new list."
     (-let [(list &as _ _ _ a _ _ _ b _ _ _ c) (list 1 2 3 4 5 6 7 8 9 10 11 12)] (list a b c list)) => '(4 8 12 (1 2 3 4 5 6 7 8 9 10 11 12))
     (-let (((x &as a b) (list 1 2))
            ((y &as c d) (list 3 4)))
-      (list a b c d x y)) => '(1 2 3 4 (1 2) (3 4)))
+      (list a b c d x y)) => '(1 2 3 4 (1 2) (3 4))
+    (-let (((&hash-or-plist :key) (--doto (make-hash-table)
+                                    (puthash :key "value" it))))
+      key) => "value"
+    (-let (((&hash-or-plist :key) '(:key "value")))
+      key) => "value")
 
   (defexamples -let*
     (-let* (((a . b) (cons 1 2))

@@ -1425,12 +1425,32 @@ Return the longest common prefix of @var{lists}.
     @result{} '(1)
 @end group
 @group
-(-common-prefix '(1 2) nil '(1 2))
+(-common-prefix '(1 2) '(3 4) '(1 2))
     @result{} nil
 @end group
 @group
 (-common-prefix '(1 2) '(1 2 3) '(1 2 3 4))
     @result{} '(1 2)
+@end group
+@end example
+@end defun
+
+@anchor{-common-suffix}
+@defun -common-suffix (&rest lists)
+Return the longest common suffix of @var{lists}.
+
+@example
+@group
+(-common-suffix '(1))
+    @result{} '(1)
+@end group
+@group
+(-common-suffix '(1 2) '(3 4) '(1 2))
+    @result{} nil
+@end group
+@group
+(-common-suffix '(1 2 3 4) '(2 3 4) '(3 4))
+    @result{} '(3 4)
 @end group
 @end example
 @end defun
@@ -2047,15 +2067,15 @@ Partition directly after each time @var{pred} is true on an element of @var{list
 
 @example
 @group
-(-partition-after-pred #'oddp '())
+(-partition-after-pred (function oddp) '())
     @result{} '()
 @end group
 @group
-(-partition-after-pred #'oddp '(1))
+(-partition-after-pred (function oddp) '(1))
     @result{} '((1))
 @end group
 @group
-(-partition-after-pred #'oddp '(0 1))
+(-partition-after-pred (function oddp) '(0 1))
     @result{} '((0 1))
 @end group
 @end example
@@ -2067,15 +2087,15 @@ Partition directly before each time @var{pred} is true on an element of @var{lis
 
 @example
 @group
-(-partition-before-pred #'oddp '())
+(-partition-before-pred (function oddp) '())
     @result{} '()
 @end group
 @group
-(-partition-before-pred #'oddp '(1))
+(-partition-before-pred (function oddp) '(1))
     @result{} '((1))
 @end group
 @group
-(-partition-before-pred #'oddp '(0 1))
+(-partition-before-pred (function oddp) '(0 1))
     @result{} '((0) (1))
 @end group
 @end example
@@ -3390,6 +3410,115 @@ and when that result is non-nil, through the next form, etc.
 @end example
 @end defmac
 
+@anchor{-<}
+@defmac -< (x collector &rest forms)
+Thread the expr through each form in parallel. Insert @var{x} as the
+second item in each form, then call @var{collector} on the result.
+@var{collector} must be able to take as many arguments as the length of
+@var{forms}. @var{x} will be evaluated only once.
+
+@var{collector} may have short-circuiting behavior like the @code{and}
+special form.
+
+
+@example
+@group
+(-< '(2 3 5) list)
+    @result{} '((2 3 5))
+@end group
+@group
+(-< '(2 3 5) list (append '(8 13)))
+    @result{} '((2 3 5 8 13))
+@end group
+@group
+(-< '(2 3 5) list (append '(8 13)) (-slice 1 -1))
+    @result{} '((2 3 5 8 13) (3))
+@end group
+@end example
+@end defmac
+
+@anchor{-<<}
+@defmac -<< (x collector &rest forms)
+Thread the expr through each form in parallel. Insert @var{x} as the
+last item in each form, then call @var{collector} on the result.
+@var{collector} must be able to take as many arguments as the length of
+@var{forms}. @var{x} will be evaluated only once.
+
+@var{collector} may have short-circuiting behavior like the @code{and}
+special form.
+
+
+@example
+@group
+(-<< '(1 2 3) list (-map 'square))
+    @result{} '((1 4 9))
+@end group
+@group
+(-<< '(1 2 3) list (-map 'square) (-remove 'even?))
+    @result{} '((1 4 9) (1 3))
+@end group
+@group
+(-<< '(1 2 3) list (-map 'square) (-reduce '+))
+    @result{} '((1 4 9) 6)
+@end group
+@end example
+@end defmac
+
+@anchor{--<}
+@defmac --< (x collector &rest forms)
+Thred the expr through each form in parallel.
+
+Insert @var{x} at the position signified by the symbol @code{it} in the each
+form, then call @var{collector} on the result. @var{collector} must be able
+to take as many arguments as the length of @var{forms}. @var{x} will be
+evaluated only once.
+
+@var{collector} may have short-circuiting behavior like the @code{and}
+special form. 
+
+@example
+@group
+(--< "def" list (concat "abc" it "ghi"))
+    @result{} '("abcdefghi")
+@end group
+@group
+(--< "def" list (concat "abc" it "ghi") (upcase it))
+    @result{} '("abcdefghi" "DEF")
+@end group
+@group
+(--< "def" list (concat "abc" it "ghi") upcase)
+    @result{} '("abcdefghi" "DEF")
+@end group
+@end example
+@end defmac
+
+@anchor{-as-<}
+@defmac -as-< (x collector variable &rest forms)
+Thread the expr through each form in parallel. Bind @var{variable}
+to @var{x} in each form, then call @var{collector} on the result.  @var{collector}
+must be able to take as many arguments as the length of @var{forms}. @var{x}
+will be evaluated only once.
+
+@var{collector} may have short-circuiting behavior like the @code{and}
+special form.
+
+
+@example
+@group
+(-as-< 3 list my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) (list my-var)))
+    @result{} '(4 (3) (6))
+@end group
+@group
+(-as-< 3 list my-var 1+)
+    @result{} '(4)
+@end group
+@group
+(-as-< 3 list my-var)
+    @result{} '(3)
+@end group
+@end example
+@end defmac
+
 
 @node Binding
 @section Binding
@@ -4045,7 +4174,7 @@ expects a list with n items as arguments
     @result{} '(3 6 15)
 @end group
 @group
-(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5)))
+(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5)))
     @result{} '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
 @end group
 @group

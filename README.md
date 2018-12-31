@@ -147,6 +147,7 @@ Functions reducing lists into single value.
 * [-inits](#-inits-list) `(list)`
 * [-tails](#-tails-list) `(list)`
 * [-common-prefix](#-common-prefix-rest-lists) `(&rest lists)`
+* [-common-suffix](#-common-suffix-rest-lists) `(&rest lists)`
 * [-min](#-min-list) `(list)`
 * [-min-by](#-min-by-comparator-list) `(comparator list)`
 * [-max](#-max-list) `(list)`
@@ -275,6 +276,10 @@ Functions pretending lists are trees.
 * [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some-->](#-some---x-optional-form-rest-more) `(x &optional form &rest more)`
+* [-<](#--x-collector-rest-forms) `(x collector &rest forms)`
+* [-<<](#--x-collector-rest-forms) `(x collector &rest forms)`
+* [--<](#---x-collector-rest-forms) `(x collector &rest forms)`
+* [-as-<](#-as--x-collector-variable-rest-forms) `(x collector variable &rest forms)`
 
 ### Binding
 
@@ -1052,8 +1057,18 @@ Return the longest common prefix of `lists`.
 
 ```el
 (-common-prefix '(1)) ;; => '(1)
-(-common-prefix '(1 2) nil '(1 2)) ;; => nil
+(-common-prefix '(1 2) '(3 4) '(1 2)) ;; => nil
 (-common-prefix '(1 2) '(1 2 3) '(1 2 3 4)) ;; => '(1 2)
+```
+
+#### -common-suffix `(&rest lists)`
+
+Return the longest common suffix of `lists`.
+
+```el
+(-common-suffix '(1)) ;; => '(1)
+(-common-suffix '(1 2) '(3 4) '(1 2)) ;; => nil
+(-common-suffix '(1 2 3 4) '(2 3 4) '(3 4)) ;; => '(3 4)
 ```
 
 #### -min `(list)`
@@ -1405,9 +1420,9 @@ other value (the body).
 Partition directly after each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-after-pred #'oddp '()) ;; => '()
-(-partition-after-pred #'oddp '(1)) ;; => '((1))
-(-partition-after-pred #'oddp '(0 1)) ;; => '((0 1))
+(-partition-after-pred (function oddp) '()) ;; => '()
+(-partition-after-pred (function oddp) '(1)) ;; => '((1))
+(-partition-after-pred (function oddp) '(0 1)) ;; => '((0 1))
 ```
 
 #### -partition-before-pred `(pred list)`
@@ -1415,9 +1430,9 @@ Partition directly after each time `pred` is true on an element of `list`.
 Partition directly before each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-before-pred #'oddp '()) ;; => '()
-(-partition-before-pred #'oddp '(1)) ;; => '((1))
-(-partition-before-pred #'oddp '(0 1)) ;; => '((0) (1))
+(-partition-before-pred (function oddp) '()) ;; => '()
+(-partition-before-pred (function oddp) '(1)) ;; => '((1))
+(-partition-before-pred (function oddp) '(0 1)) ;; => '((0) (1))
 ```
 
 #### -partition-before-item `(item list)`
@@ -2188,6 +2203,75 @@ and when that result is non-nil, through the next form, etc.
 (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) ;; => nil
 ```
 
+#### -< `(x collector &rest forms)`
+
+Thread the expr through each form in parallel. Insert `x` as the
+second item in each form, then call `collector` on the result.
+`collector` must be able to take as many arguments as the length of
+`forms`. `x` will be evaluated only once.
+
+`collector` may have short-circuiting behavior like the `and`
+special form.
+
+
+```el
+(-< '(2 3 5) list) ;; => '((2 3 5))
+(-< '(2 3 5) list (append '(8 13))) ;; => '((2 3 5 8 13))
+(-< '(2 3 5) list (append '(8 13)) (-slice 1 -1)) ;; => '((2 3 5 8 13) (3))
+```
+
+#### -<< `(x collector &rest forms)`
+
+Thread the expr through each form in parallel. Insert `x` as the
+last item in each form, then call `collector` on the result.
+`collector` must be able to take as many arguments as the length of
+`forms`. `x` will be evaluated only once.
+
+`collector` may have short-circuiting behavior like the `and`
+special form.
+
+
+```el
+(-<< '(1 2 3) list (-map 'square)) ;; => '((1 4 9))
+(-<< '(1 2 3) list (-map 'square) (-remove 'even?)) ;; => '((1 4 9) (1 3))
+(-<< '(1 2 3) list (-map 'square) (-reduce '+)) ;; => '((1 4 9) 6)
+```
+
+#### --< `(x collector &rest forms)`
+
+Thred the expr through each form in parallel.
+
+Insert `x` at the position signified by the symbol `it` in the each
+form, then call `collector` on the result. `collector` must be able
+to take as many arguments as the length of `forms`. `x` will be
+evaluated only once.
+
+`collector` may have short-circuiting behavior like the `and`
+special form. 
+
+```el
+(--< "def" list (concat "abc" it "ghi")) ;; => '("abcdefghi")
+(--< "def" list (concat "abc" it "ghi") (upcase it)) ;; => '("abcdefghi" "DEF")
+(--< "def" list (concat "abc" it "ghi") upcase) ;; => '("abcdefghi" "DEF")
+```
+
+#### -as-< `(x collector variable &rest forms)`
+
+Thread the expr through each form in parallel. Bind `variable`
+to `x` in each form, then call `collector` on the result.  `collector`
+must be able to take as many arguments as the length of `forms`. `x`
+will be evaluated only once.
+
+`collector` may have short-circuiting behavior like the `and`
+special form.
+
+
+```el
+(-as-< 3 list my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) (list my-var))) ;; => '(4 (3) (6))
+(-as-< 3 list my-var 1+) ;; => '(4)
+(-as-< 3 list my-var) ;; => '(3)
+```
+
 
 ## Binding
 
@@ -2658,7 +2742,7 @@ expects a list with n items as arguments
 
 ```el
 (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => '(3 6 15)
-(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
 (funcall (-applify '<) '(3 6)) ;; => t
 ```
 

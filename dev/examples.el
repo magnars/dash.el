@@ -979,7 +979,53 @@ new list."
     (-some--> "def" (concat "abc" it "ghi")) => "abcdefghi"
     (-some--> nil (concat "abc" it "ghi")) => nil
     (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) => nil
-    (-some--> '(2 4 6) (-filter 'even? it) (append it it) (-map 'square it)) => '(4 16 36 4 16 36)))
+    (-some--> '(2 4 6) (-filter 'even? it) (append it it) (-map 'square it)) => '(4 16 36 4 16 36))
+
+  (defexamples -<
+    (-< '(2 3 5) list) => '((2 3 5))
+    (-< '(2 3 5) list (append '(8 13))) => '((2 3 5 8 13))
+    (-< '(2 3 5) list (append '(8 13)) (-slice 1 -1)) => '((2 3 5 8 13) (3))
+    (-< 5 list square) => '(25)
+    (-< 5 list (+ 3) square) => '(8 25)
+    (-< (+ 1 2) list (list 2) (list 3) (list 4)) => '((3 2) (3 3) (3 4))
+    (-< (+ 1 2) list (-> (* 2) list) (list 4)) => '((6) (3 4))
+    (-< 8 and integer-or-marker-p even?) => t)
+
+  (defexamples -<<
+    (-<< '(1 2 3) list (-map 'square)) => '((1 4 9))
+    (-<< '(1 2 3) list (-map 'square) (-remove 'even?)) => '((1 4 9) (1 3))
+    (-<< '(1 2 3) list (-map 'square) (-reduce '+)) => '((1 4 9) 6)
+    (-<< 5 list (- 8)) => '(3)
+    (-<< 5 list (- 3) square) => '(-2 25)
+    (-<< (+ 1 2) list (list 2 1) (list 5 7) (list 9 4)) => '((2 1 3) (5 7 3) (9 4 3)))
+
+  (defexamples --<
+    (--< "def" list (concat "abc" it "ghi")) => '("abcdefghi")
+    (--< "def" list (concat "abc" it "ghi") (upcase it)) => '("abcdefghi" "DEF")
+    (--< "def" list (concat "abc" it "ghi") upcase) => '("abcdefghi" "DEF")
+    (--< "def" list upcase) => '("DEF")
+    (--< 3 list (car (list it))) => '(3)
+
+    (--< '(1 2 3 4) list (--map (1+ it) it)) => '((2 3 4 5))
+    (--map (--< it list (1+ it)) '(1 2 3 4)) => '((2) (3) (4) (5))
+
+    (--< '(1 2 3 4) list (--filter (equal 0 (mod it 2)) it)) => '((2 4))
+
+    (--< '(0 1 2 3) list (--annotate (< 1 it) it)) => '(((nil . 0)
+                                                         (nil . 1)
+                                                         (t . 2)
+                                                         (t . 3)))
+
+    (--< (+ 1 2) list (list it 2 1) (list 5 it 7) (list 9 4 it)) => '((3 2 1) (5 3 7) (9 4 3)))
+
+   (defexamples -as-<
+    (-as-< 3 list my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) (list my-var))) => '(4 (3) (6))
+    (-as-< 3 list my-var 1+) => '(4)
+    (-as-< 3 list my-var) => '(3)
+    (-as-< "def" list string (concat "abc" string "ghi")) => '("abcdefghi")
+    (-as-< "def" list string (concat "abc" string "ghi") upcase) => '("abcdefghi" "DEF")
+    (-as-< "def" list string (concat "abc" string "ghi") (upcase string)) => '("abcdefghi" "DEF")
+    (-as-< (+ 1 2) list my-var (list my-var 2 1) (list 5 my-var 7) (list 9 4 my-var)) => '((3 2 1) (5 3 7) (9 4 3))))
 
 (def-example-group "Binding"
   "Convenient versions of `let` and `let*` constructs combined with flow control."

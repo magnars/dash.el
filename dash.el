@@ -86,6 +86,14 @@ the target form."
                  forms)
        ,retval)))
 
+(defmacro --doto (eval-initial-value &rest forms)
+  "Anaphoric form of `-doto'.
+Note: `it' is not required in each form."
+  (declare (indent 1))
+  `(let ((it ,eval-initial-value))
+     ,@forms
+     it))
+
 (defun -each (list fn)
   "Call FN with every item in LIST. Return nil, used for side-effects only."
   (--each list (funcall fn it)))

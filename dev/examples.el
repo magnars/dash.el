@@ -1259,7 +1259,12 @@ new list."
 
   (defexamples -doto
     (-doto '(1 2 3) (!cdr) (!cdr)) => '(3)
-    (-doto '(1 . 2) (setcar 3) (setcdr 4)) => '(3 . 4)))
+    (-doto '(1 . 2) (setcar 3) (setcdr 4)) => '(3 . 4))
+
+  (defexamples --doto
+    (gethash "key"
+             (--doto (make-hash-table :test 'equal)
+               (puthash "key" "value" it))) => "value"))
 
 (def-example-group "Destructive operations" nil
   (defexamples !cons

@@ -2406,7 +2406,7 @@ if the first element should sort before the second."
 
 (defun -shuffle (list)
   "Shuffle the LIST, return a disordered list.
-Shuffling the list by using Fisher-Yates shuffle algoritm.
+Shuffling the list by using Fisher-Yates shuffle algorithm.
 See https://en.wikipedia.org/wiki/Fisher-Yates_shuffle for more details."
   (let ((source (copy-sequence list))
         (random-nums (->> (length list)

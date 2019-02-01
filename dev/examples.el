@@ -834,6 +834,18 @@ new list."
     (--sort (< it other) '(3 1 2)) => '(1 2 3)
     (let ((l '(3 1 2))) (-sort '> l) l) => '(3 1 2))
 
+  (defexamples -shuffle
+    (progn (random "dash1")
+           (-shuffle '(1 2 3 4 5 6 7 8 9))) => '(2 7 9 8 5 1 6 3 4)
+    (progn (random "dash2")
+           (-shuffle '(1 2 3 4 5 6 7 8 9))) => '(5 8 3 4 1 2 6 9 7)
+    (progn (random "dash3")
+           (-shuffle (list 1 2 3 4 5 6 7))) => '(6 1 5 3 4 2 7)
+    (let ((l '(1 2 3 4 5 6 7)))
+      (random "dash4")
+      (list (-shuffle l) l)) => '((6 2 1 5 7 4 3) (1 2 3 4 5 6 7))
+    (-shuffle nil) => nil)
+
   (defexamples -list
     (-list 1) => '(1)
     (-list 1 2 3) => '(1 2 3)

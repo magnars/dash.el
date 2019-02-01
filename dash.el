@@ -2404,6 +2404,22 @@ if the first element should sort before the second."
   (declare (debug (form form)))
   `(-sort (lambda (it other) ,form) ,list))
 
+(defun -shuffle (list)
+  "Shuffle the LIST, return a disordered list.
+Shuffling the list by using Fisher-Yates shuffle algoritm.
+See https://en.wikipedia.org/wiki/Fisher-Yates_shuffle for more details."
+  (let ((source (copy-sequence list))
+        (random-nums (->> (length list)
+                          (number-sequence 1)
+                          (-map #'random)
+                          nreverse))
+        result)
+    (--each random-nums
+      (-let [(front (target . rest)) (-split-at it source)]
+        (push target result)
+        (setq source (nconc front rest))))
+    result))
+
 (defun -list (&rest args)
   "Return a list with ARGS.
 

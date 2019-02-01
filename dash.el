@@ -2415,7 +2415,9 @@ See https://en.wikipedia.org/wiki/Fisher-Yates_shuffle for more details."
                           nreverse))
         result)
     (--each random-nums
-      (-let [(front (target . rest)) (-split-at it source)]
+      (let* ((front (-take it list))
+             (rest (-drop it list))
+             (target (pop rest)))
         (push target result)
         (setq source (nconc front rest))))
     result))

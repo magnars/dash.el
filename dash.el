@@ -2540,10 +2540,14 @@ the new seed."
 
 (defun -cons-pair? (con)
   "Return non-nil if CON is true cons pair.
-That is (A . B) where B is not a list."
+That is (A . B) where B is not a list.
+
+Alias: `-cons-pair-p'"
   (declare (pure t) (side-effect-free t))
   (and (listp con)
        (not (listp (cdr con)))))
+
+(defalias '-cons-pair-p '-cons-pair?)
 
 (defun -cons-to-list (con)
   "Convert a cons pair to a list with `car' and `cdr' of the pair respectively."
@@ -2949,6 +2953,7 @@ structure such as plist or alist."
                              "-unfold"
                              "--unfold"
                              "-cons-pair?"
+                             "-cons-pair-p"
                              "-cons-to-list"
                              "-value-to-list"
                              "-tree-mapreduce-from"

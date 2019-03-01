@@ -1562,6 +1562,69 @@ and when that result is non-nil, through the next form, etc."
                    (--> ,result ,form))
                  ,@more))))
 
+(defmacro dash--thread-each-and-collect (op x collector &optional forms)
+  "Private: Used by -< and -<<.
+
+Returned expr: (COLLECTOR (OP X form1) (OP X form2) ...).
+If no forms were passed then returned expr would be: (COLLECTOR (OP X nil)).
+X will be evaluated only once.
+"
+  (let ((value (make-symbol "value")))
+    `(let ((,value ,x))
+       (,collector ,@(--map (list op value it)
+                            (or forms '(nil)))))))
+
+(defmacro -< (x collector &rest forms)
+  "Thread the expr through each form in parallel. Insert X as the
+second item in each form, then call COLLECTOR on the result.
+COLLECTOR must be able to take as many arguments as the length of
+FORMS. X will be evaluated only once.
+
+COLLECTOR may have short-circuiting behavior like the `and'
+special form.
+"
+  `(dash--thread-each-and-collect -> ,x ,collector ,forms))
+
+(defmacro -<< (x collector &rest forms)
+  "Thread the expr through each form in parallel. Insert X as the
+last item in each form, then call COLLECTOR on the result.
+COLLECTOR must be able to take as many arguments as the length of
+FORMS. X will be evaluated only once.
+
+COLLECTOR may have short-circuiting behavior like the `and'
+special form.
+"
+  `(dash--thread-each-and-collect ->> ,x ,collector ,forms))
+
+(defmacro -as-< (x collector variable &rest forms)
+  "Thread the expr through each form in parallel. Bind VARIABLE
+to X in each form, then call COLLECTOR on the result.  COLLECTOR
+must be able to take as many arguments as the length of FORMS. X
+will be evaluated only once.
+
+COLLECTOR may have short-circuiting behavior like the `and'
+special form.
+"
+  (cond
+    ((null forms)
+     `(,collector (-as-> ,x ,variable)))
+    (:else (let ((value (make-symbol "value")))
+             `(let ((,value ,x))
+                (,collector ,@(--map (list '-as-> value variable it)
+                                     (or forms '(nil)))))))))
+
+(defmacro --< (x collector &rest forms)
+    "Thread the expr through each form in parallel.
+
+Insert X at the position signified by the symbol `it' in the each
+form, then call COLLECTOR on the result. COLLECTOR must be able
+to take as many arguments as the length of FORMS. X will be
+evaluated only once.
+
+COLLECTOR may have short-circuiting behavior like the `and'
+special form. "
+  `(-as-< ,x ,collector it ,@forms))
+
 (defun -grade-up (comparator list)
   "Grade elements of LIST using COMPARATOR relation, yielding a
 permutation vector such that applying this permutation to LIST

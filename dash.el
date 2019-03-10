@@ -921,9 +921,11 @@ See also: `-drop'"
   "Rotate LIST N places to the right.  With N negative, rotate to the left.
 The time complexity is O(n)."
   (declare (pure t) (side-effect-free t))
-  (if (> n 0)
-      (append (last list n) (butlast list n))
-    (append (-drop (- n) list) (-take (- n) list))))
+  (when list
+    (let* ((len (length list))
+           (n-mod-len (mod n len))
+           (new-tail-len (- len n-mod-len)))
+      (append (-drop new-tail-len list) (-take new-tail-len list)))))
 
 (defun -insert-at (n x list)
   "Return a list with X inserted into LIST at position N.

@@ -694,7 +694,9 @@ new list."
 
   (defexamples -rotate
     (-rotate 3 '(1 2 3 4 5 6 7)) => '(5 6 7 1 2 3 4)
-    (-rotate -3 '(1 2 3 4 5 6 7)) => '(4 5 6 7 1 2 3))
+    (-rotate -3 '(1 2 3 4 5 6 7)) => '(4 5 6 7 1 2 3)
+    (-rotate 16 '(1 2 3 4 5 6 7)) => '(6 7 1 2 3 4 5)
+    (-rotate -16 '(1 2 3 4 5 6 7)) => '(3 4 5 6 7 1 2))
 
   (defexamples -repeat
     (-repeat 3 :a) => '(:a :a :a)

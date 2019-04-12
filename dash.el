@@ -2099,13 +2099,12 @@ because we need to support improper list binding."
                    body))
            (indent 1))
   (if (vectorp varlist)
-      `(let* ,(dash--match (aref varlist 0) (aref varlist 1))
-         ,@body)
-    (let* ((varlist (dash--normalize-let-varlist varlist))
-           (inputs (--map-indexed (list (make-symbol (format "input%d" it-index)) (cadr it)) varlist))
-           (new-varlist (--map (list (caar it) (cadr it)) (-zip varlist inputs))))
-      `(let ,inputs
-         (-let* ,new-varlist ,@body)))))
+      (setq varlist `((,(aref varlist 0) ,(aref varlist 1)))))
+  (let* ((varlist (dash--normalize-let-varlist varlist))
+         (inputs (--map-indexed (list (make-symbol (format "input%d" it-index)) (cadr it)) varlist))
+         (new-varlist (--map (list (caar it) (cadr it)) (-zip varlist inputs))))
+    `(let ,inputs
+       (-let* ,new-varlist ,@body))))
 
 (defmacro -lambda (match-form &rest body)
   "Return a lambda which destructures its input as MATCH-FORM and executes BODY.

@@ -1828,12 +1828,12 @@ kv can be any key-value store, such as plist, alist or hash-table."
   "Generate extracting KEY from SOURCE for &alist destructuring."
   `(cdr (assoc ,key ,source)))
 
-(require 'macroexp)
-
 (defun dash-expand:&hash? (key source)
   "Generate extracting KEY from SOURCE for &hash? destructuring.
 Similar to &hash but check whether the map is not nil."
-  (macroexp-let2 nil source source `(when ,source (gethash ,key ,source))))
+  (let ((src (make-symbol "src")))
+    `(let ((,src ,source))
+       (when ,src (gethash ,key ,src)))))
 
 (defalias 'dash-expand:&keys 'dash-expand:&plist)
 

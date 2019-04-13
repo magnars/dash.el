@@ -1152,10 +1152,10 @@ new list."
     (-let (((&hash :foo (&hash? :bar)) (make-hash-table)))) => nil
     ;; Ensure `hash?' expander evaluates its arg only once
     (let* ((ht (make-hash-table :test #'equal))
-           (fn (lambda (ht) (cl-incf (gethash 'a ht)) ht)))
-      (puthash 'a 3 ht)
+           (fn (lambda (ht) (push 3 (gethash 'a ht)) ht)))
+      (puthash 'a nil ht)
       (-let (((&hash? 'a) (funcall fn ht)))
-        a)) => 4
+        a)) => '(3)
     (-let (((_ &keys :foo :bar) (list 'ignored :foo 1 :bar 2))) (list foo bar)) => '(1 2)
     ;;; go over all the variations of match-form derivation
     (-let (((&plist :foo foo :bar) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)

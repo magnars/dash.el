@@ -1831,7 +1831,9 @@ kv can be any key-value store, such as plist, alist or hash-table."
 (defun dash-expand:&hash? (key source)
   "Generate extracting KEY from SOURCE for &hash? destructuring.
 Similar to &hash but check whether the map is not nil."
-  `(when ,source (gethash ,key ,source)))
+  (let ((src (make-symbol "src")))
+    `(let ((,src ,source))
+       (when ,src (gethash ,key ,src)))))
 
 (defalias 'dash-expand:&keys 'dash-expand:&plist)
 

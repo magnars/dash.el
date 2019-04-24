@@ -98,6 +98,13 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 2.15 to 2.16
+
+- Added `--doto`, anaphoric version of `-doto` (#282)
+- Aliased `-cons-pair-p` to `-cons-pair?`(#288)
+- Generalized `-rotate` for |n| greater than the length of the list (@leungbk, #290)
+- Added a mechanism to extend destructuring with custom matchers (@yyoncho, #277)
+
 ### From 2.14 to 2.15
 
 This release brings new destructuring features, some new control flow

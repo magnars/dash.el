@@ -1343,6 +1343,16 @@ Return a list of ((-filter `pred` `list`) (-remove `pred` `list`)), in one pass 
 (-separate 'cdr '((1 2) (1) (1 2 3) (4))) ;; => '(((1 2) (1 2 3)) ((1) (4)))
 ```
 
+### -separate-multi `(preds list)`
+
+Return a list of ((-filter PRED1 LIST) (-filter PRED2 LIST) ... REST), in one pass through the list.
+
+```el
+(-separate-multi '(stringp floatp) '(:hi "ho" "ho" :he 2.4)) ;; => '(("ho" "ho") (2.4) (:hi :he))
+(--separate-multi ((stringp it) (floatp it)) '(:hi "ho" "ho" :he 2.4)) ;; => '(("ho" "ho") (2.4) (:hi :he))
+(-separate-multi '(stringp floatp keywordp) '(:hi "ho" "ho" :he 2.4)) ;; => (("ho" "ho") (2.4) (:hi :he) nil)
+```
+
 #### -partition `(n list)`
 
 Return a new list with the items in `list` grouped into `n-`sized sublists.

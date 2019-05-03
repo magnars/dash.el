@@ -1048,6 +1048,24 @@ This function can be thought of as a generalization of
   "Return a list of ((-filter PRED LIST) (-remove PRED LIST)), in one pass through the list."
   (--separate (funcall pred it) list))
 
+(defun -separate-multi (preds list)
+  "Return a list of ((-filter PRED1 LIST) (-filter PRED2 LIST) ... REST).
+
+PREDS is a list of functions.  REST is a list of elements that are unmatched by
+PREDS.
+
+This is done in one pass through the list."
+  (setq preds (mapcar #'list (-snoc preds (lambda (_) t))))
+  (dolist (elem list)
+    (--first (when (funcall (car it) elem)
+               (push elem (cdr it)))
+             preds))
+  (--map (nreverse (cdr it)) preds))
+
+(defmacro --separate-multi (forms list)
+  "Anaphoric form of `-separate-multi.'"
+  `(-separate-multi '(,@(--map `(lambda (it) ,it) forms)) ,list))
+
 (defun ---partition-all-in-steps-reversed (n step list)
   "Private: Used by -partition-all-in-steps and -partition-in-steps."
   (when (< step 1)

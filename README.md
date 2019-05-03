@@ -183,6 +183,7 @@ Functions partitioning the input list into a list of lists.
 * [-split-on](#-split-on-item-list) `(item list)`
 * [-split-when](#-split-when-fn-list) `(fn list)`
 * [-separate](#-separate-pred-list) `(pred list)`
+* [-separate-multi](#-separate-multi-preds-list) `(pred list)`
 * [-partition](#-partition-n-list) `(n list)`
 * [-partition-all](#-partition-all-n-list) `(n list)`
 * [-partition-in-steps](#-partition-in-steps-n-step-list) `(n step list)`
@@ -1341,6 +1342,16 @@ Return a list of ((-filter `pred` `list`) (-remove `pred` `list`)), in one pass 
 (-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7)) ;; => '((2 4 6) (1 3 5 7))
 (--separate (< it 5) '(3 7 5 9 3 2 1 4 6)) ;; => '((3 3 2 1 4) (7 5 9 6))
 (-separate 'cdr '((1 2) (1) (1 2 3) (4))) ;; => '(((1 2) (1 2 3)) ((1) (4)))
+```
+
+### -separate-multi `(preds list)`
+
+Return a list of ((-filter PRED1 LIST) (-filter PRED2 LIST) ... REST), in one pass through the list.
+
+```el
+(-separate-multi '(stringp floatp) '(:hi "ho" "ho" :he 2.4)) ;; => '(("ho" "ho") (2.4) (:hi :he))
+(--separate-multi ((stringp it) (floatp it)) '(:hi "ho" "ho" :he 2.4)) ;; => '(("ho" "ho") (2.4) (:hi :he))
+(-separate-multi '(stringp floatp keywordp) '(:hi "ho" "ho" :he 2.4)) ;; => (("ho" "ho") (2.4) (:hi :he) nil)
 ```
 
 #### -partition `(n list)`

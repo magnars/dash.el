@@ -2274,9 +2274,22 @@ The test for equality is done with `equal',
 or with `-compare-fn' if that's non-nil.
 
 Alias: `-uniq'"
-  (let (result)
-    (--each list (unless (-contains? result it) (!cons it result)))
-    (nreverse result)))
+  ;; Implementation note: The speedup gained from hash table lookup
+  ;; starts to outweigh its overhead for lists of length greater than
+  ;; 32.  See discussion in PR #305.
+  (let* ((len (length list))
+         (lut (and (> len 32)
+                   ;; Check that `-compare-fn' is a valid hash-table
+                   ;; lookup function or `nil'.
+                   (memq -compare-fn '(nil equal eq eql))
+                   (make-hash-table :test (or -compare-fn #'equal)
+                                    :size len))))
+    (if lut
+        (--filter (unless (gethash it lut)
+                    (puthash it t lut))
+                  list)
+      (--each list (unless (-contains? lut it) (!cons it lut)))
+      (nreverse lut))))
 
 (defalias '-uniq '-distinct)
 

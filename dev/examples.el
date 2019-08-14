@@ -692,7 +692,19 @@ new list."
 
   (defexamples -distinct
     (-distinct '()) => '()
-    (-distinct '(1 2 2 4)) => '(1 2 4)))
+    (-distinct '(1 2 2 4)) => '(1 2 4)
+    (-distinct '(t t t)) => '(t)
+    (-distinct '(nil nil nil)) => '(nil)
+    (let ((-compare-fn nil))
+      (-distinct '((1) (2) (1) (1)))) => '((1) (2))
+    (let ((-compare-fn #'eq))
+      (-distinct '((1) (2) (1) (1)))) => '((1) (2) (1) (1))
+    (let ((-compare-fn #'eq))
+      (-distinct '(:a :b :a :a))) => '(:a :b)
+    (let ((-compare-fn #'eql))
+      (-distinct '(2.1 3.1 2.1 2.1))) => '(2.1 3.1)
+    (let ((-compare-fn #'string=))
+      (-distinct '(dash "dash" "ash" "cash" "bash"))) => '(dash "ash" "cash" "bash")))
 
 (def-example-group "Other list operations"
   "Other list functions not fit to be classified elsewhere."

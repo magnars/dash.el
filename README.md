@@ -38,12 +38,20 @@ To get function combinators:
   cons-cell return value, use `-zip-pair` instead.  During the 2.x
   release cycle the new API is available as `-zip-lists`.
 
-## Syntax highlighting of dash functions
+## Fontification of special variables
 
-Font lock of dash functions in emacs lisp buffers is now optional.
-Include this in your emacs settings to get syntax highlighting:
+Font lock of special Dash variables (`it`, `acc`, etc.) in Emacs Lisp
+buffers can optionally be enabled with the autoloaded minor mode
+`dash-fontify-mode`.  In older Emacs versions which do not dynamically
+detect macros, the minor mode also fontifies Dash macro calls.
 
-    (eval-after-load 'dash '(dash-enable-font-lock))
+To automatically enable the minor mode in all Emacs Lisp buffers, just
+call its autoloaded global counterpart `global-dash-fontify-mode`,
+either interactively or from your `user-init-file`:
+
+```el
+(global-dash-fontify-mode)
+```
 
 ## Functions
 

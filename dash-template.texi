@@ -62,7 +62,7 @@ along with this program.  If not, see @uref{http://www.gnu.org/licenses/}.
 Installation
 
 * Using in a package::
-* Syntax highlighting of dash functions::
+* Fontification of special variables::
 
 Functions
 
@@ -99,7 +99,7 @@ Alternatively, you can just dump @verb{~dash.el~} or
 
 @menu
 * Using in a package::
-* Syntax highlighting of dash functions::
+* Fontification of special variables::
 @end menu
 
 @node Using in a package
@@ -117,14 +117,22 @@ Add this to the big comment block at the top:
 ;; Package-Requires: ((dash "2.12.1") (dash-functional "1.2.0") (emacs "24"))
 @end lisp
 
-@node Syntax highlighting of dash functions
-@section Syntax highlighting of dash functions
+@node Fontification of special variables
+@section Fontification of special variables
 
-Font lock of dash functions in emacs lisp buffers is now optional.
-Include this in your emacs settings to get syntax highlighting:
+Font lock of special Dash variables (@code{it}, @code{acc}, etc.@:) in
+Emacs Lisp buffers can optionally be enabled with the autoloaded minor
+mode @code{dash-fontify-mode}.  In older Emacs versions which do not
+dynamically detect macros, the minor mode also fontifies Dash macro
+calls.
+
+To automatically enable the minor mode in all Emacs Lisp buffers, just
+call its autoloaded global counterpart
+@code{global-dash-fontify-mode}, either interactively or from your
+@code{user-init-file}:
 
 @lisp
-(eval-after-load 'dash '(dash-enable-font-lock))
+(global-dash-fontify-mode)
 @end lisp
 
 @node Functions

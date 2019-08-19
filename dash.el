@@ -45,18 +45,6 @@
   :group 'lisp
   :prefix "dash-")
 
-(defun dash--enable-fontlock (symbol value)
-  (when value
-    (dash-enable-font-lock))
-  (set-default symbol value))
-
-(defcustom dash-enable-fontlock nil
-  "If non-nil, enable fontification of dash functions, macros and
-special values."
-  :type 'boolean
-  :set 'dash--enable-fontlock
-  :group 'dash)
-
 (defmacro !cons (car cdr)
   "Destructive: Set CDR to the cons of CAR and CDR."
   `(setq ,cdr (cons ,car ,cdr)))
@@ -2776,298 +2764,157 @@ structure such as plist or alist."
   (declare (pure t) (side-effect-free t))
   (-tree-map 'identity list))
 
-(defun dash-enable-font-lock ()
-  "Add syntax highlighting to dash functions, macros and magic values."
-  (eval-after-load 'lisp-mode
-    '(progn
-       (let ((new-keywords '(
-                             "!cons"
-                             "!cdr"
-                             "-each"
-                             "--each"
-                             "-each-indexed"
-                             "--each-indexed"
-                             "-each-while"
-                             "--each-while"
-                             "-doto"
-                             "-dotimes"
-                             "--dotimes"
-                             "-map"
-                             "--map"
-                             "-reduce-from"
-                             "--reduce-from"
-                             "-reduce"
-                             "--reduce"
-                             "-reduce-r-from"
-                             "--reduce-r-from"
-                             "-reduce-r"
-                             "--reduce-r"
-                             "-reductions-from"
-                             "-reductions-r-from"
-                             "-reductions"
-                             "-reductions-r"
-                             "-filter"
-                             "--filter"
-                             "-select"
-                             "--select"
-                             "-remove"
-                             "--remove"
-                             "-reject"
-                             "--reject"
-                             "-remove-first"
-                             "--remove-first"
-                             "-reject-first"
-                             "--reject-first"
-                             "-remove-last"
-                             "--remove-last"
-                             "-reject-last"
-                             "--reject-last"
-                             "-remove-item"
-                             "-non-nil"
-                             "-keep"
-                             "--keep"
-                             "-map-indexed"
-                             "--map-indexed"
-                             "-splice"
-                             "--splice"
-                             "-splice-list"
-                             "--splice-list"
-                             "-map-when"
-                             "--map-when"
-                             "-replace-where"
-                             "--replace-where"
-                             "-map-first"
-                             "--map-first"
-                             "-map-last"
-                             "--map-last"
-                             "-replace"
-                             "-replace-first"
-                             "-replace-last"
-                             "-flatten"
-                             "-flatten-n"
-                             "-concat"
-                             "-mapcat"
-                             "--mapcat"
-                             "-copy"
-                             "-cons*"
-                             "-snoc"
-                             "-first"
-                             "--first"
-                             "-find"
-                             "--find"
-                             "-some"
-                             "--some"
-                             "-any"
-                             "--any"
-                             "-last"
-                             "--last"
-                             "-first-item"
-                             "-second-item"
-                             "-third-item"
-                             "-fourth-item"
-                             "-fifth-item"
-                             "-last-item"
-                             "-butlast"
-                             "-count"
-                             "--count"
-                             "-any?"
-                             "--any?"
-                             "-some?"
-                             "--some?"
-                             "-any-p"
-                             "--any-p"
-                             "-some-p"
-                             "--some-p"
-                             "-some->"
-                             "-some->>"
-                             "-some-->"
-                             "-all?"
-                             "-all-p"
-                             "--all?"
-                             "--all-p"
-                             "-every?"
-                             "--every?"
-                             "-all-p"
-                             "--all-p"
-                             "-every-p"
-                             "--every-p"
-                             "-none?"
-                             "--none?"
-                             "-none-p"
-                             "--none-p"
-                             "-only-some?"
-                             "--only-some?"
-                             "-only-some-p"
-                             "--only-some-p"
-                             "-slice"
-                             "-take"
-                             "-drop"
-                             "-drop-last"
-                             "-take-last"
-                             "-take-while"
-                             "--take-while"
-                             "-drop-while"
-                             "--drop-while"
-                             "-split-at"
-                             "-rotate"
-                             "-insert-at"
-                             "-replace-at"
-                             "-update-at"
-                             "--update-at"
-                             "-remove-at"
-                             "-remove-at-indices"
-                             "-split-with"
-                             "--split-with"
-                             "-split-on"
-                             "-split-when"
-                             "--split-when"
-                             "-separate"
-                             "--separate"
-                             "-partition-all-in-steps"
-                             "-partition-in-steps"
-                             "-partition-all"
-                             "-partition"
-                             "-partition-after-item"
-                             "-partition-after-pred"
-                             "-partition-before-item"
-                             "-partition-before-pred"
-                             "-partition-by"
-                             "--partition-by"
-                             "-partition-by-header"
-                             "--partition-by-header"
-                             "-group-by"
-                             "--group-by"
-                             "-interpose"
-                             "-interleave"
-                             "-unzip"
-                             "-zip-with"
-                             "--zip-with"
-                             "-zip"
-                             "-zip-fill"
-                             "-zip-lists"
-                             "-zip-pair"
-                             "-cycle"
-                             "-pad"
-                             "-annotate"
-                             "--annotate"
-                             "-table"
-                             "-table-flat"
-                             "-partial"
-                             "-elem-index"
-                             "-elem-indices"
-                             "-find-indices"
-                             "--find-indices"
-                             "-find-index"
-                             "--find-index"
-                             "-find-last-index"
-                             "--find-last-index"
-                             "-select-by-indices"
-                             "-select-columns"
-                             "-select-column"
-                             "-grade-up"
-                             "-grade-down"
-                             "->"
-                             "->>"
-                             "-->"
-                             "-as->"
-                             "-when-let"
-                             "-when-let*"
-                             "--when-let"
-                             "-if-let"
-                             "-if-let*"
-                             "--if-let"
-                             "-let*"
-                             "-let"
-                             "-lambda"
-                             "-distinct"
-                             "-uniq"
-                             "-union"
-                             "-intersection"
-                             "-difference"
-                             "-powerset"
-                             "-permutations"
-                             "-inits"
-                             "-tails"
-                             "-common-prefix"
-                             "-common-suffix"
-                             "-contains?"
-                             "-contains-p"
-                             "-same-items?"
-                             "-same-items-p"
-                             "-is-prefix-p"
-                             "-is-prefix?"
-                             "-is-suffix-p"
-                             "-is-suffix?"
-                             "-is-infix-p"
-                             "-is-infix?"
-                             "-sort"
-                             "--sort"
-                             "-list"
-                             "-repeat"
-                             "-sum"
-                             "-running-sum"
-                             "-product"
-                             "-running-product"
-                             "-max"
-                             "-min"
-                             "-max-by"
-                             "--max-by"
-                             "-min-by"
-                             "--min-by"
-                             "-iterate"
-                             "--iterate"
-                             "-fix"
-                             "--fix"
-                             "-unfold"
-                             "--unfold"
-                             "-cons-pair?"
-                             "-cons-pair-p"
-                             "-cons-to-list"
-                             "-value-to-list"
-                             "-tree-mapreduce-from"
-                             "--tree-mapreduce-from"
-                             "-tree-mapreduce"
-                             "--tree-mapreduce"
-                             "-tree-map"
-                             "--tree-map"
-                             "-tree-reduce-from"
-                             "--tree-reduce-from"
-                             "-tree-reduce"
-                             "--tree-reduce"
-                             "-tree-seq"
-                             "--tree-seq"
-                             "-tree-map-nodes"
-                             "--tree-map-nodes"
-                             "-clone"
-                             "-rpartial"
-                             "-juxt"
-                             "-applify"
-                             "-on"
-                             "-flip"
-                             "-const"
-                             "-cut"
-                             "-orfn"
-                             "-andfn"
-                             "-iteratefn"
-                             "-fixfn"
-                             "-prodfn"
-                             ))
-             (special-variables '(
-                                  "it"
-                                  "it-index"
-                                  "acc"
-                                  "other"
-                                  )))
-         (font-lock-add-keywords 'emacs-lisp-mode `((,(concat "\\_<" (regexp-opt special-variables 'paren) "\\_>")
-                                                     1 font-lock-variable-name-face)) 'append)
-         (font-lock-add-keywords 'emacs-lisp-mode `((,(concat "(\\s-*" (regexp-opt new-keywords 'paren) "\\_>")
-                                                     1 font-lock-keyword-face)) 'append))
-       (--each (buffer-list)
-         (with-current-buffer it
-           (when (and (eq major-mode 'emacs-lisp-mode)
-                      (boundp 'font-lock-mode)
-                      font-lock-mode)
-             (font-lock-refresh-defaults)))))))
+;;; Font lock
+
+(defvar dash--keywords
+  `(;; TODO: Do not fontify the following automatic variables
+    ;; globally; detect and limit to their local anaphoric scope.
+    (,(concat "\\_<" (regexp-opt '("acc" "it" "it-index" "other")) "\\_>")
+     0 font-lock-variable-name-face)
+    ;; Elisp macro fontification was static prior to Emacs 25.
+    ,@(when (< emacs-major-version 25)
+        (let ((macs '("!cdr"
+                      "!cons"
+                      "-->"
+                      "--all?"
+                      "--annotate"
+                      "--any?"
+                      "--count"
+                      "--dotimes"
+                      "--doto"
+                      "--drop-while"
+                      "--each"
+                      "--each-r"
+                      "--each-r-while"
+                      "--each-while"
+                      "--filter"
+                      "--find-index"
+                      "--find-indices"
+                      "--find-last-index"
+                      "--first"
+                      "--fix"
+                      "--group-by"
+                      "--if-let"
+                      "--iterate"
+                      "--keep"
+                      "--last"
+                      "--map"
+                      "--map-first"
+                      "--map-indexed"
+                      "--map-last"
+                      "--map-when"
+                      "--mapcat"
+                      "--max-by"
+                      "--min-by"
+                      "--none?"
+                      "--only-some?"
+                      "--partition-by"
+                      "--partition-by-header"
+                      "--reduce"
+                      "--reduce-from"
+                      "--reduce-r"
+                      "--reduce-r-from"
+                      "--remove"
+                      "--remove-first"
+                      "--remove-last"
+                      "--separate"
+                      "--some"
+                      "--sort"
+                      "--splice"
+                      "--splice-list"
+                      "--split-when"
+                      "--split-with"
+                      "--take-while"
+                      "--tree-map"
+                      "--tree-map-nodes"
+                      "--tree-mapreduce"
+                      "--tree-mapreduce-from"
+                      "--tree-reduce"
+                      "--tree-reduce-from"
+                      "--tree-seq"
+                      "--unfold"
+                      "--update-at"
+                      "--when-let"
+                      "--zip-with"
+                      "->"
+                      "->>"
+                      "-as->"
+                      "-doto"
+                      "-if-let"
+                      "-if-let*"
+                      "-lambda"
+                      "-let"
+                      "-let*"
+                      "-setq"
+                      "-some-->"
+                      "-some->"
+                      "-some->>"
+                      "-split-on"
+                      "-when-let"
+                      "-when-let*")))
+          `((,(concat "(" (regexp-opt macs 'symbols)) . 1)))))
+  "Font lock keywords for `dash-fontify-mode'.")
+
+(defcustom dash-fontify-mode-lighter nil
+  "Mode line lighter for `dash-fontify-mode'.
+Either a string to display in the mode line when
+`dash-fontify-mode' is on, or nil to display
+nothing (the default)."
+  :package-version '(dash . "2.18.0")
+  :group 'dash
+  :type '(choice (string :tag "Lighter" :value " Dash")
+                 (const :tag "Nothing" nil)))
+
+;;;###autoload
+(define-minor-mode dash-fontify-mode
+  "Toggle fontification of Dash special variables.
+
+Dash-Fontify mode is a buffer-local minor mode intended for Emacs
+Lisp buffers.  Enabling it causes the special variables bound in
+anaphoric Dash macros to be fontified.  These anaphoras include
+`it', `it-index', `acc', and `other'.  In older Emacs versions
+which do not dynamically detect macros, Dash-Fontify mode
+additionally fontifies Dash macro calls.
+
+See also `dash-fontify-mode-lighter' and
+`global-dash-fontify-mode'."
+  :group 'dash :lighter dash-fontify-mode-lighter
+  (if dash-fontify-mode
+      (font-lock-add-keywords nil dash--keywords t)
+    (font-lock-remove-keywords nil dash--keywords))
+  (cond ((fboundp 'font-lock-flush) ;; Added in Emacs 25.
+         (font-lock-flush))
+        ;; `font-lock-fontify-buffer' unconditionally enables
+        ;; `font-lock-mode' and is marked `interactive-only' in later
+        ;; Emacs versions which have `font-lock-flush', so we guard
+        ;; and pacify as needed, respectively.
+        (font-lock-mode
+         (with-no-warnings
+           (font-lock-fontify-buffer)))))
+
+(defun dash--turn-on-fontify-mode ()
+  "Enable `dash-fontify-mode' if in an Emacs Lisp buffer."
+  (when (derived-mode-p #'emacs-lisp-mode)
+    (dash-fontify-mode)))
+
+;;;###autoload
+(define-globalized-minor-mode global-dash-fontify-mode
+  dash-fontify-mode dash--turn-on-fontify-mode
+  :group 'dash)
+
+(defcustom dash-enable-fontlock nil
+  "If non-nil, fontify Dash macro calls and special variables."
+  :group 'dash
+  :set (lambda (sym val)
+         (set-default sym val)
+         (global-dash-fontify-mode (if val 1 0)))
+  :type 'boolean)
+
+(make-obsolete-variable
+ 'dash-enable-fontlock #'global-dash-fontify-mode "2.18.0")
+
+(define-obsolete-function-alias
+  'dash-enable-font-lock #'global-dash-fontify-mode "2.17.0")
 
 (provide 'dash)
 ;;; dash.el ends here

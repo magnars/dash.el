@@ -1417,9 +1417,9 @@ other value (the body).
 Partition directly after each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-after-pred #'oddp '()) ;; => '()
-(-partition-after-pred #'oddp '(1)) ;; => '((1))
-(-partition-after-pred #'oddp '(0 1)) ;; => '((0 1))
+(-partition-after-pred #'odd? '()) ;; => '()
+(-partition-after-pred #'odd? '(1)) ;; => '((1))
+(-partition-after-pred #'odd? '(0 1)) ;; => '((0 1))
 ```
 
 #### -partition-before-pred `(pred list)`
@@ -1427,9 +1427,9 @@ Partition directly after each time `pred` is true on an element of `list`.
 Partition directly before each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-before-pred #'oddp '()) ;; => '()
-(-partition-before-pred #'oddp '(1)) ;; => '((1))
-(-partition-before-pred #'oddp '(0 1)) ;; => '((0) (1))
+(-partition-before-pred #'odd? '()) ;; => '()
+(-partition-before-pred #'odd? '(1)) ;; => '((1))
+(-partition-before-pred #'odd? '(0 1)) ;; => '((0) (1))
 ```
 
 #### -partition-before-item `(item list)`

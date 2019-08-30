@@ -1322,22 +1322,22 @@ Functions partitioning the input list into a list of lists.
      Partition directly after each time PRED is true on an element of
      LIST.
 
-          (-partition-after-pred #'oddp '())
+          (-partition-after-pred #'odd? '())
               ⇒ '()
-          (-partition-after-pred #'oddp '(1))
+          (-partition-after-pred #'odd? '(1))
               ⇒ '((1))
-          (-partition-after-pred #'oddp '(0 1))
+          (-partition-after-pred #'odd? '(0 1))
               ⇒ '((0 1))
 
  -- Function: -partition-before-pred (pred list)
      Partition directly before each time PRED is true on an element of
      LIST.
 
-          (-partition-before-pred #'oddp '())
+          (-partition-before-pred #'odd? '())
               ⇒ '()
-          (-partition-before-pred #'oddp '(1))
+          (-partition-before-pred #'odd? '(1))
               ⇒ '((1))
-          (-partition-before-pred #'oddp '(0 1))
+          (-partition-before-pred #'odd? '(0 1))
               ⇒ '((0) (1))
 
  -- Function: -partition-before-item (item list)

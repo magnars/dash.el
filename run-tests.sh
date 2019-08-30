@@ -16,19 +16,13 @@ if [ -z "$ERT_SELECTOR" ] ; then
     ERT_SELECTOR="nil"
 fi
 
-$EMACS -batch \
+$EMACS -Q -batch \
        -l dash.el \
        -l dash-functional.el \
        -l dev/examples-to-tests.el \
        -l dev/examples.el \
-       --eval "(ert-run-tests-batch-and-exit (quote ${ERT_SELECTOR}))"
+       -eval "(ert-run-tests-batch-and-exit (quote ${ERT_SELECTOR}))"
 
-VERSION=`$EMACS -version | head -1 | cut -d" " -f3`
-
-if [[ $VERSION == "24.1.1" ]] || [[ $VERSION == "24.2.1" ]] ; then
-    echo Skipping byte compile check for early Emacs version
-else
-    $EMACS -Q --batch \
-           --eval '(setq byte-compile-error-on-warn t)' \
-           -f batch-byte-compile dash.el
-fi
+$EMACS -Q -batch \
+       -eval '(setq byte-compile-error-on-warn t)' \
+       -f batch-byte-compile dash.el

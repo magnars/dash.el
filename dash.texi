@@ -2066,15 +2066,15 @@ Partition directly after each time @var{pred} is true on an element of @var{list
 
 @example
 @group
-(-partition-after-pred #'oddp '())
+(-partition-after-pred #'odd? '())
     @result{} '()
 @end group
 @group
-(-partition-after-pred #'oddp '(1))
+(-partition-after-pred #'odd? '(1))
     @result{} '((1))
 @end group
 @group
-(-partition-after-pred #'oddp '(0 1))
+(-partition-after-pred #'odd? '(0 1))
     @result{} '((0 1))
 @end group
 @end example
@@ -2086,15 +2086,15 @@ Partition directly before each time @var{pred} is true on an element of @var{lis
 
 @example
 @group
-(-partition-before-pred #'oddp '())
+(-partition-before-pred #'odd? '())
     @result{} '()
 @end group
 @group
-(-partition-before-pred #'oddp '(1))
+(-partition-before-pred #'odd? '(1))
     @result{} '((1))
 @end group
 @group
-(-partition-before-pred #'oddp '(0 1))
+(-partition-before-pred #'odd? '(0 1))
     @result{} '((0) (1))
 @end group
 @end example

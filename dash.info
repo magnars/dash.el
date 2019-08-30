@@ -1,4 +1,4 @@
-This is dash.info, produced by makeinfo version 6.5 from dash.texi.
+This is dash.info, produced by makeinfo version 6.6 from dash.texi.
 
 This manual is for ‘dash.el’ version 2.12.1.
 
@@ -1322,22 +1322,22 @@ Functions partitioning the input list into a list of lists.
      Partition directly after each time PRED is true on an element of
      LIST.
 
-          (-partition-after-pred (function oddp) '())
+          (-partition-after-pred #'oddp '())
               ⇒ '()
-          (-partition-after-pred (function oddp) '(1))
+          (-partition-after-pred #'oddp '(1))
               ⇒ '((1))
-          (-partition-after-pred (function oddp) '(0 1))
+          (-partition-after-pred #'oddp '(0 1))
               ⇒ '((0 1))
 
  -- Function: -partition-before-pred (pred list)
      Partition directly before each time PRED is true on an element of
      LIST.
 
-          (-partition-before-pred (function oddp) '())
+          (-partition-before-pred #'oddp '())
               ⇒ '()
-          (-partition-before-pred (function oddp) '(1))
+          (-partition-before-pred #'oddp '(1))
               ⇒ '((1))
-          (-partition-before-pred (function oddp) '(0 1))
+          (-partition-before-pred #'oddp '(0 1))
               ⇒ '((0) (1))
 
  -- Function: -partition-before-item (item list)
@@ -1535,6 +1535,8 @@ Operations pretending lists are sets.
               ⇒ '()
           (-distinct '(1 2 2 4))
               ⇒ '(1 2 4)
+          (-distinct '(t t t))
+              ⇒ '(t)
 
 
 File: dash.info,  Node: Other list operations,  Next: Tree operations,  Prev: Set operations,  Up: Functions
@@ -2597,7 +2599,7 @@ offered in a separate package: ‘dash-functional‘.
 
           (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5)))
               ⇒ '(3 6 15)
-          (-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5)))
+          (-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5)))
               ⇒ '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
           (funcall (-applify '<) '(3 6))
               ⇒ t
@@ -3277,25 +3279,25 @@ Ref: -partition-all-in-steps41195
 Ref: -partition-by41680
 Ref: -partition-by-header42062
 Ref: -partition-after-pred42666
-Ref: -partition-before-pred43037
-Ref: -partition-before-item43415
-Ref: -partition-after-item43726
-Ref: -group-by44032
-Node: Indexing44469
-Ref: -elem-index44671
-Ref: -elem-indices45066
-Ref: -find-index45449
-Ref: -find-last-index45938
-Ref: -find-indices46442
-Ref: -grade-up46850
-Ref: -grade-down47253
-Node: Set operations47663
-Ref: -union47846
-Ref: -difference48288
-Ref: -intersection48705
-Ref: -powerset49142
-Ref: -permutations49355
-Ref: -distinct49655
+Ref: -partition-before-pred43010
+Ref: -partition-before-item43361
+Ref: -partition-after-item43672
+Ref: -group-by43978
+Node: Indexing44415
+Ref: -elem-index44617
+Ref: -elem-indices45012
+Ref: -find-index45395
+Ref: -find-last-index45884
+Ref: -find-indices46388
+Ref: -grade-up46796
+Ref: -grade-down47199
+Node: Set operations47609
+Ref: -union47792
+Ref: -difference48234
+Ref: -intersection48651
+Ref: -powerset49088
+Ref: -permutations49301
+Ref: -distinct49601
 Node: Other list operations49979
 Ref: -rotate50204
 Ref: -repeat50574
@@ -3368,21 +3370,21 @@ Ref: -rpartial86761
 Ref: -juxt87163
 Ref: -compose87595
 Ref: -applify88153
-Ref: -on88600
-Ref: -flip89126
-Ref: -const89438
-Ref: -cut89782
-Ref: -not90268
-Ref: -orfn90578
-Ref: -andfn91012
-Ref: -iteratefn91507
-Ref: -fixfn92210
-Ref: -prodfn93779
-Node: Development94848
-Node: Contribute95197
-Node: Changes95945
-Node: Contributors98944
-Node: Index100568
+Ref: -on88584
+Ref: -flip89110
+Ref: -const89422
+Ref: -cut89766
+Ref: -not90252
+Ref: -orfn90562
+Ref: -andfn90996
+Ref: -iteratefn91491
+Ref: -fixfn92194
+Ref: -prodfn93763
+Node: Development94832
+Node: Contribute95181
+Node: Changes95929
+Node: Contributors98928
+Node: Index100552
 
 End Tag Table
 

@@ -2067,15 +2067,15 @@ Partition directly after each time @var{pred} is true on an element of @var{list
 
 @example
 @group
-(-partition-after-pred (function oddp) '())
+(-partition-after-pred #'oddp '())
     @result{} '()
 @end group
 @group
-(-partition-after-pred (function oddp) '(1))
+(-partition-after-pred #'oddp '(1))
     @result{} '((1))
 @end group
 @group
-(-partition-after-pred (function oddp) '(0 1))
+(-partition-after-pred #'oddp '(0 1))
     @result{} '((0 1))
 @end group
 @end example
@@ -2087,15 +2087,15 @@ Partition directly before each time @var{pred} is true on an element of @var{lis
 
 @example
 @group
-(-partition-before-pred (function oddp) '())
+(-partition-before-pred #'oddp '())
     @result{} '()
 @end group
 @group
-(-partition-before-pred (function oddp) '(1))
+(-partition-before-pred #'oddp '(1))
     @result{} '((1))
 @end group
 @group
-(-partition-before-pred (function oddp) '(0 1))
+(-partition-before-pred #'oddp '(0 1))
     @result{} '((0) (1))
 @end group
 @end example
@@ -2444,6 +2444,10 @@ Alias: @code{-uniq}
 @group
 (-distinct '(1 2 2 4))
     @result{} '(1 2 4)
+@end group
+@group
+(-distinct '(t t t))
+    @result{} '(t)
 @end group
 @end example
 @end defun
@@ -4082,7 +4086,7 @@ expects a list with n items as arguments
     @result{} '(3 6 15)
 @end group
 @group
-(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5)))
+(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5)))
     @result{} '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
 @end group
 @group

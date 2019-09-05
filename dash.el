@@ -43,6 +43,7 @@
     (dash-enable-font-lock))
   (set-default symbol value))
 
+;;;###autoload
 (defcustom dash-enable-fontlock nil
   "If non-nil, enable fontification of dash functions, macros and
 special values."

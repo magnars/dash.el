@@ -2342,12 +2342,11 @@ or with `-compare-fn' if that's non-nil."
 
 (defun -inits (list)
   "Return all prefixes of LIST."
-  (let ((acc nil)
-        (ret (list nil)))
-    (--each list
-      (!cons it acc)
-      (!cons (reverse acc) ret))
-    (nreverse ret)))
+  (let ((res (list list)))
+    (setq list (reverse list))
+    (while list
+      (push (reverse (!cdr list)) res))
+    res))
 
 (defun -tails (list)
   "Return all suffixes of LIST"

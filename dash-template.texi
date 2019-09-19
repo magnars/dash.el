@@ -81,8 +81,7 @@ Development
 @node Installation
 @chapter Installation
 
-It's available on @uref{http://marmalade-repo.org/,marmalade} and
-@uref{https://melpa.org/,Melpa}; use @code{M-x
+It's available on @uref{https://melpa.org/,Melpa}; use @code{M-x
 package-install}:
 
 @table @kbd

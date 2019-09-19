@@ -153,8 +153,8 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
 
 (defun simplify-quotes ()
   (goto-char (point-min))
-  (while (search-forward "(quote nil)" nil t)
-    (replace-match "'()"))
+  (while (re-search-forward (rx (or "'nil" "(quote nil)")) nil t)
+    (replace-match "'()" t t))
   (goto-char (point-min))
   (while (search-forward "(quote " nil t)
     (forward-char -7)

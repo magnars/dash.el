@@ -1,4 +1,4 @@
-This is dash.info, produced by makeinfo version 6.5 from dash.texi.
+This is dash.info, produced by makeinfo version 6.6 from dash.texi.
 
 This manual is for ‘dash.el’ version 2.12.1.
 
@@ -91,8 +91,8 @@ File: dash.info,  Node: Installation,  Next: Functions,  Prev: Top,  Up: Top
 1 Installation
 **************
 
-It’s available on marmalade (http://marmalade-repo.org/) and Melpa
-(https://melpa.org/); use ‘M-x package-install’:
+It’s available on Melpa (https://melpa.org/); use ‘M-x
+package-install’:
 
 ‘M-x package-install <RET> dash’
      Install the dash library.
@@ -1322,22 +1322,22 @@ Functions partitioning the input list into a list of lists.
      Partition directly after each time PRED is true on an element of
      LIST.
 
-          (-partition-after-pred (function oddp) '())
+          (-partition-after-pred #'odd? '())
               ⇒ '()
-          (-partition-after-pred (function oddp) '(1))
+          (-partition-after-pred #'odd? '(1))
               ⇒ '((1))
-          (-partition-after-pred (function oddp) '(0 1))
+          (-partition-after-pred #'odd? '(0 1))
               ⇒ '((0 1))
 
  -- Function: -partition-before-pred (pred list)
      Partition directly before each time PRED is true on an element of
      LIST.
 
-          (-partition-before-pred (function oddp) '())
+          (-partition-before-pred #'odd? '())
               ⇒ '()
-          (-partition-before-pred (function oddp) '(1))
+          (-partition-before-pred #'odd? '(1))
               ⇒ '((1))
-          (-partition-before-pred (function oddp) '(0 1))
+          (-partition-before-pred #'odd? '(0 1))
               ⇒ '((0) (1))
 
  -- Function: -partition-before-item (item list)
@@ -1535,6 +1535,8 @@ Operations pretending lists are sets.
               ⇒ '()
           (-distinct '(1 2 2 4))
               ⇒ '(1 2 4)
+          (-distinct '(t t t))
+              ⇒ '(t)
 
 
 File: dash.info,  Node: Other list operations,  Next: Tree operations,  Prev: Set operations,  Up: Functions
@@ -2597,7 +2599,7 @@ offered in a separate package: ‘dash-functional‘.
 
           (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5)))
               ⇒ '(3 6 15)
-          (-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5)))
+          (-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5)))
               ⇒ '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
           (funcall (-applify '<) '(3 6))
               ⇒ t
@@ -3185,204 +3187,204 @@ Index
 Tag Table:
 Node: Top946
 Node: Installation2425
-Node: Using in a package3001
-Node: Syntax highlighting of dash functions3365
-Node: Functions3748
-Node: Maps4959
-Ref: -map5254
-Ref: -map-when5595
-Ref: -map-first6178
-Ref: -map-last6656
-Ref: -map-indexed7129
-Ref: -annotate7609
-Ref: -splice8099
-Ref: -splice-list8880
-Ref: -mapcat9342
-Ref: -copy9718
-Node: Sublist selection9922
-Ref: -filter10115
-Ref: -remove10567
-Ref: -remove-first10978
-Ref: -remove-last11505
-Ref: -remove-item12026
-Ref: -non-nil12420
-Ref: -slice12579
-Ref: -take13111
-Ref: -take-last13419
-Ref: -drop13742
-Ref: -drop-last14015
-Ref: -take-while14275
-Ref: -drop-while14625
-Ref: -select-by-indices14981
-Ref: -select-columns15495
-Ref: -select-column16200
-Node: List to list16663
-Ref: -keep16855
-Ref: -concat17358
-Ref: -flatten17655
-Ref: -flatten-n18414
-Ref: -replace18801
-Ref: -replace-first19264
-Ref: -replace-last19760
-Ref: -insert-at20249
-Ref: -replace-at20576
-Ref: -update-at20971
-Ref: -remove-at21462
-Ref: -remove-at-indices21950
-Node: Reductions22532
-Ref: -reduce-from22701
-Ref: -reduce-r-from23467
-Ref: -reduce24234
-Ref: -reduce-r24968
-Ref: -reductions-from25838
-Ref: -reductions-r-from26553
-Ref: -reductions27278
-Ref: -reductions-r27903
-Ref: -count28538
-Ref: -sum28762
-Ref: -running-sum28951
-Ref: -product29244
-Ref: -running-product29453
-Ref: -inits29766
-Ref: -tails30014
-Ref: -common-prefix30261
-Ref: -common-suffix30558
-Ref: -min30855
-Ref: -min-by31081
-Ref: -max31604
-Ref: -max-by31829
-Node: Unfolding32357
-Ref: -iterate32596
-Ref: -unfold33041
-Node: Predicates33849
-Ref: -any?33973
-Ref: -all?34293
-Ref: -none?34623
-Ref: -only-some?34925
-Ref: -contains?35410
-Ref: -same-items?35799
-Ref: -is-prefix?36184
-Ref: -is-suffix?36507
-Ref: -is-infix?36830
-Node: Partitioning37184
-Ref: -split-at37372
-Ref: -split-with37657
-Ref: -split-on38060
-Ref: -split-when38736
-Ref: -separate39376
-Ref: -partition39818
-Ref: -partition-all40270
-Ref: -partition-in-steps40698
-Ref: -partition-all-in-steps41195
-Ref: -partition-by41680
-Ref: -partition-by-header42062
-Ref: -partition-after-pred42666
-Ref: -partition-before-pred43037
-Ref: -partition-before-item43415
-Ref: -partition-after-item43726
-Ref: -group-by44032
-Node: Indexing44469
-Ref: -elem-index44671
-Ref: -elem-indices45066
-Ref: -find-index45449
-Ref: -find-last-index45938
-Ref: -find-indices46442
-Ref: -grade-up46850
-Ref: -grade-down47253
-Node: Set operations47663
-Ref: -union47846
-Ref: -difference48288
-Ref: -intersection48705
-Ref: -powerset49142
-Ref: -permutations49355
-Ref: -distinct49655
-Node: Other list operations49979
-Ref: -rotate50204
-Ref: -repeat50574
-Ref: -cons*50837
-Ref: -snoc51224
-Ref: -interpose51637
-Ref: -interleave51935
-Ref: -zip-with52304
-Ref: -zip53021
-Ref: -zip-fill53827
-Ref: -unzip54150
-Ref: -cycle54684
-Ref: -pad55057
-Ref: -table55380
-Ref: -table-flat56170
-Ref: -first57179
-Ref: -some57551
-Ref: -last57860
-Ref: -first-item58194
-Ref: -second-item58610
-Ref: -third-item58890
-Ref: -fourth-item59168
-Ref: -fifth-item59434
-Ref: -last-item59696
-Ref: -butlast59988
-Ref: -sort60235
-Ref: -list60723
-Ref: -fix61054
-Node: Tree operations61594
-Ref: -tree-seq61790
-Ref: -tree-map62648
-Ref: -tree-map-nodes63091
-Ref: -tree-reduce63946
-Ref: -tree-reduce-from64828
-Ref: -tree-mapreduce65429
-Ref: -tree-mapreduce-from66289
-Ref: -clone67575
-Node: Threading macros67903
-Ref: ->68048
-Ref: ->>68540
-Ref: -->69045
-Ref: -as->69606
-Ref: -some->70061
-Ref: -some->>70435
-Ref: -some-->70871
-Node: Binding71342
-Ref: -when-let71554
-Ref: -when-let*72039
-Ref: -if-let72567
-Ref: -if-let*72962
-Ref: -let73579
-Ref: -let*79667
-Ref: -lambda80608
-Ref: -setq81410
-Node: Side-effects82226
-Ref: -each82420
-Ref: -each-while82827
-Ref: -each-indexed83187
-Ref: -each-r83705
-Ref: -each-r-while84138
-Ref: -dotimes84513
-Ref: -doto84816
-Ref: --doto85243
-Node: Destructive operations85518
-Ref: !cons85691
-Ref: !cdr85897
-Node: Function combinators86092
-Ref: -partial86366
-Ref: -rpartial86761
-Ref: -juxt87163
-Ref: -compose87595
-Ref: -applify88153
-Ref: -on88600
-Ref: -flip89126
-Ref: -const89438
-Ref: -cut89782
-Ref: -not90268
-Ref: -orfn90578
-Ref: -andfn91012
-Ref: -iteratefn91507
-Ref: -fixfn92210
-Ref: -prodfn93779
-Node: Development94848
-Node: Contribute95197
-Node: Changes95945
-Node: Contributors98944
-Node: Index100568
+Node: Using in a package2958
+Node: Syntax highlighting of dash functions3322
+Node: Functions3705
+Node: Maps4916
+Ref: -map5211
+Ref: -map-when5552
+Ref: -map-first6135
+Ref: -map-last6613
+Ref: -map-indexed7086
+Ref: -annotate7566
+Ref: -splice8056
+Ref: -splice-list8837
+Ref: -mapcat9299
+Ref: -copy9675
+Node: Sublist selection9879
+Ref: -filter10072
+Ref: -remove10524
+Ref: -remove-first10935
+Ref: -remove-last11462
+Ref: -remove-item11983
+Ref: -non-nil12377
+Ref: -slice12536
+Ref: -take13068
+Ref: -take-last13376
+Ref: -drop13699
+Ref: -drop-last13972
+Ref: -take-while14232
+Ref: -drop-while14582
+Ref: -select-by-indices14938
+Ref: -select-columns15452
+Ref: -select-column16157
+Node: List to list16620
+Ref: -keep16812
+Ref: -concat17315
+Ref: -flatten17612
+Ref: -flatten-n18371
+Ref: -replace18758
+Ref: -replace-first19221
+Ref: -replace-last19717
+Ref: -insert-at20206
+Ref: -replace-at20533
+Ref: -update-at20928
+Ref: -remove-at21419
+Ref: -remove-at-indices21907
+Node: Reductions22489
+Ref: -reduce-from22658
+Ref: -reduce-r-from23424
+Ref: -reduce24191
+Ref: -reduce-r24925
+Ref: -reductions-from25795
+Ref: -reductions-r-from26510
+Ref: -reductions27235
+Ref: -reductions-r27860
+Ref: -count28495
+Ref: -sum28719
+Ref: -running-sum28908
+Ref: -product29201
+Ref: -running-product29410
+Ref: -inits29723
+Ref: -tails29971
+Ref: -common-prefix30218
+Ref: -common-suffix30515
+Ref: -min30812
+Ref: -min-by31038
+Ref: -max31561
+Ref: -max-by31786
+Node: Unfolding32314
+Ref: -iterate32553
+Ref: -unfold32998
+Node: Predicates33806
+Ref: -any?33930
+Ref: -all?34250
+Ref: -none?34580
+Ref: -only-some?34882
+Ref: -contains?35367
+Ref: -same-items?35756
+Ref: -is-prefix?36141
+Ref: -is-suffix?36464
+Ref: -is-infix?36787
+Node: Partitioning37141
+Ref: -split-at37329
+Ref: -split-with37614
+Ref: -split-on38017
+Ref: -split-when38693
+Ref: -separate39333
+Ref: -partition39775
+Ref: -partition-all40227
+Ref: -partition-in-steps40655
+Ref: -partition-all-in-steps41152
+Ref: -partition-by41637
+Ref: -partition-by-header42019
+Ref: -partition-after-pred42623
+Ref: -partition-before-pred42967
+Ref: -partition-before-item43318
+Ref: -partition-after-item43629
+Ref: -group-by43935
+Node: Indexing44372
+Ref: -elem-index44574
+Ref: -elem-indices44969
+Ref: -find-index45352
+Ref: -find-last-index45841
+Ref: -find-indices46345
+Ref: -grade-up46753
+Ref: -grade-down47156
+Node: Set operations47566
+Ref: -union47749
+Ref: -difference48191
+Ref: -intersection48608
+Ref: -powerset49045
+Ref: -permutations49258
+Ref: -distinct49558
+Node: Other list operations49936
+Ref: -rotate50161
+Ref: -repeat50531
+Ref: -cons*50794
+Ref: -snoc51181
+Ref: -interpose51594
+Ref: -interleave51892
+Ref: -zip-with52261
+Ref: -zip52978
+Ref: -zip-fill53784
+Ref: -unzip54107
+Ref: -cycle54641
+Ref: -pad55014
+Ref: -table55337
+Ref: -table-flat56127
+Ref: -first57136
+Ref: -some57508
+Ref: -last57817
+Ref: -first-item58151
+Ref: -second-item58567
+Ref: -third-item58847
+Ref: -fourth-item59125
+Ref: -fifth-item59391
+Ref: -last-item59653
+Ref: -butlast59945
+Ref: -sort60192
+Ref: -list60680
+Ref: -fix61011
+Node: Tree operations61551
+Ref: -tree-seq61747
+Ref: -tree-map62605
+Ref: -tree-map-nodes63048
+Ref: -tree-reduce63903
+Ref: -tree-reduce-from64785
+Ref: -tree-mapreduce65386
+Ref: -tree-mapreduce-from66246
+Ref: -clone67532
+Node: Threading macros67860
+Ref: ->68005
+Ref: ->>68497
+Ref: -->69002
+Ref: -as->69563
+Ref: -some->70018
+Ref: -some->>70392
+Ref: -some-->70828
+Node: Binding71299
+Ref: -when-let71511
+Ref: -when-let*71996
+Ref: -if-let72524
+Ref: -if-let*72919
+Ref: -let73536
+Ref: -let*79624
+Ref: -lambda80565
+Ref: -setq81367
+Node: Side-effects82183
+Ref: -each82377
+Ref: -each-while82784
+Ref: -each-indexed83144
+Ref: -each-r83662
+Ref: -each-r-while84095
+Ref: -dotimes84470
+Ref: -doto84773
+Ref: --doto85200
+Node: Destructive operations85475
+Ref: !cons85648
+Ref: !cdr85854
+Node: Function combinators86049
+Ref: -partial86323
+Ref: -rpartial86718
+Ref: -juxt87120
+Ref: -compose87552
+Ref: -applify88110
+Ref: -on88541
+Ref: -flip89067
+Ref: -const89379
+Ref: -cut89723
+Ref: -not90209
+Ref: -orfn90519
+Ref: -andfn90953
+Ref: -iteratefn91448
+Ref: -fixfn92151
+Ref: -prodfn93720
+Node: Development94789
+Node: Contribute95138
+Node: Changes95886
+Node: Contributors98885
+Node: Index100509
 
 End Tag Table
 

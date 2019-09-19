@@ -1417,9 +1417,9 @@ other value (the body).
 Partition directly after each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-after-pred (function oddp) '()) ;; => '()
-(-partition-after-pred (function oddp) '(1)) ;; => '((1))
-(-partition-after-pred (function oddp) '(0 1)) ;; => '((0 1))
+(-partition-after-pred #'odd? '()) ;; => '()
+(-partition-after-pred #'odd? '(1)) ;; => '((1))
+(-partition-after-pred #'odd? '(0 1)) ;; => '((0 1))
 ```
 
 #### -partition-before-pred `(pred list)`
@@ -1427,9 +1427,9 @@ Partition directly after each time `pred` is true on an element of `list`.
 Partition directly before each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-before-pred (function oddp) '()) ;; => '()
-(-partition-before-pred (function oddp) '(1)) ;; => '((1))
-(-partition-before-pred (function oddp) '(0 1)) ;; => '((0) (1))
+(-partition-before-pred #'odd? '()) ;; => '()
+(-partition-before-pred #'odd? '(1)) ;; => '((1))
+(-partition-before-pred #'odd? '(0 1)) ;; => '((0) (1))
 ```
 
 #### -partition-before-item `(item list)`
@@ -1625,6 +1625,7 @@ Alias: `-uniq`
 ```el
 (-distinct '()) ;; => '()
 (-distinct '(1 2 2 4)) ;; => '(1 2 4)
+(-distinct '(t t t)) ;; => '(t)
 ```
 
 
@@ -2680,7 +2681,7 @@ expects a list with n items as arguments
 
 ```el
 (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => '(3 6 15)
-(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
 (funcall (-applify '<) '(3 6)) ;; => t
 ```
 

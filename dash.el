@@ -1653,7 +1653,7 @@ All returned symbols are guaranteed to be unique."
 
 (defun dash--get-expand-function (type)
   "Get expand function name for TYPE."
-  (intern (format "dash-expand:%s" type)))
+  (intern-soft (format "dash-expand:%s" type)))
 
 (defun dash--match-cons-1 (match-form source &optional props)
   "Match MATCH-FORM against SOURCE.

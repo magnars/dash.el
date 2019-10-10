@@ -26,8 +26,8 @@
 ;; See documentation on https://github.com/magnars/dash.el#functions
 ;;
 ;; **Please note** The lexical binding in this file is not utilised at the
-;; moment. We will take full advantage of lexical binding in an upcoming 3.0
-;; release of Dash. In the meantime, we've added the pragma to avoid a bug that
+;; moment.  We will take full advantage of lexical binding in an upcoming 3.0
+;; release of Dash.  In the meantime, we've added the pragma to avoid a bug that
 ;; you can read more about in https://github.com/magnars/dash.el/issues/130.
 ;;
 
@@ -50,8 +50,8 @@
   (set-default symbol value))
 
 (defcustom dash-enable-fontlock nil
-  "If non-nil, enable fontification of dash functions, macros and
-special values."
+  "If non-nil, enable fontification for dash.
+Dash functions, macros and special values are included."
   :type 'boolean
   :set 'dash--enable-fontlock
   :group 'dash)
@@ -65,7 +65,13 @@ special values."
   `(setq ,list (cdr ,list)))
 
 (defmacro --each (list &rest body)
-  "Anaphoric form of `-each'."
+  "Eval BODY with `it' and `it-index' bound to each element in the LIST.
+`it-index' starts from zero and represents the LIST position of
+the element bound to `it'.
+
+Return nil, used for side-effects only.
+
+Anaphoric form of `-each'."
   (declare (debug (form body))
            (indent 1))
   (let ((l (make-symbol "list")))
@@ -79,8 +85,8 @@ special values."
 
 (defmacro -doto (eval-initial-value &rest forms)
   "Eval a form, then insert that form as the 2nd argument to other forms.
-The EVAL-INITIAL-VALUE form is evaluated once. Its result is
-passed to FORMS, which are then evaluated sequentially. Returns
+The EVAL-INITIAL-VALUE form is evaluated once.  Its result is
+passed to FORMS, which are then evaluated sequentially.  Returns
 the target form."
   (declare (indent 1))
   (let ((retval (make-symbol "value")))
@@ -93,7 +99,11 @@ the target form."
        ,retval)))
 
 (defmacro --doto (eval-initial-value &rest forms)
-  "Anaphoric form of `-doto'.
+  "Eval FORMS with symbol `it' bound to the evaluation of EVAL-INITIAL-VALUE.
+The EVAL-INITIAL-VALUE is evaluated only once, and it's value is
+returned as a result.  Thus, the --doto form is used for
+side-effects only.
+
 Note: `it' is not required in each form."
   (declare (indent 1))
   `(let ((it ,eval-initial-value))
@@ -101,7 +111,9 @@ Note: `it' is not required in each form."
      it))
 
 (defun -each (list fn)
-  "Call FN with every item in LIST. Return nil, used for side-effects only."
+  "Call FN with every item in LIST.
+
+Return nil, used for side-effects only."
   (--each list (funcall fn it)))
 
 (put '-each 'lisp-indent-function 1)
@@ -111,14 +123,16 @@ Note: `it' is not required in each form."
 (defun -each-indexed (list fn)
   "Call (FN index item) for each item in LIST.
 
-In the anaphoric form `--each-indexed', the index is exposed as symbol `it-index'.
-
 See also: `-map-indexed'."
   (--each list (funcall fn it-index it)))
 (put '-each-indexed 'lisp-indent-function 1)
 
 (defmacro --each-while (list pred &rest body)
-  "Anaphoric form of `-each-while'."
+  "Eval BODY and PRED with symbol `it' bound to each element in the LIST.
+Continue the evaluation of BODY while the PRED form evaluates to non-nil.
+PRED should be a form, containing `it', and not a function symbol.
+
+Anaphoric form of `-each-while'."
   (declare (debug (form form body))
            (indent 2))
   (let ((l (make-symbol "list"))
@@ -134,13 +148,17 @@ See also: `-map-indexed'."
 
 (defun -each-while (list pred fn)
   "Call FN with every item in LIST while (PRED item) is non-nil.
+
 Return nil, used for side-effects only."
   (--each-while list (funcall pred it) (funcall fn it)))
 
 (put '-each-while 'lisp-indent-function 2)
 
 (defmacro --each-r (list &rest body)
-  "Anaphoric form of `-each-r'."
+  "Eval BODY with symbol `it' bound to each element in the LIST.
+The LIST are selected from right to left.
+
+Anaphoric form of `-each-r'."
   (declare (debug (form body))
            (indent 1))
   (let ((v (make-symbol "vector")))
@@ -159,11 +177,18 @@ Return nil, used for side-effects only."
 
 (defun -each-r (list fn)
   "Call FN with every item in LIST in reversed order.
- Return nil, used for side-effects only."
+
+Return nil, used for side-effects only."
   (--each-r list (funcall fn it)))
 
 (defmacro --each-r-while (list pred &rest body)
-  "Anaphoric form of `-each-r-while'."
+  "Eval BODY and PRED with symbol `it' bound to each element in the LIST.
+Continue the evaluation of BODY while the PRED form evaluates to
+non-nil.  The LIST elements are selected from right to left.
+PRED should be a form, containing `it', and not a function
+symbol.
+
+Anaphoric form of `-each-r-while'."
   (declare (debug (form form body))
            (indent 2))
   (let ((v (make-symbol "vector")))
@@ -179,11 +204,14 @@ Return nil, used for side-effects only."
 
 (defun -each-r-while (list pred fn)
   "Call FN with every item in reversed LIST while (PRED item) is non-nil.
+
 Return nil, used for side-effects only."
   (--each-r-while list (funcall pred it) (funcall fn it)))
 
 (defmacro --dotimes (num &rest body)
-  "Repeatedly executes BODY (presumably for side-effects) with symbol `it' bound to integers from 0 through NUM-1."
+  "Repeatedly execute BODY with symbol `it' bound to integers from 0 to NUM - 1.
+
+Return nil, used for side-effects only."
   (declare (debug (form body))
            (indent 1))
   (let ((n (make-symbol "num")))
@@ -194,41 +222,63 @@ Return nil, used for side-effects only."
          (setq it (1+ it))))))
 
 (defun -dotimes (num fn)
-  "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through NUM-1."
+  "Repeatedly call FN passing in integers from 0 to NUM - 1.
+
+Return nil, used for side-effects only."
   (--dotimes num (funcall fn it)))
 
 (put '-dotimes 'lisp-indent-function 1)
 
 (defun -map (fn list)
-  "Return a new list consisting of the result of applying FN to the items in LIST."
+  "Replace each item in the LIST with (FN item).  Return a new list."
   (mapcar fn list))
 
 (defmacro --map (form list)
-  "Anaphoric form of `-map'."
+  "Eval FORM with symbol `it' bound to each element in the LIST.
+Return a new list where each element is the result of evaluating
+FORM.
+
+Anaphoric form of `-map'."
   (declare (debug (form form)))
   `(mapcar (lambda (it) ,form) ,list))
 
 (defmacro --reduce-from (form initial-value list)
-  "Anaphoric form of `-reduce-from'."
+  "Eval FORM with each LIST item (LtoR) bound to `it' and return a single value.
+
+Evaluate FORM with the result of the previous FORM evaluation
+bound to symbol `acc' and the current LIST element bound to
+symbol `it', for each element in the LIST, from left to right.
+On the first FORM evaluation, `acc' is bound to INITIAL-VALUE.
+Return the result of the last FORM evaluation.
+
+Anaphoric form of `-reduce-from'."
   (declare (debug (form form form)))
   `(let ((acc ,initial-value))
      (--each ,list (setq acc ,form))
      acc))
 
 (defun -reduce-from (fn initial-value list)
-  "Return the result of applying FN to INITIAL-VALUE and the
-first item in LIST, then applying FN to that result and the 2nd
-item, etc. If LIST contains no items, return INITIAL-VALUE and
-do not call FN.
+  "Apply FN to all LIST items (LtoR) and return a single value.
 
-In the anaphoric form `--reduce-from', the accumulated value is
-exposed as symbol `acc'.
+FN is applied to each element in the LIST, from left to right,
+and an accumulator.  The accumulator is the return value of the
+last FN call.  The initial accumulator value is equal to
+INITIAL-VALUE.  The value of calling FN with the last element
+from the LIST and the accumulator is returned.  If the LIST is
+NIL, return the INITIAL-VALUE.
 
 See also: `-reduce', `-reduce-r'"
   (--reduce-from (funcall fn acc it) initial-value list))
 
 (defmacro --reduce (form list)
-  "Anaphoric form of `-reduce'."
+  "Eval FORM with each LIST item (LtoR) bound to `it' and return a single value.
+
+Inside FORM, `it' is bound to each item in the LIST, from left to
+right, and the accumulator `acc' is bound to the result of the
+last FORM evaluation.  On the first FORM evaluation, `acc' is
+bound to the first item in the LIST.
+
+Anaphoric form of `-reduce'."
   (declare (debug (form form)))
   (let ((lv (make-symbol "list-value")))
     `(let ((,lv ,list))
@@ -237,14 +287,15 @@ See also: `-reduce', `-reduce-r'"
          (let (acc it) ,form)))))
 
 (defun -reduce (fn list)
-  "Return the result of applying FN to the first 2 items in LIST,
-then applying FN to that result and the 3rd item, etc. If LIST
-contains no items, return the result of calling FN with no
-arguments. If LIST contains a single item, return that item
-and do not call FN.
+  "Apply FN to all LIST items (LtoR) and return a single value.
 
-In the anaphoric form `--reduce', the accumulated value is
-exposed as symbol `acc'.
+FN is applied to each element in the LIST, from left to right,
+and an accumulator.  The accumulator is the return value of the
+last FN call.  The initial accumulator value is equal to FN
+applied to the first two elements from the LIST.  If LIST
+contains no items, return the result of calling FN with no
+arguments.  If LIST contains a single item, return that item and
+do not call FN.
 
 See also: `-reduce-from', `-reduce-r'"
   (if list
@@ -252,14 +303,27 @@ See also: `-reduce-from', `-reduce-r'"
     (funcall fn)))
 
 (defmacro --reduce-r-from (form initial-value list)
-  "Anaphoric version of `-reduce-r-from'."
+  "Eval FORM with each LIST item (RtoL) bound to `it' and return a single value.
+
+Evaluate FORM with the result of the previous FORM evaluation
+bound to symbol `acc' and the current LIST element bound to
+symbol `it', for each element in the LIST, from right to left.
+On the first FORM evaluation, `acc' is bound to INITIAL-VALUE.
+Return the result of the last FORM evaluation.
+
+Anaphoric form of `-reduce-r-from'."
   (declare (debug (form form form)))
   `(--reduce-from ,form ,initial-value (reverse ,list)))
 
 (defun -reduce-r-from (fn initial-value list)
-  "Replace conses with FN, nil with INITIAL-VALUE and evaluate
-the resulting expression. If LIST is empty, INITIAL-VALUE is
-returned and FN is not called.
+  "Apply FN to all LIST items (RtoL) and return a single value.
+
+FN is applied to each element in the LIST, from right to left,
+and an accumulator.  The accumulator is the return value of the
+last FN call.  The initial accumulator value is equal to
+INITIAL-VALUE.  The value of calling FN with the first element
+from the LIST and the accumulator is returned.  If the LIST is
+NIL, return the INITIAL-VALUE.
 
 Note: this function works the same as `-reduce-from' but the
 operation associates from right instead of from left.
@@ -268,18 +332,27 @@ See also: `-reduce-r', `-reduce'"
   (--reduce-r-from (funcall fn it acc) initial-value list))
 
 (defmacro --reduce-r (form list)
-  "Anaphoric version of `-reduce-r'."
+  "Eval FORM with each LIST item (RtoL) bound to `it' and return a single value.
+
+Inside FORM, `it' is bound to each item in the LIST, from right
+to left, and the accumulator `acc' is bound to the result of the
+last FORM evaluation.  On the first FORM evaluation, `acc' is
+bound to the first item in the LIST.
+
+Anaphoric form of `-reduce-r'."
   (declare (debug (form form)))
   `(--reduce ,form (reverse ,list)))
 
 (defun -reduce-r (fn list)
-  "Replace conses with FN and evaluate the resulting expression.
-The final nil is ignored. If LIST contains no items, return the
-result of calling FN with no arguments. If LIST contains a single
-item, return that item and do not call FN.
+  "Apply FN to all LIST items (RtoL) and return a single value.
 
-The first argument of FN is the new item, the second is the
-accumulated value.
+FN is applied to each element in the LIST, from right to left,
+and an accumulator.  The accumulator is the return value of the
+last FN call.  The initial accumulator value is equal to FN
+applied to the first two elements from the LIST.  If LIST
+contains no items, return the result of calling FN with no
+arguments.  If LIST contains a single item, return that item and
+do not call FN.
 
 Note: this function works the same as `-reduce' but the operation
 associates from right instead of from left.

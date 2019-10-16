@@ -363,33 +363,54 @@ See also: `-reduce-r-from', `-reduce'"
     (funcall fn)))
 
 (defun -reductions-from (fn init list)
-  "Return a list of the intermediate values of the reduction.
+  "Apply FN to each LIST element and an accumulation of previous elements.
 
-See `-reduce-from' for explanation of the arguments.
+Return a new list where each element is the result of applying FN
+to each element of the LIST, and an accumulator.  The accumulator
+for element n of the LIST is equal to FN applied to n and the
+accumulator for the previous n-1 elements of the LIST.  INIT is
+added to the front of the returned list and is used as the
+accumulator when calling FN on the first element of the
+LIST (n=1).
 
 See also: `-reductions', `-reductions-r', `-reduce-r'"
   (nreverse (--reduce-from (cons (funcall fn (car acc) it) acc) (list init) list)))
 
 (defun -reductions (fn list)
-  "Return a list of the intermediate values of the reduction.
+  "Apply FN to each LIST element and an accumulation of previous elements.
 
-See `-reduce' for explanation of the arguments.
+Return a new list where each element is the result of applying FN
+to each element of the LIST, and an accumulator.  The accumulator
+for element n of the LIST is equal to FN applied to n and the
+accumulator for the previous n-1 elements of the LIST.  The first
+element of the LIST is returned as such and is used as the
+accumulator for the second element in the LIST.
 
 See also: `-reductions-from', `-reductions-r', `-reduce-r'"
   (and list (-reductions-from fn (car list) (cdr list))))
 
 (defun -reductions-r-from (fn init list)
-  "Return a list of the intermediate values of the reduction.
+  "Apply FN to each LIST element and an accumulation of the rest of elements.
 
-See `-reduce-r-from' for explanation of the arguments.
+Return a new list where each element is the result of applying FN
+to each element of the LIST, and an accumulator.  The accumulator
+for element n of the LIST is equal to FN applied to n and the
+accumulator for the rest of the elements of the LIST after n.
+The value of INIT is added as the last element of the returned
+list and is used in calculating the accumulator.
 
 See also: `-reductions-r', `-reductions', `-reduce'"
   (--reduce-r-from (cons (funcall fn it (car acc)) acc) (list init) list))
 
 (defun -reductions-r (fn list)
-  "Return a list of the intermediate values of the reduction.
+  "Apply FN to each LIST element and an accumulation of the rest of elements.
 
-See `-reduce-r' for explanation of the arguments.
+Return a new list where each element is the result of applying FN
+to each element of the LIST, and an accumulator.  The accumulator
+for element n of the LIST is equal to FN applied to n and the
+accumulator for the rest of the elements of the LIST after n.
+The last element of the LIST is returned as such and is used as
+an accumulator for the second-to-last element of the LIST.
 
 See also: `-reductions-r-from', `-reductions', `-reduce'"
   (when list

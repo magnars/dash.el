@@ -420,7 +420,13 @@ See also: `-reductions-r-from', `-reductions', `-reduce'"
                      (cdr rev)))))
 
 (defmacro --filter (form list)
-  "Anaphoric form of `-filter'.
+  "Return a new list with items from LIST for which FORM is non-nil.
+
+Eval FORM for every item in the LIST and build a new list with only
+those items for which FORM evals to non-nil.  Inside FORM, `it' is
+bound to the LIST item.
+
+Anaphoric form of `-filter'.
 
 See also: `--remove'."
   (declare (debug (form form)))
@@ -430,7 +436,10 @@ See also: `--remove'."
        (nreverse ,r))))
 
 (defun -filter (pred list)
-  "Return a new list of the items in LIST for which PRED returns a non-nil value.
+  "Return a new list with items from LIST for which PRED is non-nil.
+
+Eval PRED for every item in the LIST and build a new list with
+only those items for which PRED evals to non-nil.
 
 Alias: `-select'
 
@@ -441,14 +450,21 @@ See also: `-keep', `-remove'."
 (defalias '--select '--filter)
 
 (defmacro --remove (form list)
-  "Anaphoric form of `-remove'.
+  "Return a new list with items from LIST for which FORM is nil.
+
+Eval FORM for every item in the LIST and build a new list with
+only those items for which FORM evals to nil.  Inside FORM, `it'
+is bound to the LIST item.
 
 See also `--filter'."
   (declare (debug (form form)))
   `(--filter (not ,form) ,list))
 
 (defun -remove (pred list)
-  "Return a new list of the items in LIST for which PRED returns nil.
+  "Return a new list with items from LIST for which PRED is nil.
+
+Eval PRED for every item in the LIST and build a new list with
+only those items for which PRED evals to nil.
 
 Alias: `-reject'
 
@@ -459,7 +475,12 @@ See also: `-filter'."
 (defalias '--reject '--remove)
 
 (defun -remove-first (pred list)
-  "Return a new list with the first item matching PRED removed.
+  "Return a new list with the first LIST item matching PRED removed.
+
+Eval PRED for every item in the LIST, from left to right, until
+PRED evals to non-nil.  The first item for which PRED evals to
+non-nil is removed and all the other elements are kept and
+returned in a new list.
 
 Alias: `-reject-first'
 
@@ -473,7 +494,15 @@ See also: `-remove', `-map-first'"
       (nreverse front))))
 
 (defmacro --remove-first (form list)
-  "Anaphoric form of `-remove-first'."
+  "Return a new list with the first LIST item matching FORM removed.
+
+Eval FORM for every item in the LIST, from left to right, until
+PRED evals to non-nil.  The first item for which PRED evals to
+non-nil is removed and all the other elements are kept and
+returned in a new list.  Inside FORM, `it' is bound to the LIST
+item.
+
+Anaphoric form of `-remove-first'."
   (declare (debug (form form)))
   `(-remove-first (lambda (it) ,form) ,list))
 
@@ -481,7 +510,12 @@ See also: `-remove', `-map-first'"
 (defalias '--reject-first '--remove-first)
 
 (defun -remove-last (pred list)
-  "Return a new list with the last item matching PRED removed.
+  "Return a new list with the last LIST item matching PRED removed.
+
+Eval PRED for every item in the LIST, from right to left, until
+PRED evals to non-nil.  The first item for which PRED evals to
+non-nil is removed and all the other elements are kept and
+returned in a new list.
 
 Alias: `-reject-last'
 
@@ -489,7 +523,15 @@ See also: `-remove', `-map-last'"
   (nreverse (-remove-first pred (reverse list))))
 
 (defmacro --remove-last (form list)
-  "Anaphoric form of `-remove-last'."
+  "Return a new list with the last LIST item matching FORM removed.
+
+Eval PRED for every item in the LIST, from right to left, until
+PRED evals to non-nil.  The first item for which PRED evals to
+non-nil is removed and all the other elements are kept and
+returned in a new list.  Inside FORM, `it' is bound to the LIST
+item.
+
+Anaphoric form of `-remove-last'."
   (declare (debug (form form)))
   `(-remove-last (lambda (it) ,form) ,list))
 
@@ -504,7 +546,14 @@ Comparison is done with `equal'."
   (--remove (equal it item) list))
 
 (defmacro --keep (form list)
-  "Anaphoric form of `-keep'."
+  "Eval FORM for every LIST item and keep the non-nil results.
+
+Eval FORM for every item in the LIST.  Return a new list where
+each item is the result of evaluating FORM, if that result is
+non-nil.  Nil values are discarded.  Inside FORM, `it' is bound
+to the LIST item.
+
+Anaphoric form of `-keep'."
   (declare (debug (form form)))
   (let ((r (make-symbol "result"))
         (m (make-symbol "mapped")))
@@ -513,9 +562,14 @@ Comparison is done with `equal'."
        (nreverse ,r))))
 
 (defun -keep (fn list)
-  "Return a new list of the non-nil results of applying FN to the items in LIST.
+  "Eval FN for every LIST item and keep the non-nil results.
 
-If you want to select the original items satisfying a predicate use `-filter'."
+Eval FN for every item in the LIST.  Return a new list where each
+item is the result of evaluating FN, if that result is non-nil.
+Nil values are discarded.
+
+If you want to select the original items satisfying a predicate
+use `-filter'."
   (--keep (funcall fn it) list))
 
 (defun -non-nil (list)
@@ -524,7 +578,14 @@ If you want to select the original items satisfying a predicate use `-filter'."
   (-remove 'null list))
 
 (defmacro --map-indexed (form list)
-  "Anaphoric form of `-map-indexed'."
+  "Eval FORM for every item in LIST and return a new list.
+
+Evaluate FORM for every item in the LIST and return a new list
+with the result of the FORM's evaluation.  Inside FORM, for every
+item in the LIST, `it-index' is bound to the item's index in the
+LIST and `it' is bound to the LIST item.
+
+Anaphoric form of `-map-indexed'."
   (declare (debug (form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
@@ -533,15 +594,25 @@ If you want to select the original items satisfying a predicate use `-filter'."
        (nreverse ,r))))
 
 (defun -map-indexed (fn list)
-  "Return a new list consisting of the result of (FN index item) for each item in LIST.
+  "Eval (FN index item) for every item in LIST and return a new list.
 
-In the anaphoric form `--map-indexed', the index is exposed as symbol `it-index'.
+Evaluate FN for every item in the LIST and return a new list with
+the result of the FN evaluation.  For every item in the LIST, FN
+is called with the item index in the list and the item value.
 
 See also: `-each-indexed'."
   (--map-indexed (funcall fn it-index it) list))
 
 (defmacro --map-when (pred rep list)
-  "Anaphoric form of `-map-when'."
+  "Apply REP to all LIST items that match PRED and return a new list.
+
+Eval PRED for all the items in the LIST.  If PRED evaluates to
+non-nil, also eval REP also for that item.  Return a new list
+with the results of evaluating REP or with the original LIST item
+if PRED evaluated to nil.  Inside both PRED and REP forms, `it' is
+bound to the LIST item.
+
+Anaphoric form of `-map-when'."
   (declare (debug (form form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
@@ -549,9 +620,12 @@ See also: `-each-indexed'."
        (nreverse ,r))))
 
 (defun -map-when (pred rep list)
-  "Return a new list where the elements in LIST that do not match the PRED function
-are unchanged, and where the elements in LIST that do match the PRED function are mapped
-through the REP function.
+  "Apply REP to all LIST items that match PRED and return a new list.
+
+Eval PRED for all the items in the LIST.  If PRED evaluates to
+non-nil, also eval REP also for that item.  Return a new list
+with the results of evaluating REP or with the original LIST item
+if PRED evaluated to nil.
 
 Alias: `-replace-where'
 
@@ -562,7 +636,12 @@ See also: `-update-at'"
 (defalias '--replace-where '--map-when)
 
 (defun -map-first (pred rep list)
-  "Replace first item in LIST satisfying PRED with result of REP called on this item.
+  "Eval REP for the first item in LIST matching PRED and replace it.
+ 
+Eval PRED for all the items in the LIST, from left to right.  The
+first item in the LIST for which PRED returns non-nil is replaced
+with the value of applying REP to it.  Return a new list where
+all the other values from LIST are kept unchanged.
 
 See also: `-map-when', `-replace-first'"
   (let (front)
@@ -574,17 +653,38 @@ See also: `-map-when', `-replace-first'"
       (nreverse front))))
 
 (defmacro --map-first (pred rep list)
-  "Anaphoric form of `-map-first'."
+  "Eval REP for the first item in LIST matching PRED and replace it.
+
+Eval PRED for all the items in the LIST, from left to right.  The
+first item in the LIST for which PRED returns non-nil is replaced
+with the value of applying REP to it.  Return a new list where
+all the other values from LIST are kept unchanged.  Inside both
+PRED and REP forms, `it' is bound to the LIST item.
+
+Anaphoric form of `-map-first'."
   `(-map-first (lambda (it) ,pred) (lambda (it) (ignore it) ,rep) ,list))
 
 (defun -map-last (pred rep list)
-  "Replace last item in LIST satisfying PRED with result of REP called on this item.
+  "Eval PRED for the last item in LIST matching PRED and replace it.
+
+Eval PRED for all the items in the LIST, from right to left.  The
+first item in the LIST for which PRED returns non-nil is replaced
+with the value of applying REP to it.  Return a new list where
+all the other values from LIST are kept unchanged.
 
 See also: `-map-when', `-replace-last'"
   (nreverse (-map-first pred rep (reverse list))))
 
 (defmacro --map-last (pred rep list)
-  "Anaphoric form of `-map-last'."
+  "Eval PRED for the last item in LIST matching PRED and replace it.
+
+Eval PRED for all the items in the LIST, from right to left.  The
+first item in the LIST for which PRED returns non-nil is replaced
+with the value of applying REP to it.  Return a new list where
+all the other values from LIST are kept unchanged.  Inside both
+PRED and REP forms, `it' is bound to the LIST item.
+
+Anaphoric form of `-map-last'."
   `(-map-last (lambda (it) ,pred) (lambda (it) (ignore it) ,rep) ,list))
 
 (defun -replace (old new list)
@@ -615,19 +715,23 @@ See also: `-map-last'"
   (--map-last (equal old it) new list))
 
 (defmacro --mapcat (form list)
-  "Anaphoric form of `-mapcat'."
+  "Eval FORM for every item in LIST and concatenate the results.
+
+The result of evaluating FORM must be a list.  Inside FORM, `it'
+is bound to the LIST item."
   (declare (debug (form form)))
   `(apply 'append (--map ,form ,list)))
 
 (defun -mapcat (fn list)
-  "Return the concatenation of the result of mapping FN over LIST.
-Thus function FN should return a list."
+  "Apply FN to every item in LIST and concatenate the results.
+
+The result of evaluating FN must be a list."
   (--mapcat (funcall fn it) list))
 
 (defun -flatten (l)
   "Take a nested list L and return its contents as a single, flat list.
 
-Note that because `nil' represents a list of zero elements (an
+Note that because nil represents a list of zero elements (an
 empty list), any mention of nil in L will disappear after
 flattening.  If you need to preserve nils, consider `-flatten-n'
 or map them to some unique symbol and then map them back.

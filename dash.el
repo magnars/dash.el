@@ -1272,7 +1272,10 @@ If two lists are provided as arguments, return the groupings as a list
 of cons cells. Otherwise, return the groupings as a list of lists.
 
 Please note! This distinction is being removed in an upcoming 3.0
-release of Dash. If you rely on this behavior, use -zip-pair instead."
+release of Dash. If you rely on this behavior, use `-zip-pair` instead,
+which will retain that behaviour in future versions.
+
+Alias: `-zip-pair'"
   (declare (pure t) (side-effect-free t))
   (when lists
     (let (results)

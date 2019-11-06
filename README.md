@@ -530,7 +530,7 @@ See also: [`-remove`](#-remove-pred-list), [`-map-last`](#-map-last-pred-rep-lis
 
 #### -remove-item `(item list)`
 
-Remove all occurences of `item` from `list`.
+Remove all occurrences of `item` from `list`.
 
 Comparison is done with `equal`.
 
@@ -751,7 +751,7 @@ See also: [`-replace-at`](#-replace-at-n-x-list)
 
 #### -replace-first `(old new list)`
 
-Replace the first occurence of `old` with `new` in `list`.
+Replace the first occurrence of `old` with `new` in `list`.
 
 Elements are compared using `equal`.
 
@@ -765,7 +765,7 @@ See also: [`-map-first`](#-map-first-pred-rep-list)
 
 #### -replace-last `(old new list)`
 
-Replace the last occurence of `old` with `new` in `list`.
+Replace the last occurrence of `old` with `new` in `list`.
 
 Elements are compared using `equal`.
 
@@ -2801,13 +2801,13 @@ Return a function that computes the (least) fixpoint of `fn`.
 
 `fn` must be a unary function. The returned lambda takes a single
 argument, `x`, the initial value for the fixpoint iteration. The
-iteration halts when either of the following conditions is satisified:
+iteration halts when either of the following conditions is satisfied:
 
  1. Iteration converges to the fixpoint, with equality being
       tested using `equal-test`. If `equal-test` is not specified,
       `equal` is used. For functions over the floating point
       numbers, it may be necessary to provide an appropriate
-      appoximate comparsion test.
+      appoximate comparison test.
 
  2. `halt-test` returns a non-nil value. `halt-test` defaults to a
       simple counter that returns t after `-fixfn-max-iterations`,

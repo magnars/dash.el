@@ -529,7 +529,7 @@ See also: @code{-remove} (@pxref{-remove}), @code{-map-last} (@pxref{-map-last})
 
 @anchor{-remove-item}
 @defun -remove-item (item list)
-Remove all occurences of @var{item} from @var{list}.
+Remove all occurrences of @var{item} from @var{list}.
 
 Comparison is done with @code{equal}.
 
@@ -901,7 +901,7 @@ See also: @code{-replace-at} (@pxref{-replace-at})
 
 @anchor{-replace-first}
 @defun -replace-first (old new list)
-Replace the first occurence of @var{old} with @var{new} in @var{list}.
+Replace the first occurrence of @var{old} with @var{new} in @var{list}.
 
 Elements are compared using @code{equal}.
 
@@ -925,7 +925,7 @@ See also: @code{-map-first} (@pxref{-map-first})
 
 @anchor{-replace-last}
 @defun -replace-last (old new list)
-Replace the last occurence of @var{old} with @var{new} in @var{list}.
+Replace the last occurrence of @var{old} with @var{new} in @var{list}.
 
 Elements are compared using @code{equal}.
 
@@ -4285,13 +4285,13 @@ Return a function that computes the (least) fixpoint of @var{fn}.
 
 @var{fn} must be a unary function. The returned lambda takes a single
 argument, @var{x}, the initial value for the fixpoint iteration. The
-iteration halts when either of the following conditions is satisified:
+iteration halts when either of the following conditions is satisfied:
 
  1. Iteration converges to the fixpoint, with equality being
       tested using @var{equal-test}. If @var{equal-test} is not specified,
       @code{equal} is used. For functions over the floating point
       numbers, it may be necessary to provide an appropriate
-      appoximate comparsion test.
+      appoximate comparison test.
 
  2. @var{halt-test} returns a non-nil value. @var{halt-test} defaults to a
       simple counter that returns t after @code{-fixfn-max-iterations},

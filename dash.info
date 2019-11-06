@@ -396,7 +396,7 @@ Functions returning a sublist of the original list.
               ⇒ '(1 2 3 4 5 6 7 8 9)
 
  -- Function: -remove-item (item list)
-     Remove all occurences of ITEM from LIST.
+     Remove all occurrences of ITEM from LIST.
 
      Comparison is done with ‘equal’.
 
@@ -622,7 +622,7 @@ Functions returning a modified copy of the input list.
               ⇒ nil
 
  -- Function: -replace-first (old new list)
-     Replace the first occurence of OLD with NEW in LIST.
+     Replace the first occurrence of OLD with NEW in LIST.
 
      Elements are compared using ‘equal’.
 
@@ -636,7 +636,7 @@ Functions returning a modified copy of the input list.
               ⇒ nil
 
  -- Function: -replace-last (old new list)
-     Replace the last occurence of OLD with NEW in LIST.
+     Replace the last occurrence of OLD with NEW in LIST.
 
      Elements are compared using ‘equal’.
 
@@ -2720,12 +2720,12 @@ offered in a separate package: ‘dash-functional‘.
      FN must be a unary function.  The returned lambda takes a single
      argument, X, the initial value for the fixpoint iteration.  The
      iteration halts when either of the following conditions is
-     satisified:
+     satisfied:
 
      1.  Iteration converges to the fixpoint, with equality being
      tested using EQUAL-TEST.  If EQUAL-TEST is not specified, ‘equal’
      is used.  For functions over the floating point numbers, it may
-     be necessary to provide an appropriate appoximate comparsion
+     be necessary to provide an appropriate appoximate comparison
      test.
 
      2.  HALT-TEST returns a non-nil value.  HALT-TEST defaults to a

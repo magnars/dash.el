@@ -1417,9 +1417,9 @@ other value (the body).
 Partition directly after each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-after-pred #'odd? '()) ;; => '()
-(-partition-after-pred #'odd? '(1)) ;; => '((1))
-(-partition-after-pred #'odd? '(0 1)) ;; => '((0 1))
+(-partition-after-pred (function odd?) '()) ;; => '()
+(-partition-after-pred (function odd?) '(1)) ;; => '((1))
+(-partition-after-pred (function odd?) '(0 1)) ;; => '((0 1))
 ```
 
 #### -partition-before-pred `(pred list)`
@@ -1427,9 +1427,9 @@ Partition directly after each time `pred` is true on an element of `list`.
 Partition directly before each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-before-pred #'odd? '()) ;; => '()
-(-partition-before-pred #'odd? '(1)) ;; => '((1))
-(-partition-before-pred #'odd? '(0 1)) ;; => '((0) (1))
+(-partition-before-pred (function odd?) '()) ;; => '()
+(-partition-before-pred (function odd?) '(1)) ;; => '((1))
+(-partition-before-pred (function odd?) '(0 1)) ;; => '((0) (1))
 ```
 
 #### -partition-before-item `(item list)`
@@ -1730,7 +1730,10 @@ If two lists are provided as arguments, return the groupings as a list
 of cons cells. Otherwise, return the groupings as a list of lists.
 
 Please note! This distinction is being removed in an upcoming 3.0
-release of Dash. If you rely on this behavior, use -zip-pair instead.
+release of Dash. If you rely on this behavior, use `-zip-pair` instead,
+which will retain that behaviour in future versions.
+
+Alias: `-zip-pair`
 
 ```el
 (-zip '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
@@ -2681,7 +2684,7 @@ expects a list with n items as arguments
 
 ```el
 (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => '(3 6 15)
-(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+(-map (-applify (lambda (a b c) (\` ((\, a) ((\, b) ((\, c))))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
 (funcall (-applify '<) '(3 6)) ;; => t
 ```
 

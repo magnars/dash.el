@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 git stash -q --keep-index
 ./run-tests.sh

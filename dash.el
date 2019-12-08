@@ -1,10 +1,12 @@
-;;; dash.el --- A modern list library for Emacs  -*- lexical-binding: t -*-
+;;; dash.el --- A modern list library  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2012-2016 Free Software Foundation, Inc.
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Version: 2.16.0
-;; Keywords: lists
+;; Keywords: convenience lists
+;; Package-Requires: ((emacs "24.1"))
+;; URL: https://github.com/magnars/dash.el
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -26,8 +28,8 @@
 ;; See documentation on https://github.com/magnars/dash.el#functions
 ;;
 ;; **Please note** The lexical binding in this file is not utilised at the
-;; moment. We will take full advantage of lexical binding in an upcoming 3.0
-;; release of Dash. In the meantime, we've added the pragma to avoid a bug that
+;; moment.  We will take full advantage of lexical binding in an upcoming 3.0
+;; release of Dash.  In the meantime, we've added the pragma to avoid a bug that
 ;; you can read more about in https://github.com/magnars/dash.el/issues/130.
 ;;
 
@@ -79,8 +81,8 @@ special values."
 
 (defmacro -doto (eval-initial-value &rest forms)
   "Eval a form, then insert that form as the 2nd argument to other forms.
-The EVAL-INITIAL-VALUE form is evaluated once. Its result is
-passed to FORMS, which are then evaluated sequentially. Returns
+The EVAL-INITIAL-VALUE form is evaluated once.  Its result is
+passed to FORMS, which are then evaluated sequentially.  Returns
 the target form."
   (declare (indent 1))
   (let ((retval (make-symbol "value")))
@@ -101,7 +103,7 @@ Note: `it' is not required in each form."
      it))
 
 (defun -each (list fn)
-  "Call FN with every item in LIST. Return nil, used for side-effects only."
+  "Call FN with every item in LIST.  Return nil, used for side-effects only."
   (--each list (funcall fn it)))
 
 (put '-each 'lisp-indent-function 1)
@@ -159,7 +161,7 @@ Return nil, used for side-effects only."
 
 (defun -each-r (list fn)
   "Call FN with every item in LIST in reversed order.
- Return nil, used for side-effects only."
+Return nil, used for side-effects only."
   (--each-r list (funcall fn it)))
 
 (defmacro --each-r-while (list pred &rest body)
@@ -183,7 +185,7 @@ Return nil, used for side-effects only."
   (--each-r-while list (funcall pred it) (funcall fn it)))
 
 (defmacro --dotimes (num &rest body)
-  "Repeatedly executes BODY (presumably for side-effects) with symbol `it' bound to integers from 0 through NUM-1."
+  "Repeatedly execute BODY (presumably for side-effects) with symbol `it' bound to integers from 0 through NUM-1."
   (declare (debug (form body))
            (indent 1))
   (let ((n (make-symbol "num")))
@@ -194,7 +196,7 @@ Return nil, used for side-effects only."
          (setq it (1+ it))))))
 
 (defun -dotimes (num fn)
-  "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through NUM-1."
+  "Repeatedly call FN (presumably for side-effects) passing in integers from 0 through NUM-1."
   (--dotimes num (funcall fn it)))
 
 (put '-dotimes 'lisp-indent-function 1)
@@ -218,7 +220,7 @@ Return nil, used for side-effects only."
 (defun -reduce-from (fn initial-value list)
   "Return the result of applying FN to INITIAL-VALUE and the
 first item in LIST, then applying FN to that result and the 2nd
-item, etc. If LIST contains no items, return INITIAL-VALUE and
+item, etc.  If LIST contains no items, return INITIAL-VALUE and
 do not call FN.
 
 In the anaphoric form `--reduce-from', the accumulated value is
@@ -238,9 +240,9 @@ See also: `-reduce', `-reduce-r'"
 
 (defun -reduce (fn list)
   "Return the result of applying FN to the first 2 items in LIST,
-then applying FN to that result and the 3rd item, etc. If LIST
+then applying FN to that result and the 3rd item, etc.  If LIST
 contains no items, return the result of calling FN with no
-arguments. If LIST contains a single item, return that item
+arguments.  If LIST contains a single item, return that item
 and do not call FN.
 
 In the anaphoric form `--reduce', the accumulated value is
@@ -258,7 +260,7 @@ See also: `-reduce-from', `-reduce-r'"
 
 (defun -reduce-r-from (fn initial-value list)
   "Replace conses with FN, nil with INITIAL-VALUE and evaluate
-the resulting expression. If LIST is empty, INITIAL-VALUE is
+the resulting expression.  If LIST is empty, INITIAL-VALUE is
 returned and FN is not called.
 
 Note: this function works the same as `-reduce-from' but the
@@ -274,8 +276,8 @@ See also: `-reduce-r', `-reduce'"
 
 (defun -reduce-r (fn list)
   "Replace conses with FN and evaluate the resulting expression.
-The final nil is ignored. If LIST contains no items, return the
-result of calling FN with no arguments. If LIST contains a single
+The final nil is ignored.  If LIST contains no items, return the
+result of calling FN with no arguments.  If LIST contains a single
 item, return that item and do not call FN.
 
 The first argument of FN is the new item, the second is the
@@ -455,9 +457,10 @@ See also: `-each-indexed'."
        (nreverse ,r))))
 
 (defun -map-when (pred rep list)
-  "Return a new list where the elements in LIST that do not match the PRED function
-are unchanged, and where the elements in LIST that do match the PRED function are mapped
-through the REP function.
+  "Return a new list where the elements in LIST that do not match
+the PRED function are unchanged, and where the elements in LIST
+that do match the PRED function are mapped through the REP
+function.
 
 Alias: `-replace-where'
 
@@ -533,7 +536,7 @@ Thus function FN should return a list."
 (defun -flatten (l)
   "Take a nested list L and return its contents as a single, flat list.
 
-Note that because `nil' represents a list of zero elements (an
+Note that because nil represents a list of zero elements (an
 empty list), any mention of nil in L will disappear after
 flattening.  If you need to preserve nils, consider `-flatten-n'
 or map them to some unique symbol and then map them back.
@@ -1050,7 +1053,7 @@ This function can be thought of as a generalization of
 (defun ---partition-all-in-steps-reversed (n step list)
   "Private: Used by -partition-all-in-steps and -partition-in-steps."
   (when (< step 1)
-    (error "Step must be a positive number, or you're looking at some juicy infinite loops."))
+    (error "Step must be a positive number, or you're looking at some juicy infinite loops"))
   (let ((result nil))
     (while list
       (!cons (-take n list) result)
@@ -1149,10 +1152,10 @@ those items are discarded."
            (nreverse ,r))))))
 
 (defun -partition-by-header (fn list)
-  "Apply FN to the first item in LIST. That is the header
-value. Apply FN to each item in LIST, splitting it each time FN
-returns the header value, but only after seeing at least one
-other value (the body)."
+  "Apply FN to the first item in LIST.
+That is the header value.  Apply FN to each item in LIST,
+splitting it each time FN returns the header value, but only
+after seeing at least one other value (the body)."
   (--partition-by-header (funcall fn it) list))
 
 (defun -partition-after-pred (pred list)
@@ -1254,25 +1257,26 @@ The elements in list1 are bound as symbol `it', the elements in list2 as symbol 
        (nreverse ,r))))
 
 (defun -zip-with (fn list1 list2)
-  "Zip the two lists LIST1 and LIST2 using a function FN.  This
-function is applied pairwise taking as first argument element of
-LIST1 and as second argument element of LIST2 at corresponding
-position.
+  "Zip the two lists LIST1 and LIST2 using a function FN.
+This function is applied pairwise taking as first argument
+element of LIST1 and as second argument element of LIST2 at
+corresponding position.
 
 The anaphoric form `--zip-with' binds the elements from LIST1 as symbol `it',
 and the elements from LIST2 as symbol `other'."
   (--zip-with (funcall fn it other) list1 list2))
 
 (defun -zip (&rest lists)
-  "Zip LISTS together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+  "Zip LISTS together.
+Group the head of each list, followed by the second elements of
+each list, and so on.  The lengths of the returned groupings are
+equal to the length of the shortest input list.
 
 If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists.
+of cons cells.  Otherwise, return the groupings as a list of lists.
 
 Please note! This distinction is being removed in an upcoming 3.0
-release of Dash. If you rely on this behavior, use `-zip-pair` instead,
+release of Dash.  If you rely on this behavior, use `-zip-pair` instead,
 which will retain that behaviour in future versions.
 
 Alias: `-zip-pair'"
@@ -1292,9 +1296,9 @@ Alias: `-zip-pair'"
 (defalias '-zip-pair '-zip)
 
 (defun -zip-fill (fill-value &rest lists)
-  "Zip LISTS, with FILL-VALUE padded onto the shorter lists. The
-lengths of the returned groupings are equal to the length of the
-longest input list."
+  "Zip LISTS, with FILL-VALUE padded onto the shorter lists.
+The lengths of the returned groupings are equal to the length of
+the longest input list."
   (declare (pure t) (side-effect-free t))
   (apply '-zip (apply '-pad (cons fill-value lists))))
 
@@ -1319,7 +1323,7 @@ elements and repeat from the beginning."
     (nconc newlist newlist)))
 
 (defun -pad (fill-value &rest lists)
-  "Appends FILL-VALUE to the end of each list in LISTS such that they
+  "Append FILL-VALUE to the end of each list in LISTS such that they
 will all have the same length."
   (let* ((annotations (-annotate 'length lists))
          (n (-max (-map 'car annotations))))
@@ -1487,10 +1491,10 @@ See also: `-select-columns', `-select-by-indices'"
   (--mapcat (-select-by-indices (list column) it) table))
 
 (defmacro -> (x &optional form &rest more)
-  "Thread the expr through the forms. Insert X as the second item
-in the first form, making a list of it if it is not a list
-already. If there are more forms, insert the first form as the
-second item in second form, etc."
+  "Thread the expr through the forms.
+Insert X as the second item in the first form, making a list of
+it if it is not a list already.  If there are more forms, insert
+the first form as the second item in second form, etc."
   (declare (debug (form &rest [&or symbolp (sexp &rest form)])))
   (cond
    ((null form) x)
@@ -1500,10 +1504,10 @@ second item in second form, etc."
    (:else `(-> (-> ,x ,form) ,@more))))
 
 (defmacro ->> (x &optional form &rest more)
-  "Thread the expr through the forms. Insert X as the last item
-in the first form, making a list of it if it is not a list
-already. If there are more forms, insert the first form as the
-last item in second form, etc."
+  "Thread the expr through the forms.
+Insert X as the last item in the first form, making a list of it
+if it is not a list already.  If there are more forms, insert the
+first form as the last item in second form, etc."
   (declare (debug ->))
   (cond
    ((null form) x)
@@ -1669,7 +1673,7 @@ MATCH-FORM is either a symbol, which gets bound to the respective
 value in source or another match form which gets destructured
 recursively.
 
-If the cdr of last cons cell in the list is `nil', matching stops
+If the cdr of last cons cell in the list is nil, matching stops
 there.
 
 SOURCE is a proper or improper list."
@@ -2203,7 +2207,7 @@ multiple assignments it does not cause unexpected side effects.
 
 (defmacro -if-let* (vars-vals then &rest else)
   "If all VALS evaluate to true, bind them to their corresponding
-VARS and do THEN, otherwise do ELSE. VARS-VALS should be a list
+VARS and do THEN, otherwise do ELSE.  VARS-VALS should be a list
 of (VAR VAL) pairs.
 
 Note: binding is done according to `-let*'.  VALS are evaluated
@@ -2240,7 +2244,7 @@ otherwise do ELSE."
 
 (defmacro -when-let* (vars-vals &rest body)
   "If all VALS evaluate to true, bind them to their corresponding
-VARS and execute body. VARS-VALS should be a list of (VAR VAL)
+VARS and execute body.  VARS-VALS should be a list of (VAR VAL)
 pairs.
 
 Note: binding is done according to `-let*'.  VALS are evaluated
@@ -2261,8 +2265,7 @@ Note: binding is done according to `-let'.
   `(-if-let ,var-val (progn ,@body)))
 
 (defmacro --when-let (val &rest body)
-  "If VAL evaluates to non-nil, bind it to symbol `it' and
-execute body."
+  "If VAL evaluate to non-nil, bind it to symbol `it' and execute body."
   (declare (debug (form body))
            (indent 1))
   `(--if-let ,val (progn ,@body)))
@@ -2354,7 +2357,7 @@ or with `-compare-fn' if that's non-nil."
     res))
 
 (defun -tails (list)
-  "Return all suffixes of LIST"
+  "Return all suffixes of LIST."
   (-reductions-r-from 'cons nil list))
 
 (defun -common-prefix (&rest lists)
@@ -2390,7 +2393,7 @@ Alias: `-contains-p'"
 (defalias '-contains-p '-contains?)
 
 (defun -same-items? (list list2)
-  "Return true if LIST and LIST2 has the same items.
+  "Return non-nil if LIST and LIST2 has the same items.
 
 The order of the elements in the lists does not matter.
 
@@ -2568,7 +2571,7 @@ This is \"dual\" operation to `-reduce-r': while -reduce-r
 consumes a list to produce a single value, `-unfold' takes a
 seed value and builds a (potentially infinite!) list.
 
-FUN should return `nil' to stop the generating process, or a
+FUN should return nil to stop the generating process, or a
 cons (A . B), where A will be prepended to the result and B is
 the new seed."
   (let ((last (funcall fun seed)) r)
@@ -2616,7 +2619,7 @@ If elements of TREE are lists themselves, apply FN recursively to
 elements of these nested lists.
 
 Then reduce the resulting lists using FOLDER and initial value
-INIT-VALUE. See `-reduce-r-from'.
+INIT-VALUE.  See `-reduce-r-from'.
 
 This is the same as calling `-tree-reduce-from' after `-tree-map'
 but is twice as fast as it only traverse the structure once."
@@ -2638,7 +2641,7 @@ If elements of TREE are lists themselves, apply FN recursively to
 elements of these nested lists.
 
 Then reduce the resulting lists using FOLDER and initial value
-INIT-VALUE. See `-reduce-r-from'.
+INIT-VALUE.  See `-reduce-r-from'.
 
 This is the same as calling `-tree-reduce' after `-tree-map'
 but is twice as fast as it only traverse the structure once."

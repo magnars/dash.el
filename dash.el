@@ -1263,6 +1263,24 @@ The anaphoric form `--zip-with' binds the elements from LIST1 as symbol `it',
 and the elements from LIST2 as symbol `other'."
   (--zip-with (funcall fn it other) list1 list2))
 
+(defun -zip-lists (&rest lists)
+  "Zip LISTS together.  Group the head of each list, followed by the
+second elements of each list, and so on. The lengths of the returned
+groupings are equal to the length of the shortest input list.
+
+The return value is always list of lists, which is a difference
+from `-zip-pair' which returns a cons-cell in case two input
+lists are provided.
+
+See also: `-zip'"
+  (declare (pure t) (side-effect-free t))
+  (when lists
+    (let (results)
+      (while (-none? 'null lists)
+        (setq results (cons (mapcar 'car lists) results))
+        (setq lists (mapcar 'cdr lists)))
+      (nreverse results))))
+
 (defun -zip (&rest lists)
   "Zip LISTS together.  Group the head of each list, followed by the
 second elements of each list, and so on. The lengths of the returned
@@ -1271,11 +1289,12 @@ groupings are equal to the length of the shortest input list.
 If two lists are provided as arguments, return the groupings as a list
 of cons cells. Otherwise, return the groupings as a list of lists.
 
-Please note! This distinction is being removed in an upcoming 3.0
-release of Dash. If you rely on this behavior, use `-zip-pair` instead,
-which will retain that behaviour in future versions.
+Use `-zip-lists' if you need the return value to always be a list
+of lists.
 
-Alias: `-zip-pair'"
+Alias: `-zip-pair'
+
+See also: `-zip-lists'"
   (declare (pure t) (side-effect-free t))
   (when lists
     (let (results)
@@ -1307,6 +1326,9 @@ a variable number of arguments, such that
   (-unzip (-zip L1 L2 L3 ...))
 
 is identity (given that the lists are the same length).
+
+Note in particular that calling this on a list of two lists will
+return a list of cons-cells such that the aboce identity works.
 
 See also: `-zip'"
   (apply '-zip lists))
@@ -2921,6 +2943,7 @@ structure such as plist or alist."
                              "--zip-with"
                              "-zip"
                              "-zip-fill"
+                             "-zip-lists"
                              "-zip-pair"
                              "-cycle"
                              "-pad"

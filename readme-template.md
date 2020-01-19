@@ -30,7 +30,8 @@ To get function combinators:
 - For backward compatibility reasons `-zip` return a cons-cell instead of a list
   with two elements when called on two lists. This is a clunky API, and in an
   upcoming 3.0 release of Dash it will always return a list. If you rely on the
-  cons-cell return value, use `-zip-pair` instead.
+  cons-cell return value, use `-zip-pair` instead.  During the 2.x
+  release cycle the new API is available as `-zip-lists`.
 
 ## Syntax highlighting of dash functions
 

@@ -19,18 +19,19 @@ If you want the function combinators, then also:
 
 Add this to the big comment block at the top:
 
-    ;; Package-Requires: ((dash "2.16.0"))
+    ;; Package-Requires: ((dash "2.17.0"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "2.16.0") (dash-functional "1.2.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.17.0") (dash-functional "1.2.0") (emacs "24"))
 
 ## Upcoming breaking change!
 
 - For backward compatibility reasons `-zip` return a cons-cell instead of a list
   with two elements when called on two lists. This is a clunky API, and in an
   upcoming 3.0 release of Dash it will always return a list. If you rely on the
-  cons-cell return value, use `-zip-pair` instead.
+  cons-cell return value, use `-zip-pair` instead.  During the 2.x
+  release cycle the new API is available as `-zip-lists`.
 
 ## Syntax highlighting of dash functions
 
@@ -233,6 +234,7 @@ Other list functions not fit to be classified elsewhere.
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
 * [-zip](#-zip-rest-lists) `(&rest lists)`
+* [-zip-lists](#-zip-lists-rest-lists) `(&rest lists)`
 * [-zip-fill](#-zip-fill-fill-value-rest-lists) `(fill-value &rest lists)`
 * [-unzip](#-unzip-lists) `(lists)`
 * [-cycle](#-cycle-list) `(list)`
@@ -1729,13 +1731,35 @@ groupings are equal to the length of the shortest input list.
 If two lists are provided as arguments, return the groupings as a list
 of cons cells. Otherwise, return the groupings as a list of lists.
 
-Please note! This distinction is being removed in an upcoming 3.0
-release of Dash. If you rely on this behavior, use -zip-pair instead.
+Use [`-zip-lists`](#-zip-lists-rest-lists) if you need the return value to always be a list
+of lists.
+
+Alias: `-zip-pair`
+
+See also: [`-zip-lists`](#-zip-lists-rest-lists)
 
 ```el
 (-zip '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
 (-zip '(1 2 3) '(4 5 6 7)) ;; => '((1 . 4) (2 . 5) (3 . 6))
-(-zip '(1 2 3 4) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
+(-zip '(1 2) '(3 4 5) '(6)) ;; => '((1 3 6))
+```
+
+#### -zip-lists `(&rest lists)`
+
+Zip `lists` together.  Group the head of each list, followed by the
+second elements of each list, and so on. The lengths of the returned
+groupings are equal to the length of the shortest input list.
+
+The return value is always list of lists, which is a difference
+from `-zip-pair` which returns a cons-cell in case two input
+lists are provided.
+
+See also: [`-zip`](#-zip-rest-lists)
+
+```el
+(-zip-lists '(1 2 3) '(4 5 6)) ;; => '((1 4) (2 5) (3 6))
+(-zip-lists '(1 2 3) '(4 5 6 7)) ;; => '((1 4) (2 5) (3 6))
+(-zip-lists '(1 2) '(3 4 5) '(6)) ;; => '((1 3 6))
 ```
 
 #### -zip-fill `(fill-value &rest lists)`
@@ -1759,11 +1783,15 @@ a variable number of arguments, such that
 
 is identity (given that the lists are the same length).
 
+Note in particular that calling this on a list of two lists will
+return a list of cons-cells such that the aboce identity works.
+
 See also: [`-zip`](#-zip-rest-lists)
 
 ```el
 (-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g"))) ;; => '((1 2 3) (a b c) ("e" "f" "g"))
 (-unzip '((1 2) (3 4) (5 6) (7 8) (9 10))) ;; => '((1 3 5 7 9) (2 4 6 8 10))
+(-unzip '((1 2) (3 4))) ;; => '((1 . 3) (2 . 4))
 ```
 
 #### -cycle `(list)`
@@ -2878,6 +2906,14 @@ Oh, and don't edit `README.md` directly, it is auto-generated.
 Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
+
+### From 2.16 to 2.17
+
+- Speed up `-uniq` by using hash-tables when possible (@cireu, #305)
+- Fix `-inits` to be non-destructive (@SwiftLawnGnome, #313)
+- Fix indent rules for `-some->` and family (@wbolster, #321)
+- Add `-zip-lists` which always returns list of lists, even for two
+  input lists (see issue #135).
 
 ### From 2.15 to 2.16
 

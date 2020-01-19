@@ -99,6 +99,14 @@ Change `readme-template.md` or `examples-to-docs.el` instead.
 
 ## Changelist
 
+### From 2.16 to 2.17
+
+- Speed up `-uniq` by using hash-tables when possible (@cireu, #305)
+- Fix `-inits` to be non-destructive (@SwiftLawnGnome, #313)
+- Fix indent rules for `-some->` and family (@wbolster, #321)
+- Add `-zip-lists` which always returns list of lists, even for two
+  input lists (see issue #135).
+
 ### From 2.15 to 2.16
 
 - Added `--doto`, anaphoric version of `-doto` (#282)

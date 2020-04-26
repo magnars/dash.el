@@ -1328,7 +1328,7 @@ a variable number of arguments, such that
 is identity (given that the lists are the same length).
 
 Note in particular that calling this on a list of two lists will
-return a list of cons-cells such that the aboce identity works.
+return a list of cons-cells such that the above identity works.
 
 See also: `-zip'"
   (apply '-zip lists))

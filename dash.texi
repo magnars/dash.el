@@ -4330,7 +4330,7 @@ iteration halts when either of the following conditions is satisfied:
       tested using @var{equal-test}. If @var{equal-test} is not specified,
       @code{equal} is used. For functions over the floating point
       numbers, it may be necessary to provide an appropriate
-      appoximate comparison test.
+      approximate comparison test.
 
  2. @var{halt-test} returns a non-nil value. @var{halt-test} defaults to a
       simple counter that returns t after @code{-fixfn-max-iterations},

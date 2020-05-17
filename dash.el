@@ -2146,27 +2146,61 @@ such that:
   (-lambda (x y ...) body)
 
 has the usual semantics of `lambda'.  Furthermore, these get
-translated into normal lambda, so there is no performance
+translated into a normal `lambda', so there is no performance
 penalty.
 
-See `-let' for the description of destructuring mechanism."
+See `-let' for a description of the destructuring mechanism."
   (declare (doc-string 2) (indent defun)
            (debug (&define sexp
                            [&optional stringp]
                            [&optional ("interactive" interactive)]
                            def-body)))
   (cond
-   ((not (consp match-form))
-    (signal 'wrong-type-argument "match-form must be a list"))
+   ((nlistp match-form)
+    (signal 'wrong-type-argument (list #'listp match-form)))
    ;; no destructuring, so just return regular lambda to make things faster
-   ((-all? 'symbolp match-form)
+   ((-all? #'symbolp match-form)
     `(lambda ,match-form ,@body))
    (t
-    (let* ((inputs (--map-indexed (list it (make-symbol (format "input%d" it-index))) match-form)))
+    (let ((inputs (--map-indexed (list it (make-symbol (format "input%d" it-index))) match-form)))
       ;; TODO: because inputs to the lambda are evaluated only once,
       ;; -let* need not to create the extra bindings to ensure that.
       ;; We should find a way to optimize that.  Not critical however.
-      `(lambda ,(--map (cadr it) inputs)
+      `(lambda ,(-map #'cadr inputs)
+         (-let* ,inputs ,@body))))))
+
+(defmacro -defun (name match-form &rest body)
+  "Define NAME as a function which destructures its input as MATCH-FORM and executes BODY.
+
+Note that you have to enclose the MATCH-FORM in a pair of parens,
+such that:
+
+  (-defun (x) body)
+  (-defun (x y ...) body)
+
+has the usual semantics of `defun'.  Furthermore, these get
+translated into a normal `defun', so there is no performance
+penalty.
+
+See `-let' for a description of the destructuring mechanism."
+  (declare (doc-string 3) (indent defun)
+           (debug (&define name sexp
+                           [&optional stringp]
+                           [&optional ("declare" &rest sexp)]
+                           [&optional ("interactive" interactive)]
+                           def-body)))
+  (cond
+   ((nlistp match-form)
+    (signal 'wrong-type-argument (list #'listp match-form)))
+   ;; no destructuring, so just return regular defun to make things faster
+   ((-all? #'symbolp match-form)
+    `(defun ,name ,match-form ,@body))
+   (t
+    (let ((inputs (--map-indexed (list it (make-symbol (format "input%d" it-index))) match-form)))
+      ;; TODO: because inputs to the defun are evaluated only once,
+      ;; -let* need not to create the extra bindings to ensure that.
+      ;; We should find a way to optimize that.  Not critical however.
+      `(defun ,name ,(-map #'cadr inputs)
          (-let* ,inputs ,@body))))))
 
 (defmacro -setq (&rest forms)

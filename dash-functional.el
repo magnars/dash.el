@@ -31,13 +31,6 @@
 
 (require 'dash)
 
-(defun -partial (fn &rest args)
-  "Takes a function FN and fewer than the normal arguments to FN,
-and returns a fn that takes a variable number of additional ARGS.
-When called, the returned function calls FN with ARGS first and
-then additional args."
-  (apply 'apply-partially fn args))
-
 (defun -rpartial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,
 and returns a fn that takes a variable number of additional ARGS.

@@ -934,6 +934,23 @@ See also: `-splice', `-splice-list'"
   (let ((split-list (-split-at n list)))
     (nconc (car split-list) (cons x (cadr split-list)))))
 
+(defun -insert-sorted (comparator item list)
+  "Using COMPARATOR insert ITEM into sorted LIST.
+
+It is assumed that LIST is already sorted on input.
+
+The new item is inserted at the first position where
+
+  (funcall comparator x item)
+
+returns nil.  X is the \"current\" item from the input list."
+  (let ((place (-split-with (lambda (x) (funcall comparator x item)) list)))
+    (-concat (car place) (list item) (cadr place))))
+
+(defmacro --insert-sorted (form item list)
+  "Anaphoric form of `-insert-sorted'."
+  `(-insert-sorted (lambda (it other) ,form) ,list))
+
 (defun -replace-at (n x list)
   "Return a list with element at Nth position in LIST replaced with X.
 
@@ -2910,6 +2927,8 @@ structure such as plist or alist."
                              "-split-at"
                              "-rotate"
                              "-insert-at"
+                             "-insert-sorted"
+                             "--insert-sorted"
                              "-replace-at"
                              "-update-at"
                              "--update-at"

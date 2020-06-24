@@ -2470,6 +2470,32 @@ if the first element should sort before the second."
   (declare (debug (form form)))
   `(-sort (lambda (it other) ,form) ,list))
 
+(defun -sort-keyed (key-computer comparator list)
+  "Sort LIST by given keys, comparing them using COMPARATOR.
+First KEY-COMPUTER is used to compute key value for each list
+item.  Then resulting keys are sorted (stably) according to
+COMPARATOR.  Finally, a copy of the original LIST is built and
+rearranged in the same way.
+
+LIST is not modified by side effects.  KEY-COMPARATOR is called
+once for each element of LIST, i.e. with one argument.
+COMPARATOR is called with two keys, and should return non-nil if
+the first one (and thus its associated LIST element) should sort
+before the second."
+  (if (cdr list)
+      ;; We don't use '-sort' because there's no need to copy
+      ;; argument.
+      (-map 'cdr
+            (sort (--map (cons (funcall key-computer it) it) list)
+                  (lambda (a b) (funcall comparator (car a) (car b)))))
+    (when list
+      (list (car list)))))
+
+(defmacro --sort-keyed (key-form comparator-form list)
+  "Anaphoric form of `-sort-keyed'."
+  (declare (debug (form form form)))
+  `(-sort-keyed (lambda (it) ,key-form) (lambda (it other) ,comparator-form) ,list))
+
 (defun -list (&rest args)
   "Return a list with ARGS.
 

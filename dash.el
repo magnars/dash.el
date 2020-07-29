@@ -1581,7 +1581,7 @@ and when that result is non-nil, through the next form, etc."
                  ,@more))))
 
 (defmacro -some--> (x &optional form &rest more)
-  "When expr in non-nil, thread it through the first form (via `-->'),
+  "When expr is non-nil, thread it through the first form (via `-->'),
 and when that result is non-nil, through the next form, etc."
   (declare (debug ->)
            (indent 1))

@@ -363,7 +363,7 @@ Alias: `-replace-where`
 See also: [`-update-at`](#-update-at-n-func-list)
 
 ```el
-(-map-when 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
+(-map-when 'evenp 'square '(1 2 3 4)) ;; => '(1 4 3 16)
 (--map-when (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
 (--map-when (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
 ```
@@ -375,7 +375,7 @@ Replace first item in `list` satisfying `pred` with result of `rep` called on th
 See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-first`](#-replace-first-old-new-list)
 
 ```el
-(-map-first 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 4)
+(-map-first 'evenp 'square '(1 2 3 4)) ;; => '(1 4 3 4)
 (--map-first (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 4)
 (--map-first (= it 2) 17 '(1 2 3 2)) ;; => '(1 17 3 2)
 ```
@@ -387,7 +387,7 @@ Replace last item in `list` satisfying `pred` with result of `rep` called on thi
 See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-last`](#-replace-last-old-new-list)
 
 ```el
-(-map-last 'even? 'square '(1 2 3 4)) ;; => '(1 2 3 16)
+(-map-last 'evenp 'square '(1 2 3 4)) ;; => '(1 2 3 16)
 (--map-last (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 3 16)
 (--map-last (= it 2) 17 '(1 2 3 2)) ;; => '(1 2 3 17)
 ```
@@ -429,7 +429,7 @@ with keywords).
 See also: [`-splice-list`](#-splice-list-pred-new-list-list), [`-insert-at`](#-insert-at-n-x-list)
 
 ```el
-(-splice 'even? (lambda (x) (list x x)) '(1 2 3 4)) ;; => '(1 2 2 3 4 4)
+(-splice 'evenp (lambda (x) (list x x)) '(1 2 3 4)) ;; => '(1 2 2 3 4 4)
 (--splice 't (list it it) '(1 2 3 4)) ;; => '(1 1 2 2 3 3 4 4)
 (--splice (equal it :magic) '((list of) (magical) (code)) '((foo) (bar) :magic (baz))) ;; => '((foo) (bar) (list of) (magical) (code) (baz))
 ```
@@ -484,7 +484,7 @@ See also: [`-keep`](#-keep-fn-list), [`-remove`](#-remove-pred-list).
 
 ```el
 (-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(2 4)
-(-filter 'even? '(1 2 3 4)) ;; => '(2 4)
+(-filter 'evenp '(1 2 3 4)) ;; => '(2 4)
 (--filter (= 0 (% it 2)) '(1 2 3 4)) ;; => '(2 4)
 ```
 
@@ -498,7 +498,7 @@ See also: [`-filter`](#-filter-pred-list).
 
 ```el
 (-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
-(-remove 'even? '(1 2 3 4)) ;; => '(1 3)
+(-remove 'evenp '(1 2 3 4)) ;; => '(1 3)
 (--remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
 ```
 
@@ -511,7 +511,7 @@ Alias: `-reject-first`
 See also: [`-remove`](#-remove-pred-list), [`-map-first`](#-map-first-pred-rep-list)
 
 ```el
-(-remove-first 'even? '(1 3 5 4 7 8 10)) ;; => '(1 3 5 7 8 10)
+(-remove-first 'evenp '(1 3 5 4 7 8 10)) ;; => '(1 3 5 7 8 10)
 (-remove-first 'stringp '(1 2 "first" "second" "third")) ;; => '(1 2 "second" "third")
 (--remove-first (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 5 6 7 8 9 10)
 ```
@@ -525,7 +525,7 @@ Alias: `-reject-last`
 See also: [`-remove`](#-remove-pred-list), [`-map-last`](#-map-last-pred-rep-list)
 
 ```el
-(-remove-last 'even? '(1 3 5 4 7 8 10 11)) ;; => '(1 3 5 4 7 8 11)
+(-remove-last 'evenp '(1 3 5 4 7 8 10 11)) ;; => '(1 3 5 4 7 8 11)
 (-remove-last 'stringp '(1 2 "last" "second" "third")) ;; => '(1 2 "last" "second")
 (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 5 6 7 8 9)
 ```
@@ -618,8 +618,8 @@ See also: [`-drop`](#-drop-n-list)
 Return a new list of successive items from `list` while (`pred` item) returns a non-nil value.
 
 ```el
-(-take-while 'even? '(1 2 3 4)) ;; => '()
-(-take-while 'even? '(2 4 5 6)) ;; => '(2 4)
+(-take-while 'evenp '(1 2 3 4)) ;; => '()
+(-take-while 'evenp '(2 4 5 6)) ;; => '(2 4)
 (--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
 ```
 
@@ -628,8 +628,8 @@ Return a new list of successive items from `list` while (`pred` item) returns a 
 Return the tail of `list` starting from the first item for which (`pred` item) returns nil.
 
 ```el
-(-drop-while 'even? '(1 2 3 4)) ;; => '(1 2 3 4)
-(-drop-while 'even? '(2 4 5 6)) ;; => '(5 6)
+(-drop-while 'evenp '(1 2 3 4)) ;; => '(1 2 3 4)
+(-drop-while 'evenp '(2 4 5 6)) ;; => '(5 6)
 (--drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(4 3 2 1)
 ```
 
@@ -982,7 +982,7 @@ See also: [`-reductions-r-from`](#-reductions-r-from-fn-init-list), [`-reduction
 Counts the number of items in `list` where (`pred` item) is non-nil.
 
 ```el
-(-count 'even? '(1 2 3 4 5)) ;; => 2
+(-count 'evenp '(1 2 3 4 5)) ;; => 2
 (--count (< it 4) '(1 2 3 4)) ;; => 3
 ```
 
@@ -1168,8 +1168,8 @@ Return t if (`pred` x) is non-nil for any x in `list`, else nil.
 Alias: `-any-p`, `-some?`, `-some-p`
 
 ```el
-(-any? 'even? '(1 2 3)) ;; => t
-(-any? 'even? '(1 3 5)) ;; => nil
+(-any? 'evenp '(1 2 3)) ;; => t
+(-any? 'evenp '(1 3 5)) ;; => nil
 (-any? 'null '(1 3 5)) ;; => nil
 ```
 
@@ -1180,8 +1180,8 @@ Return t if (`pred` x) is non-nil for all x in `list`, else nil.
 Alias: `-all-p`, `-every?`, `-every-p`
 
 ```el
-(-all? 'even? '(1 2 3)) ;; => nil
-(-all? 'even? '(2 4 6)) ;; => t
+(-all? 'evenp '(1 2 3)) ;; => nil
+(-all? 'evenp '(2 4 6)) ;; => t
 (--all? (= 0 (% it 2)) '(2 4 6)) ;; => t
 ```
 
@@ -1192,8 +1192,8 @@ Return t if (`pred` x) is nil for all x in `list`, else nil.
 Alias: `-none-p`
 
 ```el
-(-none? 'even? '(1 2 3)) ;; => nil
-(-none? 'even? '(1 3 5)) ;; => t
+(-none? 'evenp '(1 2 3)) ;; => nil
+(-none? 'evenp '(1 3 5)) ;; => t
 (--none? (= 0 (% it 2)) '(1 2 3)) ;; => nil
 ```
 
@@ -1205,9 +1205,9 @@ Return `nil` both if all items match the predicate or if none of the items match
 Alias: `-only-some-p`
 
 ```el
-(-only-some? 'even? '(1 2 3)) ;; => t
-(-only-some? 'even? '(1 3 5)) ;; => nil
-(-only-some? 'even? '(2 4 6)) ;; => nil
+(-only-some? 'evenp '(1 2 3)) ;; => t
+(-only-some? 'evenp '(1 3 5)) ;; => nil
+(-only-some? 'evenp '(2 4 6)) ;; => nil
 ```
 
 #### -contains? `(list element)`
@@ -1297,8 +1297,8 @@ Return a list of ((-take `n` `list`) (-drop `n` `list`)), in no more than one pa
 Return a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`)), in no more than one pass through the list.
 
 ```el
-(-split-with 'even? '(1 2 3 4)) ;; => '(nil (1 2 3 4))
-(-split-with 'even? '(2 4 5 6)) ;; => '((2 4) (5 6))
+(-split-with 'evenp '(1 2 3 4)) ;; => '(nil (1 2 3 4))
+(-split-with 'evenp '(2 4 5 6)) ;; => '((2 4) (5 6))
 (--split-with (< it 4) '(1 2 3 4 3 2 1)) ;; => '((1 2 3) (4 3 2 1))
 ```
 
@@ -1330,8 +1330,8 @@ This function can be thought of as a generalization of
 `split-string`.
 
 ```el
-(-split-when 'even? '(1 2 3 4 5 6)) ;; => '((1) (3) (5))
-(-split-when 'even? '(1 2 3 4 6 8 9)) ;; => '((1) (3) (9))
+(-split-when 'evenp '(1 2 3 4 5 6)) ;; => '((1) (3) (5))
+(-split-when 'evenp '(1 2 3 4 6 8 9)) ;; => '((1) (3) (9))
 (--split-when (memq it '(&optional &rest)) '(a b &optional c d &rest args)) ;; => '((a b) (c d) (args))
 ```
 
@@ -1396,8 +1396,8 @@ The last groups may contain less than `n` items.
 Apply `fn` to each item in `list`, splitting it each time `fn` returns a new value.
 
 ```el
-(-partition-by 'even? '()) ;; => '()
-(-partition-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => '((1 1) (2 2 2) (3) (4 6 8))
+(-partition-by 'evenp '()) ;; => '()
+(-partition-by 'evenp '(1 1 2 2 2 3 4 6 8)) ;; => '((1 1) (2 2 2) (3) (4 6 8))
 (--partition-by (< it 3) '(1 2 3 4 3 2 1)) ;; => '((1 2) (3 4 3) (2 1))
 ```
 
@@ -1411,7 +1411,7 @@ other value (the body).
 ```el
 (--partition-by-header (= it 1) '(1 2 3 1 2 1 2 3 4)) ;; => '((1 2 3) (1 2) (1 2 3 4))
 (--partition-by-header (> it 0) '(1 2 0 1 0 1 2 3 0)) ;; => '((1 2 0) (1 0) (1 2 3 0))
-(-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1)) ;; => '((2 1 1 1) (4 1 3 5) (6 6 1))
+(-partition-by-header 'evenp '(2 1 1 1 4 1 3 5 6 6 1)) ;; => '((2 1 1 1) (4 1 3 5) (6 6 1))
 ```
 
 #### -partition-after-pred `(pred list)`
@@ -1419,9 +1419,9 @@ other value (the body).
 Partition directly after each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-after-pred #'odd? '()) ;; => '()
-(-partition-after-pred #'odd? '(1)) ;; => '((1))
-(-partition-after-pred #'odd? '(0 1)) ;; => '((0 1))
+(-partition-after-pred #'oddp '()) ;; => '()
+(-partition-after-pred #'oddp '(1)) ;; => '((1))
+(-partition-after-pred #'oddp '(0 1)) ;; => '((0 1))
 ```
 
 #### -partition-before-pred `(pred list)`
@@ -1429,9 +1429,9 @@ Partition directly after each time `pred` is true on an element of `list`.
 Partition directly before each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-before-pred #'odd? '()) ;; => '()
-(-partition-before-pred #'odd? '(1)) ;; => '((1))
-(-partition-before-pred #'odd? '(0 1)) ;; => '((0) (1))
+(-partition-before-pred #'oddp '()) ;; => '()
+(-partition-before-pred #'oddp '(1)) ;; => '((1))
+(-partition-before-pred #'oddp '(0 1)) ;; => '((0) (1))
 ```
 
 #### -partition-before-item `(item list)`
@@ -1460,8 +1460,8 @@ Separate `list` into an alist whose keys are `fn` applied to the
 elements of `list`.  Keys are compared by `equal`.
 
 ```el
-(-group-by 'even? '()) ;; => '()
-(-group-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => '((nil 1 1 3) (t 2 2 2 4 6 8))
+(-group-by 'evenp '()) ;; => '()
+(-group-by 'evenp '(1 1 2 2 2 3 4 6 8)) ;; => '((nil 1 1 3) (t 2 2 2 4 6 8))
 (--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) ;; => '(("a" "a/b" "a/e") ("c" "c/d"))
 ```
 
@@ -1503,7 +1503,7 @@ there is no such element.
 See also [`-first`](#-first-pred-list).
 
 ```el
-(-find-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 0
+(-find-index 'evenp '(2 4 1 6 3 3 5 8)) ;; => 0
 (--find-index (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => 3
 (-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz")) ;; => 1
 ```
@@ -1517,7 +1517,7 @@ there is no such element.
 See also [`-last`](#-last-pred-list).
 
 ```el
-(-find-last-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 7
+(-find-last-index 'evenp '(2 4 1 6 3 3 5 8)) ;; => 7
 (--find-last-index (< 5 it) '(2 7 1 6 3 8 5 2)) ;; => 5
 (-find-last-index (-partial 'string-lessp "baz") '("q" "foo" "baz")) ;; => 1
 ```
@@ -1528,7 +1528,7 @@ Return the indices of all elements in `list` satisfying the
 predicate `pred`, in ascending order.
 
 ```el
-(-find-indices 'even? '(2 4 1 6 3 3 5 8)) ;; => '(0 1 3 7)
+(-find-indices 'evenp '(2 4 1 6 3 3 5 8)) ;; => '(0 1 3 7)
 (--find-indices (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => '(3 7)
 (-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz")) ;; => '(1)
 ```
@@ -1868,8 +1868,8 @@ To get the first item in the list no questions asked, use `car`.
 Alias: `-find`
 
 ```el
-(-first 'even? '(1 2 3)) ;; => 2
-(-first 'even? '(1 3 5)) ;; => nil
+(-first 'evenp '(1 2 3)) ;; => 2
+(-first 'evenp '(1 3 5)) ;; => nil
 (-first 'null '(1 3 5)) ;; => nil
 ```
 
@@ -1880,7 +1880,7 @@ Return (`pred` x) for the first `list` item where (`pred` x) is non-nil, else ni
 Alias: `-any`
 
 ```el
-(-some 'even? '(1 2 3)) ;; => t
+(-some 'evenp '(1 2 3)) ;; => t
 (-some 'null '(1 2 3)) ;; => nil
 (-some 'null '(1 2 nil)) ;; => t
 ```
@@ -1890,8 +1890,8 @@ Alias: `-any`
 Return the last x in `list` where (`pred` x) is non-nil, else nil.
 
 ```el
-(-last 'even? '(1 2 3 4 5 6 3 3 3)) ;; => 6
-(-last 'even? '(1 3 7 5 9)) ;; => nil
+(-last 'evenp '(1 2 3 4 5 6 3 3 3)) ;; => 6
+(-last 'evenp '(1 3 7 5 9)) ;; => nil
 (--last (> (length it) 3) '("a" "looong" "word" "and" "short" "one")) ;; => "short"
 ```
 
@@ -2166,7 +2166,7 @@ last item in second form, etc.
 
 ```el
 (->> '(1 2 3) (-map 'square)) ;; => '(1 4 9)
-(->> '(1 2 3) (-map 'square) (-remove 'even?)) ;; => '(1 9)
+(->> '(1 2 3) (-map 'square) (-remove 'evenp)) ;; => '(1 9)
 (->> '(1 2 3) (-map 'square) (-reduce '+)) ;; => 14
 ```
 
@@ -2205,7 +2205,7 @@ and when that result is non-nil, through the next form, etc.
 ```el
 (-some-> '(2 3 5)) ;; => '(2 3 5)
 (-some-> 5 square) ;; => 25
-(-some-> 5 even? square) ;; => nil
+(-some-> 5 evenp square) ;; => nil
 ```
 
 #### -some->> `(x &optional form &rest more)`
@@ -2215,8 +2215,8 @@ and when that result is non-nil, through the next form, etc.
 
 ```el
 (-some->> '(1 2 3) (-map 'square)) ;; => '(1 4 9)
-(-some->> '(1 3 5) (-last 'even?) (+ 100)) ;; => nil
-(-some->> '(2 4 6) (-last 'even?) (+ 100)) ;; => 106
+(-some->> '(1 3 5) (-last 'evenp) (+ 100)) ;; => nil
+(-some->> '(2 4 6) (-last 'evenp) (+ 100)) ;; => 106
 ```
 
 #### -some--> `(x &optional form &rest more)`
@@ -2227,7 +2227,7 @@ and when that result is non-nil, through the next form, etc.
 ```el
 (-some--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
 (-some--> nil (concat "abc" it "ghi")) ;; => nil
-(-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) ;; => nil
+(-some--> '(1 3 5) (-filter 'evenp it) (append it it) (-map 'square it)) ;; => nil
 ```
 
 
@@ -2276,7 +2276,7 @@ Note: binding is done according to [`-let`](#-let-varlist-rest-body).
 
 ```el
 (-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7) ;; => 7
-(--if-let (even? 4) it nil) ;; => t
+(--if-let (evenp 4) it nil) ;; => t
 ```
 
 #### -if-let* `(vars-vals then &rest else)`
@@ -2557,7 +2557,7 @@ Call `fn` with every item in `list` while (`pred` item) is non-nil.
 Return nil, used for side-effects only.
 
 ```el
-(let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(4 2)
+(let (s) (-each-while '(2 4 5 6) 'evenp (lambda (item) (!cons item s))) s) ;; => '(4 2)
 (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) ;; => '(2 1)
 ```
 
@@ -2591,7 +2591,7 @@ Call `fn` with every item in reversed `list` while (`pred` item) is non-nil.
 Return nil, used for side-effects only.
 
 ```el
-(let (s) (-each-r-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(6)
+(let (s) (-each-r-while '(2 4 5 6) 'evenp (lambda (item) (!cons item s))) s) ;; => '(6)
 (let (s) (--each-r-while '(1 2 3 4) (>= it 3) (!cons it s)) s) ;; => '(3 4)
 ```
 
@@ -2771,7 +2771,7 @@ that returns t if `pred` returns nil and nil if `pred` returns
 non-nil.
 
 ```el
-(funcall (-not 'even?) 5) ;; => t
+(funcall (-not 'evenp) 5) ;; => t
 (-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8)) ;; => '(1 2 3 4)
 ```
 
@@ -2784,8 +2784,8 @@ the `preds` returns non-nil on x.
 In types: [a -> Bool] -> a -> Bool
 
 ```el
-(-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 6 8 10)
-(funcall (-orfn 'stringp 'even?) "foo") ;; => t
+(-filter (-orfn 'evenp (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 6 8 10)
+(funcall (-orfn 'stringp 'evenp) "foo") ;; => t
 ```
 
 #### -andfn `(&rest preds)`
@@ -2797,9 +2797,9 @@ predicate with argument x that returns non-nil if all of the
 In types: [a -> Bool] -> a -> Bool
 
 ```el
-(funcall (-andfn (-cut < <> 10) 'even?) 6) ;; => t
-(funcall (-andfn (-cut < <> 10) 'even?) 12) ;; => nil
-(-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 3 5)
+(funcall (-andfn (-cut < <> 10) 'evenp) 6) ;; => t
+(funcall (-andfn (-cut < <> 10) 'evenp) 12) ;; => nil
+(-filter (-andfn (-not 'evenp) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 3 5)
 ```
 
 #### -iteratefn `(fn n)`

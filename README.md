@@ -1,4 +1,8 @@
-# <img align="right" src="https://raw.github.com/magnars/dash.el/master/rainbow-dash.png"> dash.el ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/magnars/dash.el/CI)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/magnars/dash.el/CI)
+[![MELPA](https://melpa.org/packages/dash-badge.svg)](https://melpa.org/#/dash)
+[![MELPA Stable](https://stable.melpa.org/packages/dash-badge.svg)](https://stable.melpa.org/#/dash)
+
+# <img align="right" src="https://raw.github.com/magnars/dash.el/master/rainbow-dash.png"> dash.el
 
 A modern list api for Emacs. No 'cl required.
 

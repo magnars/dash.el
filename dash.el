@@ -2191,6 +2191,7 @@ additional destructuring, this function behaves exactly like
 `defun' (in terms of `declare', ...).
 
 \(-defun NAME MATCH-FORMS &optional DOCSTRING DECL &rest BODY)"
+  (declare (doc-string 3) (indent 2))
   (-let [(decls realbody) (dash--decompose-defun-body body)]
     `(defun ,name ,(dash--make-arglist match-form)
        ,@decls

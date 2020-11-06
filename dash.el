@@ -2363,9 +2363,25 @@ These symbols, if encountered, aren't bound to variables, but
 instead have some special effect on the following arguments (e.g.
 make them optional).")
 
-(defun dash--arglist-as-symbolp (arg)
-  "Check if ARG is an &as binding whose `car' is a variable."
-  (and (listp arg) (symbolp (car arg)) (listp (cdr arg)) (eq '&as (cadr arg))))
+(defun dash--arglist-as-symbolp (matcher)
+  "Check MATCHER is an &as binding with a variable."
+  (cond ((vectorp matcher) (and (>= (length matcher) 2)
+                                (symbolp (aref matcher 0))
+                                (eq '&as (aref matcher 1))))
+        ((listp matcher) (and (symbolp (car matcher))
+                              (listp (cdr matcher))
+                              (eq '&as (cadr matcher))))))
+
+(defun dash--as-matcher-variable (matcher)
+  "Get the variable from &as matcher MATCHER.
+See `dash--arglist-as-symbolp'."
+  (elt matcher 0))
+
+(defun dash--as-matcher-tail (matcher)
+  "Extract the body of a &as-matcher MATCHER.
+\(sym &as ...) => ...."
+  (cond ((vectorp matcher) (dash--vector-tail matcher 2))
+        (t (cddr matcher))))
 
 (defun dash--make-arglist (args)
   "Make ARGS a function arglist for `dash--destructure-body'."
@@ -2375,7 +2391,7 @@ make them optional).")
           ;; don't increment the input<n> number for &optional and &rest.
           (progn (when (memq it dash--arglist-keywords)
                    (setq it-index (1- it-index))) it))
-         ((dash--arglist-as-symbolp it) (car it))
+         ((dash--arglist-as-symbolp it) (dash--as-matcher-variable it))
          (t (intern (format "input%d" it-index))))
    args))
 
@@ -2414,7 +2430,9 @@ docstring if none is provided."
                              (setq it-index (1- it-index))
                              ;; Don't add a binding for IT-INDEX
                              nil))
-                          ((dash--arglist-as-symbolp it) (list (cddr it) (car it)))
+                          ((dash--arglist-as-symbolp it)
+                           (list (dash--as-matcher-tail it)
+                                 (dash--as-matcher-variable it)))
                           (t (list it (intern (format "input%d" it-index)))))
                     arglist))))
     (nconc

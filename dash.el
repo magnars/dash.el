@@ -2430,6 +2430,11 @@ docstring if none is provided."
          `((-let ,let-bindings ,@body))
        body))))
 
+(defun dash--normalize-arglist (arglist)
+  "Make ARGLIST have the form (MATCHERS...).
+If it is a vector, convert it to a single-matcher arglist."
+  (if (vectorp arglist) (list (append arglist nil)) arglist))
+
 ;; TODO: a proper `dash-lambda-list'
 (def-edebug-spec dash-lambda-list sexp)
 
@@ -2448,8 +2453,9 @@ additional destructuring, this function behaves exactly like
                            [&optional ("declare" &rest sexp)]
                            [&optional ("interactive" interactive)]
                            def-body)))
-  `(defun ,name ,(dash--make-arglist match-form)
-     ,@(dash--destructure-body match-form body)))
+  (let ((match-form (dash--normalize-arglist match-form)))
+    `(defun ,name ,(dash--make-arglist match-form)
+       ,@(dash--destructure-body match-form body))))
 
 (defmacro -defmacro (name match-form &rest body)
   "Like `-defun', but define macro called NAME instead.
@@ -2461,8 +2467,9 @@ MATCH-FORM and BODY are the same.
                            [&optional stringp]
                            [&optional ("interactive" interactive)]
                            def-body)))
-  `(defmacro ,name ,(dash--make-arglist match-form)
-     ,@(dash--destructure-body match-form body)))
+  (let ((match-form (dash--normalize-arglist match-form)))
+    `(defmacro ,name ,(dash--make-arglist match-form)
+       ,@(dash--destructure-body match-form body))))
 
 (defmacro -lambda (match-form &rest body)
   "Return a lambda which destructures its input as MATCH-FORM and executes BODY.
@@ -2475,7 +2482,10 @@ such that:
 
 has the usual semantics of `lambda'. Furthermore, these get
 translated into a normal `lambda', so there is no performance
-penalty.
+penalty. MATCH-FORM may also be a vector, in which case the
+entire vector destructures a single argument:
+
+  (-lambda [a b]) = (-lambda ((a b)))
 
 See `-let' for the description of destructuring mechanism.
 
@@ -2484,8 +2494,9 @@ See `-let' for the description of destructuring mechanism.
            (debug (&define dash-lambda-list lambda-doc
                            [&optional ("interactive" interactive)]
                            def-body)))
-  `(lambda ,(dash--make-arglist match-form)
-     ,@(dash--destructure-body match-form body t)))
+  (let ((match-form (dash--normalize-arglist match-form)))
+    `(lambda ,(dash--make-arglist match-form)
+       ,@(dash--destructure-body match-form body t))))
 
 (defmacro -setq (&rest forms)
   "Bind each MATCH-FORM to the value of its VAL.

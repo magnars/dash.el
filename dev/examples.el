@@ -1166,7 +1166,7 @@ new list."
     (-let (a b) (list a b)) => '(nil nil)
     (-let ((a) (b)) (list a b)) => '(nil nil)
     ;; auto-derived match forms for kv destructuring
-    ;;; test that we normalize all the supported kv stores
+;;; test that we normalize all the supported kv stores
     (-let (((&plist :foo :bar) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
     (-let (((&alist :foo :bar) (list (cons :foo 1) (cons :bar 2)))) (list foo bar)) => '(1 2)
     (let ((hash (make-hash-table)))
@@ -1181,7 +1181,7 @@ new list."
       (-let (((&hash? 'a) (funcall fn ht)))
         a)) => '(3)
     (-let (((_ &keys :foo :bar) (list 'ignored :foo 1 :bar 2))) (list foo bar)) => '(1 2)
-    ;;; go over all the variations of match-form derivation
+;;; go over all the variations of match-form derivation
     (-let (((&plist :foo foo :bar) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
     (-let (((&plist :foo foo :bar bar) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
     (-let (((&plist :foo x :bar y) (list :foo 1 :bar 2))) (list x y)) => '(1 2)
@@ -1258,6 +1258,17 @@ new list."
     (-lambda a t) !!> wrong-type-argument
     (funcall (-lambda (a b) (+ a b)) 1 2) => 3
     (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6)
+
+  (defexamples -defun
+    (progn (-defun example/cdr ((_ . tail)) tail)
+           (example/cdr '(a . b))) => 'b
+    (progn (-defun example/car ((cur)) cur)
+           (example/car '(a . b))) => 'a
+    (progn (-defun example/add-cons ((a . b))
+             "Add the `car' and `cdr' of INPUT0."
+             (interactive (list (cons 1 2)))
+             (+ a b))
+           (command-execute #'example/add-cons)) => 3)
 
   (defexamples -setq
     (progn (-setq a 1) a) => 1

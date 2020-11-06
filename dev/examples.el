@@ -1271,7 +1271,8 @@ new list."
            (command-execute #'example/add-cons)) => 3
     (progn (-defun example/add-conses-rec (&rest (cur . other))
              (if other
-                 (+ (example/add-cons cur) (example/add-conses-rec other))
+                 (+ (example/add-cons cur)
+                    (apply #'example/add-conses-rec other))
                (example/add-cons cur)))
            (example/add-conses-rec '(1 . 5) '(5 . 10))) => 21)
 

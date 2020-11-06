@@ -2226,7 +2226,9 @@ additional destructuring, this function behaves exactly like
 
 (defmacro -defmacro (name match-form &rest body)
   "Like `-defun', but define macro called NAME instead.
-MATCH-FORM and BODY are the same."
+MATCH-FORM and BODY are the same.
+
+\(fn NAME MATCH-FORM &optional DOCSTRING DECL &rest BODY)"
   (declare (doc-string 3) (indent 2)
            (debug (&define name sexp
                            [&optional stringp]
@@ -2245,11 +2247,13 @@ such that:
   (-lambda (x) body)
   (-lambda (x y ...) body)
 
-has the usual semantics of `lambda'.  Furthermore, these get
-translated into normal lambda, so there is no performance
+has the usual semantics of `lambda'. Furthermore, these get
+translated into a normal `lambda', so there is no performance
 penalty.
 
-See `-let' for the description of destructuring mechanism."
+See `-let' for the description of destructuring mechanism.
+
+\(fn MATCH-FORM [DOCSTRING] [INTERACTIVE] BODY)"
   (declare (doc-string 2) (indent defun)
            (debug (&define sexp
                            [&optional stringp]

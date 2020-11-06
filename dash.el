@@ -2357,11 +2357,23 @@ because we need to support improper list binding."
       `(let ,inputs
          (-let* ,new-varlist ,@body)))))
 
+(defconst dash--arglist-keywords '(&optional &rest)
+  "List of special symbols in function argument lists.
+These symbols, if encountered, aren't bound to variables, but
+instead have some special effect on the following arguments (e.g.
+make them optional).")
+
 (defun dash--make-arglist (args)
   "Make ARGS a function arglist for `dash--destructure-arglist'."
   (--map-indexed
-   ;; No need to destructure a symbol to itself.
-   (if (symbolp it) it (intern (format "input%d" it-index))) args))
+   ;; Don't destructure symbols to themselves
+   (if (symbolp it)
+       ;; don't increment the input<n> number for &optional and &rest.
+       (progn (when (memq it dash--arglist-keywords)
+                (setq it-index (1- it-index)))
+              it)
+     (intern (format "input%d" it-index)))
+   args))
 
 (defun dash--progn (body-forms)
   "Wrap BODY-FORMS in a `progn'.
@@ -2373,7 +2385,7 @@ The `progn' is omitted if it isn't needed. This function is just
 
 (defun dash--destructure-arglist (args body-forms)
   "Destructure function arguments ARGS using `-let'.
-The result, an ELisp-form, is valid only in a function whose
+The result, a LISP-form, is valid only in a function whose
 arguments are the result of transforming ARGS with
 `dash--make-arglist'. In the resulting form, BODY-FORMS are
 executed within the bound environment."
@@ -2384,7 +2396,11 @@ executed within the bound environment."
                   (--map-indexed
                    ;; Symbols shouldn't be rebound; they can be taken from the
                    ;; surrounding environment directly.
-                   (unless (symbolp it)
+                   (if (symbolp it)
+                       (when (memq it dash--arglist-keywords)
+                         (setq it-index (1- it-index))
+                         ;; Don't add a binding for IT-INDEX
+                         nil)
                      (list it (intern (format "input%d" it-index))))
                    args))))
     (if let-bindings
@@ -2412,7 +2428,12 @@ additional destructuring, this function behaves exactly like
 `defun' (in terms of `declare', ...).
 
 \(-defun NAME MATCH-FORMS &optional DOCSTRING DECL &rest BODY)"
-  (declare (doc-string 3) (indent 2))
+  (declare (doc-string 3) (indent 2)
+           (debug (&define name sexp
+                           [&optional stringp]
+                           [&optional ("declare" &rest sexp)]
+                           [&optional ("interactive" interactive)]
+                           def-body)))
   (-let [(decls realbody) (dash--decompose-defun-body body)]
     `(defun ,name ,(dash--make-arglist match-form)
        ,@decls

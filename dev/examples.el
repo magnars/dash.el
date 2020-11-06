@@ -1559,7 +1559,12 @@ or readability."
              "Add the `car' and `cdr' of INPUT0."
              (interactive (list (cons 1 2)))
              (+ a b))
-           (command-execute #'example/add-cons)) => 3)
+           (command-execute #'example/add-cons)) => 3
+    (progn (-defun example/add-conses-rec (&rest (cur . other))
+             (if other
+                 (+ (example/add-cons cur) (example/add-conses-rec other))
+               (example/add-cons cur)))
+           (example/add-conses-rec '(1 . 5) '(5 . 10))) => 21)
 
   (defexamples -setq
     (let (a) (-setq a 1) a) => 1

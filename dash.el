@@ -2427,6 +2427,9 @@ docstring if none is provided."
          `((-let ,let-bindings ,@body))
        body))))
 
+;; TODO: a proper `dash-lambda-list'
+(def-edebug-spec dash-lambda-list sexp)
+
 (defmacro -defun (name match-form &rest body)
   "Like `-lambda', but as a `defun'.
 Define a function called NAME with destructuring.
@@ -2437,7 +2440,7 @@ additional destructuring, this function behaves exactly like
 
 \(fn NAME MATCH-FORM &optional DOCSTRING DECL &rest BODY)"
   (declare (doc-string 3) (indent 2)
-           (debug (&define name sexp
+           (debug (&define name dash-lambda-list
                            [&optional stringp]
                            [&optional ("declare" &rest sexp)]
                            [&optional ("interactive" interactive)]
@@ -2451,9 +2454,8 @@ MATCH-FORM and BODY are the same.
 
 \(fn NAME MATCH-FORM &optional DOCSTRING DECL &rest BODY)"
   (declare (doc-string 3) (indent 2)
-           (debug (&define name sexp
+           (debug (&define name dash-lambda-list
                            [&optional stringp]
-                           [&optional ("declare" &rest sexp)]
                            [&optional ("interactive" interactive)]
                            def-body)))
   `(defmacro ,name ,(dash--make-arglist match-form)
@@ -2476,8 +2478,7 @@ See `-let' for the description of destructuring mechanism.
 
 \(fn MATCH-FORM [DOCSTRING] [INTERACTIVE] BODY)"
   (declare (doc-string 2) (indent defun)
-           (debug (&define sexp
-                           [&optional stringp]
+           (debug (&define dash-lambda-list lambda-doc
                            [&optional ("interactive" interactive)]
                            def-body)))
   `(lambda ,(dash--make-arglist match-form)

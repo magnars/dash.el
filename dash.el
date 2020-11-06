@@ -2363,16 +2363,20 @@ These symbols, if encountered, aren't bound to variables, but
 instead have some special effect on the following arguments (e.g.
 make them optional).")
 
+(defun dash--arglist-as-symbolp (arg)
+  "Check if ARG is an &as binding whose `car' is a variable."
+  (and (listp arg) (symbolp (car arg)) (listp (cdr arg)) (eq '&as (cadr arg))))
+
 (defun dash--make-arglist (args)
   "Make ARGS a function arglist for `dash--destructure-body'."
   (--map-indexed
    ;; Don't destructure symbols to themselves
-   (if (symbolp it)
-       ;; don't increment the input<n> number for &optional and &rest.
-       (progn (when (memq it dash--arglist-keywords)
-                (setq it-index (1- it-index)))
-              it)
-     (intern (format "input%d" it-index)))
+   (cond ((symbolp it)
+          ;; don't increment the input<n> number for &optional and &rest.
+          (progn (when (memq it dash--arglist-keywords)
+                   (setq it-index (1- it-index))) it))
+         ((dash--arglist-as-symbolp it) (car it))
+         (t (intern (format "input%d" it-index))))
    args))
 
 (defun dash--decompose-defun-body (body)
@@ -2399,20 +2403,19 @@ The result is a list of body forms (including optional docstring
 and declarations) that does the destructuring and executes
 BODY-FORMS. If NODOC is non-nil, omit generating a signature
 docstring if none is provided."
-  (unless (listp arglist)
-    (signal 'wrong-type-argument "match-form must be a list"))
   (-let (((docstring? decls body) (dash--decompose-defun-body body-forms))
          (let-bindings
           (-remove #'null
                    (--map-indexed
                     ;; Symbols shouldn't be rebound; they can be taken from the
                     ;; surrounding environment directly.
-                    (if (symbolp it)
-                        (when (memq it dash--arglist-keywords)
-                          (setq it-index (1- it-index))
-                          ;; Don't add a binding for IT-INDEX
-                          nil)
-                      (list it (intern (format "input%d" it-index))))
+                    (cond ((symbolp it)
+                           (when (memq it dash--arglist-keywords)
+                             (setq it-index (1- it-index))
+                             ;; Don't add a binding for IT-INDEX
+                             nil))
+                          ((dash--arglist-as-symbolp it) (list (cddr it) (car it)))
+                          (t (list it (intern (format "input%d" it-index)))))
                     arglist))))
     (nconc
      ;; If there is no docstring, provide it only if NODOC is not specified.

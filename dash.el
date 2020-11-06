@@ -2136,6 +2136,66 @@ because we need to support improper list binding."
       `(let ,inputs
          (-let* ,new-varlist ,@body)))))
 
+(defun dash--make-arglist (args)
+  "Make ARGS a function arglist for `dash--destructure-arglist'."
+  (--map-indexed
+   ;; No need to destructure a symbol to itself.
+   (if (symbolp it) it (intern (format "input%d" it-index))) args))
+
+(defun dash--progn (body-forms)
+  "Wrap BODY-FORMS in a `progn'.
+The `progn' is omitted if it isn't needed. This function is just
+`macroexp-progn' reimplemented."
+  (if (cdr body-forms)
+      `(progn ,@body-forms)
+    (car body-forms)))
+
+(defun dash--destructure-arglist (args body-forms)
+  "Destructure function arguments ARGS using `-let'.
+The result, an ELisp-form, is valid only in a function whose
+arguments are the result of transforming ARGS with
+`dash--make-arglist'. In the resulting form, BODY-FORMS are
+executed within the bound environment."
+  (unless (listp args)
+    (signal 'wrong-type-argument "match-form must be a list"))
+  (let ((let-bindings
+         (-remove #'null
+                  (--map-indexed
+                   ;; Symbols shouldn't be rebound; they can be taken from the
+                   ;; surrounding environment directly.
+                   (unless (symbolp it)
+                     (list it (intern (format "input%d" it-index))))
+                   args))))
+    (if let-bindings
+        `(-let ,let-bindings ,@body-forms)
+      (dash--progn body-forms))))
+
+(defun dash--decompose-defun-body (body)
+  "Split `defun'-body BODY into declarations and the real body.
+The body of a `defun' can start with various declare forms like
+interactive, `declare', ... and a docstring. Split BODY into a
+list (DECLS REALBODY)."
+  (let* ((docstring? (car body))
+         (result (--split-with (memq (car-safe it) '(declare interactive))
+                               (if (stringp docstring?) (cdr body) body))))
+    (when (stringp docstring?)
+      (push docstring? (car result)))
+    result))
+
+(defmacro -defun (name match-form &rest body)
+  "Like `-lambda', but as a `defun'.
+Define a function called NAME with destructuring.
+
+MATCH-FORM is like in `-lambda'. Except for the (optional)
+additional destructuring, this function behaves exactly like
+`defun' (in terms of `declare', ...).
+
+\(-defun NAME MATCH-FORMS &optional DOCSTRING DECL &rest BODY)"
+  (-let [(decls realbody) (dash--decompose-defun-body body)]
+    `(defun ,name ,(dash--make-arglist match-form)
+       ,@decls
+       ,(dash--destructure-arglist match-form realbody))))
+
 (defmacro -lambda (match-form &rest body)
   "Return a lambda which destructures its input as MATCH-FORM and executes BODY.
 
@@ -2155,19 +2215,8 @@ See `-let' for the description of destructuring mechanism."
                            [&optional stringp]
                            [&optional ("interactive" interactive)]
                            def-body)))
-  (cond
-   ((not (consp match-form))
-    (signal 'wrong-type-argument "match-form must be a list"))
-   ;; no destructuring, so just return regular lambda to make things faster
-   ((-all? 'symbolp match-form)
-    `(lambda ,match-form ,@body))
-   (t
-    (let* ((inputs (--map-indexed (list it (make-symbol (format "input%d" it-index))) match-form)))
-      ;; TODO: because inputs to the lambda are evaluated only once,
-      ;; -let* need not to create the extra bindings to ensure that.
-      ;; We should find a way to optimize that.  Not critical however.
-      `(lambda ,(--map (cadr it) inputs)
-         (-let* ,inputs ,@body))))))
+  `(lambda ,(dash--make-arglist match-form)
+     ,(dash--destructure-arglist match-form body)))
 
 (defmacro -setq (&rest forms)
   "Bind each MATCH-FORM to the value of its VAL.

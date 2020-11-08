@@ -2466,11 +2466,10 @@ additional destructuring, this function behaves exactly like
 
 \(fn NAME MATCH-FORM &optional DOCSTRING DECL &rest BODY)"
   (declare (doc-string 3) (indent 2)
-           (debug (&define name dash-lambda-list
-                           [&optional stringp]
+           (debug (&define name dash-lambda-list lambda-doc
                            [&optional ("declare" &rest sexp)]
                            [&optional ("interactive" interactive)]
-                           def-body)))
+                           body)))
   (let ((match-form (dash--normalize-arglist match-form)))
     `(defun ,name ,(dash--make-arglist match-form)
        ,@(dash--destructure-body match-form body))))
@@ -2481,10 +2480,9 @@ MATCH-FORM and BODY are the same.
 
 \(fn NAME MATCH-FORM &optional DOCSTRING DECL &rest BODY)"
   (declare (doc-string 3) (indent 2)
-           (debug (&define name dash-lambda-list
-                           [&optional stringp]
-                           [&optional ("interactive" interactive)]
-                           def-body)))
+           (debug (&define name dash-lambda-list lambda-doc
+                           [&optional ("declare" &rest sexp)]
+                           body)))
   (let ((match-form (dash--normalize-arglist match-form)))
     `(defmacro ,name ,(dash--make-arglist match-form)
        ,@(dash--destructure-body match-form body))))

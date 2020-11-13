@@ -2419,7 +2419,10 @@ The result is a list of body forms (including optional docstring
 and declarations) that does the destructuring and executes
 BODY-FORMS. If NODOC is non-nil, omit generating a signature
 docstring if none is provided."
-  (-let (((docstring? decls body) (dash--decompose-defun-body body-forms))
+  (let* ((body-structure (dash--decompose-defun-body body-forms))
+         (docstring? (nth 0 body-structure))
+         (decls (nth 1 body-structure))
+         (body (nth 2 body-structure))
          (let-bindings
           (-remove #'null
                    (--map-indexed

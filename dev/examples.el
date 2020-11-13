@@ -1276,6 +1276,13 @@ new list."
                (example/add-cons cur)))
            (example/add-conses-rec '(1 . 5) '(5 . 10))) => 21)
 
+  (defexamples -defmacro
+    (progn (-defmacro example/ht-query ((_query &as &plist :key) table)
+             `(gethash ,key ,table))
+           (example/ht-query (:key 'k) (--doto (make-hash-table)
+                                         (puthash 'k "v" it))))
+    => "v")
+
   (defexamples -setq
     (progn (-setq a 1) a) => 1
     (progn (-setq (a b) (list 1 2)) (list a b)) => '(1 2)

@@ -2138,9 +2138,11 @@ because we need to support improper list binding."
 
 (defconst dash--arglist-keywords '(&optional &rest)
   "List of special symbols in function argument lists.
-These symbols, if encountered, aren't bound to variables, but
-instead have some special effect on the following arguments (e.g.
-make them optional).")
+If such a symbol is encountered in a match-form of `-defun', ...
+it doesn't cause the input<N> N to be incremented.
+
+They should be keywords that are handled specially in argument
+lists.")
 
 (defun dash--arglist-as-symbolp (matcher)
   "Check MATCHER is an &as binding with a variable."

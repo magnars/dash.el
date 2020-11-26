@@ -2196,8 +2196,12 @@ signature line."
   "Destructure function ARGLIST using `-let'.
 The result is a list of body forms (including optional docstring
 and declarations) that does the destructuring and executes
-BODY-FORMS. If NODOC is non-nil, omit generating a signature
-docstring if none is provided."
+BODY-FORMS.
+
+If NODOC is non-nil, don't generate a signature docstring if no
+docstring is provided. Note that a signature is still added if a
+docstring is provided and one is needed (due to unusual
+arguments)."
   (let* ((body-structure (dash--decompose-defun-body body-forms))
          (docstring? (nth 0 body-structure))
          (decls (nth 1 body-structure))
@@ -2218,13 +2222,14 @@ docstring if none is provided."
                           (t (list it (intern (format "input%d" it-index)))))
                     arglist))))
     (nconc
-     ;; If there is no docstring, provide it only if NODOC is not specified.
-     (when (and (or docstring? (not nodoc)))
-       ;; There is no need to add a signature to the doc if only symbols are in
-       ;; the ARGLIST, since support for that is built-in; we want to have no
-       ;; overhead in that case.
-       (list (if (-all? #'symbolp arglist) docstring?
-               (dash--docstring-add-signature docstring? arglist))))
+     ;; If the arglist doesn't make use of dash's features, just reuse the
+     ;; docstring directly, because signature hints aren't necessary.
+     (if (-all? #'symbolp arglist)
+         (and docstring? (list docstring?))
+       ;; If there is a docstring, add signature hints in any case; otherwise,
+       ;; only generate an empty signature docstring if NODOC is unspecified.
+       (when (or docstring? (not nodoc))
+         (list (dash--docstring-add-signature docstring? arglist))))
      decls
      (if let-bindings
          ;; TODO: `-let*' generates less bytecode, especially with dynamic

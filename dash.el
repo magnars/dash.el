@@ -2448,7 +2448,9 @@ docstring if none is provided."
                (dash--docstring-add-signature docstring? arglist))))
      decls
      (if let-bindings
-         `((-let ,let-bindings ,@body))
+         ;; TODO: `-let*' generates less bytecode, especially with dynamic
+         ;; binding
+         `((-let* ,let-bindings ,@body))
        body))))
 
 (defun dash--normalize-arglist (arglist)

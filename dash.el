@@ -1591,6 +1591,58 @@ and when that result is non-nil, through the next form, etc."
                    (--> ,result ,form))
                  ,@more))))
 
+(defmacro -cond-> (x &rest clauses)
+  "Conditionally thread X through CLAUSES.
+Threads x (via `->') through each form for which the
+corresponding test expression is true.  Note that, unlike cond
+branching, `-cond->' threading does not short circuit after the
+first true test expression.
+Given some elisp details, current value is exposed as the symbol
+`it'."
+  (declare (debug (form body))
+           (indent 1))
+  (when (-> clauses length (% 2) (= 1))
+    (error "Wrong number of arguments."))
+  (-let* ((it (intern "it"))
+          (steps (-map
+                  (-lambda ((test step))
+                    `(if ,test
+                         (-> it ,step)
+                       it))
+                  (-partition 2 clauses))))
+    `(-let* ((it ,x)
+            ,@(-zip-lists (-cycle '(it))
+                          (butlast steps)))
+       ,@(if (null steps)
+            it
+           (last steps)))))
+
+(defmacro -cond->> (x &rest clauses)
+  "Conditionally thread X through CLAUSES.
+Threads x (via `->>') through each form for which the
+corresponding test expression is true.  Note that, unlike cond
+branching, `-cond->>' threading does not short circuit after the
+first true test expression.
+Given some elisp details, current value is exposed as the symbol
+`it'."
+  (declare (debug (form body))
+           (indent 1))
+  (when (-> clauses length (% 2) (= 1))
+    (error "Wrong number of arguments."))
+  (-let* ((it (intern "it"))
+          (steps (-map
+                  (-lambda ((test step))
+                    `(if ,test
+                         (->> ,it ,step)
+                       ,it))
+                  (-partition 2 clauses))))
+    `(-let* ((,it ,x)
+             ,@(-zip-lists (-cycle '(it))
+                           (butlast steps)))
+       ,@(if (null steps)
+            it
+           (last steps)))))
+
 (defun -grade-up (comparator list)
   "Grade elements of LIST using COMPARATOR relation, yielding a
 permutation vector such that applying this permutation to LIST

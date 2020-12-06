@@ -282,6 +282,8 @@ Functions pretending lists are trees.
 * [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some-->](#-some---x-optional-form-rest-more) `(x &optional form &rest more)`
+* [-cond->](#-cond--form-rest-more) `(x &rest clauses)`
+* [-cond->>](#-cond---form-rest-more) `(x &rest clauses)`
 
 ### Binding
 
@@ -2234,6 +2236,41 @@ and when that result is non-nil, through the next form, etc.
 (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) ;; => nil
 ```
 
+#### -cond-> `(x &rest clauses)`
+
+Conditionally thread X through CLAUSES. Threads x (via `->`) through
+each form for which the corresponding test expression is true.  Note
+that, unlike cond branching, `-cond->` threading does not short
+circuit after the first true test expression.  Given some elisp
+details, current value is exposed as the symbol `it`."
+
+```el
+(-cond-> "abc"
+    (stringp it) (concat "def" "ghi")) ;; => "abcdefghi"
+(-cond-> "abc"
+    (stringp it) (concat "def" "ghi")
+    (s-split "" it) ) ;; => '("a" "b" "c" "d" "e" "f" "g" "h" "i")
+(-cond-> 10
+    (even? it) (/ 2)
+    (odd? it) list) ;; => '(5)
+```
+
+#### -cond->> `(x &rest clauses)`
+
+Conditionally thread X through CLAUSES. Threads x (via `->`) through
+each form for which the corresponding test expression is true.  Note
+that, unlike cond branching, `-cond->` threading does not short
+circuit after the first true test expression.  Given some elisp
+details, current value is exposed as the symbol `it`."
+
+```el
+(-cond->> "abc"
+    (stringp it) (concat "def" "ghi")) ;; => "defghiabc"
+(-cond->> '(1 2 3)
+    (numberp (car it)) (-filter 'even?)
+    (null it) (+ 10 100 1000 )
+    (listp it) (--map (* it it))) ;; => '(4)
+```
 
 ## Binding
 

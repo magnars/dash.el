@@ -1603,7 +1603,7 @@ Given some elisp details, current value is exposed as the symbol
            (indent 1))
   (when (-> clauses length (% 2) (= 1))
     (error "Wrong number of arguments."))
-  (-let* ((it (intern "it"))
+  (-let* ((it (make-symbol "it"))
           (steps (-map
                   (-lambda ((test step))
                     `(if ,test
@@ -1629,14 +1629,14 @@ Given some elisp details, current value is exposed as the symbol
            (indent 1))
   (when (-> clauses length (% 2) (= 1))
     (error "Wrong number of arguments."))
-  (-let* ((it (intern "it"))
+  (-let* ((it (make-symbol "it"))
           (steps (-map
                   (-lambda ((test step))
                     `(if ,test
-                         (->> ,it ,step)
-                       ,it))
+                         (->> it ,step)
+                       it))
                   (-partition 2 clauses))))
-    `(-let* ((,it ,x)
+    `(-let* ((it ,x)
              ,@(-zip-lists (-cycle '(it))
                            (butlast steps)))
        ,@(if (null steps)

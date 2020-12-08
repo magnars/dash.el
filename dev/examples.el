@@ -1010,7 +1010,30 @@ new list."
     (-some--> "def" (concat "abc" it "ghi")) => "abcdefghi"
     (-some--> nil (concat "abc" it "ghi")) => nil
     (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) => nil
-    (-some--> '(2 4 6) (-filter 'even? it) (append it it) (-map 'square it)) => '(4 16 36 4 16 36)))
+    (-some--> '(2 4 6) (-filter 'even? it) (append it it) (-map 'square it)) => '(4 16 36 4 16 36))
+
+  (defexamples -cond->
+    (-cond-> "abc"
+      (stringp it) (concat "def" "ghi")) => "abcdefghi"
+    (-cond-> 10
+      (even? it) (/ 2)
+      (odd? it) list) => '(5)
+    (let ((list '(:name "John" :age 24)))
+      (-cond-> list
+        (not (plist-get list :name)) (plist-put :name "Owen")
+        (not (plist-get list :age)) (plist-put :age 40)
+        (not (plist-get list :address)) (plist-put :address "123, Saint St.")))
+    => '(:name "John" :age 24 :address "123, Saint St."))
+
+  (defexamples -cond->>
+    (-cond->> "abc"
+      (stringp it) (concat "def" "ghi")) => "defghiabc"
+    (-cond->> '(1 2 3)
+      nil (+ 10 100 1000 )
+      t   (-filter 'even?)) => '(2)
+    (-cond->> "ghi"
+      (= 1 1) (concat "abc" "def")
+      (= 0 1) (split-string)) => "abcdefghi"))
 
 (def-example-group "Binding"
   "Convenient versions of `let` and `let*` constructs combined with flow control."

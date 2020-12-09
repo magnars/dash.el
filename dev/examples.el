@@ -1014,10 +1014,11 @@ new list."
 
   (defexamples -cond->
     (-cond-> "abc"
-      (stringp it) (concat "def" "ghi")) => "abcdefghi"
-    (-cond-> 10
-      (even? it) (/ 2)
-      (odd? it) list) => '(5)
+      t (concat "def" "ghi")) => "abcdefghi"
+    (let ((a 10))
+      (-cond-> a
+        (even? a) (/ 2)
+        (odd? (/ a 2)) list)) => '(5)
     (let ((list '(:name "John" :age 24)))
       (-cond-> list
         (not (plist-get list :name)) (plist-put :name "Owen")
@@ -1026,8 +1027,9 @@ new list."
     => '(:name "John" :age 24 :address "123, Saint St."))
 
   (defexamples -cond->>
-    (-cond->> "abc"
-      (stringp it) (concat "def" "ghi")) => "defghiabc"
+    (let ((string "abc"))
+      (-cond->> "abc"
+      (stringp string) (concat "def" "ghi"))) => "defghiabc"
     (-cond->> '(1 2 3)
       nil (+ 10 100 1000 )
       t   (-filter 'even?)) => '(2)

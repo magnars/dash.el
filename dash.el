@@ -1596,25 +1596,23 @@ and when that result is non-nil, through the next form, etc."
 Threads x (via `->') through each form for which the
 corresponding test expression is true.  Note that, unlike cond
 branching, `-cond->' threading does not short circuit after the
-first true test expression.
-Given some elisp details, current value is exposed as the symbol
-`it'."
+first true test expression."
   (declare (debug (form body))
            (indent 1))
   (when (-> clauses length (% 2) (= 1))
-    (error "Wrong number of arguments."))
-  (-let* ((it (make-symbol "it"))
+    (error "Wrong number of arguments"))
+  (-let* ((g (dash--match-make-source-symbol))
           (steps (-map
                   (-lambda ((test step))
                     `(if ,test
-                         (-> it ,step)
-                       it))
+                         (-> ,g ,step)
+                       ,g))
                   (-partition 2 clauses))))
-    `(-let* ((it ,x)
-            ,@(-zip-lists (-cycle '(it))
-                          (butlast steps)))
+    `(-let* ((,g ,x)
+             ,@(-zip-lists (-cycle (list g))
+                           (butlast steps)))
        ,@(if (null steps)
-            it
+             g
            (last steps)))))
 
 (defmacro -cond->> (x &rest clauses)
@@ -1622,25 +1620,23 @@ Given some elisp details, current value is exposed as the symbol
 Threads x (via `->>') through each form for which the
 corresponding test expression is true.  Note that, unlike cond
 branching, `-cond->>' threading does not short circuit after the
-first true test expression.
-Given some elisp details, current value is exposed as the symbol
-`it'."
+first true test expression."
   (declare (debug (form body))
            (indent 1))
   (when (-> clauses length (% 2) (= 1))
     (error "Wrong number of arguments."))
-  (-let* ((it (make-symbol "it"))
+  (-let* ((g (dash--match-make-source-symbol))
           (steps (-map
                   (-lambda ((test step))
                     `(if ,test
-                         (->> it ,step)
-                       it))
+                         (->> ,g ,step)
+                       ,g))
                   (-partition 2 clauses))))
-    `(-let* ((it ,x)
-             ,@(-zip-lists (-cycle '(it))
+    `(-let* ((,g ,x)
+             ,@(-zip-lists (-cycle (list g))
                            (butlast steps)))
        ,@(if (null steps)
-            it
+            g
            (last steps)))))
 
 (defun -grade-up (comparator list)

@@ -1,8 +1,4 @@
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/magnars/dash.el/CI)
-[![MELPA](https://melpa.org/packages/dash-badge.svg)](https://melpa.org/#/dash)
-[![MELPA Stable](https://stable.melpa.org/packages/dash-badge.svg)](https://stable.melpa.org/#/dash)
-
-# <img align="right" src="https://raw.github.com/magnars/dash.el/master/rainbow-dash.png"> dash.el
+# <img align="right" src="https://raw.github.com/magnars/dash.el/master/rainbow-dash.png"> dash.el ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/magnars/dash.el/CI)
 
 A modern list api for Emacs. No 'cl required.
 
@@ -282,8 +278,8 @@ Functions pretending lists are trees.
 * [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some-->](#-some---x-optional-form-rest-more) `(x &optional form &rest more)`
-* [-cond->](#-cond--form-rest-more) `(x &rest clauses)`
-* [-cond->>](#-cond---form-rest-more) `(x &rest clauses)`
+* [-cond->](#-cond--x-rest-clauses) `(x &rest clauses)`
+* [-cond->>](#-cond--x-rest-clauses) `(x &rest clauses)`
 
 ### Binding
 
@@ -2227,7 +2223,7 @@ and when that result is non-nil, through the next form, etc.
 
 #### -some--> `(x &optional form &rest more)`
 
-When expr in non-nil, thread it through the first form (via [`-->`](#---x-rest-forms)),
+When expr is non-nil, thread it through the first form (via [`-->`](#---x-rest-forms)),
 and when that result is non-nil, through the next form, etc.
 
 ```el
@@ -2238,39 +2234,36 @@ and when that result is non-nil, through the next form, etc.
 
 #### -cond-> `(x &rest clauses)`
 
-Conditionally thread X through CLAUSES. Threads x (via `->`) through
-each form for which the corresponding test expression is true.  Note
-that, unlike cond branching, `-cond->` threading does not short
-circuit after the first true test expression.  Given some elisp
-details, current value is exposed as the symbol `it`."
+Conditionally thread `x` through `clauses`.
+Threads x (via [`->`](#--x-optional-form-rest-more)) through each form for which the
+corresponding test expression is true.  Note that, unlike cond
+branching, [`-cond->`](#-cond--x-rest-clauses) threading does not short circuit after the
+first true test expression.
+Given some elisp details, current value is exposed as the symbol
+`it`.
 
 ```el
-(-cond-> "abc"
-    (stringp it) (concat "def" "ghi")) ;; => "abcdefghi"
-(-cond-> "abc"
-    (stringp it) (concat "def" "ghi")
-    (s-split "" it) ) ;; => '("a" "b" "c" "d" "e" "f" "g" "h" "i")
-(-cond-> 10
-    (even? it) (/ 2)
-    (odd? it) list) ;; => '(5)
+(-cond-> "abc" (stringp it) (concat "def" "ghi")) ;; => "abcdefghi"
+(-cond-> 10 (even? it) (/ 2) (odd? it) list) ;; => '(5)
+(-cond-> '(:name "John" :age 24) (not (plist-get it :name)) (plist-put :name "Owen") (not (plist-get it :age)) (plist-put :age 40) (not (plist-get it :address)) (plist-put :address "123, Saint St.")) ;; => '(:name "John" :age 24 :address "123, Saint St.")
 ```
 
 #### -cond->> `(x &rest clauses)`
 
-Conditionally thread X through CLAUSES. Threads x (via `->`) through
-each form for which the corresponding test expression is true.  Note
-that, unlike cond branching, `-cond->` threading does not short
-circuit after the first true test expression.  Given some elisp
-details, current value is exposed as the symbol `it`."
+Conditionally thread `x` through `clauses`.
+Threads x (via [`->>`](#--x-optional-form-rest-more)) through each form for which the
+corresponding test expression is true.  Note that, unlike cond
+branching, [`-cond->>`](#-cond--x-rest-clauses) threading does not short circuit after the
+first true test expression.
+Given some elisp details, current value is exposed as the symbol
+`it`.
 
 ```el
-(-cond->> "abc"
-    (stringp it) (concat "def" "ghi")) ;; => "defghiabc"
-(-cond->> '(1 2 3)
-    (numberp (car it)) (-filter 'even?)
-    (null it) (+ 10 100 1000 )
-    (listp it) (--map (* it it))) ;; => '(4)
+(-cond->> "abc" (stringp it) (concat "def" "ghi")) ;; => "defghiabc"
+(-cond->> '(1 2 3) nil (+ 10 100 1000) t (-filter 'even?)) ;; => '(2)
+(-cond->> "ghi" (= 1 1) (concat "abc" "def") (= 0 1) (split-string)) ;; => "abcdefghi"
 ```
+
 
 ## Binding
 
@@ -2695,8 +2688,8 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 
 #### -partial `(fn &rest args)`
 
-Takes a function `fn` and fewer than the normal arguments to `fn`,
-and returns a fn that takes a variable number of additional `args`.
+Take a function `fn` and fewer than the normal arguments to `fn`,
+and return a fn that takes a variable number of additional `args`.
 When called, the returned function calls `fn` with `args` first and
 then additional args.
 

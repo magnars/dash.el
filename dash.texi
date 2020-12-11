@@ -3437,7 +3437,7 @@ and when that result is non-nil, through the next form, etc.
 
 @anchor{-some-->}
 @defmac -some--> (x &optional form &rest more)
-When expr in non-nil, thread it through the first form (via @code{-->} (@pxref{-->})),
+When expr is non-nil, thread it through the first form (via @code{-->} (@pxref{-->})),
 and when that result is non-nil, through the next form, etc.
 
 @example
@@ -3452,6 +3452,58 @@ and when that result is non-nil, through the next form, etc.
 @group
 (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it))
     @result{} nil
+@end group
+@end example
+@end defmac
+
+@anchor{-cond->}
+@defmac -cond-> (x &rest clauses)
+Conditionally thread @var{x} through @var{clauses}.
+Threads x (via @code{->} (@pxref{->})) through each form for which the
+corresponding test expression is true.  Note that, unlike cond
+branching, @code{-cond->} (@pxref{-cond->}) threading does not short circuit after the
+first true test expression.
+Given some elisp details, current value is exposed as the symbol
+@code{it}.
+
+@example
+@group
+(-cond-> "abc" (stringp it) (concat "def" "ghi"))
+    @result{} "abcdefghi"
+@end group
+@group
+(-cond-> 10 (even? it) (/ 2) (odd? it) list)
+    @result{} '(5)
+@end group
+@group
+(-cond-> '(:name "John" :age 24) (not (plist-get it :name)) (plist-put :name "Owen") (not (plist-get it :age)) (plist-put :age 40) (not (plist-get it :address)) (plist-put :address "123, Saint St."))
+    @result{} '(:name "John" :age 24 :address "123, Saint St.")
+@end group
+@end example
+@end defmac
+
+@anchor{-cond->>}
+@defmac -cond->> (x &rest clauses)
+Conditionally thread @var{x} through @var{clauses}.
+Threads x (via @code{->>} (@pxref{->>})) through each form for which the
+corresponding test expression is true.  Note that, unlike cond
+branching, @code{-cond->>} (@pxref{-cond->>}) threading does not short circuit after the
+first true test expression.
+Given some elisp details, current value is exposed as the symbol
+@code{it}.
+
+@example
+@group
+(-cond->> "abc" (stringp it) (concat "def" "ghi"))
+    @result{} "defghiabc"
+@end group
+@group
+(-cond->> '(1 2 3) nil (+ 10 100 1000) t (-filter 'even?))
+    @result{} '(2)
+@end group
+@group
+(-cond->> "ghi" (= 1 1) (concat "abc" "def") (= 0 1) (split-string))
+    @result{} "abcdefghi"
 @end group
 @end example
 @end defmac
@@ -4034,8 +4086,8 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 
 @anchor{-partial}
 @defun -partial (fn &rest args)
-Takes a function @var{fn} and fewer than the normal arguments to @var{fn},
-and returns a fn that takes a variable number of additional @var{args}.
+Take a function @var{fn} and fewer than the normal arguments to @var{fn},
+and return a fn that takes a variable number of additional @var{args}.
 When called, the returned function calls @var{fn} with @var{args} first and
 then additional args.
 

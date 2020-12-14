@@ -2225,7 +2225,7 @@ and when that result is non-nil, through the next form, etc.
 
 #### -some--> `(x &optional form &rest more)`
 
-When expr in non-nil, thread it through the first form (via [`-->`](#---x-rest-forms)),
+When expr is non-nil, thread it through the first form (via [`-->`](#---x-rest-forms)),
 and when that result is non-nil, through the next form, etc.
 
 ```el
@@ -2658,8 +2658,8 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 
 #### -partial `(fn &rest args)`
 
-Takes a function `fn` and fewer than the normal arguments to `fn`,
-and returns a fn that takes a variable number of additional `args`.
+Take a function `fn` and fewer than the normal arguments to `fn`,
+and return a fn that takes a variable number of additional `args`.
 When called, the returned function calls `fn` with `args` first and
 then additional args.
 

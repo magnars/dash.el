@@ -1,4 +1,4 @@
-This is dash.info, produced by makeinfo version 6.5 from dash.texi.
+This is dash.info, produced by makeinfo version 6.7 from dash.texi.
 
 This manual is for ‘dash.el’ version 2.12.1.
 
@@ -2140,7 +2140,7 @@ File: dash.info,  Node: Threading macros,  Next: Binding,  Prev: Tree operations
               ⇒ 106
 
  -- Macro: -some--> (x &optional form &rest more)
-     When expr in non-nil, thread it through the first form (via ‘-->’
+     When expr is non-nil, thread it through the first form (via ‘-->’
      (*note -->::)), and when that result is non-nil, through the next
      form, etc.
 
@@ -2574,8 +2574,8 @@ These combinators require Emacs 24 for its lexical scope.  So they are
 offered in a separate package: ‘dash-functional‘.
 
  -- Function: -partial (fn &rest args)
-     Takes a function FN and fewer than the normal arguments to FN,
-     and returns a fn that takes a variable number of additional ARGS.
+     Take a function FN and fewer than the normal arguments to FN, and
+     return a fn that takes a variable number of additional ARGS.
      When called, the returned function calls FN with ARGS first and
      then additional args.
 
@@ -3396,25 +3396,25 @@ Ref: !cons86589
 Ref: !cdr86795
 Node: Function combinators86990
 Ref: -partial87264
-Ref: -rpartial87659
-Ref: -juxt88061
-Ref: -compose88493
-Ref: -applify89051
-Ref: -on89498
-Ref: -flip90024
-Ref: -const90336
-Ref: -cut90680
-Ref: -not91166
-Ref: -orfn91476
-Ref: -andfn91910
-Ref: -iteratefn92405
-Ref: -fixfn93108
-Ref: -prodfn94676
-Node: Development95745
-Node: Contribute96094
-Node: Changes96842
-Node: Contributors99841
-Node: Index101465
+Ref: -rpartial87657
+Ref: -juxt88059
+Ref: -compose88491
+Ref: -applify89049
+Ref: -on89480
+Ref: -flip90006
+Ref: -const90318
+Ref: -cut90662
+Ref: -not91148
+Ref: -orfn91458
+Ref: -andfn91892
+Ref: -iteratefn92387
+Ref: -fixfn93090
+Ref: -prodfn94659
+Node: Development95728
+Node: Contribute96077
+Node: Changes96825
+Node: Contributors99824
+Node: Index101448
 
 End Tag Table
 

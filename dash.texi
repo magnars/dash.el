@@ -3437,7 +3437,7 @@ and when that result is non-nil, through the next form, etc.
 
 @anchor{-some-->}
 @defmac -some--> (x &optional form &rest more)
-When expr in non-nil, thread it through the first form (via @code{-->} (@pxref{-->})),
+When expr is non-nil, thread it through the first form (via @code{-->} (@pxref{-->})),
 and when that result is non-nil, through the next form, etc.
 
 @example
@@ -4034,8 +4034,8 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 
 @anchor{-partial}
 @defun -partial (fn &rest args)
-Takes a function @var{fn} and fewer than the normal arguments to @var{fn},
-and returns a fn that takes a variable number of additional @var{args}.
+Take a function @var{fn} and fewer than the normal arguments to @var{fn},
+and return a fn that takes a variable number of additional @var{args}.
 When called, the returned function calls @var{fn} with @var{args} first and
 then additional args.
 

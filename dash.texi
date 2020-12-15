@@ -96,8 +96,8 @@ Development
 @node Installation
 @chapter Installation
 
-It's available on @uref{https://melpa.org/,Melpa}; use @code{M-x
-package-install}:
+It's available on @uref{https://elpa.gnu.org/, GNU ELPA} and
+@uref{https://melpa.org/, MELPA}; use @code{M-x package-install}:
 
 @table @kbd
 @item M-x package-install @key{RET} dash

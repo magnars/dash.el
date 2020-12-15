@@ -40,7 +40,8 @@
     (require 'cl)))
 
 (defgroup dash ()
-  "Customize group for dash.el"
+  "Customize group for Dash, a modern list library."
+  :group 'extensions
   :group 'lisp
   :prefix "dash-")
 

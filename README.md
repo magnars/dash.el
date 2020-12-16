@@ -4,7 +4,8 @@ A modern list api for Emacs. No 'cl required.
 
 ## Installation
 
-It's available on [Melpa](https://melpa.org/):
+It's available on [GNU ELPA](https://elpa.gnu.org/) and
+[MELPA](https://melpa.org/):
 
     M-x package-install dash
 
@@ -3139,16 +3140,16 @@ things compatible but no future guarantees are made.
 
 Thanks!
 
-New contributors are welcome. To ensure that dash.el can be
-distributed with ELPA or Emacs, we would request that all contributors
-assign copyright to the Free Software Foundation.
+New contributors are welcome.  To ensure that dash.el can be distributed with
+GNU ELPA or Emacs, we would request that all contributors assign copyright to
+the Free Software Foundation.  For more on this, see [`(info "(emacs) Copyright
+Assignment")`](https://www.gnu.org/software/emacs/manual/html_node/emacs/Copyright-Assignment.html).
 
 ## License
 
 Copyright (C) 2012-2016 Free Software Foundation, Inc.
 
 Authors: Magnar Sveen <magnars@gmail.com>
-Keywords: lists
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

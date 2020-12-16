@@ -6,7 +6,7 @@
 ;;          Magnar Sveen <magnars@gmail.com>
 ;; Version: 1.2.0
 ;; Package-Requires: ((dash "2.0.0") (emacs "24"))
-;; Keywords: lisp functions combinators
+;; Keywords: extensions, lisp
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

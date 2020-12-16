@@ -1015,10 +1015,11 @@ new list."
   (defexamples -cond->
     (-cond-> "abc"
       t (concat "def" "ghi")) => "abcdefghi"
+    (-cond-> 10
+      nil number-to-string) => 10
     (let ((a 10))
       (-cond-> a
-        (even? a) (/ 2)
-        (odd? (/ a 2)) list)) => '(5)
+        (= 10 a) number-to-string)) => "10"
     (let ((list '(:name "John" :age 24)))
       (-cond-> list
         (not (plist-get list :name)) (plist-put :name "Owen")
@@ -1027,15 +1028,13 @@ new list."
     => '(:name "John" :age 24 :address "123, Saint St."))
 
   (defexamples -cond->>
+    (-cond->> "abc"
+      t (concat "def" "ghi")) => "defghiabc"
+    (-cond->> 10
+      nil number-to-string) => 10
     (let ((string "abc"))
-      (-cond->> "abc"
-      (stringp string) (concat "def" "ghi"))) => "defghiabc"
-    (-cond->> '(1 2 3)
-      nil (+ 10 100 1000 )
-      t   (-filter 'even?)) => '(2)
-    (-cond->> "ghi"
-      (= 1 1) (concat "abc" "def")
-      (= 0 1) (split-string)) => "abcdefghi"))
+      (-cond->> string
+        (string= nil string) (concat "def" "ghi"))) => "abc"))
 
 (def-example-group "Binding"
   "Convenient versions of `let` and `let*` constructs combined with flow control."

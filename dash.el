@@ -1594,11 +1594,13 @@ and when that result is non-nil, through the next form, etc."
 
 (defmacro -cond-> (x &rest clauses)
   "Conditionally thread X through CLAUSES.
-Threads x (via `->') through each form for which the
-corresponding test expression is true.  Note that, unlike cond
-branching, `-cond->' threading does not short circuit after the
-first true test expression."
-  (declare (debug (form body))
+Clauses take the form of (CONDITION EXPRESSION).
+When condition is non-nil, threads X (via `->') through the
+corresponding expression.  Note that, unlike `cond',
+`-cond->' threading does not short circuit after the
+first non-nil test expression.
+Returns the value of the last expression."
+  (declare (debug (form clauses))
            (indent 1))
   (when (= 1 (% 2 (length clauses)))
     (signal 'wrong-number-of-arguments))
@@ -1618,10 +1620,12 @@ first true test expression."
 
 (defmacro -cond->> (x &rest clauses)
   "Conditionally thread X through CLAUSES.
-Threads x (via `->>') through each form for which the
-corresponding test expression is true.  Note that, unlike cond
-branching, `-cond->>' threading does not short circuit after the
-first true test expression."
+Clauses take the form of (CONDITION EXPRESSION).
+When condition is non-nil, threads X (via `->>') through the
+corresponding expression.  Note that, unlike `cond',
+`-cond->>' threading does not short circuit after the
+first non-nil test expression.
+Returns the value of the last expression."
   (declare (debug (form body))
            (indent 1))
   (when (= 1 (% 2 (length clauses)))

@@ -1,4 +1,8 @@
-# <img align="right" src="https://raw.github.com/magnars/dash.el/master/rainbow-dash.png"> dash.el ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/magnars/dash.el/CI)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/magnars/dash.el/CI)
+[![MELPA](https://melpa.org/packages/dash-badge.svg)](https://melpa.org/#/dash)
+[![MELPA Stable](https://stable.melpa.org/packages/dash-badge.svg)](https://stable.melpa.org/#/dash)
+
+# <img align="right" src="https://raw.github.com/magnars/dash.el/master/rainbow-dash.png"> dash.el
 
 A modern list api for Emacs. No 'cl required.
 
@@ -279,8 +283,8 @@ Functions pretending lists are trees.
 * [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some-->](#-some---x-optional-form-rest-more) `(x &optional form &rest more)`
-* [-cond->](#-cond--x-rest-clauses) `(x &rest clauses)`
-* [-cond->>](#-cond--x-rest-clauses) `(x &rest clauses)`
+* [-cond->](#-cond--x-rest-branches) `(x &rest branches)`
+* [-cond->>](#-cond--x-rest-branches) `(x &rest branches)`
 
 ### Binding
 
@@ -2233,36 +2237,34 @@ and when that result is non-nil, through the next form, etc.
 (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) ;; => nil
 ```
 
-#### -cond-> `(x &rest clauses)`
+#### -cond-> `(x &rest branches)`
 
-Conditionally thread `x` through `clauses`.
-Threads x (via [`->`](#--x-optional-form-rest-more)) through each form for which the
-corresponding test expression is true.  Note that, unlike cond
-branching, [`-cond->`](#-cond--x-rest-clauses) threading does not short circuit after the
+Conditionally thread `x` through `branches`.
+Branches take the form of test-expressions pairs.
+When test is non-nil, threads `x` (via [`->`](#--x-optional-form-rest-more)) through the
+corresponding expression.  Note that, unlike cond
+branching, [`-cond->`](#-cond--x-rest-branches) threading does not short circuit after the
 first true test expression.
-Given some elisp details, current value is exposed as the symbol
-`it`.
 
 ```el
-(-cond-> "abc" (stringp it) (concat "def" "ghi")) ;; => "abcdefghi"
-(-cond-> 10 (even? it) (/ 2) (odd? it) list) ;; => '(5)
-(-cond-> '(:name "John" :age 24) (not (plist-get it :name)) (plist-put :name "Owen") (not (plist-get it :age)) (plist-put :age 40) (not (plist-get it :address)) (plist-put :address "123, Saint St.")) ;; => '(:name "John" :age 24 :address "123, Saint St.")
+(-cond-> "abc" t (concat "def" "ghi")) ;; => "abcdefghi"
+(-cond-> 10 nil number-to-string) ;; => 10
+(let ((a 10)) (-cond-> a (= 10 a) number-to-string)) ;; => "10"
 ```
 
-#### -cond->> `(x &rest clauses)`
+#### -cond->> `(x &rest branches)`
 
-Conditionally thread `x` through `clauses`.
-Threads x (via [`->>`](#--x-optional-form-rest-more)) through each form for which the
-corresponding test expression is true.  Note that, unlike cond
-branching, [`-cond->>`](#-cond--x-rest-clauses) threading does not short circuit after the
+Conditionally thread `x` through `branches`.
+Branches take the form of test-expressions pairs.
+When test is non-nil, threads `x` (via [`->>`](#--x-optional-form-rest-more)) through the
+corresponding expression.  Note that, unlike cond
+branching, [`-cond->>`](#-cond--x-rest-branches) threading does not short circuit after the
 first true test expression.
-Given some elisp details, current value is exposed as the symbol
-`it`.
 
 ```el
-(-cond->> "abc" (stringp it) (concat "def" "ghi")) ;; => "defghiabc"
-(-cond->> '(1 2 3) nil (+ 10 100 1000) t (-filter 'even?)) ;; => '(2)
-(-cond->> "ghi" (= 1 1) (concat "abc" "def") (= 0 1) (split-string)) ;; => "abcdefghi"
+(-cond->> "abc" t (concat "def" "ghi")) ;; => "defghiabc"
+(-cond->> 10 nil number-to-string) ;; => 10
+(let ((string "abc")) (-cond->> string (string= nil string) (concat "def" "ghi"))) ;; => "abc"
 ```
 
 

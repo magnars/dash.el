@@ -1600,8 +1600,8 @@ branching, `-cond->' threading does not short circuit after the
 first true test expression."
   (declare (debug (form body))
            (indent 1))
-  (when (-> clauses length (% 2) (= 1))
-    (error "Wrong number of arguments"))
+  (when (= 1 (% 2 (length clauses)))
+    (signal 'wrong-number-of-arguments))
   (-let* ((g (dash--match-make-source-symbol))
           (steps (-map
                   (-lambda ((test step))
@@ -1624,8 +1624,8 @@ branching, `-cond->>' threading does not short circuit after the
 first true test expression."
   (declare (debug (form body))
            (indent 1))
-  (when (-> clauses length (% 2) (= 1))
-    (error "Wrong number of arguments."))
+  (when (= 1 (% 2 (length clauses)))
+    (signal 'wrong-number-of-arguments))
   (-let* ((g (dash--match-make-source-symbol))
           (steps (-map
                   (-lambda ((test step))

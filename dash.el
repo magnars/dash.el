@@ -1604,7 +1604,7 @@ Returns the value of the last expression."
            (indent 1))
   (when (= 1 (% 2 (length clauses)))
     (signal 'wrong-number-of-arguments))
-  (-let* ((g (dash--match-make-source-symbol))
+  (-let* ((g (make-symbol "g"))
           (steps (-map
                   (-lambda ((test step))
                     `(if ,test
@@ -1630,7 +1630,7 @@ Returns the value of the last expression."
            (indent 1))
   (when (= 1 (% 2 (length clauses)))
     (signal 'wrong-number-of-arguments))
-  (-let* ((g (dash--match-make-source-symbol))
+  (-let* ((g (make-symbol "g"))
           (steps (-map
                   (-lambda ((test step))
                     `(if ,test

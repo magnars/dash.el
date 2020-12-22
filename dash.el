@@ -1602,21 +1602,17 @@ first non-nil test expression.
 Returns the value of the last expression."
   (declare (debug (form clauses))
            (indent 1))
-  (when (= 1 (% 2 (length clauses)))
-    (signal 'wrong-number-of-arguments))
-  (-let* ((g (make-symbol "g"))
-          (steps (-map
-                  (-lambda ((test step))
-                    `(if ,test
-                         (-> ,g ,step)
-                       ,g))
-                  (-partition 2 clauses))))
-    `(-let* ((,g ,x)
-             ,@(-zip-lists (-cycle (list g))
-                           (butlast steps)))
-       ,@(if (null steps)
-             g
-           (last steps)))))
+  (when (= 1 (% (length clauses) 2))
+    (signal 'wrong-number-of-arguments (list '-> (1+ (length clauses)))))
+  (let ((g (make-symbol "g"))
+          steps)
+    (while clauses
+      (let ((test (pop clauses))
+            (form (pop clauses)))
+        (push `(,g (if ,test (-> ,g ,form) ,g)) steps)))
+    `(let* ((,g ,x)
+             ,@(nreverse steps))
+       ,g)))
 
 (defmacro -cond->> (x &rest clauses)
   "Conditionally thread X through CLAUSES.
@@ -1629,20 +1625,16 @@ Returns the value of the last expression."
   (declare (debug (form body))
            (indent 1))
   (when (= 1 (% 2 (length clauses)))
-    (signal 'wrong-number-of-arguments))
-  (-let* ((g (make-symbol "g"))
-          (steps (-map
-                  (-lambda ((test step))
-                    `(if ,test
-                         (->> ,g ,step)
-                       ,g))
-                  (-partition 2 clauses))))
-    `(-let* ((,g ,x)
-             ,@(-zip-lists (-cycle (list g))
-                           (butlast steps)))
-       ,@(if (null steps)
-            g
-           (last steps)))))
+    (signal 'wrong-number-of-arguments (list '-cond->> (+1 (length clauses)))))
+    (let ((g (make-symbol "g"))
+          steps)
+    (while clauses
+      (let ((test (pop clauses))
+            (form (pop clauses)))
+        (push `(,g (if ,test (->> ,g ,form) ,g)) steps)))
+    `(let* ((,g ,x)
+             ,@(nreverse steps))
+       ,g)))
 
 (defun -grade-up (comparator list)
   "Grade elements of LIST using COMPARATOR relation, yielding a

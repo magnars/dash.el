@@ -291,6 +291,8 @@ Functions pretending lists are trees.
 * [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some-->](#-some---x-optional-form-rest-more) `(x &optional form &rest more)`
+* [-cond->](#-cond--x-rest-branches) `(x &rest branches)`
+* [-cond->>](#-cond--x-rest-branches) `(x &rest branches)`
 
 ### Binding
 
@@ -2241,6 +2243,36 @@ and when that result is non-nil, through the next form, etc.
 (-some--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
 (-some--> nil (concat "abc" it "ghi")) ;; => nil
 (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) ;; => nil
+```
+
+#### -cond-> `(x &rest branches)`
+
+Conditionally thread `x` through `branches`.
+Branches take the form of test-expressions pairs.
+When test is non-nil, threads `x` (via [`->`](#--x-optional-form-rest-more)) through the
+corresponding expression.  Note that, unlike cond
+branching, [`-cond->`](#-cond--x-rest-branches) threading does not short circuit after the
+first true test expression.
+
+```el
+(-cond-> "abc" t (concat "def" "ghi")) ;; => "abcdefghi"
+(-cond-> 10 nil number-to-string) ;; => 10
+(let ((a 10)) (-cond-> a (= 10 a) number-to-string)) ;; => "10"
+```
+
+#### -cond->> `(x &rest branches)`
+
+Conditionally thread `x` through `branches`.
+Branches take the form of test-expressions pairs.
+When test is non-nil, threads `x` (via [`->>`](#--x-optional-form-rest-more)) through the
+corresponding expression.  Note that, unlike cond
+branching, [`-cond->>`](#-cond--x-rest-branches) threading does not short circuit after the
+first true test expression.
+
+```el
+(-cond->> "abc" t (concat "def" "ghi")) ;; => "defghiabc"
+(-cond->> 10 nil number-to-string) ;; => 10
+(let ((string "abc")) (-cond->> string (string= nil string) (concat "def" "ghi"))) ;; => "abc"
 ```
 
 

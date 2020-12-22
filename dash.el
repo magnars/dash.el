@@ -1580,6 +1580,50 @@ and when that result is non-nil, through the next form, etc."
                    (--> ,result ,form))
                  ,@more))))
 
+(defmacro -cond-> (x &rest clauses)
+  "Conditionally thread X through CLAUSES.
+Clauses take the form of (CONDITION EXPRESSION).
+When condition is non-nil, threads X (via `->') through the
+corresponding expression.  Note that, unlike `cond',
+`-cond->' threading does not short circuit after the
+first non-nil test expression.
+Returns the value of the last expression."
+  (declare (debug (form clauses))
+           (indent 1))
+  (when (= 1 (% (length clauses) 2))
+    (signal 'wrong-number-of-arguments (list '-> (1+ (length clauses)))))
+  (let ((g (make-symbol "g"))
+          steps)
+    (while clauses
+      (let ((test (pop clauses))
+            (form (pop clauses)))
+        (push `(,g (if ,test (-> ,g ,form) ,g)) steps)))
+    `(let* ((,g ,x)
+             ,@(nreverse steps))
+       ,g)))
+
+(defmacro -cond->> (x &rest clauses)
+  "Conditionally thread X through CLAUSES.
+Clauses take the form of (CONDITION EXPRESSION).
+When condition is non-nil, threads X (via `->>') through the
+corresponding expression.  Note that, unlike `cond',
+`-cond->>' threading does not short circuit after the
+first non-nil test expression.
+Returns the value of the last expression."
+  (declare (debug (form body))
+           (indent 1))
+  (when (= 1 (% 2 (length clauses)))
+    (signal 'wrong-number-of-arguments (list '-cond->> (+1 (length clauses)))))
+    (let ((g (make-symbol "g"))
+          steps)
+    (while clauses
+      (let ((test (pop clauses))
+            (form (pop clauses)))
+        (push `(,g (if ,test (->> ,g ,form) ,g)) steps)))
+    `(let* ((,g ,x)
+             ,@(nreverse steps))
+       ,g)))
+
 (defun -grade-up (comparator list)
   "Grade elements of LIST using COMPARATOR relation, yielding a
 permutation vector such that applying this permutation to LIST

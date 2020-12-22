@@ -3464,6 +3464,56 @@ and when that result is non-nil, through the next form, etc.
 @end example
 @end defmac
 
+@anchor{-cond->}
+@defmac -cond-> (x &rest branches)
+Conditionally thread @var{x} through @var{branches}.
+Branches take the form of test-expressions pairs.
+When test is non-nil, threads @var{x} (via @code{->} (@pxref{->})) through the
+corresponding expression.  Note that, unlike cond
+branching, @code{-cond->} (@pxref{-cond->}) threading does not short circuit after the
+first true test expression.
+
+@example
+@group
+(-cond-> "abc" t (concat "def" "ghi"))
+    @result{} "abcdefghi"
+@end group
+@group
+(-cond-> 10 nil number-to-string)
+    @result{} 10
+@end group
+@group
+(let ((a 10)) (-cond-> a (= 10 a) number-to-string))
+    @result{} "10"
+@end group
+@end example
+@end defmac
+
+@anchor{-cond->>}
+@defmac -cond->> (x &rest branches)
+Conditionally thread @var{x} through @var{branches}.
+Branches take the form of test-expressions pairs.
+When test is non-nil, threads @var{x} (via @code{->>} (@pxref{->>})) through the
+corresponding expression.  Note that, unlike cond
+branching, @code{-cond->>} (@pxref{-cond->>}) threading does not short circuit after the
+first true test expression.
+
+@example
+@group
+(-cond->> "abc" t (concat "def" "ghi"))
+    @result{} "defghiabc"
+@end group
+@group
+(-cond->> 10 nil number-to-string)
+    @result{} 10
+@end group
+@group
+(let ((string "abc")) (-cond->> string (string= nil string) (concat "def" "ghi")))
+    @result{} "abc"
+@end group
+@end example
+@end defmac
+
 
 @node Binding
 @section Binding

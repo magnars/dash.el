@@ -2731,8 +2731,9 @@ See also: @code{-zip} (@pxref{-zip})
 
 @anchor{-cycle}
 @defun -cycle (list)
-Return an infinite copy of @var{list} that will cycle through the
-elements and repeat from the beginning.
+Return an infinite circular copy of @var{list}.
+The returned list cycles through the elements of @var{list} and repeats
+from the beginning.
 
 @example
 @group

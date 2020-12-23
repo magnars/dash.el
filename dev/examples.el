@@ -782,7 +782,8 @@ new list."
     (-take 7 (-cycle '(1 "and" 3))) => '(1 "and" 3 1 "and" 3 1)
     (-zip (-cycle '(1 2 3)) '(1 2)) => '((1 . 1) (2 . 2))
     (-zip-with 'cons (-cycle '(1 2 3)) '(1 2)) => '((1 . 1) (2 . 2))
-    (-map (-partial '-take 5) (-split-at 5 (-cycle '(1 2 3)))) => '((1 2 3 1 2) (3 1 2 3 1)))
+    (-map (-partial '-take 5) (-split-at 5 (-cycle '(1 2 3)))) => '((1 2 3 1 2) (3 1 2 3 1))
+    (let ((l (list 1))) (eq l (-cycle l))) => nil)
 
   (defexamples -pad
     (-pad 0 '()) => '(())

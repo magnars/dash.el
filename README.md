@@ -1809,8 +1809,9 @@ See also: [`-zip`](#-zip-rest-lists)
 
 #### -cycle `(list)`
 
-Return an infinite copy of `list` that will cycle through the
-elements and repeat from the beginning.
+Return an infinite circular copy of `list`.
+The returned list cycles through the elements of `list` and repeats
+from the beginning.
 
 ```el
 (-take 5 (-cycle '(1 2 3))) ;; => '(1 2 3 1 2)

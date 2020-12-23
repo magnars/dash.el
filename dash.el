@@ -1323,10 +1323,12 @@ See also: `-zip'"
   (apply '-zip lists))
 
 (defun -cycle (list)
-  "Return an infinite copy of LIST that will cycle through the
-elements and repeat from the beginning."
+  "Return an infinite circular copy of LIST.
+The returned list cycles through the elements of LIST and repeats
+from the beginning."
   (declare (pure t) (side-effect-free t))
-  (let ((newlist (-map 'identity list)))
+  ;; Also works with sequences that aren't lists.
+  (let ((newlist (append list ())))
     (nconc newlist newlist)))
 
 (defun -pad (fill-value &rest lists)

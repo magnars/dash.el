@@ -2475,7 +2475,6 @@ If it is a vector, convert it to a single-matcher arglist."
    ((listp arglist) arglist)
    (:else (signal 'wrong-type-argument "match-form must be a vector or list"))))
 
-;; TODO: a proper `dash-lambda-list'
 (def-edebug-spec dash-lambda-list sexp)
 
 (defmacro -defun (name match-form &rest body)

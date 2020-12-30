@@ -2397,14 +2397,19 @@ See `dash--arglist-as-symbolp'."
          (t (intern (format "input%d" it-index))))
    args))
 
-(defun dash--decompose-defun-body (body)
+(defun dash--decompose-defun-body (body declare?)
   "Destructure a `defun' or `lambda' BODY.
-Return a list (DOCSTRING? DECLS REALBODY)."
-  (let* ((docstring? (car body))
-         (docstring? (when (stringp docstring?) docstring?))
-         (result (--split-with (memq (car-safe it) '(declare interactive))
-                               (if docstring? (cdr body) body))))
-    (cons docstring? result)))
+Return a list (DOCSTRING? DECLS REALBODY).
+
+If DECLARE? is given, the body may start with a leading
+`declare', in addition to `interactive'."
+  (let ((docstring? (and (stringp (car body)) (pop body)))
+        decls)
+    (when (and declare? (eq (car-safe (car body)) 'declare))
+      (push (pop body) decls))
+    (when (and (eq (car-safe (car body)) 'interactive))
+      (push (pop body) decls))
+    (list docstring? (nreverse decls) body)))
 
 (defun dash--docstring-add-signature (docstring arglist)
   "Add an ARGLIST signature to DOCSTRING.
@@ -2415,17 +2420,19 @@ signature line."
       docstring
     (format "%s\n\n%S" (or docstring "") (cons 'fn arglist))))
 
-(defun dash--destructure-body (arglist body-forms &optional nodoc)
+(defun dash--destructure-body (arglist body-forms &optional doc declare?)
   "Destructure function ARGLIST using `-let'.
 The result is a list of body forms (including optional docstring
 and declarations) that does the destructuring and executes
 BODY-FORMS.
 
-If NODOC is non-nil, don't generate a signature docstring if no
+If DOC is nil, don't generate a signature docstring if no
 docstring is provided. Note that a signature is still added if a
 docstring is provided and one is needed (due to unusual
-arguments)."
-  (let* ((body-structure (dash--decompose-defun-body body-forms))
+arguments).
+
+DECLARE? is the same as in `dash--decompose-defun-body'."
+  (let* ((body-structure (dash--decompose-defun-body body-forms declare?))
          (docstring? (nth 0 body-structure))
          (decls (nth 1 body-structure))
          (body (nth 2 body-structure))
@@ -2451,7 +2458,7 @@ arguments)."
          (and docstring? (list docstring?))
        ;; If there is a docstring, add signature hints in any case; otherwise,
        ;; only generate an empty signature docstring if NODOC is unspecified.
-       (when (or docstring? (not nodoc))
+       (when (or docstring? doc)
          (list (dash--docstring-add-signature docstring? arglist))))
      decls
      (if let-bindings
@@ -2487,7 +2494,7 @@ additional destructuring, this function behaves exactly like
                            def-body)))
   (let ((match-form (dash--normalize-arglist match-form)))
     `(defun ,name ,(dash--make-arglist match-form)
-       ,@(dash--destructure-body match-form body))))
+       ,@(dash--destructure-body match-form body t t))))
 
 (defmacro -defmacro (name match-form &rest body)
   "Like `-defun', but define macro called NAME instead.
@@ -2500,7 +2507,7 @@ MATCH-FORM and BODY are the same.
                            def-body)))
   (let ((match-form (dash--normalize-arglist match-form)))
     `(defmacro ,name ,(dash--make-arglist match-form)
-       ,@(dash--destructure-body match-form body))))
+       ,@(dash--destructure-body match-form body t t))))
 
 (defmacro -lambda (match-form &rest body)
   "Return a lambda which destructures its input as MATCH-FORM and executes BODY.
@@ -2527,7 +2534,7 @@ See `-let' for the description of destructuring mechanism.
                            def-body)))
   (let ((match-form (dash--normalize-arglist match-form)))
     `(lambda ,(dash--make-arglist match-form)
-       ,@(dash--destructure-body match-form body t))))
+       ,@(dash--destructure-body match-form body))))
 
 (defmacro -setq (&rest forms)
   "Bind each MATCH-FORM to the value of its VAL.

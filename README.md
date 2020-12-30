@@ -2571,8 +2571,9 @@ Call `fn` with every item in `list` while (`pred` item) is non-nil.
 Return nil, used for side-effects only.
 
 ```el
-(let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(4 2)
-(let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) ;; => '(2 1)
+(let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (push item s))) s) ;; => '(4 2)
+(let (s) (--each-while '(1 2 3 4) (< it 3) (push it s)) s) ;; => '(2 1)
+(let ((s 0)) (--each-while '(1 3 4 5) (odd? it) (setq s (+ s it))) s) ;; => 4
 ```
 
 #### -each-indexed `(list fn)`

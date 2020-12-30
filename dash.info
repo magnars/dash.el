@@ -2485,10 +2485,12 @@ Functions iterating over lists for side-effect only.
      Call FN with every item in LIST while (PRED item) is non-nil.
      Return nil, used for side-effects only.
 
-          (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s)
+          (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (push item s))) s)
               ⇒ '(4 2)
-          (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s)
+          (let (s) (--each-while '(1 2 3 4) (< it 3) (push it s)) s)
               ⇒ '(2 1)
+          (let ((s 0)) (--each-while '(1 3 4 5) (odd? it) (setq s (+ s it))) s)
+              ⇒ 4
 
  -- Function: -each-indexed (list fn)
      Call (FN index item) for each item in LIST.
@@ -3003,7 +3005,7 @@ Index
 * !cons:                                 Destructive operations.
                                                             (line   6)
 * -->:                                   Threading macros.  (line  32)
-* --doto:                                Side-effects.      (line  81)
+* --doto:                                Side-effects.      (line  83)
 * ->:                                    Threading macros.  (line   6)
 * ->>:                                   Threading macros.  (line  19)
 * -all?:                                 Predicates.        (line  18)
@@ -3035,15 +3037,15 @@ Index
                                                             (line 168)
 * -difference:                           Set operations.    (line  20)
 * -distinct:                             Set operations.    (line  62)
-* -dotimes:                              Side-effects.      (line  61)
-* -doto:                                 Side-effects.      (line  70)
+* -dotimes:                              Side-effects.      (line  63)
+* -doto:                                 Side-effects.      (line  72)
 * -drop:                                 Sublist selection. (line 125)
 * -drop-last:                            Sublist selection. (line 137)
 * -drop-while:                           Sublist selection. (line 158)
 * -each:                                 Side-effects.      (line   8)
-* -each-indexed:                         Side-effects.      (line  28)
-* -each-r:                               Side-effects.      (line  41)
-* -each-r-while:                         Side-effects.      (line  52)
+* -each-indexed:                         Side-effects.      (line  30)
+* -each-r:                               Side-effects.      (line  43)
+* -each-r-while:                         Side-effects.      (line  54)
 * -each-while:                           Side-effects.      (line  19)
 * -elem-index:                           Indexing.          (line   9)
 * -elem-indices:                         Indexing.          (line  21)
@@ -3393,36 +3395,36 @@ Ref: -setq82691
 Node: Side-effects83507
 Ref: -each83701
 Ref: -each-while84108
-Ref: -each-indexed84468
-Ref: -each-r84986
-Ref: -each-r-while85419
-Ref: -dotimes85794
-Ref: -doto86097
-Ref: --doto86524
-Node: Destructive operations86799
-Ref: !cons86972
-Ref: !cdr87178
-Node: Function combinators87373
-Ref: -partial87647
-Ref: -rpartial88040
-Ref: -juxt88442
-Ref: -compose88874
-Ref: -applify89432
-Ref: -on89863
-Ref: -flip90389
-Ref: -const90701
-Ref: -cut91045
-Ref: -not91531
-Ref: -orfn91841
-Ref: -andfn92275
-Ref: -iteratefn92770
-Ref: -fixfn93473
-Ref: -prodfn95042
-Node: Development96111
-Node: Contribute96460
-Node: Changes97208
-Node: Contributors100207
-Node: Index101831
+Ref: -each-indexed84566
+Ref: -each-r85084
+Ref: -each-r-while85517
+Ref: -dotimes85892
+Ref: -doto86195
+Ref: --doto86622
+Node: Destructive operations86897
+Ref: !cons87070
+Ref: !cdr87276
+Node: Function combinators87471
+Ref: -partial87745
+Ref: -rpartial88138
+Ref: -juxt88540
+Ref: -compose88972
+Ref: -applify89530
+Ref: -on89961
+Ref: -flip90487
+Ref: -const90799
+Ref: -cut91143
+Ref: -not91629
+Ref: -orfn91939
+Ref: -andfn92373
+Ref: -iteratefn92868
+Ref: -fixfn93571
+Ref: -prodfn95140
+Node: Development96209
+Node: Contribute96558
+Node: Changes97306
+Node: Contributors100305
+Node: Index101929
 
 End Tag Table
 

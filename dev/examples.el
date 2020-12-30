@@ -1280,8 +1280,12 @@ new list."
     (let (s) (--each (reverse (three-letters)) (setq s (cons it s))) s) => '("A" "B" "C"))
 
   (defexamples -each-while
-    (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) => '(4 2)
-    (let (s) (--each-while '(1 2 3 4) (< it 3) (!cons it s)) s) => '(2 1))
+    (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (push item s))) s) => '(4 2)
+    (let (s) (--each-while '(1 2 3 4) (< it 3) (push it s)) s) => '(2 1)
+    (let ((s 0)) (--each-while '(1 3 4 5) (odd? it) (setq s (+ s it))) s) => 4
+    (let (s) (--each-while () t (setq s t)) s) => nil
+    (let (s) (--each-while '(1) t (setq s it)) s) => 1
+    (let (s) (--each-while '(1) nil (setq s it)) s) => nil)
 
   (defexamples -each-indexed
     (let (s) (-each-indexed '(a b c) (lambda (index item) (setq s (cons (list item index) s)))) s) => '((c 2) (b 1) (a 0))

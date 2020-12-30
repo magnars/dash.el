@@ -581,18 +581,23 @@ section is returned.  Defaults to 1.
 
 #### -take `(n list)`
 
-Return a new list of the first `n` items in `list`, or all items if there are fewer than `n`.
+Return a copy of the first `n` items in `list`.
+Return a copy of `list` if it contains `n` items or fewer.
+Return nil if `n` is zero or less.
 
 See also: [`-take-last`](#-take-last-n-list)
 
 ```el
 (-take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
 (-take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
+(-take 0 '(1 2 3 4 5)) ;; => nil
 ```
 
 #### -take-last `(n list)`
 
-Return the last `n` items of `list` in order.
+Return a copy of the last `n` items of `list` in order.
+Return a copy of `list` if it contains `n` items or fewer.
+Return nil if `n` is zero or less.
 
 See also: [`-take`](#-take-n-list)
 
@@ -604,41 +609,54 @@ See also: [`-take`](#-take-n-list)
 
 #### -drop `(n list)`
 
-Return the tail of `list` without the first `n` items.
+Return a copy of the tail of `list` without the first `n` items.
+Return a copy of `list` if `n` is zero or less.
+Return nil if `list` contains `n` items or fewer.
 
 See also: [`-drop-last`](#-drop-last-n-list)
 
-(fn `n` `list`)
-
 ```el
 (-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
-(-drop 17 '(1 2 3 4 5)) ;; => '()
+(-drop 17 '(1 2 3 4 5)) ;; => nil
+(-drop 0 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
 ```
 
 #### -drop-last `(n list)`
 
-Remove the last `n` items of `list` and return a copy.
+Return a copy of `list` without its last `n` items.
+Return a copy of `list` if `n` is zero or less.
+Return nil if `list` contains `n` items or fewer.
 
 See also: [`-drop`](#-drop-n-list)
 
 ```el
 (-drop-last 3 '(1 2 3 4 5)) ;; => '(1 2)
-(-drop-last 17 '(1 2 3 4 5)) ;; => '()
+(-drop-last 17 '(1 2 3 4 5)) ;; => nil
+(-drop-last 0 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
 ```
 
 #### -take-while `(pred list)`
 
-Return a new list of successive items from `list` while (`pred` item) returns a non-nil value.
+Take successive items from `list` for which `pred` returns non-nil.
+`pred` is a function of one argument.  Return a new list of the
+successive elements from the start of `list` for which `pred` returns
+non-nil.
+
+See also: [`-drop-while`](#-drop-while-pred-list)
 
 ```el
-(-take-while 'even? '(1 2 3 4)) ;; => '()
+(-take-while 'even? '(1 2 3 4)) ;; => nil
 (-take-while 'even? '(2 4 5 6)) ;; => '(2 4)
 (--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
 ```
 
 #### -drop-while `(pred list)`
 
-Return the tail of `list` starting from the first item for which (`pred` item) returns nil.
+Drop successive items from `list` for which `pred` returns non-nil.
+`pred` is a function of one argument.  Return a copy of the tail of
+`list` starting from its first element for which `pred` returns nil.
+
+See also: [`-take-while`](#-take-while-pred-list)
 
 ```el
 (-drop-while 'even? '(1 2 3 4)) ;; => '(1 2 3 4)

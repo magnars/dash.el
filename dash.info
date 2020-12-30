@@ -437,8 +437,9 @@ Functions returning a sublist of the original list.
               ⇒ '(2 4 6 8)
 
  -- Function: -take (n list)
-     Return a new list of the first N items in LIST, or all items if
-     there are fewer than N.
+     Return a copy of the first N items in LIST.  Return a copy of
+     LIST if it contains N items or fewer.  Return nil if N is zero or
+     less.
 
      See also: ‘-take-last’ (*note -take-last::)
 
@@ -446,9 +447,13 @@ Functions returning a sublist of the original list.
               ⇒ '(1 2 3)
           (-take 17 '(1 2 3 4 5))
               ⇒ '(1 2 3 4 5)
+          (-take 0 '(1 2 3 4 5))
+              ⇒ nil
 
  -- Function: -take-last (n list)
-     Return the last N items of LIST in order.
+     Return a copy of the last N items of LIST in order.  Return a
+     copy of LIST if it contains N items or fewer.  Return nil if N is
+     zero or less.
 
      See also: ‘-take’ (*note -take::)
 
@@ -460,41 +465,54 @@ Functions returning a sublist of the original list.
               ⇒ '(5)
 
  -- Function: -drop (n list)
-     Return the tail of LIST without the first N items.
+     Return a copy of the tail of LIST without the first N items.
+     Return a copy of LIST if N is zero or less.  Return nil if LIST
+     contains N items or fewer.
 
      See also: ‘-drop-last’ (*note -drop-last::)
-
-     (fn N LIST)
 
           (-drop 3 '(1 2 3 4 5))
               ⇒ '(4 5)
           (-drop 17 '(1 2 3 4 5))
-              ⇒ '()
+              ⇒ nil
+          (-drop 0 '(1 2 3 4 5))
+              ⇒ '(1 2 3 4 5)
 
  -- Function: -drop-last (n list)
-     Remove the last N items of LIST and return a copy.
+     Return a copy of LIST without its last N items.  Return a copy of
+     LIST if N is zero or less.  Return nil if LIST contains N items
+     or fewer.
 
      See also: ‘-drop’ (*note -drop::)
 
           (-drop-last 3 '(1 2 3 4 5))
               ⇒ '(1 2)
           (-drop-last 17 '(1 2 3 4 5))
-              ⇒ '()
+              ⇒ nil
+          (-drop-last 0 '(1 2 3 4 5))
+              ⇒ '(1 2 3 4 5)
 
  -- Function: -take-while (pred list)
-     Return a new list of successive items from LIST while (PRED item)
-     returns a non-nil value.
+     Take successive items from LIST for which PRED returns non-nil.
+     PRED is a function of one argument.  Return a new list of the
+     successive elements from the start of LIST for which PRED returns
+     non-nil.
+
+     See also: ‘-drop-while’ (*note -drop-while::)
 
           (-take-while 'even? '(1 2 3 4))
-              ⇒ '()
+              ⇒ nil
           (-take-while 'even? '(2 4 5 6))
               ⇒ '(2 4)
           (--take-while (< it 4) '(1 2 3 4 3 2 1))
               ⇒ '(1 2 3)
 
  -- Function: -drop-while (pred list)
-     Return the tail of LIST starting from the first item for which
-     (PRED item) returns nil.
+     Drop successive items from LIST for which PRED returns non-nil.
+     PRED is a function of one argument.  Return a copy of the tail of
+     LIST starting from its first element for which PRED returns nil.
+
+     See also: ‘-take-while’ (*note -take-while::)
 
           (-drop-while 'even? '(1 2 3 4))
               ⇒ '(1 2 3 4)
@@ -3039,9 +3057,9 @@ Index
 * -distinct:                             Set operations.    (line  62)
 * -dotimes:                              Side-effects.      (line  63)
 * -doto:                                 Side-effects.      (line  72)
-* -drop:                                 Sublist selection. (line 125)
-* -drop-last:                            Sublist selection. (line 137)
-* -drop-while:                           Sublist selection. (line 158)
+* -drop:                                 Sublist selection. (line 130)
+* -drop-last:                            Sublist selection. (line 144)
+* -drop-while:                           Sublist selection. (line 173)
 * -each:                                 Side-effects.      (line   8)
 * -each-indexed:                         Side-effects.      (line  30)
 * -each-r:                               Side-effects.      (line  43)
@@ -3166,9 +3184,9 @@ Index
 * -same-items?:                          Predicates.        (line  72)
 * -second-item:                          Other list operations.
                                                             (line 287)
-* -select-by-indices:                    Sublist selection. (line 169)
-* -select-column:                        Sublist selection. (line 199)
-* -select-columns:                       Sublist selection. (line 180)
+* -select-by-indices:                    Sublist selection. (line 187)
+* -select-column:                        Sublist selection. (line 217)
+* -select-columns:                       Sublist selection. (line 198)
 * -separate:                             Partitioning.      (line  63)
 * -setq:                                 Binding.           (line 276)
 * -slice:                                Sublist selection. (line  86)
@@ -3194,8 +3212,8 @@ Index
                                                             (line 210)
 * -tails:                                Reductions.        (line 214)
 * -take:                                 Sublist selection. (line 102)
-* -take-last:                            Sublist selection. (line 113)
-* -take-while:                           Sublist selection. (line 147)
+* -take-last:                            Sublist selection. (line 116)
+* -take-while:                           Sublist selection. (line 158)
 * -third-item:                           Other list operations.
                                                             (line 299)
 * -tree-map:                             Tree operations.   (line  28)
@@ -3249,182 +3267,182 @@ Ref: -remove-item12332
 Ref: -non-nil12727
 Ref: -slice12886
 Ref: -take13418
-Ref: -take-last13726
-Ref: -drop14049
-Ref: -drop-last14322
-Ref: -take-while14582
-Ref: -drop-while14932
-Ref: -select-by-indices15288
-Ref: -select-columns15802
-Ref: -select-column16507
-Node: List to list16970
-Ref: -keep17162
-Ref: -concat17665
-Ref: -flatten17962
-Ref: -flatten-n18721
-Ref: -replace19108
-Ref: -replace-first19571
-Ref: -replace-last20068
-Ref: -insert-at20558
-Ref: -replace-at20885
-Ref: -update-at21280
-Ref: -remove-at21771
-Ref: -remove-at-indices22259
-Node: Reductions22841
-Ref: -reduce-from23010
-Ref: -reduce-r-from23776
-Ref: -reduce24543
-Ref: -reduce-r25277
-Ref: -reductions-from26147
-Ref: -reductions-r-from26862
-Ref: -reductions27587
-Ref: -reductions-r28212
-Ref: -count28847
-Ref: -sum29071
-Ref: -running-sum29260
-Ref: -product29553
-Ref: -running-product29762
-Ref: -inits30075
-Ref: -tails30323
-Ref: -common-prefix30570
-Ref: -common-suffix30867
-Ref: -min31164
-Ref: -min-by31390
-Ref: -max31913
-Ref: -max-by32138
-Node: Unfolding32666
-Ref: -iterate32905
-Ref: -unfold33350
-Node: Predicates34158
-Ref: -any?34282
-Ref: -all?34602
-Ref: -none?34932
-Ref: -only-some?35234
-Ref: -contains?35719
-Ref: -same-items?36108
-Ref: -is-prefix?36493
-Ref: -is-suffix?36816
-Ref: -is-infix?37139
-Node: Partitioning37493
-Ref: -split-at37681
-Ref: -split-with37966
-Ref: -split-on38369
-Ref: -split-when39045
-Ref: -separate39685
-Ref: -partition40127
-Ref: -partition-all40579
-Ref: -partition-in-steps41007
-Ref: -partition-all-in-steps41504
-Ref: -partition-by41989
-Ref: -partition-by-header42371
-Ref: -partition-after-pred42975
-Ref: -partition-before-pred43319
-Ref: -partition-before-item43670
-Ref: -partition-after-item43981
-Ref: -group-by44287
-Node: Indexing44724
-Ref: -elem-index44926
-Ref: -elem-indices45321
-Ref: -find-index45704
-Ref: -find-last-index46193
-Ref: -find-indices46697
-Ref: -grade-up47105
-Ref: -grade-down47508
-Node: Set operations47918
-Ref: -union48101
-Ref: -difference48543
-Ref: -intersection48960
-Ref: -powerset49397
-Ref: -permutations49610
-Ref: -distinct49910
-Node: Other list operations50288
-Ref: -rotate50513
-Ref: -repeat50883
-Ref: -cons*51146
-Ref: -snoc51533
-Ref: -interpose51946
-Ref: -interleave52244
-Ref: -zip-with52613
-Ref: -zip53330
-Ref: -zip-lists54162
-Ref: -zip-fill54863
-Ref: -unzip55186
-Ref: -cycle55931
-Ref: -pad56338
-Ref: -table56661
-Ref: -table-flat57451
-Ref: -first58460
-Ref: -some58832
-Ref: -last59141
-Ref: -first-item59475
-Ref: -second-item59891
-Ref: -third-item60171
-Ref: -fourth-item60449
-Ref: -fifth-item60715
-Ref: -last-item60977
-Ref: -butlast61269
-Ref: -sort61516
-Ref: -list62004
-Ref: -fix62335
-Node: Tree operations62875
-Ref: -tree-seq63071
-Ref: -tree-map63929
-Ref: -tree-map-nodes64372
-Ref: -tree-reduce65227
-Ref: -tree-reduce-from66109
-Ref: -tree-mapreduce66710
-Ref: -tree-mapreduce-from67570
-Ref: -clone68856
-Node: Threading macros69184
-Ref: ->69329
-Ref: ->>69821
-Ref: -->70326
-Ref: -as->70887
-Ref: -some->71342
-Ref: -some->>71716
-Ref: -some-->72152
-Node: Binding72623
-Ref: -when-let72835
-Ref: -when-let*73320
-Ref: -if-let73848
-Ref: -if-let*74243
-Ref: -let74860
-Ref: -let*80948
-Ref: -lambda81889
-Ref: -setq82691
-Node: Side-effects83507
-Ref: -each83701
-Ref: -each-while84108
-Ref: -each-indexed84566
-Ref: -each-r85084
-Ref: -each-r-while85517
-Ref: -dotimes85892
-Ref: -doto86195
-Ref: --doto86622
-Node: Destructive operations86897
-Ref: !cons87070
-Ref: !cdr87276
-Node: Function combinators87471
-Ref: -partial87745
-Ref: -rpartial88138
-Ref: -juxt88540
-Ref: -compose88972
-Ref: -applify89530
-Ref: -on89961
-Ref: -flip90487
-Ref: -const90799
-Ref: -cut91143
-Ref: -not91629
-Ref: -orfn91939
-Ref: -andfn92373
-Ref: -iteratefn92868
-Ref: -fixfn93571
-Ref: -prodfn95140
-Node: Development96209
-Node: Contribute96558
-Node: Changes97306
-Node: Contributors100305
-Node: Index101929
+Ref: -take-last13832
+Ref: -drop14265
+Ref: -drop-last14695
+Ref: -take-while15123
+Ref: -drop-while15649
+Ref: -select-by-indices16173
+Ref: -select-columns16687
+Ref: -select-column17392
+Node: List to list17855
+Ref: -keep18047
+Ref: -concat18550
+Ref: -flatten18847
+Ref: -flatten-n19606
+Ref: -replace19993
+Ref: -replace-first20456
+Ref: -replace-last20953
+Ref: -insert-at21443
+Ref: -replace-at21770
+Ref: -update-at22165
+Ref: -remove-at22656
+Ref: -remove-at-indices23144
+Node: Reductions23726
+Ref: -reduce-from23895
+Ref: -reduce-r-from24661
+Ref: -reduce25428
+Ref: -reduce-r26162
+Ref: -reductions-from27032
+Ref: -reductions-r-from27747
+Ref: -reductions28472
+Ref: -reductions-r29097
+Ref: -count29732
+Ref: -sum29956
+Ref: -running-sum30145
+Ref: -product30438
+Ref: -running-product30647
+Ref: -inits30960
+Ref: -tails31208
+Ref: -common-prefix31455
+Ref: -common-suffix31752
+Ref: -min32049
+Ref: -min-by32275
+Ref: -max32798
+Ref: -max-by33023
+Node: Unfolding33551
+Ref: -iterate33790
+Ref: -unfold34235
+Node: Predicates35043
+Ref: -any?35167
+Ref: -all?35487
+Ref: -none?35817
+Ref: -only-some?36119
+Ref: -contains?36604
+Ref: -same-items?36993
+Ref: -is-prefix?37378
+Ref: -is-suffix?37701
+Ref: -is-infix?38024
+Node: Partitioning38378
+Ref: -split-at38566
+Ref: -split-with38851
+Ref: -split-on39254
+Ref: -split-when39930
+Ref: -separate40570
+Ref: -partition41012
+Ref: -partition-all41464
+Ref: -partition-in-steps41892
+Ref: -partition-all-in-steps42389
+Ref: -partition-by42874
+Ref: -partition-by-header43256
+Ref: -partition-after-pred43860
+Ref: -partition-before-pred44204
+Ref: -partition-before-item44555
+Ref: -partition-after-item44866
+Ref: -group-by45172
+Node: Indexing45609
+Ref: -elem-index45811
+Ref: -elem-indices46206
+Ref: -find-index46589
+Ref: -find-last-index47078
+Ref: -find-indices47582
+Ref: -grade-up47990
+Ref: -grade-down48393
+Node: Set operations48803
+Ref: -union48986
+Ref: -difference49428
+Ref: -intersection49845
+Ref: -powerset50282
+Ref: -permutations50495
+Ref: -distinct50795
+Node: Other list operations51173
+Ref: -rotate51398
+Ref: -repeat51768
+Ref: -cons*52031
+Ref: -snoc52418
+Ref: -interpose52831
+Ref: -interleave53129
+Ref: -zip-with53498
+Ref: -zip54215
+Ref: -zip-lists55047
+Ref: -zip-fill55748
+Ref: -unzip56071
+Ref: -cycle56816
+Ref: -pad57223
+Ref: -table57546
+Ref: -table-flat58336
+Ref: -first59345
+Ref: -some59717
+Ref: -last60026
+Ref: -first-item60360
+Ref: -second-item60776
+Ref: -third-item61056
+Ref: -fourth-item61334
+Ref: -fifth-item61600
+Ref: -last-item61862
+Ref: -butlast62154
+Ref: -sort62401
+Ref: -list62889
+Ref: -fix63220
+Node: Tree operations63760
+Ref: -tree-seq63956
+Ref: -tree-map64814
+Ref: -tree-map-nodes65257
+Ref: -tree-reduce66112
+Ref: -tree-reduce-from66994
+Ref: -tree-mapreduce67595
+Ref: -tree-mapreduce-from68455
+Ref: -clone69741
+Node: Threading macros70069
+Ref: ->70214
+Ref: ->>70706
+Ref: -->71211
+Ref: -as->71772
+Ref: -some->72227
+Ref: -some->>72601
+Ref: -some-->73037
+Node: Binding73508
+Ref: -when-let73720
+Ref: -when-let*74205
+Ref: -if-let74733
+Ref: -if-let*75128
+Ref: -let75745
+Ref: -let*81833
+Ref: -lambda82774
+Ref: -setq83576
+Node: Side-effects84392
+Ref: -each84586
+Ref: -each-while84993
+Ref: -each-indexed85451
+Ref: -each-r85969
+Ref: -each-r-while86402
+Ref: -dotimes86777
+Ref: -doto87080
+Ref: --doto87507
+Node: Destructive operations87782
+Ref: !cons87955
+Ref: !cdr88161
+Node: Function combinators88356
+Ref: -partial88630
+Ref: -rpartial89023
+Ref: -juxt89425
+Ref: -compose89857
+Ref: -applify90415
+Ref: -on90846
+Ref: -flip91372
+Ref: -const91684
+Ref: -cut92028
+Ref: -not92514
+Ref: -orfn92824
+Ref: -andfn93258
+Ref: -iteratefn93753
+Ref: -fixfn94456
+Ref: -prodfn96025
+Node: Development97094
+Node: Contribute97443
+Node: Changes98191
+Node: Contributors101190
+Node: Index102814
 
 End Tag Table
 

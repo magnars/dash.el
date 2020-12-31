@@ -2913,7 +2913,7 @@ See also `dash-fontify-mode-lighter' and
  'dash-enable-fontlock #'global-dash-fontify-mode "2.18.0")
 
 (define-obsolete-function-alias
-  'dash-enable-font-lock #'global-dash-fontify-mode "2.17.0")
+  'dash-enable-font-lock #'global-dash-fontify-mode "2.18.0")
 
 (provide 'dash)
 ;;; dash.el ends here

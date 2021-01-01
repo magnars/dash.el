@@ -833,50 +833,21 @@ section is returned.  Defaults to 1."
         (push it new-list)))
     (nreverse new-list)))
 
-(defun -take (n list)
-  "Return a new list of the first N items in LIST, or all items if there are fewer than N.
-
-See also: `-take-last'"
-  (declare (pure t) (side-effect-free t))
-  (let (result)
-    (--dotimes n
-      (when list
-        (!cons (car list) result)
-        (!cdr list)))
-    (nreverse result)))
-
-(defun -take-last (n list)
-  "Return the last N items of LIST in order.
-
-See also: `-take'"
-  (declare (pure t) (side-effect-free t))
-  (copy-sequence (last list n)))
-
-(defalias '-drop 'nthcdr
-  "Return the tail of LIST without the first N items.
-
-See also: `-drop-last'
-
-\(fn N LIST)")
-
-(defun -drop-last (n list)
-  "Remove the last N items of LIST and return a copy.
-
-See also: `-drop'"
-  ;; No alias because we don't want magic optional argument
-  (declare (pure t) (side-effect-free t))
-  (butlast list n))
-
 (defmacro --take-while (form list)
   "Anaphoric form of `-take-while'."
   (declare (debug (form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
-       (--each-while ,list ,form (!cons it ,r))
+       (--each-while ,list ,form (push it ,r))
        (nreverse ,r))))
 
 (defun -take-while (pred list)
-  "Return a new list of successive items from LIST while (PRED item) returns a non-nil value."
+  "Take successive items from LIST for which PRED returns non-nil.
+PRED is a function of one argument.  Return a new list of the
+successive elements from the start of LIST for which PRED returns
+non-nil.
+
+See also: `-drop-while'"
   (--take-while (funcall pred it) list))
 
 (defmacro --drop-while (form list)
@@ -884,13 +855,51 @@ See also: `-drop'"
   (declare (debug (form form)))
   (let ((l (make-symbol "list")))
     `(let ((,l ,list))
-       (while (and ,l (let ((it (car ,l))) ,form))
-         (!cdr ,l))
-       ,l)))
+       (--each-while ,l ,form (pop ,l))
+       (copy-sequence ,l))))
 
 (defun -drop-while (pred list)
-  "Return the tail of LIST starting from the first item for which (PRED item) returns nil."
+  "Drop successive items from LIST for which PRED returns non-nil.
+PRED is a function of one argument.  Return a copy of the tail of
+LIST starting from its first element for which PRED returns nil.
+
+See also: `-take-while'"
   (--drop-while (funcall pred it) list))
+
+(defun -take (n list)
+  "Return a copy of the first N items in LIST.
+Return a copy of LIST if it contains N items or fewer.
+Return nil if N is zero or less.
+
+See also: `-take-last'"
+  (declare (pure t) (side-effect-free t))
+  (--take-while (< it-index n) list))
+
+(defun -take-last (n list)
+  "Return a copy of the last N items of LIST in order.
+Return a copy of LIST if it contains N items or fewer.
+Return nil if N is zero or less.
+
+See also: `-take'"
+  (declare (pure t) (side-effect-free t))
+  (copy-sequence (last list n)))
+
+(defun -drop (n list)
+  "Return a copy of the tail of LIST without the first N items.
+Return a copy of LIST if N is zero or less.
+Return nil if LIST contains N items or fewer.
+
+See also: `-drop-last'"
+  (copy-sequence (nthcdr n list)))
+
+(defun -drop-last (n list)
+  "Return a copy of LIST without its last N items.
+Return a copy of LIST if N is zero or less.
+Return nil if LIST contains N items or fewer.
+
+See also: `-drop'"
+  (declare (pure t) (side-effect-free t))
+  (nbutlast (copy-sequence list) n))
 
 (defun -split-at (n list)
   "Return a list of ((-take N LIST) (-drop N LIST)), in no more than one pass through the list."

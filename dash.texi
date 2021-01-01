@@ -597,7 +597,9 @@ section is returned.  Defaults to 1.
 
 @anchor{-take}
 @defun -take (n list)
-Return a new list of the first @var{n} items in @var{list}, or all items if there are fewer than @var{n}.
+Return a copy of the first @var{n} items in @var{list}.
+Return a copy of @var{list} if it contains @var{n} items or fewer.
+Return nil if @var{n} is zero or less.
 
 See also: @code{-take-last} (@pxref{-take-last})
 
@@ -610,12 +612,18 @@ See also: @code{-take-last} (@pxref{-take-last})
 (-take 17 '(1 2 3 4 5))
     @result{} '(1 2 3 4 5)
 @end group
+@group
+(-take 0 '(1 2 3 4 5))
+    @result{} nil
+@end group
 @end example
 @end defun
 
 @anchor{-take-last}
 @defun -take-last (n list)
-Return the last @var{n} items of @var{list} in order.
+Return a copy of the last @var{n} items of @var{list} in order.
+Return a copy of @var{list} if it contains @var{n} items or fewer.
+Return nil if @var{n} is zero or less.
 
 See also: @code{-take} (@pxref{-take})
 
@@ -637,11 +645,11 @@ See also: @code{-take} (@pxref{-take})
 
 @anchor{-drop}
 @defun -drop (n list)
-Return the tail of @var{list} without the first @var{n} items.
+Return a copy of the tail of @var{list} without the first @var{n} items.
+Return a copy of @var{list} if @var{n} is zero or less.
+Return nil if @var{list} contains @var{n} items or fewer.
 
 See also: @code{-drop-last} (@pxref{-drop-last})
-
-(fn @var{n} @var{list})
 
 @example
 @group
@@ -650,14 +658,20 @@ See also: @code{-drop-last} (@pxref{-drop-last})
 @end group
 @group
 (-drop 17 '(1 2 3 4 5))
-    @result{} '()
+    @result{} nil
+@end group
+@group
+(-drop 0 '(1 2 3 4 5))
+    @result{} '(1 2 3 4 5)
 @end group
 @end example
 @end defun
 
 @anchor{-drop-last}
 @defun -drop-last (n list)
-Remove the last @var{n} items of @var{list} and return a copy.
+Return a copy of @var{list} without its last @var{n} items.
+Return a copy of @var{list} if @var{n} is zero or less.
+Return nil if @var{list} contains @var{n} items or fewer.
 
 See also: @code{-drop} (@pxref{-drop})
 
@@ -668,19 +682,28 @@ See also: @code{-drop} (@pxref{-drop})
 @end group
 @group
 (-drop-last 17 '(1 2 3 4 5))
-    @result{} '()
+    @result{} nil
+@end group
+@group
+(-drop-last 0 '(1 2 3 4 5))
+    @result{} '(1 2 3 4 5)
 @end group
 @end example
 @end defun
 
 @anchor{-take-while}
 @defun -take-while (pred list)
-Return a new list of successive items from @var{list} while (@var{pred} item) returns a non-nil value.
+Take successive items from @var{list} for which @var{pred} returns non-nil.
+@var{pred} is a function of one argument.  Return a new list of the
+successive elements from the start of @var{list} for which @var{pred} returns
+non-nil.
+
+See also: @code{-drop-while} (@pxref{-drop-while})
 
 @example
 @group
 (-take-while 'even? '(1 2 3 4))
-    @result{} '()
+    @result{} nil
 @end group
 @group
 (-take-while 'even? '(2 4 5 6))
@@ -695,7 +718,11 @@ Return a new list of successive items from @var{list} while (@var{pred} item) re
 
 @anchor{-drop-while}
 @defun -drop-while (pred list)
-Return the tail of @var{list} starting from the first item for which (@var{pred} item) returns nil.
+Drop successive items from @var{list} for which @var{pred} returns non-nil.
+@var{pred} is a function of one argument.  Return a copy of the tail of
+@var{list} starting from its first element for which @var{pred} returns nil.
+
+See also: @code{-take-while} (@pxref{-take-while})
 
 @example
 @group

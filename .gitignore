@@ -1,8 +1,12 @@
 # Byte-compiled Elisp
 *.elc
 
+# ELPA files.
 /dash-autoloads.el
 /dash-pkg.el
+
+# Personal customization.
+.dir-locals-2.el
 
 # ctags, etags.
 TAGS

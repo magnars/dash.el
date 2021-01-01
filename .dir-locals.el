@@ -7,6 +7,8 @@
  (emacs-lisp-mode
   (indent-tabs-mode . nil)
   (mode . bug-reference-prog))
+ (sh-mode
+  (sh-basic-offset . 4))
  (texinfo-mode
   (indent-tabs-mode . nil)
   (mode . bug-reference-prog)))

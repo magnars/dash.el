@@ -4474,8 +4474,8 @@ please.  There's a suite of examples/tests in @file{dev/examples.el},
 so remember to add tests for your additions, or they may get broken
 later.
 
-Run the tests with @samp{./run-tests.sh}.  Regenerate the docs with
-@samp{./create-docs.sh}.  Contributors are encouraged to install these
+Run the tests with @samp{make check}.  Regenerate the docs with
+@samp{make docs}.  Contributors are encouraged to install these
 commands as a Git pre-commit hook, so that the tests are always
 running and the docs are always in sync:
 

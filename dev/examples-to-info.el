@@ -24,6 +24,7 @@
 (require 'dash)
 (require 'dash-functional)
 (require 'help-fns)
+(require 'lisp-mnt)
 
 (setq text-quoting-style 'grave)
 
@@ -189,6 +190,9 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
   (let ((functions (nreverse functions)))
     (with-temp-file "./dash.texi"
       (insert-file-contents-literally "./dash-template.texi")
+
+      (goto-and-remove "@c [[ version ]]")
+      (insert (lm-version "dash.el"))
 
       (goto-and-remove "@c [[ function-nodes ]]")
       (insert (mapconcat 'function-to-node

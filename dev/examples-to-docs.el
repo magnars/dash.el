@@ -23,17 +23,11 @@
 
 (require 'dash)
 (require 'dash-functional)
-(require 'help-fns)
-(require 'package)
+(require 'lisp-mnt)
 
 (setq text-quoting-style 'grave)
 
-(defvar functions '())
-
-(defun dash-get-package-version ()
-  "Get version of dash package."
-  (with-current-buffer (find-file-noselect "dash.el")
-    (mapconcat 'number-to-string (package-desc-version (package-buffer-info)) version-separator)))
+(defvar functions ())
 
 (defun example-to-string (example)
   (-let* (((actual sym expected) example)
@@ -195,7 +189,7 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
       (goto-and-remove "[[ function-docs ]]")
       (insert (mapconcat 'function-to-md functions "\n"))
 
-      (goto-and-replace-all "[[ version ]]" (dash-get-package-version))
+      (goto-and-replace-all "[[ version ]]" (lm-version "dash.el"))
 
       (simplify-quotes))))
 

@@ -1,6 +1,6 @@
 ;;; examples.el --- Examples/tests for dash.el's API  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2015 Free Software Foundation, Inc.
+;; Copyright (C) 2015, 2017 Free Software Foundation, Inc.
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -23,6 +23,10 @@
 ;;; Code:
 
 (require 'dash)
+(require 'dash-functional)
+(eval-when-compile
+  (unless (fboundp 'def-example-group)
+    (require 'examples-to-tests "dev/examples-to-tests")))
 
 ;; FIXME: These definitions ought to be exported along with the
 ;; examples, if they are going to be used there.
@@ -44,8 +48,8 @@
 (defun approx-equal (u v)
   (or (= u v)
       (< (/ (abs (- u v))
-        (max (abs u) (abs v)))
-     dash--epsilon)))
+            (max (abs u) (abs v)))
+         dash--epsilon)))
 
 (def-example-group "Maps"
   "Functions in this category take a transforming function, which

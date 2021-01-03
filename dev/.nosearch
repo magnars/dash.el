@@ -1,0 +1,2 @@
+This file excludes the current directory from load-path.
+See (info "(elisp) Library Search").

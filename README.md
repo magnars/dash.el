@@ -28,7 +28,7 @@ Add this to the big comment block at the top:
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "2.17.0") (dash-functional "1.2.0") (emacs "24"))
+    ;; Package-Requires: ((dash "2.17.0") (dash-functional "1.2.0"))
 
 ## Upcoming breaking change!
 
@@ -3145,7 +3145,7 @@ Assignment")`](https://www.gnu.org/software/emacs/manual/html_node/emacs/Copyrig
 
 ## License
 
-Copyright (C) 2012-2016 Free Software Foundation, Inc.
+Copyright (C) 2012-2021 Free Software Foundation, Inc.
 
 Authors: Magnar Sveen <magnars@gmail.com>
 

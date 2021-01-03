@@ -1,6 +1,6 @@
-;;; examples-to-docs.el --- Extract dash.el's doc from examples.el
+;;; examples-to-docs.el --- Extract dash.el's doc from examples.el -*- lexical-binding: t -*-
 
-;; Copyright (C) 2015 Free Software Foundation, Inc.
+;; Copyright (C) 2012-2021 Free Software Foundation, Inc.
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

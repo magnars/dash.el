@@ -12,10 +12,9 @@
 @c %**end of header
 
 @copying
+This manual is for @code{dash.el} version 2.17.0.
 
-This manual is for @code{dash.el} version 2.12.1.
-
-Copyright © 2012-2015 Magnar Sveen
+Copyright @copyright{} 2012--2021 Free Software Foundation, Inc.
 
 @quotation
 This program is free software: you can redistribute it and/or modify
@@ -108,13 +107,13 @@ Alternatively, you can just dump @verb{~dash.el~} or
 Add this to the big comment block at the top:
 
 @lisp
-;; Package-Requires: ((dash "2.12.1"))
+;; Package-Requires: ((dash "2.17.0"))
 @end lisp
 
 @noindent To get function combinators:
 
 @lisp
-;; Package-Requires: ((dash "2.12.1") (dash-functional "1.2.0") (emacs "24"))
+;; Package-Requires: ((dash "2.17.0") (dash-functional "1.2.0"))
 @end lisp
 
 @node Fontification of special variables

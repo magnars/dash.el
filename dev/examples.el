@@ -28,6 +28,12 @@
   (unless (fboundp 'def-example-group)
     (require 'examples-to-tests "dev/examples-to-tests")))
 
+;; TODO: `setf' was introduced in Emacs 24.3, so remove this when
+;; support for earlier versions is dropped.
+(eval-when-compile
+  (unless (fboundp 'setf)
+    (require 'cl)))
+
 ;; FIXME: These definitions ought to be exported along with the
 ;; examples, if they are going to be used there.
 (defun odd? (num) (= 1 (% num 2)))

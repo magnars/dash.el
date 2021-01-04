@@ -1,9 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 git stash -q --keep-index
-./run-tests.sh
+make check
 RESULT=$?
-[ $RESULT == 0 ] && ./create-docs.sh && git add ./README.md
+[ $RESULT -eq 0 ] && make docs && git add ./README.md
 git stash pop -q
 [ $RESULT -ne 0 ] && exit 1
 exit 0

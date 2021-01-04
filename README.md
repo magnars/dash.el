@@ -2932,11 +2932,11 @@ You'll find the repo at:
 
 Run the tests with:
 
-    ./run-tests.sh
+    make check
 
 Regenerate the docs with:
 
-    ./create-docs.sh
+    make docs
 
 I highly recommend that you install these as a pre-commit hook, so
 that the tests are always running and the docs are always in sync:

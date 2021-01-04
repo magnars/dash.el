@@ -501,12 +501,21 @@ new list."
     (--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) => '(1 2 3)))
 
 (def-example-group "Unfolding"
-  "Operations dual to reductions, building lists from seed value rather than consuming a list to produce a single value."
+  "Operations dual to reductions, building lists from a seed value rather than \
+consuming a list to produce a single value."
 
   (defexamples -iterate
-    (-iterate '1+ 1 10) => '(1 2 3 4 5 6 7 8 9 10)
+    (-iterate #'1+ 1 10) => '(1 2 3 4 5 6 7 8 9 10)
     (-iterate (lambda (x) (+ x x)) 2 5) => '(2 4 8 16 32)
-    (--iterate (* it it) 2 5) => '(2 4 16 256 65536))
+    (--iterate (* it it) 2 5) => '(2 4 16 256 65536)
+    (-iterate #'1+ 1 0) => ()
+    (-iterate #'1+ 1 -1) => ()
+    (-iterate #'ignore 1 1) => '(1)
+    (-iterate #'ignore 1 3) => '(1 nil nil)
+    (--iterate nil nil 0) => ()
+    (--iterate nil nil 1) => '(nil)
+    (--iterate nil nil 2) => '(nil nil)
+    (--iterate (setq it -1) 1 3) => '(1 -1 -1))
 
   (defexamples -unfold
     (-unfold (lambda (x) (unless (= x 0) (cons x (1- x)))) 10) => '(10 9 8 7 6 5 4 3 2 1)

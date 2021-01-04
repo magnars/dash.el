@@ -178,7 +178,7 @@ Functions reducing lists into single value.
 ### Unfolding
 
 
-Operations dual to reductions, building lists from seed value rather than consuming a list to produce a single value.
+Operations dual to reductions, building lists from a seed value rather than consuming a list to produce a single value.
 
 * [-iterate](#-iterate-fun-init-n) `(fun init n)`
 * [-unfold](#-unfold-fun-seed) `(fun seed)`
@@ -1161,20 +1161,20 @@ comparing them.
 ## Unfolding
 
 
-Operations dual to reductions, building lists from seed value rather than consuming a list to produce a single value.
+Operations dual to reductions, building lists from a seed value rather than consuming a list to produce a single value.
 
 #### -iterate `(fun init n)`
 
 Return a list of iterated applications of `fun` to `init`.
 
-This means a list of form:
+This means a list of the form:
 
-    (init (fun init) (fun (fun init)) ...)
+    (`init` (`fun` `init`) (`fun` (`fun` `init`)) ...)
 
 `n` is the length of the returned list.
 
 ```el
-(-iterate '1+ 1 10) ;; => '(1 2 3 4 5 6 7 8 9 10)
+(-iterate #'1+ 1 10) ;; => '(1 2 3 4 5 6 7 8 9 10)
 (-iterate (lambda (x) (+ x x)) 2 5) ;; => '(2 4 8 16 32)
 (--iterate (* it it) 2 5) ;; => '(2 4 16 256 65536)
 ```

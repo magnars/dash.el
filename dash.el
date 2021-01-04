@@ -522,6 +522,26 @@ See also: `-map-last'"
 Thus function FN should return a list."
   (--mapcat (funcall fn it) list))
 
+(defmacro --iterate (form init n)
+  "Anaphoric version of `-iterate'."
+  (declare (debug (form form form)))
+  (let ((res (make-symbol "result")))
+    `(let ((it ,init) ,res)
+       (dotimes (_ ,n)
+         (push it ,res)
+         (setq it ,form))
+       (nreverse ,res))))
+
+(defun -iterate (fun init n)
+  "Return a list of iterated applications of FUN to INIT.
+
+This means a list of the form:
+
+  (INIT (FUN INIT) (FUN (FUN INIT)) ...)
+
+N is the length of the returned list."
+  (--iterate (funcall fun it) init n))
+
 (defun -flatten (l)
   "Take a nested list L and return its contents as a single, flat list.
 
@@ -538,11 +558,6 @@ See also: `-flatten-n'"
   (if (and (listp l) (listp (cdr l)))
       (-mapcat '-flatten l)
     (list l)))
-
-(defmacro --iterate (form init n)
-  "Anaphoric version of `-iterate'."
-  (declare (debug (form form form)))
-  `(-iterate (lambda (it) ,form) ,init ,n))
 
 (defun -flatten-n (num list)
   "Flatten NUM levels of a nested LIST.
@@ -2544,20 +2559,6 @@ The items for the comparator form are exposed as \"it\" and \"other\"."
 The items for the comparator form are exposed as \"it\" and \"other\"."
   (declare (debug (form form)))
   `(-min-by (lambda (it other) ,form) ,list))
-
-(defun -iterate (fun init n)
-  "Return a list of iterated applications of FUN to INIT.
-
-This means a list of form:
-
-  (init (fun init) (fun (fun init)) ...)
-
-N is the length of the returned list."
-  (if (= n 0) nil
-    (let ((r (list init)))
-      (--dotimes (1- n)
-        (push (funcall fun (car r)) r))
-      (nreverse r))))
 
 (defun -fix (fn list)
   "Compute the (least) fixpoint of FN with initial input LIST.

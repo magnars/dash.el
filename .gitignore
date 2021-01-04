@@ -10,3 +10,6 @@
 
 # ctags, etags.
 TAGS
+
+# Generated Info manual.
+dash.info

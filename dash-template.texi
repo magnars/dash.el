@@ -1,40 +1,35 @@
 \input texinfo    @c -*- texinfo -*-
 @c %**start of header
 @setfilename dash.info
-@settitle dash
+@set DASHVER @c [[ version ]]
+@settitle Dash: A modern list library for GNU Emacs.
 @documentencoding UTF-8
 @documentlanguage en
-@syncodeindex fn cp
-@dircategory Emacs
-@direntry
-* Dash: (dash.info). A modern list library for GNU Emacs
-@end direntry
 @c %**end of header
 
 @copying
-This manual is for @code{dash.el} version 2.17.0.
+This manual is for Dash version @value{DASHVER}.
 
 Copyright @copyright{} 2012--2021 Free Software Foundation, Inc.
 
 @quotation
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see @uref{https://www.gnu.org/licenses/}.
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3 or
+any later version published by the Free Software Foundation; with the
+Invariant Sections being ``GNU General Public License,'' and no
+Front-Cover Texts or Back-Cover Texts.  A copy of the license is
+included in the section entitled ``GNU Free Documentation License''.
 @end quotation
 @end copying
 
-@finalout
+@dircategory Emacs
+@direntry
+* Dash: (dash.info).    A modern list library for GNU Emacs.
+@end direntry
+
 @titlepage
-@title Dash
+@title Dash Manual
+@subtitle For Dash Version @value{DASHVER}.
 @author Magnar Sveen
 @page
 @vskip 0pt plus 1filll
@@ -45,23 +40,29 @@ along with this program.  If not, see @uref{https://www.gnu.org/licenses/}.
 
 @ifnottex
 @node Top
-@top dash
+@top Dash
+
 @insertcopying
 @end ifnottex
 
 @menu
-* Installation::
-* Functions::
-* Development::
-* Index::
+* Installation::        Installing and configuring Dash.
+* Functions::           Dash API reference.
+* Development::         Contributing to Dash development.
+
+Appendices
+
+* FDL::                 The license for this documentation.
+* GPL::                 Conditions for copying and changing Dash.
+* Index::               Index including functions and macros.
 
 @detailmenu
---- The Detailed Node Listing ---
+ --- The Detailed Node Listing ---
 
 Installation
 
-* Using in a package::
-* Fontification of special variables::
+* Using in a package::  Listing Dash as a package dependency.
+* Fontification of special variables::  Font Lock of anaphoric macro variables.
 
 Functions
 
@@ -69,9 +70,9 @@ Functions
 
 Development
 
-* Contribute::          How to contribute
-* Changes::             List of significant changes by version
-* Contributors::        List of contributors
+* Contribute::          How to contribute.
+* Change log::          List of significant changes by version.
+* Contributors::        List of contributors.
 @end detailmenu
 @end menu
 
@@ -80,51 +81,57 @@ Development
 @node Installation
 @chapter Installation
 
-It's available on @uref{https://elpa.gnu.org/, GNU ELPA} and
-@uref{https://melpa.org/, MELPA}; use @code{M-x package-install}:
+Dash is available on @url{https://elpa.gnu.org/, GNU ELPA} and
+@url{https://melpa.org/, MELPA}, and can be installed with the
+standard command @code{package-install} (@pxref{Package
+Installation,,, emacs, The GNU Emacs Manual}).
 
 @table @kbd
-@item M-x package-install @key{RET} dash
-Install the dash library.
+@item M-x package-install @key{RET} dash @key{RET}
+Install the Dash library.
+
+@item M-x package-install @key{RET} dash-functional @key{RET}
+Install an optional library of additional function combinators.
 @end table
 
-@table @kbd
-@item M-x package-install @key{RET} dash-functional
-Optional, if you want the function combinators.
-@end table
-
-Alternatively, you can just dump @verb{~dash.el~} or
-@verb{~dash-functional.el~} in your load path somewhere.
+Alternatively, you can just dump @file{dash.el} or
+@file{dash-functional.el} in your load path somewhere.
 
 @menu
-* Using in a package::
-* Fontification of special variables::
+* Using in a package::  Listing Dash as a package dependency.
+* Fontification of special variables::  Font Lock of anaphoric macro variables.
 @end menu
 
 @node Using in a package
 @section Using in a package
 
-Add this to the big comment block at the top:
+If you use Dash in your own package, be sure to list it as a
+dependency in the library's headers as follows (@pxref{Library
+Headers,,, elisp, The Emacs Lisp Reference Manual}).
 
 @lisp
-;; Package-Requires: ((dash "2.17.0"))
+;; Package-Requires: ((dash "@value{DASHVER}"))
 @end lisp
 
-@noindent To get function combinators:
+The same goes for the @file{dash-functional.el} library of function
+combinators:
 
 @lisp
-;; Package-Requires: ((dash "2.17.0") (dash-functional "1.2.0"))
+;; Package-Requires: ((dash "@value{DASHVER}") (dash-functional "1.2.0"))
 @end lisp
 
 @node Fontification of special variables
 @section Fontification of special variables
 
-Font lock of special Dash variables (@code{it}, @code{acc}, etc.@:) in
-Emacs Lisp buffers can optionally be enabled with the autoloaded minor
-mode @code{dash-fontify-mode}.  In older Emacs versions which do not
-dynamically detect macros, the minor mode also fontifies Dash macro
-calls.
+@findex dash-fontify-mode
+The autoloaded minor mode @code{dash-fontify-mode} is provided for
+optional fontification of anaphoric Dash variables (@code{it},
+@code{acc}, etc.@:) in Emacs Lisp buffers using search-based Font Lock
+(@pxref{Font Lock,,, emacs, The GNU Emacs Manual}).  In older Emacs
+versions which do not dynamically detect macros, the minor mode also
+fontifies calls to Dash macros.
 
+@findex global-dash-fontify-mode
 To automatically enable the minor mode in all Emacs Lisp buffers, just
 call its autoloaded global counterpart
 @code{global-dash-fontify-mode}, either interactively or from your
@@ -137,33 +144,47 @@ call its autoloaded global counterpart
 @node Functions
 @chapter Functions
 
-This chapter contains reference documentation for the dash
-@abbr{application programming interface,API}.  All functions and
-constructs in the library are prefixed with a dash (-).
+This chapter contains reference documentation for the Dash
+@acronym{API, Application Programming Interface}.  The names of all
+public functions defined in the library are prefixed with a dash
+character (@samp{-}).
 
-There are also anaphoric versions of functions where that makes sense,
-prefixed with two dashes instead of one.
+The library also provides anaphoric macro versions of functions where
+that makes sense.  The names of these macros are prefixed with two
+dashes (@samp{--}) instead of one.
 
-For instance, while @code{-map} takes a function to map over the list,
-one can also use the anaphoric form with double dashes - which will
-then be executed with @code{it} exposed as the list item. Here's an
-example:
-
-@lisp
-(-map (lambda (n) (* n n)) '(1 2 3 4)) ;; normal version
-
-(--map (* it it) '(1 2 3 4)) ;; anaphoric version
-@end lisp
-
-@noindent Of course, the original can also be written like
+For instance, while the function @code{-map} applies a function to
+each element of a list, its anaphoric counterpart @code{--map}
+evaluates a form with the local variable @code{it} temporarily bound
+to the current list element instead.
 
 @lisp
-(defun square (n) (* n n))
+@group
+;; Normal version.
+(-map (lambda (n) (* n n)) '(1 2 3 4))
+    @result{} (1 4 9 16)
+@end group
 
-(-map 'square '(1 2 3 4))
+@group
+;; Anaphoric version.
+(--map (* it it) '(1 2 3 4))
+    @result{} (1 4 9 16)
+@end group
 @end lisp
 
-@noindent which demonstrates the usefulness of both versions.
+The normal version can, of course, also be written as in the following
+example, which demonstrates the utility of both versions.
+
+@lisp
+@group
+(defun my-square (n)
+  "Return N multiplied by itself."
+  (* n n))
+
+(-map #'my-square '(1 2 3 4))
+    @result{} (1 4 9 16)
+@end group
+@end lisp
 
 @menu
 @c [[ function-nodes ]]
@@ -174,284 +195,458 @@ example:
 @node Development
 @chapter Development
 
-The dash repository is hosted on GitHub:
-@uref{https://github.com/magnars/dash.el}
+The Dash repository is hosted on GitHub at
+@url{https://github.com/magnars/dash.el}.
 
 @menu
-* Contribute::          How to contribute
-* Changes::             List of significant changes by version
-* Contributors::        List of contributors
+* Contribute::          How to contribute.
+* Change log::          List of significant changes by version.
+* Contributors::        List of contributors.
 @end menu
 
 @node Contribute
 @section Contribute
 
-Yes, please do. Pure functions in the list manipulation realm only,
-please. There's a suite of tests in @verb{~dev/examples.el~}, so remember to add
-tests for your function, or it might get broken later.
+Yes, please do.  Pure functions in the list manipulation realm only,
+please.  There's a suite of examples/tests in @file{dev/examples.el},
+so remember to add tests for your additions, or they may get broken
+later.
 
-Run the tests with @code{./run-tests.sh}. Create the docs with
-@code{./create-docs.sh}. I highly recommend that you install these as a
-pre-commit hook, so that the tests are always running and the docs are
-always in sync:
+Run the tests with @samp{./run-tests.sh}.  Regenerate the docs with
+@samp{./create-docs.sh}.  Contributors are encouraged to install these
+commands as a Git pre-commit hook, so that the tests are always
+running and the docs are always in sync:
 
-@verbatim
-cp pre-commit.sh .git/hooks/pre-commit
-@end verbatim
+@example
+$ cp pre-commit.sh .git/hooks/pre-commit
+@end example
 
-Oh, and don't edit @file{README.md} directly, it is auto-generated.
-Change @file{readme-template.md} or @file{examples-to-docs.el}
-instead.  The same goes for the info manual.
+Oh, and don't edit @file{README.md} or @file{dash.texi} directly, as
+they are auto-generated.  Instead, change their respective templates
+@file{readme-template.md} or @file{dash-template.texi}.
 
-@node Changes
-@section Changes
+To ensure that Dash can be distributed with GNU ELPA or Emacs, we
+require that all contributors assign copyright to the Free Software
+Foundation.  For more on this, @pxref{Copyright Assignment,,, emacs,
+The GNU Emacs Manual}.
 
-@noindent Changes in 2.10:
+@node Change log
+@section Change log
 
-@itemize
-@item
-Add @code{-let} destructuring to @code{-if-let} and @code{-when-let}
-(Fredrik Bergroth)
-@end itemize
-
-@noindent Changes in 2.9:
-
-@itemize
-@item
-Add @code{-let}, @code{-let*} and @code{-lambda} with destructuring
-@item
-Add @code{-tree-seq} and @code{-tree-map-nodes}
-@item
-Add @code{-non-nil}
-@item
-Add @code{-fix}
-@item
-Add @code{-fixfn} (dash-functional 1.2)
-@item
-Add @code{-copy} (Wilfred Hughes)
-@end itemize
-
-@noindent Changes in 2.8:
+@table @asis
+@item Changes in 2.17:
 
 @itemize
 @item
-Add @code{-butlast}
+Sped up @code{-uniq} by using hash-tables when possible (Zhu Zihao).
+@item
+Fixed @code{-inits} to be non-destructive (Zach Shaftel).
+@item
+Fixed indent rules for @code{-some->} and family (Wouter Bolsterlee).
+@item
+Added @code{-zip-lists} which always returns a list of proper lists,
+even for two input lists (see issue #135).
 @end itemize
 
-@noindent Changes in 2.7:
+@item Changes in 2.16:
 
 @itemize
 @item
-@code{-zip} now supports more than two lists (Steve Lamb)
+Added @code{--doto}, anaphoric version of @code{-doto}.
 @item
-Add @code{-cycle}, @code{-pad}, @code{-annotate}, @code{-zip-fill}
-(Steve Lamb)
+Aliased @code{-cons-pair-p} to @code{-cons-pair?}.
 @item
-Add @code{-table}, @code{-table-flat} (finite cartesian product)
+Generalized @code{-rotate} for @math{|@var{n}|} greater than the
+length of the list (Brian Leung).
 @item
-Add @code{-flatten-n}
-@item
-@code{-slice} now supports "step" argument
-@item
-Add functional combinators @code{-iteratefn}, @code{-prodfn}
-@item
-Add @code{-replace}, @code{-splice}, @code{-splice-list} which
-generalize @code{-replace-at} and @code{-insert-at}
-@item
-Add @code{-compose}, @code{-iteratefn} and @code{-prodfn}
-(dash-functional 1.1)
+Added a mechanism to extend destructuring with custom matchers (Ivan
+Yonchovski).
 @end itemize
 
-@noindent Changes in 2.6:
+@item Changes in 2.15:
+
+This release brought new destructuring features, some new control flow
+functions, and performance optimizations.
 
 @itemize
 @item
-Add @code{-is-prefix-p}, @code{-is-suffix-p}, @code{-is-infix-p}
-(Matus Goljer)
+Added @code{-setq} with destructuring binding support similar to the
+@code{-let} family.
 @item
-Add @code{-iterate}, @code{-unfold} (Matus Goljer)
+Added smarter key destructuring in @code{-let} and friends where
+variables are auto-derived from keys.
 @item
-Add @code{-split-on}, @code{-split-when} (Matus Goljer)
+Allowed @code{-let} bindings without a source value form.
 @item
-Add @code{-find-last-index} (Matus Goljer)
+Added @code{-each-r} and @code{-each-r-while} (Paul Pogonyshev).
 @item
-Add @code{-list} (Johan Andersson)
+Added @code{-common-suffix} (Basil L. Contovounesios).
+@item
+Improved performance of folds (@code{-reduce} and friends) (Basil L.
+Contovounesios).
 @end itemize
 
-@noindent Changes in 2.5:
+@item Changes in 2.14:
+
+This release retired support for Emacs 23.
 
 @itemize
 @item
-Add @code{-same-items?} (Johan Andersson)
+Added Edebug support for threading macros (Wilfred Hughes).
 @item
-A few bugfixes
+Added @code{-unzip}.
+@item
+Added support for @code{-first-item} and @code{-last-item} as place
+forms (@pxref{Generalized Variables,,, elisp, The Emacs Lisp Reference
+Manual}).
+@item
+Added @code{-powerset} and @code{-permutations} (Mark Oteiza).
+@item
+Added @code{-as->} for threading a named variable (Zachary Kanfer).
+@item
+Added @code{-partition-after-pred}, @code{-partition-before-pred},
+@code{-partition-after-item}, and @code{-partition-before-item}
+(Zachary Kanfer).
+@item
+Fixed a bug in @code{-any-p} and friends testing for @code{null} on
+lists containing @code{nil}.
+@item
+Fixed infinite loop bug in @code{-zip} and @code{-interleave} when
+called with empty input.
+@item
+Added @code{-second-item} through @code{-fifth-item} as alternatives
+to @code{nth} (Wilfred Hughes).
+@item
+Added @code{-tails} and @code{-inits}.
+@item
+Added @code{-running-sum} and @code{-running-product}.
+@item
+Added the @code{-reductions[-r][-from]} family of functions (like
+@code{-reduce} but collecting intermediate results).
+@item
+Added @code{-common-prefix} (Basil L. Contovounesios).
 @end itemize
 
-@noindent Changes in 2.4:
+@item Changes in 2.13:
 
 @itemize
 @item
-Add @code{-snoc} (Matus Goljer)
+@code{-let} now supports @code{&alist} destructuring.
 @item
-Add @code{-replace-at}, @code{-update-at}, @code{-remove-at}, and
-@code{-remove-at-indices} (Matus Goljer)
+Various performance improvements.
+@item
+@code{-zip} might change in a future release to always return a list
+of proper lists.  Added @code{-zip-pair} for users who explicitly want
+the old behavior.
+@item
+Enabled lexical binding in @file{dash.el} for Emacs versions 24 or
+newer.
+@item
+Added @code{-select-column} and @code{-select-columns}.
+@item
+Fixed @code{-map-last} and @code{--remove-last} to be non-destructive.
+@item
+Added @code{-each-indexed} and @code{--each-indexed}.
+@item
+Added @code{-take-last} and @code{-drop-last}.
+@item
+Added the @code{-doto} macro.
+@item
+@code{-cut <>} is now treated as a function, consistent with
+@url{https://srfi.schemers.org/srfi-26/srfi-26.html, SRFI 26}.
 @end itemize
 
-@noindent Changes in 2.3:
+@item Changes in 2.12:
 
 @itemize
 @item
-Add tree operations (Matus Goljer)
+Added GNU ELPA support (Phillip Lord).
 @item
-Make font-lock optional
+Added @code{-some->}, @code{-some->>}, and @code{-some-->} macros (Cam
+Saul).
+@item
+@code{-is-suffix?} is now non-destructive.
+@item
+Faster hash table implementation for @code{-union}.
+@item
+Improvements to docstrings and examples.
 @end itemize
 
-@noindent Changes in 2.2:
+@item Changes in 2.11:
 
 @itemize
 @item
-Add @code{-compose} (Christina Whyte)
+Lots of clean up w.r.t. byte compilation, debug macros, and tests.
 @end itemize
 
-@noindent Changes in 2.1:
+@item Changes in 2.10:
 
 @itemize
 @item
-Add indexing operations (Matus Goljer)
+Added @code{-let} destructuring to @code{-if-let} and @code{-when-let}
+(Fredrik Bergroth).
 @end itemize
 
-@noindent Changes in 2.0:
+@item Changes in 2.9:
 
 @itemize
 @item
-Split out @code{dash-functional.el} (Matus Goljer)
+Added @code{-let}, @code{-let*}, and @code{-lambda} with
+destructuring.
 @item
-Add @code{-andfn}, @code{-orfn}, @code{-not}, @code{-cut},
-@code{-const}, @code{-flip} and @code{-on}. (Matus Goljer)
+Added @code{-tree-seq} and @code{-tree-map-nodes}.
 @item
-Fix @code{-min}, @code{-max}, @code{-min-by} and @code{-max-by} (Matus
-Goljer)
+Added @code{-non-nil}.
+@item
+Added @code{-fix}.
+@item
+Added @code{-fixfn} (@samp{dash-functional} version 1.2).
+@item
+Added @code{-copy} (Wilfred Hughes).
 @end itemize
 
-@noindent Changes in 1.8:
+@item Changes in 2.8:
 
 @itemize
 @item
-Add @code{-first-item} and @code{-last-item} (Wilfred Hughes)
+Added @code{-butlast}.
 @end itemize
 
-@noindent Changes in 1.7:
+@item Changes in 2.7:
 
 @itemize
 @item
-Add @code{-rotate} (Matus Goljer)
+@code{-zip} now supports more than two lists (Steve Lamb).
+@item
+Added @code{-cycle}, @code{-pad}, @code{-annotate}, and
+@code{-zip-fill} (Steve Lamb).
+@item
+Added @code{-table}, @code{-table-flat} (finite Cartesian product).
+@item
+Added @code{-flatten-n}.
+@item
+@code{-slice} now supports a ``step'' argument.
+@item
+Added functional combinators @code{-iteratefn} and @code{-prodfn}.
+@item
+Added @code{-replace}, @code{-splice}, and @code{-splice-list} which
+generalize @code{-replace-at} and @code{-insert-at}.
+@item
+Added @code{-compose}, @code{-iteratefn}, and @code{-prodfn}
+(@samp{dash-functional} version 1.1).
 @end itemize
 
-@noindent Changes in 1.6:
+@item Changes in 2.6:
 
 @itemize
 @item
-Add @code{-min}, @code{-max}, @code{-min-by} and @code{-max-by} (Johan
-Andersson)
+Added @code{-is-prefix-p}, @code{-is-suffix-p}, and @code{-is-infix-p}
+(Matus Goljer).
+@item
+Added @code{-iterate} and @code{-unfold} (Matus Goljer).
+@item
+Added @code{-split-on} and @code{-split-when} (Matus Goljer).
+@item
+Added @code{-find-last-index} (Matus Goljer).
+@item
+Added @code{-list} (Johan Andersson).
 @end itemize
 
-@noindent Changes in 1.5:
+@item Changes in 2.5:
 
 @itemize
 @item
-Add @code{-sum} and @code{-product} (Johan Andersson)
+Added @code{-same-items?} (Johan Andersson).
+@item
+Various bugfixes.
 @end itemize
 
-@noindent Changes in 1.4:
+@item Changes in 2.4:
 
 @itemize
 @item
-Add @code{-sort}
+Added @code{-snoc} (Matus Goljer).
 @item
-Add @code{-reduce-r} (Matus Goljer)
-@item
-Add @code{-reduce-r-from} (Matus Goljer)
+Added @code{-replace-at}, @code{-update-at}, @code{-remove-at}, and
+@code{-remove-at-indices} (Matus Goljer).
 @end itemize
 
-@noindent Changes in 1.3:
+@item Changes in 2.3:
 
 @itemize
 @item
-Add @code{-partition-in-steps}
+Added tree operations (Matus Goljer).
 @item
-Add @code{-partition-all-in-steps}
+Made Font Lock optional.
 @end itemize
 
-@noindent Changes in 1.2:
+@item Changes in 2.2:
 
 @itemize
 @item
-Add @code{-last} (Matus Goljer)
-@item
-Add @code{-insert-at} (Emanuel Evans)
-@item
-Add @code{-when-let} and @code{-if-let} (Emanuel Evans)
-@item
-Add @code{-when-let*} and @code{-if-let*} (Emanuel Evans)
-@item
-Some bugfixes
+Added @code{-compose} (Christina Whyte).
 @end itemize
+
+@item Changes in 2.1:
+
+@itemize
+@item
+Added indexing operations (Matus Goljer).
+@end itemize
+
+@item Changes in 2.0:
+
+@itemize
+@item
+Split out @file{dash-functional.el} (Matus Goljer).
+@item
+Added @code{-andfn}, @code{-orfn}, @code{-not}, @code{-cut},
+@code{-const}, @code{-flip}, and @code{-on} (Matus Goljer).
+@item
+Fixed @code{-min}, @code{-max}, @code{-min-by}, and @code{-max-by}
+(Matus Goljer).
+@end itemize
+
+@item Changes in 1.8:
+
+@itemize
+@item
+Added @code{-first-item} and @code{-last-item} (Wilfred Hughes).
+@end itemize
+
+@item Changes in 1.7:
+
+@itemize
+@item
+Added @code{-rotate} (Matus Goljer).
+@end itemize
+
+@item Changes in 1.6:
+
+@itemize
+@item
+Added @code{-min}, @code{-max}, @code{-min-by}, and @code{-max-by}
+(Johan Andersson).
+@end itemize
+
+@item Changes in 1.5:
+
+@itemize
+@item
+Added @code{-sum} and @code{-product} (Johan Andersson).
+@end itemize
+
+@item Changes in 1.4:
+
+@itemize
+@item
+Added @code{-sort}.
+@item
+Added @code{-reduce-r} (Matus Goljer).
+@item
+Added @code{-reduce-r-from} (Matus Goljer).
+@end itemize
+
+@item Changes in 1.3:
+
+@itemize
+@item
+Added @code{-partition-in-steps}.
+@item
+Added @code{-partition-all-in-steps}.
+@end itemize
+
+@item Changes in 1.2:
+
+@itemize
+@item
+Added @code{-last} (Matus Goljer).
+@item
+Added @code{-insert-at} (Emanuel Evans).
+@item
+Added @code{-when-let} and @code{-if-let} (Emanuel Evans).
+@item
+Added @code{-when-let*} and @code{-if-let*} (Emanuel Evans).
+@item
+Various bugfixes.
+@end itemize
+@end table
 
 @node Contributors
 @section Contributors
 
 @itemize
 @item
-@uref{https://github.com/Fuco1,Matus Goljer} contributed lots of
+@url{https://github.com/Fuco1, Matus Goljer} contributed lots of
 features and functions.
 @item
-@uref{https://github.com/tkf,Takafumi Arakaki} contributed
+@url{https://github.com/tkf, Takafumi Arakaki} contributed
 @code{-group-by}.
 @item
-@uref{https://github.com/tali713,tali713} is the author of
+@url{https://github.com/tali713, tali713} is the author of
 @code{-applify}.
 @item
-@uref{https://github.com/vemv,Víctor M. Valenzuela} contributed
+@url{https://github.com/vemv, V@'{i}ctor M. Valenzuela} contributed
 @code{-repeat}.
 @item
-@uref{https://github.com/nicferrier,Nic Ferrier} contributed
+@url{https://github.com/nicferrier, Nic Ferrier} contributed
 @code{-cons*}.
 @item
-@uref{https://github.com/Wilfred,Wilfred Hughes} contributed
-@code{-slice}, @code{-first-item} and @code{-last-item}.
+@url{https://github.com/Wilfred, Wilfred Hughes} contributed
+@code{-slice}, @code{-first-item}, and @code{-last-item}.
 @item
-@uref{https://github.com/shosti,Emanuel Evans} contributed
-@code{-if-let}, @code{-when-let} and @code{-insert-at}.
+@url{https://github.com/shosti, Emanuel Evans} contributed
+@code{-if-let}, @code{-when-let}, and @code{-insert-at}.
 @item
-@uref{https://github.com/rejeep,Johan Andersson} contributed
-@code{-sum}, @code{-product} and @code{-same-items?}
+@url{https://github.com/rejeep, Johan Andersson} contributed
+@code{-sum}, @code{-product}, and @code{-same-items?}.
 @item
-@uref{https://github.com/kurisuwhyte,Christina Whyte} contributed
-@code{-compose}
+@url{https://github.com/kurisuwhyte, Christina Whyte} contributed
+@code{-compose}.
 @item
-@uref{https://github.com/steventlamb,Steve Lamb} contributed
-@code{-cycle}, @code{-pad}, @code{-annotate}, @code{-zip-fill} and an
-n-ary version of @code{-zip}.
+@url{https://github.com/steventlamb, Steve Lamb} contributed
+@code{-cycle}, @code{-pad}, @code{-annotate}, @code{-zip-fill}, and a
+variadic version of @code{-zip}.
 @item
-@uref{https://github.com/fbergroth,Fredrik Bergroth} made the
-@code{-if-let} family use @code{-let} destructuring and improved
+@url{https://github.com/fbergroth, Fredrik Bergroth} made the
+@code{-if-let} family use @code{-let} destructuring and improved the
 script for generating documentation.
 @item
-@uref{https://github.com/holomorph,Mark Oteiza} contributed the
-script to create an info manual.
+@url{https://github.com/holomorph, Mark Oteiza} contributed the
+script to create an Info manual.
 @item
-@uref{https://github.com/wasamasa,Vasilij Schneidermann} contributed
+@url{https://github.com/wasamasa, Vasilij Schneidermann} contributed
 @code{-some}.
 @item
-@uref{https://github.com/occidens,William West} made @code{-fixfn}
+@url{https://github.com/occidens, William West} made @code{-fixfn}
 more robust at handling floats.
+@item
+@url{https://github.com/camsaul, Cam Saul} contributed @code{-some->},
+@code{-some->>}, and @code{-some-->}.
+@item
+@url{https://github.com/basil-conto, Basil L. Contovounesios} contributed
+@code{-common-prefix}.
+@item
+@url{https://github.com/doublep, Paul Pogonyshev} contributed
+@code{-each-r} and @code{-each-r-while}.
 @end itemize
 
 Thanks!
 
+New contributors are very welcome.  @xref{Contribute}.
+
+@c Appendices.
+
+@node FDL
+@appendix GNU Free Documentation License
+@include doc/fdl.texi
+
+@node GPL
+@appendix GNU General Public License
+@include doc/gpl.texi
+
 @node Index
 @unnumbered Index
-
-@printindex cp
+@printindex fn
 
 @bye

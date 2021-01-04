@@ -163,11 +163,12 @@ This release retired Emacs 23 support.
 
 - Added Edebug support for threading macros (@Wilfred).
 - Added `-unzip`.
-- Added `gv` setters for `-first-item` and `-last-item`.
+- Added support for `-first-item` and `-last-item` as [place
+  forms](https://www.gnu.org/software/emacs/manual/html_node/elisp/Generalized-Variables.html).
 - Added `-powerset` and `-permutations` (@holomorph).
 - Added `-as->` for threading a named variable (@zck).
 - Added `-partition-after-pred`, `-partition-before-pred`,
-  `-partition-after-item`, `-partition-before-item` (@zck).
+  `-partition-after-item`, and `-partition-before-item` (@zck).
 - Fixed a bug in `-any-p` and friends testing for `null` on lists containing
   `nil` (#239).
 - Fixed infinite loop bug in `-zip` and `-interleave` when called with empty
@@ -182,11 +183,11 @@ This release retired Emacs 23 support.
 
 ### From 2.12 to 2.13
 
-- `-let` now supports `&alist` in destructuring.
+- `-let` now supports `&alist` destructuring.
 - Various performance improvements.
 - `-zip` might change in a future release to always return a list of proper
   lists.  Added `-zip-pair` for users who explicitly want the old behavior.
-- Enabled lexical binding in `dash.el` for Emacs versions 24 or newer.  (#130).
+- Enabled lexical binding in `dash.el` for Emacs versions 24 or newer (#130).
 - Added `-select-column` and `-select-columns`.
 - Fixed `-map-last` and `--remove-last` to be non-destructive (#158).
 - Added `-each-indexed` and `--each-indexed`.
@@ -227,11 +228,11 @@ This release retired Emacs 23 support.
 ### From 2.6 to 2.7
 
 - `-zip` now supports more than two lists (Steve Lamb).
-- Added `-cycle`, `-pad`, `-annotate`, `-zip-fill` (Steve Lamb).
+- Added `-cycle`, `-pad`, `-annotate`, and `-zip-fill` (Steve Lamb).
 - Added `-table`, `-table-flat` (finite Cartesian product).
 - Added `-flatten-n`.
 - `-slice` now supports a "step" argument.
-- Added functional combinators `-iteratefn`, `-prodfn`.
+- Added functional combinators `-iteratefn` and `-prodfn`.
 - Added `-replace`, `-splice`, and `-splice-list` which generalize `-replace-at`
   and `-insert-at`.
 - Added `-compose`, `-iteratefn`, and `-prodfn` (`dash-functional` version
@@ -239,9 +240,9 @@ This release retired Emacs 23 support.
 
 ### From 2.5 to 2.6
 
-- Added `-is-prefix-p`, `-is-suffix-p`, `-is-infix-p` (Matus Goljer).
-- Added `-iterate`, `-unfold` (Matus Goljer).
-- Added `-split-on`, `-split-when` (Matus Goljer).
+- Added `-is-prefix-p`, `-is-suffix-p`, and `-is-infix-p` (Matus Goljer).
+- Added `-iterate` and `-unfold` (Matus Goljer).
+- Added `-split-on` and `-split-when` (Matus Goljer).
 - Added `-find-last-index` (Matus Goljer).
 - Added `-list` (Johan Andersson).
 
@@ -327,7 +328,7 @@ This release retired Emacs 23 support.
   and `-same-items?`.
 - [Christina Whyte](https://github.com/kurisuwhyte) contributed `-compose`.
 - [Steve Lamb](https://github.com/steventlamb) contributed `-cycle`, `-pad`,
-  `-annotate`, `-zip-fill`, and an n-ary version of `-zip`.
+  `-annotate`, `-zip-fill`, and a variadic version of `-zip`.
 - [Fredrik Bergroth](https://github.com/fbergroth) made the `-if-let` family use
   `-let` destructuring and improved the script for generating documentation.
 - [Mark Oteiza](https://github.com/holomorph) contributed the script to create
@@ -335,7 +336,7 @@ This release retired Emacs 23 support.
 - [Vasilij Schneidermann](https://github.com/wasamasa) contributed `-some`.
 - [William West](https://github.com/occidens) made `-fixfn` more robust at
   handling floats.
-- [Cam Saül](https://github.com/camsaul) contributed `-some->`, `-some->>`, and
+- [Cam Saul](https://github.com/camsaul) contributed `-some->`, `-some->>`, and
   `-some-->`.
 - [Basil L. Contovounesios](https://github.com/basil-conto) contributed
   `-common-prefix`.

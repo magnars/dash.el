@@ -2980,7 +2980,7 @@ functions and performance optimizations.
   (#116).
 - Added smarter key destructuring in `-let` and friends where variables are
   auto-derived from keys (#111).
-- Allowed `-let` bindings without a sourve value form (#256).
+- Allowed `-let` bindings without a source value form (#256).
 - Added `-each-r` and `-each-r-while` (@doublep, #159).
 - Added `-common-suffix` (@basil-conto, #263).
 - Improved performance of folds (`-reduce` and friends) (@basil-conto, #264).

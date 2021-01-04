@@ -2537,7 +2537,7 @@ The time complexity is @var{o}(n).
 
 @anchor{-repeat}
 @defun -repeat (n x)
-Return a list with @var{x} repeated @var{n} times.
+Return a new list of length @var{n} with each element being @var{x}.
 Return nil if @var{n} is less than 1.
 
 @example

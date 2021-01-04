@@ -1688,7 +1688,7 @@ The time complexity is `o`(n).
 
 #### -repeat `(n x)`
 
-Return a list with `x` repeated `n` times.
+Return a new list of length `n` with each element being `x`.
 Return nil if `n` is less than 1.
 
 ```el

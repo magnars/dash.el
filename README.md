@@ -2352,11 +2352,11 @@ If `varlist` only contains one (`pattern` `source`) element, you can
 optionally specify it using a vector and discarding the
 outer-most parens.  Thus
 
-    (-let ((`pattern` `source`)) ..)
+    (-let ((`pattern` `source`)) ...)
 
 becomes
 
-    (-let [`pattern` `source`] ..).
+    (-let [`pattern` `source`] ...).
 
 [`-let`](#-let-varlist-rest-body) uses a convention of not binding places (symbols) starting
 with _ whenever it's possible.  You can use this to skip over
@@ -2381,7 +2381,7 @@ Conses and lists:
 
     (a b) - bind car of list to `a` and `cadr` to `b`
 
-    (a1 a2 a3  ...) - bind 0th car of list to `a1`, 1st to `a2`, 2nd to `a3` ...
+    (a1 a2 a3 ...) - bind 0th car of list to `a1`, 1st to `a2`, 2nd to `a3`...
 
     (a1 a2 a3 ... aN . rest) - as above, but bind the Nth cdr to `rest`.
 

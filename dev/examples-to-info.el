@@ -98,7 +98,11 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
       (replace-regexp-in-string "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b" 'quote-and-downcase it t)
       (replace-regexp-in-string "`\\([^ ]+\\)'" 'unquote-and-link it t)
       (replace-regexp-in-string "{,@}" "{,@@}" it t)
-      (replace-regexp-in-string "^  " "    " it))))
+      (replace-regexp-in-string "^  " "    " it)
+      (replace-regexp-in-string
+       "\\.\\.\\.\\($\\)?"
+       (lambda (_) (if (match-beginning 1) "@enddots{}" "@dots{}"))
+       it t t))))
 
 (defun function-to-node (function)
   (when (and (stringp function)

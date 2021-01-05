@@ -1960,11 +1960,11 @@ If VARLIST only contains one (PATTERN SOURCE) element, you can
 optionally specify it using a vector and discarding the
 outer-most parens.  Thus
 
-  (-let ((PATTERN SOURCE)) ..)
+  (-let ((PATTERN SOURCE)) ...)
 
 becomes
 
-  (-let [PATTERN SOURCE] ..).
+  (-let [PATTERN SOURCE] ...).
 
 `-let' uses a convention of not binding places (symbols) starting
 with _ whenever it's possible.  You can use this to skip over
@@ -1989,7 +1989,7 @@ Conses and lists:
 
   (a b) - bind car of list to A and `cadr' to B
 
-  (a1 a2 a3  ...) - bind 0th car of list to A1, 1st to A2, 2nd to A3 ...
+  (a1 a2 a3 ...) - bind 0th car of list to A1, 1st to A2, 2nd to A3...
 
   (a1 a2 a3 ... aN . rest) - as above, but bind the Nth cdr to REST.
 

@@ -1611,7 +1611,7 @@ Return a list of iterated applications of @var{fun} to @var{init}.
 
 This means a list of form:
 
-    (init (fun init) (fun (fun init)) ...)
+    (init (fun init) (fun (fun init)) @dots{})
 
 @var{n} is the length of the returned list.
 
@@ -2751,7 +2751,7 @@ Unzip @var{lists}.
 This works just like @code{-zip} (@pxref{-zip}) but takes a list of lists instead of
 a variable number of arguments, such that
 
-    (-unzip (-zip @var{l1} @var{l2} @var{l3} ...))
+    (-unzip (-zip @var{l1} @var{l2} @var{l3} @dots{}))
 
 is identity (given that the lists are the same length).
 
@@ -3630,11 +3630,11 @@ If @var{varlist} only contains one (@var{pattern} @var{source}) element, you can
 optionally specify it using a vector and discarding the
 outer-most parens.  Thus
 
-    (-let ((@var{pattern} @var{source})) ..)
+    (-let ((@var{pattern} @var{source})) @dots{})
 
 becomes
 
-    (-let [@var{pattern} @var{source}] ..).
+    (-let [@var{pattern} @var{source}] @dots{}).
 
 @code{-let} (@pxref{-let}) uses a convention of not binding places (symbols) starting
 with _ whenever it's possible.  You can use this to skip over
@@ -3659,40 +3659,40 @@ Conses and lists:
 
     (a b) - bind car of list to @var{a} and @code{cadr} to @var{b}
 
-    (a1 a2 a3  ...) - bind 0th car of list to @var{a1}, 1st to @var{a2}, 2nd to @var{a3} ...
+    (a1 a2 a3 @dots{}) - bind 0th car of list to @var{a1}, 1st to @var{a2}, 2nd to @var{a3}@enddots{}
 
-    (a1 a2 a3 ... aN . rest) - as above, but bind the Nth cdr to @var{rest}.
+    (a1 a2 a3 @dots{} aN . rest) - as above, but bind the Nth cdr to @var{rest}.
 
 Vectors:
 
     [a] - bind 0th element of a non-list sequence to @var{a} (works with
-          vectors, strings, bit arrays...)
+          vectors, strings, bit arrays@dots{})
 
-    [a1 a2 a3 ...] - bind 0th element of non-list sequence to @var{a0}, 1st to
-                     @var{a1}, 2nd to @var{a2}, ...
+    [a1 a2 a3 @dots{}] - bind 0th element of non-list sequence to @var{a0}, 1st to
+                     @var{a1}, 2nd to @var{a2}, @enddots{}
                      If the @var{pattern} is shorter than @var{source}, the values at
                      places not in @var{pattern} are ignored.
                      If the @var{pattern} is longer than @var{source}, an @code{error} is
                      thrown.
 
-    [a1 a2 a3 ... &rest rest] - as above, but bind the rest of
+    [a1 a2 a3 @dots{} &rest rest] - as above, but bind the rest of
                                 the sequence to @var{rest}.  This is
                                 conceptually the same as improper list
-                                matching (a1 a2 ... aN . rest)
+                                matching (a1 a2 @dots{} aN . rest)
 
 Key/value stores:
 
-    (&plist key0 a0 ... keyN aN) - bind value mapped by keyK in the
+    (&plist key0 a0 @dots{} keyN aN) - bind value mapped by keyK in the
                                    @var{source} plist to aK.  If the
                                    value is not found, aK is nil.
                                    Uses @code{plist-get} to fetch values.
 
-    (&alist key0 a0 ... keyN aN) - bind value mapped by keyK in the
+    (&alist key0 a0 @dots{} keyN aN) - bind value mapped by keyK in the
                                    @var{source} alist to aK.  If the
                                    value is not found, aK is nil.
                                    Uses @code{assoc} to fetch values.
 
-    (&hash key0 a0 ... keyN aN) - bind value mapped by keyK in the
+    (&hash key0 a0 @dots{} keyN aN) - bind value mapped by keyK in the
                                   @var{source} hash table to aK.  If the
                                   value is not found, aK is nil.
                                   Uses @code{gethash} to fetch values.
@@ -3701,9 +3701,9 @@ Further, special keyword &keys supports "inline" matching of
 plist-like key-value pairs, similarly to &keys keyword of
 @code{cl-defun}.
 
-    (a1 a2 ... aN &keys key1 b1 ... keyN bK)
+    (a1 a2 @dots{} aN &keys key1 b1 @dots{} keyN bK)
 
-This binds @var{n} values from the list to a1 ... aN, then interprets
+This binds @var{n} values from the list to a1 @dots{} aN, then interprets
 the cdr as a plist (see key/value matching above).
 
 @var{a} shorthand notation for kv-destructuring exists which allows the
@@ -3830,7 +3830,7 @@ Note that you have to enclose the @var{match-form} in a pair of parens,
 such that:
 
     (-lambda (x) body)
-    (-lambda (x y ...) body)
+    (-lambda (x y @dots{}) body)
 
 has the usual semantics of @code{lambda}.  Furthermore, these get
 translated into normal lambda, so there is no performance
@@ -3875,7 +3875,7 @@ expands roughly speaking to the following code
 Care is taken to only evaluate each @var{val} once so that in case of
 multiple assignments it does not cause unexpected side effects.
 
-(fn [@var{match-form} @var{val}]...)
+(fn [@var{match-form} @var{val}]@dots{})
 
 @example
 @group
@@ -4432,10 +4432,10 @@ In types (for n=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
 
 This function satisfies the following laws:
 
-    (-compose (-prodfn f g ...) (-prodfn f' g' ...)) = (-prodfn (-compose f f') (-compose g g') ...)
-    (-prodfn f g ...) = (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1)) ...)
-    (-compose (-prodfn f g ...) (-juxt f' g' ...)) = (-juxt (-compose f f') (-compose g g') ...)
-    (-compose (-partial 'nth n) (-prod f1 f2 ...)) = (-compose fn (-partial 'nth n))
+    (-compose (-prodfn f g @dots{}) (-prodfn f' g' @dots{})) = (-prodfn (-compose f f') (-compose g g') @dots{})
+    (-prodfn f g @dots{}) = (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1)) @dots{})
+    (-compose (-prodfn f g @dots{}) (-juxt f' g' @dots{})) = (-juxt (-compose f f') (-compose g g') @dots{})
+    (-compose (-partial 'nth n) (-prod f1 f2 @dots{})) = (-compose fn (-partial 'nth n))
 
 @example
 @group

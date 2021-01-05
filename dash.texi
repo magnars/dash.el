@@ -642,7 +642,7 @@ Return a copy of the first @var{n} items in @var{list}.
 Return a copy of @var{list} if it contains @var{n} items or fewer.
 Return nil if @var{n} is zero or less.
 
-See also: @code{-take-last} (@pxref{-take-last})
+See also: @code{-take-last} (@pxref{-take-last}).
 
 @example
 @group
@@ -666,7 +666,7 @@ Return a copy of the last @var{n} items of @var{list} in order.
 Return a copy of @var{list} if it contains @var{n} items or fewer.
 Return nil if @var{n} is zero or less.
 
-See also: @code{-take} (@pxref{-take})
+See also: @code{-take} (@pxref{-take}).
 
 @example
 @group
@@ -686,11 +686,12 @@ See also: @code{-take} (@pxref{-take})
 
 @anchor{-drop}
 @defun -drop (n list)
-Return a copy of the tail of @var{list} without the first @var{n} items.
-Return a copy of @var{list} if @var{n} is zero or less.
+Return the tail (not a copy) of @var{list} without the first @var{n} items.
 Return nil if @var{list} contains @var{n} items or fewer.
+Return @var{list} if @var{n} is zero or less.
+For another variant, see also @code{-drop-last} (@pxref{-drop-last}).
 
-See also: @code{-drop-last} (@pxref{-drop-last})
+(fn @var{n} @var{list})
 
 @example
 @group
@@ -714,7 +715,7 @@ Return a copy of @var{list} without its last @var{n} items.
 Return a copy of @var{list} if @var{n} is zero or less.
 Return nil if @var{list} contains @var{n} items or fewer.
 
-See also: @code{-drop} (@pxref{-drop})
+See also: @code{-drop} (@pxref{-drop}).
 
 @example
 @group
@@ -738,16 +739,16 @@ Take successive items from @var{list} for which @var{pred} returns non-nil.
 @var{pred} is a function of one argument.  Return a new list of the
 successive elements from the start of @var{list} for which @var{pred} returns
 non-nil.
-
-See also: @code{-drop-while} (@pxref{-drop-while})
+This function's anaphoric counterpart is @code{--take-while}.
+For another variant, see also @code{-drop-while} (@pxref{-drop-while}).
 
 @example
 @group
-(-take-while 'even? '(1 2 3 4))
+(-take-while #'even? '(1 2 3 4))
     @result{} nil
 @end group
 @group
-(-take-while 'even? '(2 4 5 6))
+(-take-while #'even? '(2 4 5 6))
     @result{} '(2 4)
 @end group
 @group
@@ -760,18 +761,19 @@ See also: @code{-drop-while} (@pxref{-drop-while})
 @anchor{-drop-while}
 @defun -drop-while (pred list)
 Drop successive items from @var{list} for which @var{pred} returns non-nil.
-@var{pred} is a function of one argument.  Return a copy of the tail of
-@var{list} starting from its first element for which @var{pred} returns nil.
-
-See also: @code{-take-while} (@pxref{-take-while})
+@var{pred} is a function of one argument.  Return the tail (not a copy)
+of @var{list} starting from its first element for which @var{pred} returns
+nil.
+This function's anaphoric counterpart is @code{--drop-while}.
+For another variant, see also @code{-take-while} (@pxref{-take-while}).
 
 @example
 @group
-(-drop-while 'even? '(1 2 3 4))
+(-drop-while #'even? '(1 2 3 4))
     @result{} '(1 2 3 4)
 @end group
 @group
-(-drop-while 'even? '(2 4 5 6))
+(-drop-while #'even? '(2 4 5 6))
     @result{} '(5 6)
 @end group
 @group
@@ -1935,7 +1937,12 @@ Functions partitioning the input list into a list of lists.
 
 @anchor{-split-at}
 @defun -split-at (n list)
-Return a list of ((-take @var{n} @var{list}) (-drop @var{n} @var{list})), in no more than one pass through the list.
+Split @var{list} into two sublists after the Nth element.
+The result is a list of two elements (@var{take} @var{drop}) where @var{take} is a
+new list of the first @var{n} elements of @var{list}, and @var{drop} is the
+remaining elements of @var{list} (not a copy).  @var{take} and @var{drop} are like
+the results of @code{-take} (@pxref{-take}) and @code{-drop} (@pxref{-drop}), respectively, but the split
+is done in a single list traversal.
 
 @example
 @group
@@ -1945,6 +1952,10 @@ Return a list of ((-take @var{n} @var{list}) (-drop @var{n} @var{list})), in no 
 @group
 (-split-at 17 '(1 2 3 4 5))
     @result{} '((1 2 3 4 5) nil)
+@end group
+@group
+(-split-at 0 '(1 2 3 4 5))
+    @result{} '(nil (1 2 3 4 5))
 @end group
 @end example
 @end defun
@@ -3196,12 +3207,12 @@ Compute the (least) fixpoint of @var{fn} with initial input @var{list}.
 
 @example
 @group
-(-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6)))
-    @result{} '((1) (2) (3) (4) (5) (6))
+(-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3)))
+    @result{} '((1) (2) (3))
 @end group
 @group
-(let ((data '(("starwars" "scifi") ("jedi" "starwars" "warrior")))) (--fix (-uniq (--mapcat (cons it (cdr (assoc it data))) it)) '("jedi" "book")))
-    @result{} '("jedi" "starwars" "warrior" "scifi" "book")
+(let ((l '((starwars scifi) (jedi starwars warrior)))) (--fix (-uniq (--mapcat (cons it (cdr (assq it l))) it)) '(jedi book)))
+    @result{} '(jedi starwars warrior scifi book)
 @end group
 @end example
 @end defun

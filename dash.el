@@ -966,7 +966,12 @@ section is returned.  Defaults to 1."
     (nreverse new-list)))
 
 (defmacro --take-while (form list)
-  "Anaphoric form of `-take-while'."
+  "Take successive items from LIST for which FORM evals to non-nil.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.  Return a new
+list of the successive elements from the start of LIST for which
+FORM evaluates to non-nil.
+This is the anaphoric counterpart to `-take-while'."
   (declare (debug (form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
@@ -978,24 +983,30 @@ section is returned.  Defaults to 1."
 PRED is a function of one argument.  Return a new list of the
 successive elements from the start of LIST for which PRED returns
 non-nil.
-
-See also: `-drop-while'"
+This function's anaphoric counterpart is `--take-while'.
+For another variant, see also `-drop-while'."
   (--take-while (funcall pred it) list))
 
 (defmacro --drop-while (form list)
-  "Anaphoric form of `-drop-while'."
+  "Drop successive items from LIST for which FORM evals to non-nil.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.  Return the
+tail (not a copy) of LIST starting from its first element for
+which FORM evaluates to nil.
+This is the anaphoric counterpart to `-drop-while'."
   (declare (debug (form form)))
   (let ((l (make-symbol "list")))
     `(let ((,l ,list))
        (--each-while ,l ,form (pop ,l))
-       (copy-sequence ,l))))
+       ,l)))
 
 (defun -drop-while (pred list)
   "Drop successive items from LIST for which PRED returns non-nil.
-PRED is a function of one argument.  Return a copy of the tail of
-LIST starting from its first element for which PRED returns nil.
-
-See also: `-take-while'"
+PRED is a function of one argument.  Return the tail (not a copy)
+of LIST starting from its first element for which PRED returns
+nil.
+This function's anaphoric counterpart is `--drop-while'.
+For another variant, see also `-take-while'."
   (--drop-while (funcall pred it) list))
 
 (defun -take (n list)
@@ -1003,7 +1014,7 @@ See also: `-take-while'"
 Return a copy of LIST if it contains N items or fewer.
 Return nil if N is zero or less.
 
-See also: `-take-last'"
+See also: `-take-last'."
   (declare (pure t) (side-effect-free t))
   (--take-while (< it-index n) list))
 
@@ -1012,35 +1023,37 @@ See also: `-take-last'"
 Return a copy of LIST if it contains N items or fewer.
 Return nil if N is zero or less.
 
-See also: `-take'"
+See also: `-take'."
   (declare (pure t) (side-effect-free t))
   (copy-sequence (last list n)))
 
-(defun -drop (n list)
-  "Return a copy of the tail of LIST without the first N items.
-Return a copy of LIST if N is zero or less.
+(defalias '-drop #'nthcdr
+  "Return the tail (not a copy) of LIST without the first N items.
 Return nil if LIST contains N items or fewer.
-
-See also: `-drop-last'"
-  (copy-sequence (nthcdr n list)))
+Return LIST if N is zero or less.
+For another variant, see also `-drop-last'.
+\n(fn N LIST)")
 
 (defun -drop-last (n list)
   "Return a copy of LIST without its last N items.
 Return a copy of LIST if N is zero or less.
 Return nil if LIST contains N items or fewer.
 
-See also: `-drop'"
+See also: `-drop'."
   (declare (pure t) (side-effect-free t))
   (nbutlast (copy-sequence list) n))
 
 (defun -split-at (n list)
-  "Return a list of ((-take N LIST) (-drop N LIST)), in no more than one pass through the list."
+  "Split LIST into two sublists after the Nth element.
+The result is a list of two elements (TAKE DROP) where TAKE is a
+new list of the first N elements of LIST, and DROP is the
+remaining elements of LIST (not a copy).  TAKE and DROP are like
+the results of `-take' and `-drop', respectively, but the split
+is done in a single list traversal."
   (declare (pure t) (side-effect-free t))
   (let (result)
-    (--dotimes n
-      (when list
-        (!cons (car list) result)
-        (!cdr list)))
+    (--each-while list (< it-index n)
+      (push (pop list) result))
     (list (nreverse result) list)))
 
 (defun -rotate (n list)
@@ -1051,7 +1064,7 @@ The time complexity is O(n)."
     (let* ((len (length list))
            (n-mod-len (mod n len))
            (new-tail-len (- len n-mod-len)))
-      (append (-drop new-tail-len list) (-take new-tail-len list)))))
+      (append (nthcdr new-tail-len list) (-take new-tail-len list)))))
 
 (defun -insert-at (n x list)
   "Return a list with X inserted into LIST at position N.

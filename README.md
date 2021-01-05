@@ -610,7 +610,7 @@ Return a copy of the first `n` items in `list`.
 Return a copy of `list` if it contains `n` items or fewer.
 Return nil if `n` is zero or less.
 
-See also: [`-take-last`](#-take-last-n-list)
+See also: [`-take-last`](#-take-last-n-list).
 
 ```el
 (-take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
@@ -624,7 +624,7 @@ Return a copy of the last `n` items of `list` in order.
 Return a copy of `list` if it contains `n` items or fewer.
 Return nil if `n` is zero or less.
 
-See also: [`-take`](#-take-n-list)
+See also: [`-take`](#-take-n-list).
 
 ```el
 (-take-last 3 '(1 2 3 4 5)) ;; => '(3 4 5)
@@ -634,11 +634,12 @@ See also: [`-take`](#-take-n-list)
 
 #### -drop `(n list)`
 
-Return a copy of the tail of `list` without the first `n` items.
-Return a copy of `list` if `n` is zero or less.
+Return the tail (not a copy) of `list` without the first `n` items.
 Return nil if `list` contains `n` items or fewer.
+Return `list` if `n` is zero or less.
+For another variant, see also [`-drop-last`](#-drop-last-n-list).
 
-See also: [`-drop-last`](#-drop-last-n-list)
+(fn `n` `list`)
 
 ```el
 (-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
@@ -652,7 +653,7 @@ Return a copy of `list` without its last `n` items.
 Return a copy of `list` if `n` is zero or less.
 Return nil if `list` contains `n` items or fewer.
 
-See also: [`-drop`](#-drop-n-list)
+See also: [`-drop`](#-drop-n-list).
 
 ```el
 (-drop-last 3 '(1 2 3 4 5)) ;; => '(1 2)
@@ -666,26 +667,27 @@ Take successive items from `list` for which `pred` returns non-nil.
 `pred` is a function of one argument.  Return a new list of the
 successive elements from the start of `list` for which `pred` returns
 non-nil.
-
-See also: [`-drop-while`](#-drop-while-pred-list)
+This function's anaphoric counterpart is `--take-while`.
+For another variant, see also [`-drop-while`](#-drop-while-pred-list).
 
 ```el
-(-take-while 'even? '(1 2 3 4)) ;; => nil
-(-take-while 'even? '(2 4 5 6)) ;; => '(2 4)
+(-take-while #'even? '(1 2 3 4)) ;; => nil
+(-take-while #'even? '(2 4 5 6)) ;; => '(2 4)
 (--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
 ```
 
 #### -drop-while `(pred list)`
 
 Drop successive items from `list` for which `pred` returns non-nil.
-`pred` is a function of one argument.  Return a copy of the tail of
-`list` starting from its first element for which `pred` returns nil.
-
-See also: [`-take-while`](#-take-while-pred-list)
+`pred` is a function of one argument.  Return the tail (not a copy)
+of `list` starting from its first element for which `pred` returns
+nil.
+This function's anaphoric counterpart is `--drop-while`.
+For another variant, see also [`-take-while`](#-take-while-pred-list).
 
 ```el
-(-drop-while 'even? '(1 2 3 4)) ;; => '(1 2 3 4)
-(-drop-while 'even? '(2 4 5 6)) ;; => '(5 6)
+(-drop-while #'even? '(1 2 3 4)) ;; => '(1 2 3 4)
+(-drop-while #'even? '(2 4 5 6)) ;; => '(5 6)
 (--drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(4 3 2 1)
 ```
 
@@ -1366,11 +1368,17 @@ Functions partitioning the input list into a list of lists.
 
 #### -split-at `(n list)`
 
-Return a list of ((-take `n` `list`) (-drop `n` `list`)), in no more than one pass through the list.
+Split `list` into two sublists after the Nth element.
+The result is a list of two elements (`take` `drop`) where `take` is a
+new list of the first `n` elements of `list`, and `drop` is the
+remaining elements of `list` (not a copy).  `take` and `drop` are like
+the results of [`-take`](#-take-n-list) and [`-drop`](#-drop-n-list), respectively, but the split
+is done in a single list traversal.
 
 ```el
 (-split-at 3 '(1 2 3 4 5)) ;; => '((1 2 3) (4 5))
 (-split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
+(-split-at 0 '(1 2 3 4 5)) ;; => '(nil (1 2 3 4 5))
 ```
 
 #### -split-with `(pred list)`
@@ -2090,8 +2098,8 @@ Compute the (least) fixpoint of `fn` with initial input `list`.
 `fn` is called at least once, results are compared with `equal`.
 
 ```el
-(-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6))) ;; => '((1) (2) (3) (4) (5) (6))
-(let ((data '(("starwars" "scifi") ("jedi" "starwars" "warrior")))) (--fix (-uniq (--mapcat (cons it (cdr (assoc it data))) it)) '("jedi" "book"))) ;; => '("jedi" "starwars" "warrior" "scifi" "book")
+(-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3))) ;; => '((1) (2) (3))
+(let ((l '((starwars scifi) (jedi starwars warrior)))) (--fix (-uniq (--mapcat (cons it (cdr (assq it l))) it)) '(jedi book))) ;; => '(jedi starwars warrior scifi book)
 ```
 
 

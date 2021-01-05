@@ -211,8 +211,8 @@ new list."
     (-drop -1 ()) => ()
     (-drop -1 '(1)) => '(1)
     (-drop 1 ()) => ()
-    (let ((l (list 1 2))) (setcar (-drop 1 l) 0) l) => '(1 2)
-    (let ((l (list 1 2))) (eq (-drop 0 l) l)) => nil)
+    (let ((l (list 1 2))) (setcar (-drop 1 l) 0) l) => '(1 0)
+    (let ((l (list 1 2))) (eq (-drop 0 l) l)) => t)
 
   (defexamples -drop-last
     (-drop-last 3 '(1 2 3 4 5)) => '(1 2)
@@ -226,8 +226,8 @@ new list."
     (let ((l (list 1 2))) (eq (-drop-last 0 l) l)) => nil)
 
   (defexamples -take-while
-    (-take-while 'even? '(1 2 3 4)) => ()
-    (-take-while 'even? '(2 4 5 6)) => '(2 4)
+    (-take-while #'even? '(1 2 3 4)) => ()
+    (-take-while #'even? '(2 4 5 6)) => '(2 4)
     (--take-while (< it 4) '(1 2 3 4 3 2 1)) => '(1 2 3)
     (--take-while t ()) => ()
     (--take-while nil ()) => ()
@@ -237,8 +237,8 @@ new list."
     (let ((l (list 1 2))) (eq (--take-while t l) l)) => nil)
 
   (defexamples -drop-while
-    (-drop-while 'even? '(1 2 3 4)) => '(1 2 3 4)
-    (-drop-while 'even? '(2 4 5 6)) => '(5 6)
+    (-drop-while #'even? '(1 2 3 4)) => '(1 2 3 4)
+    (-drop-while #'even? '(2 4 5 6)) => '(5 6)
     (--drop-while (< it 4) '(1 2 3 4 3 2 1)) => '(4 3 2 1)
     (--drop-while t ()) => ()
     (--drop-while nil ()) => ()
@@ -246,8 +246,8 @@ new list."
     (--drop-while nil '(1 2)) => '(1 2)
     (--drop-while t '(1)) => ()
     (--drop-while t '(1 2)) => ()
-    (let ((l (list 1 2))) (setcar (-drop-while 'odd? l) 0) l) => '(1 2)
-    (let ((l (list 1 2))) (eq (--drop-while nil l) l)) => nil)
+    (let ((l (list 1 2))) (setcar (-drop-while #'odd? l) 0) l) => '(1 0)
+    (let ((l (list 1 2))) (eq (--drop-while nil l) l)) => t)
 
   (defexamples -select-by-indices
     (-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r")) => '("c" "o" "l" "o" "r")
@@ -634,7 +634,21 @@ value rather than consuming a list to produce a single value."
 
   (defexamples -split-at
     (-split-at 3 '(1 2 3 4 5)) => '((1 2 3) (4 5))
-    (-split-at 17 '(1 2 3 4 5)) => '((1 2 3 4 5) nil))
+    (-split-at 17 '(1 2 3 4 5)) => '((1 2 3 4 5) ())
+    (-split-at 0 '(1 2 3 4 5)) => '(() (1 2 3 4 5))
+    (-split-at -1 ()) => '(() ())
+    (-split-at 0 ()) => '(() ())
+    (-split-at 1 ()) => '(() ())
+    (-split-at -1 '(1)) => '(() (1))
+    (-split-at 0 '(1)) => '(() (1))
+    (-split-at 1 '(1)) => '((1) ())
+    (-split-at 2 '(1)) => '((1) ())
+    (-split-at -1 '(1 2)) => '(() (1 2))
+    (-split-at 1 '(1 2)) => '((1) (2))
+    (-split-at 2 '(1 2)) => '((1 2) ())
+    (-split-at 3 '(1 2)) => '((1 2) ())
+    (let* ((l (list 1 2)) (s (-split-at 1 l))) (eq (car s) l)) => nil
+    (let* ((l (list 1 2)) (s (-split-at 1 l))) (eq (cadr s) (cdr l))) => t)
 
   (defexamples -split-with
     (-split-with 'even? '(1 2 3 4)) => '(() (1 2 3 4))
@@ -819,7 +833,17 @@ value rather than consuming a list to produce a single value."
     (-rotate 3 '(1 2 3 4 5 6 7)) => '(5 6 7 1 2 3 4)
     (-rotate -3 '(1 2 3 4 5 6 7)) => '(4 5 6 7 1 2 3)
     (-rotate 16 '(1 2 3 4 5 6 7)) => '(6 7 1 2 3 4 5)
-    (-rotate -16 '(1 2 3 4 5 6 7)) => '(3 4 5 6 7 1 2))
+    (-rotate -16 '(1 2 3 4 5 6 7)) => '(3 4 5 6 7 1 2)
+    (-rotate -1 ()) => ()
+    (-rotate 0 ()) => ()
+    (-rotate 1 ()) => ()
+    (-rotate -1 '(1)) => '(1)
+    (-rotate 0 '(1)) => '(1)
+    (-rotate 1 '(1)) => '(1)
+    (-rotate -1 '(1 2)) => '(2 1)
+    (-rotate 0 '(1 2)) => '(1 2)
+    (-rotate 1 '(1 2)) => '(2 1)
+    (-rotate 2 '(1 2)) => '(1 2))
 
   (defexamples -repeat
     (-repeat 3 :a) => '(:a :a :a)
@@ -888,8 +912,8 @@ value rather than consuming a list to produce a single value."
     (-take 5 (-cycle '(1 2 3))) => '(1 2 3 1 2)
     (-take 7 (-cycle '(1 "and" 3))) => '(1 "and" 3 1 "and" 3 1)
     (-zip (-cycle '(1 2 3)) '(1 2)) => '((1 . 1) (2 . 2))
-    (-zip-with 'cons (-cycle '(1 2 3)) '(1 2)) => '((1 . 1) (2 . 2))
-    (-map (-partial '-take 5) (-split-at 5 (-cycle '(1 2 3)))) => '((1 2 3 1 2) (3 1 2 3 1))
+    (-zip-with #'cons (-cycle '(1 2 3)) '(1 2)) => '((1 . 1) (2 . 2))
+    (-map (-partial #'-take 5) (-split-at 5 (-cycle '(1 2 3)))) => '((1 2 3 1 2) (3 1 2 3 1))
     (let ((l (list 1))) (eq l (-cycle l))) => nil)
 
   (defexamples -pad
@@ -985,10 +1009,11 @@ value rather than consuming a list to produce a single value."
     (-list '(() 1)) => '(() 1))
 
   (defexamples -fix
-    (-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6))) => '((1) (2) (3) (4) (5) (6))
-    (let ((data '(("starwars" "scifi")
-                  ("jedi" "starwars" "warrior"))))
-      (--fix (-uniq (--mapcat (cons it (cdr (assoc it data))) it)) '("jedi" "book"))) => '("jedi" "starwars" "warrior" "scifi" "book")))
+    (-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3))) => '((1) (2) (3))
+    (let ((l '((starwars scifi)
+               (jedi starwars warrior))))
+      (--fix (-uniq (--mapcat (cons it (cdr (assq it l))) it)) '(jedi book)))
+    => '(jedi starwars warrior scifi book)))
 
 (def-example-group "Tree operations"
   "Functions pretending lists are trees."

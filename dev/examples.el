@@ -806,7 +806,9 @@ value rather than consuming a list to produce a single value."
     (-partition-after-pred #'booleanp '(t t)) => '((t) (t))
     (-partition-after-pred #'booleanp '(0 0 t t 0 t)) => '((0 0 t) (t) (0 t))
     (-partition-after-pred #'booleanp '(t)) => '((t))
-    (-partition-after-pred #'booleanp '(0 t)) => '((0 t)))
+    (-partition-after-pred #'booleanp '(0 t)) => '((0 t))
+    (--partition-after-pred (= 1 (% it 2)) '(0 0 0 1 0 1 1 0 1))
+    => '((0 0 0 1) (0 1) (1) (0 1)))
 
   (defexamples -partition-before-pred
     (-partition-before-pred #'booleanp '()) => '()

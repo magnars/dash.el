@@ -1382,20 +1382,29 @@ returns the header value, but only after seeing at least one
 other value (the body)."
   (--partition-by-header (funcall fn it) list))
 
+(defmacro --partition-after-pred (form list)
+  "Anaphoric form of `-partition-after-pred'."
+  (let ((r (make-symbol "result"))
+        (s (make-symbol "sublist"))
+        (l (make-symbol "list")))
+    `(let ((,l ,list))
+       (when ,l
+         (let* ((,r nil)
+                (,s nil))
+           (while ,l
+             (let* ((it (car ,l)))
+               (!cdr ,l)
+               (!cons it ,s)
+               (when ,form
+                 (!cons (nreverse ,s) ,r)
+                 (setq ,s nil))))
+           (if ,s
+	       (!cons (nreverse ,s) ,r))
+           (nreverse ,r))))))
+
 (defun -partition-after-pred (pred list)
   "Partition directly after each time PRED is true on an element of LIST."
-  (when list
-    (let ((rest (-partition-after-pred pred
-                                       (cdr list))))
-      (if (funcall pred (car list))
-          ;;split after (car list)
-          (cons (list (car list))
-                rest)
-
-        ;;don't split after (car list)
-        (cons (cons (car list)
-                    (car rest))
-              (cdr rest))))))
+  (--partition-after-pred (funcall pred it) list))
 
 (defun -partition-before-pred (pred list)
   "Partition directly before each time PRED is true on an element of LIST."

@@ -2,6 +2,7 @@
 @c %**start of header
 @setfilename dash.info
 @set DASHVER 2.17.0
+@set DASHFNVER 1.2.0
 @settitle Dash: A modern list library for GNU Emacs.
 @documentencoding UTF-8
 @documentlanguage en
@@ -132,7 +133,7 @@ The same goes for the @file{dash-functional.el} library of function
 combinators:
 
 @lisp
-;; Package-Requires: ((dash "@value{DASHVER}") (dash-functional "1.2.0"))
+;; Package-Requires: ((dash "@value{DASHVER}") (dash-functional "@value{DASHFNVER}"))
 @end lisp
 
 @node Fontification of special variables

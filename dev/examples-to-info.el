@@ -195,8 +195,9 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
     (with-temp-file "./dash.texi"
       (insert-file-contents-literally "./dash-template.texi")
 
-      (goto-and-remove "@c [[ version ]]")
-      (insert (lm-version "dash.el"))
+      (dolist (pkg '(dash dash-functional))
+        (goto-and-remove (format "@c [[ %s-version ]]" pkg))
+        (insert (lm-version (format "%s.el" pkg))))
 
       (goto-and-remove "@c [[ function-nodes ]]")
       (insert (mapconcat 'function-to-node

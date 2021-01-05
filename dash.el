@@ -1710,17 +1710,6 @@ SOURCE is a proper or improper list."
      (t ;; Handle improper lists.  Last matching place, no need for shift
       (dash--match match-form (dash--match-cons-get-cdr skip-cdr source))))))
 
-(defun dash--vector-tail (seq start)
-  "Return the tail of SEQ starting at START."
-  (cond
-   ((vectorp seq)
-    (let* ((re-length (- (length seq) start))
-           (re (make-vector re-length 0)))
-      (--dotimes re-length (aset re it (aref seq (+ it start))))
-      re))
-   ((stringp seq)
-    (substring seq start))))
-
 (defun dash--match-vector (match-form source)
   "Setup a vector matching environment and call the real matcher."
   (let ((s (dash--match-make-source-symbol)))
@@ -1768,7 +1757,7 @@ is discarded."
                      (eq m '&rest))
                 (prog1 (dash--match
                         (aref match-form (1+ i))
-                        `(dash--vector-tail ,source ,i))
+                        `(substring ,source ,i))
                   (setq i l)))
                ((and (symbolp m)
                      ;; do not match symbols starting with _
@@ -1919,7 +1908,7 @@ Key-value stores are disambiguated by placing a token &plist,
            (eq '&as (aref match-form 1)))
       (let ((s (aref match-form 0)))
         (cons (list s source)
-              (dash--match (dash--vector-tail match-form 2) s))))
+              (dash--match (substring match-form 2) s))))
      (t (dash--match-vector match-form source))))))
 
 (defun dash--normalize-let-varlist (varlist)

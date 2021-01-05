@@ -2650,7 +2650,7 @@ if `num` is less than 1.
 
 #### -doto `(init &rest forms)`
 
-Evaluate `init` and thread the result as the 2nd argument to other forms.
+Evaluate `init` and thread the result as the 2nd argument to other `forms`.
 `init` is evaluated once.  Its result is passed to `forms`, which are
 then evaluated sequentially.  Returns the target form.
 

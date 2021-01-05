@@ -63,7 +63,7 @@
          (!cdr ,l)))))
 
 (defmacro -doto (init &rest forms)
-  "Evaluate INIT and thread the result as the 2nd argument to other forms.
+  "Evaluate INIT and thread the result as the 2nd argument to other FORMS.
 INIT is evaluated once.  Its result is passed to FORMS, which are
 then evaluated sequentially.  Returns the target form."
   (declare (indent 1))

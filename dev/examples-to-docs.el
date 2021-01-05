@@ -189,7 +189,9 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
       (goto-and-remove "[[ function-docs ]]")
       (insert (mapconcat 'function-to-md functions "\n"))
 
-      (goto-and-replace-all "[[ version ]]" (lm-version "dash.el"))
+      (dolist (pkg '(dash dash-functional))
+        (goto-and-replace-all (format "[[ %s-version ]]" pkg)
+                              (lm-version (format "%s.el" pkg))))
 
       (simplify-quotes))))
 

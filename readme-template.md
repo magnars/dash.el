@@ -25,11 +25,11 @@ If you want the function combinators, then also:
 Add something like this to the [library's
 headers](https://gnu.org/software/emacs/manual/html_node/elisp/Library-Headers.html):
 
-    ;; Package-Requires: ((dash "[[ version ]]"))
+    ;; Package-Requires: ((dash "[[ dash-version ]]"))
 
 To get function combinators:
 
-    ;; Package-Requires: ((dash "[[ version ]]") (dash-functional "1.2.0"))
+    ;; Package-Requires: ((dash "[[ dash-version ]]") (dash-functional "[[ dash-functional-version ]]"))
 
 ## Upcoming breaking change!
 

@@ -94,7 +94,7 @@ This demonstrates the utility of both versions.
 
 Functions in this category take a transforming function, which
 is then applied sequentially to each or selected elements of the
-input list.  The results are collected in order and returned as
+input list.  The results are collected in order and returned as a
 new list.
 
 * [-map](#-map-fn-list) `(fn list)`
@@ -178,7 +178,8 @@ Functions reducing lists into single value.
 ### Unfolding
 
 
-Operations dual to reductions, building lists from a seed value rather than consuming a list to produce a single value.
+Operations dual to reductions, building lists from a seed
+value rather than consuming a list to produce a single value.
 
 * [-iterate](#-iterate-fun-init-n) `(fun init n)`
 * [-unfold](#-unfold-fun-seed) `(fun seed)`
@@ -315,10 +316,10 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 * [-lambda](#-lambda-match-form-rest-body) `(match-form &rest body)`
 * [-setq](#-setq-rest-forms) `(&rest forms)`
 
-### Side-effects
+### Side effects
 
 
-Functions iterating over lists for side-effect only.
+Functions iterating over lists for side effect only.
 
 * [-each](#-each-list-fn) `(list fn)`
 * [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
@@ -359,16 +360,17 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 
 Functions in this category take a transforming function, which
 is then applied sequentially to each or selected elements of the
-input list.  The results are collected in order and returned as
+input list.  The results are collected in order and returned as a
 new list.
 
 #### -map `(fn list)`
 
-Return a new list consisting of the result of applying `fn` to the items in `list`.
+Apply `fn` to each item in `list` and return the list of results.
+This function's anaphoric counterpart is `--map`.
 
 ```el
 (-map (lambda (num) (* num num)) '(1 2 3 4)) ;; => '(1 4 9 16)
-(-map 'square '(1 2 3 4)) ;; => '(1 4 9 16)
+(-map #'1+ '(1 2 3 4)) ;; => '(2 3 4 5)
 (--map (* it it) '(1 2 3 4)) ;; => '(1 4 9 16)
 ```
 
@@ -1160,7 +1162,8 @@ comparing them.
 ## Unfolding
 
 
-Operations dual to reductions, building lists from a seed value rather than consuming a list to produce a single value.
+Operations dual to reductions, building lists from a seed
+value rather than consuming a list to produce a single value.
 
 #### -iterate `(fun init n)`
 
@@ -2588,72 +2591,84 @@ multiple assignments it does not cause unexpected side effects.
 ```
 
 
-## Side-effects
+## Side effects
 
 
-Functions iterating over lists for side-effect only.
+Functions iterating over lists for side effect only.
 
 #### -each `(list fn)`
 
-Call `fn` with every item in `list`. Return nil, used for side-effects only.
+Call `fn` on each element of `list`.
+Return nil; this function is intended for side effects.
+Its anaphoric counterpart is `--each`.  For access to the current
+element's index in `list`, see [`-each-indexed`](#-each-indexed-list-fn).
 
 ```el
-(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
-(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(3 2 1)
-(let (s) (--each '(1 2 3) (setq s (cons it s))) s) ;; => '(3 2 1)
+(let (l) (-each '(1 2 3) (lambda (x) (push x l))) l) ;; => '(3 2 1)
+(let (l) (--each '(1 2 3) (push it l)) l) ;; => '(3 2 1)
+(-each '(1 2 3) #'identity) ;; => nil
 ```
 
 #### -each-while `(list pred fn)`
 
-Call `fn` with every item in `list` while (`pred` item) is non-nil.
-Return nil, used for side-effects only.
+Call `fn` on each `item` in `list`, while (`pred` `item`) is non-nil.
+Once an `item` is reached for which `pred` returns nil, `fn` is no
+longer called.  Return nil; this function is intended for side
+effects.
+Its anaphoric counterpart is `--each-while`.
 
 ```el
-(let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (push item s))) s) ;; => '(4 2)
-(let (s) (--each-while '(1 2 3 4) (< it 3) (push it s)) s) ;; => '(2 1)
+(let (l) (-each-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) ;; => '(4 2)
+(let (l) (--each-while '(1 2 3 4) (< it 3) (push it l)) l) ;; => '(2 1)
 (let ((s 0)) (--each-while '(1 3 4 5) (odd? it) (setq s (+ s it))) s) ;; => 4
 ```
 
 #### -each-indexed `(list fn)`
 
-Call (`fn` index item) for each item in `list`.
-
-In the anaphoric form `--each-indexed`, the index is exposed as symbol `it-index`.
-
+Call `fn` on each index and element of `list`.
+For each `item` at `index` in `list`, call (funcall `fn` `index` `item`).
+Return nil; this function is intended for side effects.
 See also: [`-map-indexed`](#-map-indexed-fn-list).
 
 ```el
-(let (s) (-each-indexed '(a b c) (lambda (index item) (setq s (cons (list item index) s)))) s) ;; => '((c 2) (b 1) (a 0))
-(let (s) (--each-indexed '(a b c) (setq s (cons (list it it-index) s))) s) ;; => '((c 2) (b 1) (a 0))
+(let (l) (-each-indexed '(a b c) (lambda (i x) (push (list x i) l))) l) ;; => '((c 2) (b 1) (a 0))
+(let (l) (--each-indexed '(a b c) (push (list it it-index) l)) l) ;; => '((c 2) (b 1) (a 0))
+(let (l) (--each-indexed nil (push it l)) l) ;; => nil
 ```
 
 #### -each-r `(list fn)`
 
-Call `fn` with every item in `list` in reversed order.
- Return nil, used for side-effects only.
+Call `fn` on each element of `list` in reversed order.
+Return nil; this function is intended for side effects.
+Its anaphoric counterpart is `--each-r`.
 
 ```el
-(let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s))))) ;; => nil
-(let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))) s) ;; => '(1 2 3)
-(let (s) (--each-r '(1 2 3) (setq s (cons it s))) s) ;; => '(1 2 3)
+(let (l) (-each-r '(1 2 3) (lambda (x) (push x l))) l) ;; => '(1 2 3)
+(let (l) (--each-r '(1 2 3) (push it l)) l) ;; => '(1 2 3)
+(-each-r '(1 2 3) #'identity) ;; => nil
 ```
 
 #### -each-r-while `(list pred fn)`
 
-Call `fn` with every item in reversed `list` while (`pred` item) is non-nil.
-Return nil, used for side-effects only.
+Call `fn` on each `item` in reversed `list`, while (`pred` `item`) is non-nil.
+Once an `item` is reached for which `pred` returns nil, `fn` is no
+longer called.  Return nil; this function is intended for side
+effects.
+Its anaphoric counterpart is `--each-r-while`.
 
 ```el
-(let (s) (-each-r-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) ;; => '(6)
-(let (s) (--each-r-while '(1 2 3 4) (>= it 3) (!cons it s)) s) ;; => '(3 4)
+(let (l) (-each-r-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) ;; => '(6)
+(let (l) (--each-r-while '(1 2 3 4) (>= it 3) (push it l)) l) ;; => '(3 4)
+(let ((s 0)) (--each-r-while '(1 2 3 5) (odd? it) (setq s (+ s it))) s) ;; => 8
 ```
 
 #### -dotimes `(num fn)`
 
-Call `fn` `num` times, presumably for side-effects.
+Call `fn` `num` times, presumably for side effects.
 `fn` is called with a single argument on successive integers
 running from 0, inclusive, to `num`, exclusive.  `fn` is not called
 if `num` is less than 1.
+This function's anaphoric counterpart is `--dotimes`.
 
 ```el
 (let (s) (-dotimes 3 (lambda (n) (push n s))) s) ;; => '(2 1 0)

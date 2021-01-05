@@ -50,105 +50,132 @@
   `(setq ,list (cdr ,list)))
 
 (defmacro --each (list &rest body)
-  "Anaphoric form of `-each'."
-  (declare (debug (form body))
-           (indent 1))
-  (let ((l (make-symbol "list")))
+  "Evaluate BODY for each element of LIST and return nil.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating BODY.
+This is the anaphoric counterpart to `-each'."
+  (declare (debug (form body)) (indent 1))
+  (let ((l (make-symbol "list"))
+        (i (make-symbol "i")))
     `(let ((,l ,list)
-           (it-index 0))
+           (,i 0)
+           it it-index)
+       (ignore it it-index)
        (while ,l
-         (let ((it (car ,l)))
-           ,@body)
-         (setq it-index (1+ it-index))
-         (!cdr ,l)))))
+         (setq it (pop ,l) it-index ,i ,i (1+ ,i))
+         ,@body))))
 
 (defun -each (list fn)
-  "Call FN with every item in LIST. Return nil, used for side-effects only."
+  "Call FN on each element of LIST.
+Return nil; this function is intended for side effects.
+Its anaphoric counterpart is `--each'.  For access to the current
+element's index in LIST, see `-each-indexed'."
   (declare (indent 1))
-  (--each list (funcall fn it)))
+  (ignore (mapc fn list)))
 
 (defalias '--each-indexed '--each)
 
 (defun -each-indexed (list fn)
-  "Call (FN index item) for each item in LIST.
-
-In the anaphoric form `--each-indexed', the index is exposed as symbol `it-index'.
-
+  "Call FN on each index and element of LIST.
+For each ITEM at INDEX in LIST, call (funcall FN INDEX ITEM).
+Return nil; this function is intended for side effects.
 See also: `-map-indexed'."
   (declare (indent 1))
   (--each list (funcall fn it-index it)))
 
 (defmacro --each-while (list pred &rest body)
-  "Anaphoric form of `-each-while'."
-  (declare (debug (form form body))
-           (indent 2))
-  (let ((l (make-symbol "list")))
+  "Evaluate BODY for each item in LIST, while PRED evaluates to non-nil.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating PRED or BODY.  Once
+an element is reached for which PRED evaluates to nil, no further
+BODY is evaluated.  The return value is always nil.
+This is the anaphoric counterpart to `-each-while'."
+  (declare (debug (form form body)) (indent 2))
+  (let ((l (make-symbol "list"))
+        (i (make-symbol "i"))
+        (elt (make-symbol "elt")))
     `(let ((,l ,list)
-           (it-index 0)
-           it)
-       (ignore it)
-       (while (when ,l
-                (setq it (pop ,l))
-                ,pred)
-         ,@body
-         (setq it-index (1+ it-index))))))
+           (,i 0)
+           ,elt it it-index)
+       (ignore it it-index)
+       (while (and ,l (setq ,elt (pop ,l) it ,elt it-index ,i) ,pred)
+         (setq it ,elt it-index ,i ,i (1+ ,i))
+         ,@body))))
 
 (defun -each-while (list pred fn)
-  "Call FN with every item in LIST while (PRED item) is non-nil.
-Return nil, used for side-effects only."
+  "Call FN on each ITEM in LIST, while (PRED ITEM) is non-nil.
+Once an ITEM is reached for which PRED returns nil, FN is no
+longer called.  Return nil; this function is intended for side
+effects.
+Its anaphoric counterpart is `--each-while'."
   (declare (indent 2))
   (--each-while list (funcall pred it) (funcall fn it)))
 
 (defmacro --each-r (list &rest body)
-  "Anaphoric form of `-each-r'."
-  (declare (debug (form body))
-           (indent 1))
-  (let ((v (make-symbol "vector")))
-    ;; Implementation note: building vector is considerably faster
+  "Evaluate BODY for each element of LIST in reversed order.
+Each element of LIST in turn, starting at its end, is bound to
+`it' and its index within LIST to `it-index' before evaluating
+BODY.  The return value is always nil.
+This is the anaphoric counterpart to `-each-r'."
+  (declare (debug (form body)) (indent 1))
+  (let ((v (make-symbol "vector"))
+        (i (make-symbol "i")))
+    ;; Implementation note: building a vector is considerably faster
     ;; than building a reversed list (vector takes less memory, so
-    ;; there is less GC), plus length comes naturally.  In-place
-    ;; 'nreverse' would be faster still, but BODY would be able to see
-    ;; that, even if modification was reversed before we return.
+    ;; there is less GC), plus `length' comes naturally.  In-place
+    ;; `nreverse' would be faster still, but BODY would be able to see
+    ;; that, even if the modification was undone before we return.
     `(let* ((,v (vconcat ,list))
-            (it-index (length ,v))
-            it)
-       (while (> it-index 0)
-         (setq it-index (1- it-index))
-         (setq it (aref ,v it-index))
+            (,i (length ,v))
+            it it-index)
+       (ignore it it-index)
+       (while (> ,i 0)
+         (setq ,i (1- ,i) it-index ,i it (aref ,v ,i))
          ,@body))))
 
 (defun -each-r (list fn)
-  "Call FN with every item in LIST in reversed order.
- Return nil, used for side-effects only."
+  "Call FN on each element of LIST in reversed order.
+Return nil; this function is intended for side effects.
+Its anaphoric counterpart is `--each-r'."
   (--each-r list (funcall fn it)))
 
 (defmacro --each-r-while (list pred &rest body)
-  "Anaphoric form of `-each-r-while'."
-  (declare (debug (form form body))
-           (indent 2))
-  (let ((v (make-symbol "vector")))
+  "Eval BODY for each item in reversed LIST, while PRED evals to non-nil.
+Each element of LIST in turn, starting at its end, is bound to
+`it' and its index within LIST to `it-index' before evaluating
+PRED or BODY.  Once an element is reached for which PRED
+evaluates to nil, no further BODY is evaluated.  The return value
+is always nil.
+This is the anaphoric counterpart to `-each-r-while'."
+  (declare (debug (form form body)) (indent 2))
+  (let ((v (make-symbol "vector"))
+        (i (make-symbol "i"))
+        (elt (make-symbol "elt")))
     `(let* ((,v (vconcat ,list))
-            (it-index (length ,v))
-            it)
-       (while (> it-index 0)
-         (setq it-index (1- it-index))
-         (setq it (aref ,v it-index))
-         (if (not ,pred)
-             (setq it-index -1)
-           ,@body)))))
+            (,i (length ,v))
+            ,elt it it-index)
+       (ignore it it-index)
+       (while (when (> ,i 0)
+                (setq ,i (1- ,i) it-index ,i)
+                (setq ,elt (aref ,v ,i) it ,elt)
+                ,pred)
+         (setq it-index ,i it ,elt)
+         ,@body))))
 
 (defun -each-r-while (list pred fn)
-  "Call FN with every item in reversed LIST while (PRED item) is non-nil.
-Return nil, used for side-effects only."
+  "Call FN on each ITEM in reversed LIST, while (PRED ITEM) is non-nil.
+Once an ITEM is reached for which PRED returns nil, FN is no
+longer called.  Return nil; this function is intended for side
+effects.
+Its anaphoric counterpart is `--each-r-while'."
   (--each-r-while list (funcall pred it) (funcall fn it)))
 
 (defmacro --dotimes (num &rest body)
-  "Evaluate BODY NUM times, presumably for side-effects.
+  "Evaluate BODY NUM times, presumably for side effects.
 BODY is evaluated with the local variable `it' temporarily bound
 to successive integers running from 0, inclusive, to NUM,
 exclusive.  BODY is not evaluated if NUM is less than 1.
-
-This is the anaphoric version of `-dotimes'."
+This is the anaphoric counterpart to `-dotimes'."
   (declare (debug (form body)) (indent 1))
   (let ((n (make-symbol "num"))
         (i (make-symbol "i")))
@@ -161,21 +188,33 @@ This is the anaphoric version of `-dotimes'."
          ,@body))))
 
 (defun -dotimes (num fn)
-  "Call FN NUM times, presumably for side-effects.
+  "Call FN NUM times, presumably for side effects.
 FN is called with a single argument on successive integers
 running from 0, inclusive, to NUM, exclusive.  FN is not called
-if NUM is less than 1."
+if NUM is less than 1.
+This function's anaphoric counterpart is `--dotimes'."
   (declare (indent 1))
   (--dotimes num (funcall fn it)))
 
 (defun -map (fn list)
-  "Return a new list consisting of the result of applying FN to the items in LIST."
+  "Apply FN to each item in LIST and return the list of results.
+This function's anaphoric counterpart is `--map'."
   (mapcar fn list))
 
 (defmacro --map (form list)
-  "Anaphoric form of `-map'."
+  "Eval FORM for each item in LIST and return the list of results.
+Each element of LIST in turn is bound to `it' before evaluating
+BODY.
+This is the anaphoric counterpart to `-map'."
   (declare (debug (form form)))
-  `(mapcar (lambda (it) ,form) ,list))
+  (let ((l (make-symbol "list"))
+        (r (make-symbol "res")))
+    `(let ((,l ,list) ,r it)
+       (ignore it)
+       (while ,l
+         (setq it (pop ,l))
+         (push ,form ,r))
+       (nreverse ,r))))
 
 (defmacro --reduce-from (form initial-value list)
   "Anaphoric form of `-reduce-from'."

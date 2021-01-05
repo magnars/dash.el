@@ -39,7 +39,6 @@
 (defun odd? (num) (= 1 (% num 2)))
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))
-(defun three-letters () '("A" "B" "C"))
 
 (defun dash-expand:&hash-or-plist (key source)
   "Sample destructoring which works with plists and hash-tables."
@@ -60,14 +59,15 @@
 (def-example-group "Maps"
   "Functions in this category take a transforming function, which
 is then applied sequentially to each or selected elements of the
-input list.  The results are collected in order and returned as
+input list.  The results are collected in order and returned as a
 new list."
 
   (defexamples -map
     (-map (lambda (num) (* num num)) '(1 2 3 4)) => '(1 4 9 16)
-    (-map 'square '(1 2 3 4)) => '(1 4 9 16)
+    (-map #'1+ '(1 2 3 4)) => '(2 3 4 5)
     (--map (* it it) '(1 2 3 4)) => '(1 4 9 16)
-    (--map (concat it it) (three-letters)) => '("AA" "BB" "CC"))
+    (--map it ()) => ()
+    (-map #'identity ()) => ())
 
   (defexamples -map-when
     (-map-when 'even? 'square '(1 2 3 4)) => '(1 4 3 16)
@@ -501,8 +501,8 @@ new list."
     (--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) => '(1 2 3)))
 
 (def-example-group "Unfolding"
-  "Operations dual to reductions, building lists from a seed value rather than \
-consuming a list to produce a single value."
+  "Operations dual to reductions, building lists from a seed
+value rather than consuming a list to produce a single value."
 
   (defexamples -iterate
     (-iterate #'1+ 1 10) => '(1 2 3 4 5 6 7 8 9 10)
@@ -1332,43 +1332,64 @@ consuming a list to produce a single value."
     (-setq (a b (&plist 'x x 'y y)) (list 1 2 (list 'x 3 'y 4))
            z x) => 3))
 
-(def-example-group "Side-effects"
-  "Functions iterating over lists for side-effect only."
+(def-example-group "Side effects"
+  "Functions iterating over lists for side effect only."
 
   (defexamples -each
-    (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s))))) => nil
-    (let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(3 2 1)
-    (let (s) (--each '(1 2 3) (setq s (cons it s))) s) => '(3 2 1)
-    (let (s) (--each (reverse (three-letters)) (setq s (cons it s))) s) => '("A" "B" "C"))
+    (let (l) (-each '(1 2 3) (lambda (x) (push x l))) l) => '(3 2 1)
+    (let (l) (--each '(1 2 3) (push it l)) l) => '(3 2 1)
+    (-each '(1 2 3) #'identity) => nil
+    (--each '(1 2 3) it) => nil
+    (--each '(1 2 3) nil) => nil
+    (let (l) (-each () (lambda (x) (push x l))) l) => ()
+    (let (l) (--each () (push it l)) l) => ()
+    (let (l) (--each '(1 2 3) (push it l) (setq it-index -1)) l) => '(3 2 1))
 
   (defexamples -each-while
-    (let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (push item s))) s) => '(4 2)
-    (let (s) (--each-while '(1 2 3 4) (< it 3) (push it s)) s) => '(2 1)
+    (let (l) (-each-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) => '(4 2)
+    (let (l) (--each-while '(1 2 3 4) (< it 3) (push it l)) l) => '(2 1)
     (let ((s 0)) (--each-while '(1 3 4 5) (odd? it) (setq s (+ s it))) s) => 4
+    (let (s) (-each-while () (lambda (_) t) (lambda (_) (setq s t))) s) => nil
     (let (s) (--each-while () t (setq s t)) s) => nil
     (let (s) (--each-while '(1) t (setq s it)) s) => 1
-    (let (s) (--each-while '(1) nil (setq s it)) s) => nil)
+    (let (s) (--each-while '(1) nil (setq s it)) s) => nil
+    (let (s) (--each-while '(1) (setq it t) (setq s it)) s) => 1
+    (--each-while '(1) t t) => nil)
 
   (defexamples -each-indexed
-    (let (s) (-each-indexed '(a b c) (lambda (index item) (setq s (cons (list item index) s)))) s) => '((c 2) (b 1) (a 0))
-    (let (s) (--each-indexed '(a b c) (setq s (cons (list it it-index) s))) s) => '((c 2) (b 1) (a 0)))
+    (let (l) (-each-indexed '(a b c) (lambda (i x) (push (list x i) l))) l) => '((c 2) (b 1) (a 0))
+    (let (l) (--each-indexed '(a b c) (push (list it it-index) l)) l) => '((c 2) (b 1) (a 0))
+    (let (l) (--each-indexed () (push it l)) l) => ()
+    (let (l) (-each-indexed () (lambda (_ x) (push x l))) l) => ())
 
   (defexamples -each-r
-    (let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s))))) => nil
-    (let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))) s) => '(1 2 3)
-    (let (s) (--each-r '(1 2 3) (setq s (cons it s))) s) => '(1 2 3)
-    (let (s) (--each-r (reverse (three-letters)) (setq s (cons it s))) s) => '("C" "B" "A"))
+    (let (l) (-each-r '(1 2 3) (lambda (x) (push x l))) l) => '(1 2 3)
+    (let (l) (--each-r '(1 2 3) (push it l)) l) => '(1 2 3)
+    (-each-r '(1 2 3) #'identity) => nil
+    (--each-r '(1 2 3) it) => nil
+    (--each-r '(1 2 3) nil) => nil
+    (let (l) (--each-r '(1 2 3) (push it l) (setq it-index -1)) l) => '(1 2 3)
+    (let (l) (-each-r () (lambda (x) (push x l))) l) => ()
+    (let (l) (--each-r () (push it l)) l) => ())
 
   (defexamples -each-r-while
-    (let (s) (-each-r-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s) => '(6)
-    (let (s) (--each-r-while '(1 2 3 4) (>= it 3) (!cons it s)) s) => '(3 4))
+    (let (l) (-each-r-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) => '(6)
+    (let (l) (--each-r-while '(1 2 3 4) (>= it 3) (push it l)) l) => '(3 4)
+    (let ((s 0)) (--each-r-while '(1 2 3 5) (odd? it) (setq s (+ s it))) s) => 8
+    (let (s) (-each-r-while () (lambda (_) t) (lambda (_) (setq s t))) s) => nil
+    (let (s) (--each-r-while () t (setq s t)) s) => nil
+    (let (s) (--each-r-while '(1) t (setq s it)) s) => 1
+    (let (s) (--each-r-while '(1) nil (setq s it)) s) => nil
+    (let (s) (--each-r-while '(1) (setq it t) (setq s it)) s) => 1
+    (--each-r-while '(1) t t) => nil)
 
   (defexamples -dotimes
     (let (s) (-dotimes 3 (lambda (n) (push n s))) s) => '(2 1 0)
     (let (s) (-dotimes 0 (lambda (n) (push n s))) s) => ()
     (let (s) (--dotimes 5 (push it s)) s) => '(4 3 2 1 0)
     (let (s) (--dotimes 0 (push it s)) s) => ()
-    (let (s) (--dotimes 3 (push it s) (setq it -1)) s) => '(2 1 0)))
+    (let (s) (--dotimes 3 (push it s) (setq it -1)) s) => '(2 1 0)
+    (--dotimes 3 t) => nil))
 
 (def-example-group "Destructive operations" nil
   (defexamples !cons

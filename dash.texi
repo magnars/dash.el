@@ -80,7 +80,7 @@ Functions
 * Tree operations::
 * Threading macros::
 * Binding::
-* Side-effects::
+* Side effects::
 * Destructive operations::
 * Function combinators::
 
@@ -216,7 +216,7 @@ example, which demonstrates the utility of both versions.
 * Tree operations::
 * Threading macros::
 * Binding::
-* Side-effects::
+* Side effects::
 * Destructive operations::
 * Function combinators::
 @end menu
@@ -228,13 +228,14 @@ example, which demonstrates the utility of both versions.
 
 Functions in this category take a transforming function, which
 is then applied sequentially to each or selected elements of the
-input list.  The results are collected in order and returned as
+input list.  The results are collected in order and returned as a
 new list.
 
 
 @anchor{-map}
 @defun -map (fn list)
-Return a new list consisting of the result of applying @var{fn} to the items in @var{list}.
+Apply @var{fn} to each item in @var{list} and return the list of results.
+This function's anaphoric counterpart is @code{--map}.
 
 @example
 @group
@@ -242,8 +243,8 @@ Return a new list consisting of the result of applying @var{fn} to the items in 
     @result{} '(1 4 9 16)
 @end group
 @group
-(-map 'square '(1 2 3 4))
-    @result{} '(1 4 9 16)
+(-map #'1+ '(1 2 3 4))
+    @result{} '(2 3 4 5)
 @end group
 @group
 (--map (* it it) '(1 2 3 4))
@@ -1603,7 +1604,8 @@ comparing them.
 @section Unfolding
 
 
-Operations dual to reductions, building lists from a seed value rather than consuming a list to produce a single value.
+Operations dual to reductions, building lists from a seed
+value rather than consuming a list to produce a single value.
 
 
 @anchor{-iterate}
@@ -3918,45 +3920,51 @@ multiple assignments it does not cause unexpected side effects.
 @end defmac
 
 
-@node Side-effects
-@section Side-effects
+@node Side effects
+@section Side effects
 
 
-Functions iterating over lists for side-effect only.
+Functions iterating over lists for side effect only.
 
 
 @anchor{-each}
 @defun -each (list fn)
-Call @var{fn} with every item in @var{list}. Return nil, used for side-effects only.
+Call @var{fn} on each element of @var{list}.
+Return nil; this function is intended for side effects.
+Its anaphoric counterpart is @code{--each}.  For access to the current
+element's index in @var{list}, see @code{-each-indexed} (@pxref{-each-indexed}).
 
 @example
 @group
-(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))))
+(let (l) (-each '(1 2 3) (lambda (x) (push x l))) l)
+    @result{} '(3 2 1)
+@end group
+@group
+(let (l) (--each '(1 2 3) (push it l)) l)
+    @result{} '(3 2 1)
+@end group
+@group
+(-each '(1 2 3) #'identity)
     @result{} nil
-@end group
-@group
-(let (s) (-each '(1 2 3) (lambda (item) (setq s (cons item s)))) s)
-    @result{} '(3 2 1)
-@end group
-@group
-(let (s) (--each '(1 2 3) (setq s (cons it s))) s)
-    @result{} '(3 2 1)
 @end group
 @end example
 @end defun
 
 @anchor{-each-while}
 @defun -each-while (list pred fn)
-Call @var{fn} with every item in @var{list} while (@var{pred} item) is non-nil.
-Return nil, used for side-effects only.
+Call @var{fn} on each @var{item} in @var{list}, while (@var{pred} @var{item}) is non-nil.
+Once an @var{item} is reached for which @var{pred} returns nil, @var{fn} is no
+longer called.  Return nil; this function is intended for side
+effects.
+Its anaphoric counterpart is @code{--each-while}.
 
 @example
 @group
-(let (s) (-each-while '(2 4 5 6) 'even? (lambda (item) (push item s))) s)
+(let (l) (-each-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l)
     @result{} '(4 2)
 @end group
 @group
-(let (s) (--each-while '(1 2 3 4) (< it 3) (push it s)) s)
+(let (l) (--each-while '(1 2 3 4) (< it 3) (push it l)) l)
     @result{} '(2 1)
 @end group
 @group
@@ -3968,68 +3976,80 @@ Return nil, used for side-effects only.
 
 @anchor{-each-indexed}
 @defun -each-indexed (list fn)
-Call (@var{fn} index item) for each item in @var{list}.
-
-In the anaphoric form @code{--each-indexed}, the index is exposed as symbol @code{it-index}.
-
+Call @var{fn} on each index and element of @var{list}.
+For each @var{item} at @var{index} in @var{list}, call (funcall @var{fn} @var{index} @var{item}).
+Return nil; this function is intended for side effects.
 See also: @code{-map-indexed} (@pxref{-map-indexed}).
 
 @example
 @group
-(let (s) (-each-indexed '(a b c) (lambda (index item) (setq s (cons (list item index) s)))) s)
+(let (l) (-each-indexed '(a b c) (lambda (i x) (push (list x i) l))) l)
     @result{} '((c 2) (b 1) (a 0))
 @end group
 @group
-(let (s) (--each-indexed '(a b c) (setq s (cons (list it it-index) s))) s)
+(let (l) (--each-indexed '(a b c) (push (list it it-index) l)) l)
     @result{} '((c 2) (b 1) (a 0))
+@end group
+@group
+(let (l) (--each-indexed nil (push it l)) l)
+    @result{} nil
 @end group
 @end example
 @end defun
 
 @anchor{-each-r}
 @defun -each-r (list fn)
-Call @var{fn} with every item in @var{list} in reversed order.
- Return nil, used for side-effects only.
+Call @var{fn} on each element of @var{list} in reversed order.
+Return nil; this function is intended for side effects.
+Its anaphoric counterpart is @code{--each-r}.
 
 @example
 @group
-(let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))))
+(let (l) (-each-r '(1 2 3) (lambda (x) (push x l))) l)
+    @result{} '(1 2 3)
+@end group
+@group
+(let (l) (--each-r '(1 2 3) (push it l)) l)
+    @result{} '(1 2 3)
+@end group
+@group
+(-each-r '(1 2 3) #'identity)
     @result{} nil
-@end group
-@group
-(let (s) (-each-r '(1 2 3) (lambda (item) (setq s (cons item s)))) s)
-    @result{} '(1 2 3)
-@end group
-@group
-(let (s) (--each-r '(1 2 3) (setq s (cons it s))) s)
-    @result{} '(1 2 3)
 @end group
 @end example
 @end defun
 
 @anchor{-each-r-while}
 @defun -each-r-while (list pred fn)
-Call @var{fn} with every item in reversed @var{list} while (@var{pred} item) is non-nil.
-Return nil, used for side-effects only.
+Call @var{fn} on each @var{item} in reversed @var{list}, while (@var{pred} @var{item}) is non-nil.
+Once an @var{item} is reached for which @var{pred} returns nil, @var{fn} is no
+longer called.  Return nil; this function is intended for side
+effects.
+Its anaphoric counterpart is @code{--each-r-while}.
 
 @example
 @group
-(let (s) (-each-r-while '(2 4 5 6) 'even? (lambda (item) (!cons item s))) s)
+(let (l) (-each-r-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l)
     @result{} '(6)
 @end group
 @group
-(let (s) (--each-r-while '(1 2 3 4) (>= it 3) (!cons it s)) s)
+(let (l) (--each-r-while '(1 2 3 4) (>= it 3) (push it l)) l)
     @result{} '(3 4)
+@end group
+@group
+(let ((s 0)) (--each-r-while '(1 2 3 5) (odd? it) (setq s (+ s it))) s)
+    @result{} 8
 @end group
 @end example
 @end defun
 
 @anchor{-dotimes}
 @defun -dotimes (num fn)
-Call @var{fn} @var{num} times, presumably for side-effects.
+Call @var{fn} @var{num} times, presumably for side effects.
 @var{fn} is called with a single argument on successive integers
 running from 0, inclusive, to @var{num}, exclusive.  @var{fn} is not called
 if @var{num} is less than 1.
+This function's anaphoric counterpart is @code{--dotimes}.
 
 @example
 @group

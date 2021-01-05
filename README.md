@@ -325,8 +325,7 @@ Functions iterating over lists for side-effect only.
 * [-each-r](#-each-r-list-fn) `(list fn)`
 * [-each-r-while](#-each-r-while-list-pred-fn) `(list pred fn)`
 * [-dotimes](#-dotimes-num-fn) `(num fn)`
-* [-doto](#-doto-eval-initial-value-rest-forms) `(eval-initial-value &rest forms)`
-* [--doto](#--doto-eval-initial-value-rest-forms) `(eval-initial-value &rest forms)`
+* [-doto](#-doto-init-rest-forms) `(init &rest forms)`
 
 ### Destructive operations
 
@@ -2649,25 +2648,16 @@ if `num` is less than 1.
 (let (s) (--dotimes 5 (push it s)) s) ;; => '(4 3 2 1 0)
 ```
 
-#### -doto `(eval-initial-value &rest forms)`
+#### -doto `(init &rest forms)`
 
-Eval a form, then insert that form as the 2nd argument to other forms.
-The `eval-initial-value` form is evaluated once. Its result is
-passed to `forms`, which are then evaluated sequentially. Returns
-the target form.
-
-```el
-(-doto '(1 2 3) (!cdr) (!cdr)) ;; => '(3)
-(-doto '(1 . 2) (setcar 3) (setcdr 4)) ;; => '(3 . 4)
-```
-
-#### --doto `(eval-initial-value &rest forms)`
-
-Anaphoric form of [`-doto`](#-doto-eval-initial-value-rest-forms).
-Note: `it` is not required in each form.
+Evaluate `init` and thread the result as the 2nd argument to other forms.
+`init` is evaluated once.  Its result is passed to `forms`, which are
+then evaluated sequentially.  Returns the target form.
 
 ```el
-(gethash "key" (--doto (make-hash-table :test 'equal) (puthash "key" "value" it))) ;; => "value"
+(-doto (list 1 2 3) (pop) (pop)) ;; => '(3)
+(-doto (cons 1 2) (setcar 3) (setcdr 4)) ;; => '(3 . 4)
+(gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) ;; => 'v
 ```
 
 

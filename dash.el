@@ -62,24 +62,23 @@
          (setq it-index (1+ it-index))
          (!cdr ,l)))))
 
-(defmacro -doto (eval-initial-value &rest forms)
-  "Eval a form, then insert that form as the 2nd argument to other forms.
-The EVAL-INITIAL-VALUE form is evaluated once. Its result is
-passed to FORMS, which are then evaluated sequentially. Returns
-the target form."
+(defmacro -doto (init &rest forms)
+  "Evaluate INIT and thread the result as the 2nd argument to other forms.
+INIT is evaluated once.  Its result is passed to FORMS, which are
+then evaluated sequentially.  Returns the target form."
   (declare (indent 1))
   (let ((retval (make-symbol "value")))
-    `(let ((,retval ,eval-initial-value))
+    `(let ((,retval ,init))
        ,@(mapcar (lambda (form)
-                   (if (sequencep form)
-                       `(,(-first-item form) ,retval ,@(cdr form))
+                   (if (listp form)
+                       `(,(car form) ,retval ,@(cdr form))
                      `(funcall form ,retval)))
                  forms)
        ,retval)))
 
 (defmacro --doto (eval-initial-value &rest forms)
   "Anaphoric form of `-doto'.
-Note: `it' is not required in each form."
+Note: `it' need not be used in each form."
   (declare (indent 1))
   `(let ((it ,eval-initial-value))
      ,@forms

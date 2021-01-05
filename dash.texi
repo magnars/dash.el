@@ -4025,33 +4025,23 @@ if @var{num} is less than 1.
 @end defun
 
 @anchor{-doto}
-@defmac -doto (eval-initial-value &rest forms)
-Eval a form, then insert that form as the 2nd argument to other forms.
-The @var{eval-initial-value} form is evaluated once. Its result is
-passed to @var{forms}, which are then evaluated sequentially. Returns
-the target form.
+@defmac -doto (init &rest forms)
+Evaluate @var{init} and thread the result as the 2nd argument to other forms.
+@var{init} is evaluated once.  Its result is passed to @var{forms}, which are
+then evaluated sequentially.  Returns the target form.
 
 @example
 @group
-(-doto '(1 2 3) (!cdr) (!cdr))
+(-doto (list 1 2 3) (pop) (pop))
     @result{} '(3)
 @end group
 @group
-(-doto '(1 . 2) (setcar 3) (setcdr 4))
+(-doto (cons 1 2) (setcar 3) (setcdr 4))
     @result{} '(3 . 4)
 @end group
-@end example
-@end defmac
-
-@anchor{--doto}
-@defmac --doto (eval-initial-value &rest forms)
-Anaphoric form of @code{-doto} (@pxref{-doto}).
-Note: @code{it} is not required in each form.
-
-@example
 @group
-(gethash "key" (--doto (make-hash-table :test 'equal) (puthash "key" "value" it)))
-    @result{} "value"
+(gethash 'k (--doto (make-hash-table) (puthash 'k 'v it)))
+    @result{} 'v
 @end group
 @end example
 @end defmac

@@ -1349,8 +1349,11 @@ new list."
     (let (s) (--each-r-while '(1 2 3 4) (>= it 3) (!cons it s)) s) => '(3 4))
 
   (defexamples -dotimes
-    (let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) => '(2 1 0)
-    (let (s) (--dotimes 5 (!cons it s)) s) => '(4 3 2 1 0))
+    (let (s) (-dotimes 3 (lambda (n) (push n s))) s) => '(2 1 0)
+    (let (s) (-dotimes 0 (lambda (n) (push n s))) s) => ()
+    (let (s) (--dotimes 5 (push it s)) s) => '(4 3 2 1 0)
+    (let (s) (--dotimes 0 (push it s)) s) => ()
+    (let (s) (--dotimes 3 (push it s) (setq it -1)) s) => '(2 1 0))
 
   (defexamples -doto
     (-doto '(1 2 3) (!cdr) (!cdr)) => '(3)

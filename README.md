@@ -2638,11 +2638,15 @@ Return nil, used for side-effects only.
 
 #### -dotimes `(num fn)`
 
-Repeatedly calls `fn` (presumably for side-effects) passing in integers from 0 through `num-1`.
+Call `fn` `num` times, presumably for side-effects.
+`fn` is called with a single argument on successive integers
+running from 0, inclusive, to `num`, exclusive.  `fn` is not called
+if `num` is less than 1.
 
 ```el
-(let (s) (-dotimes 3 (lambda (n) (!cons n s))) s) ;; => '(2 1 0)
-(let (s) (--dotimes 5 (!cons it s)) s) ;; => '(4 3 2 1 0)
+(let (s) (-dotimes 3 (lambda (n) (push n s))) s) ;; => '(2 1 0)
+(let (s) (-dotimes 0 (lambda (n) (push n s))) s) ;; => nil
+(let (s) (--dotimes 5 (push it s)) s) ;; => '(4 3 2 1 0)
 ```
 
 #### -doto `(eval-initial-value &rest forms)`

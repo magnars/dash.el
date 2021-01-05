@@ -166,18 +166,28 @@ Return nil, used for side-effects only."
   (--each-r-while list (funcall pred it) (funcall fn it)))
 
 (defmacro --dotimes (num &rest body)
-  "Repeatedly executes BODY (presumably for side-effects) with symbol `it' bound to integers from 0 through NUM-1."
-  (declare (debug (form body))
-           (indent 1))
-  (let ((n (make-symbol "num")))
+  "Evaluate BODY NUM times, presumably for side-effects.
+BODY is evaluated with the local variable `it' temporarily bound
+to successive integers running from 0, inclusive, to NUM,
+exclusive.  BODY is not evaluated if NUM is less than 1.
+
+This is the anaphoric version of `-dotimes'."
+  (declare (debug (form body)) (indent 1))
+  (let ((n (make-symbol "num"))
+        (i (make-symbol "i")))
     `(let ((,n ,num)
-           (it 0))
-       (while (< it ,n)
-         ,@body
-         (setq it (1+ it))))))
+           (,i 0)
+           it)
+       (ignore it)
+       (while (< ,i ,n)
+         (setq it ,i ,i (1+ ,i))
+         ,@body))))
 
 (defun -dotimes (num fn)
-  "Repeatedly calls FN (presumably for side-effects) passing in integers from 0 through NUM-1."
+  "Call FN NUM times, presumably for side-effects.
+FN is called with a single argument on successive integers
+running from 0, inclusive, to NUM, exclusive.  FN is not called
+if NUM is less than 1."
   (declare (indent 1))
   (--dotimes num (funcall fn it)))
 

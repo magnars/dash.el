@@ -4002,15 +4002,22 @@ Return nil, used for side-effects only.
 
 @anchor{-dotimes}
 @defun -dotimes (num fn)
-Repeatedly calls @var{fn} (presumably for side-effects) passing in integers from 0 through @var{num-1}.
+Call @var{fn} @var{num} times, presumably for side-effects.
+@var{fn} is called with a single argument on successive integers
+running from 0, inclusive, to @var{num}, exclusive.  @var{fn} is not called
+if @var{num} is less than 1.
 
 @example
 @group
-(let (s) (-dotimes 3 (lambda (n) (!cons n s))) s)
+(let (s) (-dotimes 3 (lambda (n) (push n s))) s)
     @result{} '(2 1 0)
 @end group
 @group
-(let (s) (--dotimes 5 (!cons it s)) s)
+(let (s) (-dotimes 0 (lambda (n) (push n s))) s)
+    @result{} nil
+@end group
+@group
+(let (s) (--dotimes 5 (push it s)) s)
     @result{} '(4 3 2 1 0)
 @end group
 @end example

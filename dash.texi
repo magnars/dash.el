@@ -3513,6 +3513,29 @@ and when that result is non-nil, through the next form, etc.
 @end example
 @end defmac
 
+@anchor{-doto}
+@defmac -doto (init &rest forms)
+Evaluate @var{init} and pass it as argument to @var{forms} with @code{->} (@pxref{->}).
+The @var{result} of evaluating @var{init} is threaded through each of @var{forms}
+individually using @code{->} (@pxref{->}), which see.  The return value is @var{result},
+which @var{forms} may have modified by side effect.
+
+@example
+@group
+(-doto (list 1 2 3) pop pop)
+    @result{} '(3)
+@end group
+@group
+(-doto (cons 1 2) (setcar 3) (setcdr 4))
+    @result{} '(3 . 4)
+@end group
+@group
+(gethash 'k (--doto (make-hash-table) (puthash 'k 'v it)))
+    @result{} 'v
+@end group
+@end example
+@end defmac
+
 
 @node Binding
 @section Binding
@@ -4023,29 +4046,6 @@ if @var{num} is less than 1.
 @end group
 @end example
 @end defun
-
-@anchor{-doto}
-@defmac -doto (init &rest forms)
-Evaluate @var{init} and pass it as argument to @var{forms} with @code{->} (@pxref{->}).
-The @var{result} of evaluating @var{init} is threaded through each of @var{forms}
-individually using @code{->} (@pxref{->}), which see.  The return value is @var{result},
-which @var{forms} may have modified by side effect.
-
-@example
-@group
-(-doto (list 1 2 3) pop pop)
-    @result{} '(3)
-@end group
-@group
-(-doto (cons 1 2) (setcar 3) (setcdr 4))
-    @result{} '(3 . 4)
-@end group
-@group
-(gethash 'k (--doto (make-hash-table) (puthash 'k 'v it)))
-    @result{} 'v
-@end group
-@end example
-@end defmac
 
 
 @node Destructive operations

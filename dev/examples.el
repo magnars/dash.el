@@ -1067,7 +1067,13 @@ consuming a list to produce a single value."
     (-some--> "def" (concat "abc" it "ghi")) => "abcdefghi"
     (-some--> nil (concat "abc" it "ghi")) => nil
     (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) => nil
-    (-some--> '(2 4 6) (-filter 'even? it) (append it it) (-map 'square it)) => '(4 16 36 4 16 36)))
+    (-some--> '(2 4 6) (-filter 'even? it) (append it it) (-map 'square it)) => '(4 16 36 4 16 36))
+
+  (defexamples -doto
+    (-doto (list 1 2 3) pop pop) => '(3)
+    (-doto (cons 1 2) (setcar 3) (setcdr 4)) => '(3 . 4)
+    (gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) => 'v
+    (-doto (cons 1 2)) => '(1 . 2)))
 
 (def-example-group "Binding"
   "Convenient versions of `let` and `let*` constructs combined with flow control."
@@ -1362,13 +1368,7 @@ consuming a list to produce a single value."
     (let (s) (-dotimes 0 (lambda (n) (push n s))) s) => ()
     (let (s) (--dotimes 5 (push it s)) s) => '(4 3 2 1 0)
     (let (s) (--dotimes 0 (push it s)) s) => ()
-    (let (s) (--dotimes 3 (push it s) (setq it -1)) s) => '(2 1 0))
-
-  (defexamples -doto
-    (-doto (list 1 2 3) pop pop) => '(3)
-    (-doto (cons 1 2) (setcar 3) (setcdr 4)) => '(3 . 4)
-    (gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) => 'v
-    (-doto (cons 1 2)) => '(1 . 2)))
+    (let (s) (--dotimes 3 (push it s) (setq it -1)) s) => '(2 1 0)))
 
 (def-example-group "Destructive operations" nil
   (defexamples !cons

@@ -299,6 +299,7 @@ Functions pretending lists are trees.
 * [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some-->](#-some---x-optional-form-rest-more) `(x &optional form &rest more)`
+* [-doto](#-doto-init-rest-forms) `(init &rest forms)`
 
 ### Binding
 
@@ -325,7 +326,6 @@ Functions iterating over lists for side-effect only.
 * [-each-r](#-each-r-list-fn) `(list fn)`
 * [-each-r-while](#-each-r-while-list-pred-fn) `(list pred fn)`
 * [-dotimes](#-dotimes-num-fn) `(num fn)`
-* [-doto](#-doto-init-rest-forms) `(init &rest forms)`
 
 ### Destructive operations
 
@@ -2269,6 +2269,19 @@ and when that result is non-nil, through the next form, etc.
 (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) ;; => nil
 ```
 
+#### -doto `(init &rest forms)`
+
+Evaluate `init` and pass it as argument to `forms` with [`->`](#--x-optional-form-rest-more).
+The `result` of evaluating `init` is threaded through each of `forms`
+individually using [`->`](#--x-optional-form-rest-more), which see.  The return value is `result`,
+which `forms` may have modified by side effect.
+
+```el
+(-doto (list 1 2 3) pop pop) ;; => '(3)
+(-doto (cons 1 2) (setcar 3) (setcdr 4)) ;; => '(3 . 4)
+(gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) ;; => 'v
+```
+
 
 ## Binding
 
@@ -2646,19 +2659,6 @@ if `num` is less than 1.
 (let (s) (-dotimes 3 (lambda (n) (push n s))) s) ;; => '(2 1 0)
 (let (s) (-dotimes 0 (lambda (n) (push n s))) s) ;; => nil
 (let (s) (--dotimes 5 (push it s)) s) ;; => '(4 3 2 1 0)
-```
-
-#### -doto `(init &rest forms)`
-
-Evaluate `init` and pass it as argument to `forms` with [`->`](#--x-optional-form-rest-more).
-The `result` of evaluating `init` is threaded through each of `forms`
-individually using [`->`](#--x-optional-form-rest-more), which see.  The return value is `result`,
-which `forms` may have modified by side effect.
-
-```el
-(-doto (list 1 2 3) pop pop) ;; => '(3)
-(-doto (cons 1 2) (setcar 3) (setcdr 4)) ;; => '(3 . 4)
-(gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) ;; => 'v
 ```
 
 

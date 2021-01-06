@@ -2359,7 +2359,7 @@ because we need to support improper list binding."
 
 (defun dash--as-matcher? (matcher)
   "Check if MATCHER is an `&as' binding with a variable."
-  (cond ((vectorp matcher) (and (>= (length matcher) 2)
+  (cond ((vectorp matcher) (and (> (length matcher) 2)
                                 (symbolp (aref matcher 0))
                                 (eq '&as (aref matcher 1))
                                 (cons (aref matcher 0) (dash--vector-tail matcher 2))))

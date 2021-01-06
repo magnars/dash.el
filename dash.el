@@ -62,27 +62,6 @@
          (setq it-index (1+ it-index))
          (!cdr ,l)))))
 
-(defmacro -doto (init &rest forms)
-  "Evaluate INIT and pass it as argument to FORMS with `->'.
-The RESULT of evaluating INIT is threaded through each of FORMS
-individually using `->', which see.  The return value is RESULT,
-which FORMS may have modified by side effect."
-  (declare (debug (form body)) (indent 1))
-  (let ((retval (make-symbol "result")))
-    `(let ((,retval ,init))
-       ,@(mapcar (lambda (form) `(-> ,retval ,form)) forms)
-       ,retval)))
-
-(defmacro --doto (init &rest forms)
-  "Anaphoric form of `-doto'.
-This just evaluates INIT, binds the result to `it', evaluates
-FORMS, and returns the final value of `it'.
-Note: `it' need not be used in each form."
-  (declare (debug (form body)) (indent 1))
-  `(let ((it ,init))
-     ,@forms
-     it))
-
 (defun -each (list fn)
   "Call FN with every item in LIST. Return nil, used for side-effects only."
   (declare (indent 1))
@@ -1606,6 +1585,27 @@ and when that result is non-nil, through the next form, etc."
       `(-some--> (-when-let (,result ,x)
                    (--> ,result ,form))
                  ,@more))))
+
+(defmacro -doto (init &rest forms)
+  "Evaluate INIT and pass it as argument to FORMS with `->'.
+The RESULT of evaluating INIT is threaded through each of FORMS
+individually using `->', which see.  The return value is RESULT,
+which FORMS may have modified by side effect."
+  (declare (debug (form body)) (indent 1))
+  (let ((retval (make-symbol "result")))
+    `(let ((,retval ,init))
+       ,@(mapcar (lambda (form) `(-> ,retval ,form)) forms)
+       ,retval)))
+
+(defmacro --doto (init &rest forms)
+  "Anaphoric form of `-doto'.
+This just evaluates INIT, binds the result to `it', evaluates
+FORMS, and returns the final value of `it'.
+Note: `it' need not be used in each form."
+  (declare (debug (form body)) (indent 1))
+  `(let ((it ,init))
+     ,@forms
+     it))
 
 (defun -grade-up (comparator list)
   "Grade elements of LIST using COMPARATOR relation, yielding a

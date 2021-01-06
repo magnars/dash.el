@@ -2136,16 +2136,8 @@ because we need to support improper list binding."
       `(let ,inputs
          (-let* ,new-varlist ,@body)))))
 
-(defconst dash--arglist-keywords '(&optional &rest)
-  "List of special symbols in function argument lists.
-If such a symbol is encountered in a match-form of `-defun', ...
-it doesn't cause the input<N> N to be incremented.
-
-They should be keywords that are handled specially in argument
-lists.")
-
-(defun dash--arglist-as-symbolp (matcher)
-  "Check MATCHER is an &as binding with a variable."
+(defun dash--as-matcher? (matcher)
+  "Check if MATCHER is an `&as' binding with a variable."
   (cond ((vectorp matcher) (and (>= (length matcher) 2)
                                 (symbolp (aref matcher 0))
                                 (eq '&as (aref matcher 1))))
@@ -2154,27 +2146,48 @@ lists.")
                               (eq '&as (cadr matcher))))))
 
 (defun dash--as-matcher-variable (matcher)
-  "Get the variable from &as matcher MATCHER.
-See `dash--arglist-as-symbolp'."
+  "Get the variable from `&as' matcher MATCHER.
+See `dash--as-matcher?'."
   (elt matcher 0))
 
 (defun dash--as-matcher-tail (matcher)
-  "Extract the body of a &as-matcher MATCHER.
+  "Extract the body of `&as'-matcher MATCHER.
 \(sym &as ...) => ...."
   (cond ((vectorp matcher) (dash--vector-tail matcher 2))
         (t (cddr matcher))))
 
-(defun dash--make-arglist (args)
-  "Make ARGS a function arglist for `dash--destructure-body'."
-  (--map-indexed
-   ;; Don't destructure symbols to themselves
-   (cond ((symbolp it)
-          ;; don't increment the input<n> number for &optional and &rest.
-          (progn (when (memq it dash--arglist-keywords)
-                   (setq it-index (1- it-index))) it))
-         ((dash--arglist-as-symbolp it) (dash--as-matcher-variable it))
-         (t (intern (format "input%d" it-index))))
-   args))
+(defun dash--parse-arglist (args)
+  "Parse ARGS, a normalized `-defun', ... arglist.
+The result is an alist with pairs of the form (SYMBOL . MATCHER),
+where SYMBOL is a (potentially uninterned) symbol that needs to
+be destructured using MATCHER (i.e. (-let ((,MATCHER ,SYMBOL)))).
+
+As an optimization, symbols in ARGS are ignored, since they need
+not be destructured.
+
+See also `dash--destructure-arglist' and
+`dash--destructure-body'. These functions must be passed the same
+parsed arglist, since it may contain uninterned symbols."
+  (let (result (i 0))
+    (dolist (arg args)
+      (unless (symbolp arg)
+        (push
+         (cond
+          ;; Optimize &as bindings: the variable before &as becomes the
+          ;; parameter name. This way, less variables need to be bound, reducing
+          ;; bytecode size (especially with dynamic binding).
+          ((dash--as-matcher? arg)
+           (cons (dash--as-matcher-variable arg) (dash--as-matcher-tail arg)))
+          (t (prog1 (cons (make-symbol (format "input%d" i)) arg)
+               (setq i (1+ i)))))
+         result)))
+    (nreverse result)))
+
+(defun dash--destructure-arglist (args parsed-arglist)
+  "Make ARGS a function arglist for `dash--destructure-body'.
+PARSED-ARGLIST shall be the result of a call to
+`dash--parse-arglist', which see."
+  (--map (if (symbolp it) it (car (pop parsed-arglist))) args))
 
 (defun dash--decompose-defun-body (body declare?)
   "Destructure a `defun' or `lambda' BODY.
@@ -2199,7 +2212,7 @@ signature line."
       docstring
     (format "%s\n\n%S" (or docstring "") (cons 'fn arglist))))
 
-(defun dash--destructure-body (arglist body-forms &optional doc declare?)
+(defun dash--destructure-body (arglist parsed-arglist body-forms &optional doc declare?)
   "Destructure function ARGLIST using `-let'.
 The result is a list of body forms (including optional docstring
 and declarations) that does the destructuring and executes
@@ -2210,35 +2223,24 @@ docstring is provided. Note that a signature is still added if a
 docstring is provided and one is needed (due to unusual
 arguments).
 
-DECLARE? is the same as in `dash--decompose-defun-body'."
+DECLARE? is the same as in `dash--decompose-defun-body'.
+
+PARSED-ARGLIST shall be the result of a call to
+`dash--parse-arglist', which see."
   (let* ((body-structure (dash--decompose-defun-body body-forms declare?))
          (docstring? (nth 0 body-structure))
          (decls (nth 1 body-structure))
          (body (nth 2 body-structure))
-         (let-bindings
-          (-remove #'null
-                   (--map-indexed
-                    ;; Symbols shouldn't be rebound; they can be taken from the
-                    ;; surrounding environment directly.
-                    (cond ((symbolp it)
-                           (when (memq it dash--arglist-keywords)
-                             (setq it-index (1- it-index))
-                             ;; Don't add a binding for IT-INDEX
-                             nil))
-                          ((dash--arglist-as-symbolp it)
-                           (list (dash--as-matcher-tail it)
-                                 (dash--as-matcher-variable it)))
-                          (t (list it (intern (format "input%d" it-index)))))
-                    arglist))))
+         (let-bindings (--map `(,(cdr it) ,(car it)) parsed-arglist)))
     (nconc
-     ;; If the arglist doesn't make use of dash's features, just reuse the
-     ;; docstring directly, because signature hints aren't necessary.
-     (if (-all? #'symbolp arglist)
-         (and docstring? (list docstring?))
-       ;; If there is a docstring, add signature hints in any case; otherwise,
-       ;; only generate an empty signature docstring if NODOC is unspecified.
-       (when (or docstring? doc)
-         (list (dash--docstring-add-signature docstring? arglist))))
+     (if let-bindings
+         ;; If there is a docstring, add signature hints in any case; otherwise,
+         ;; only generate an empty signature docstring if DOC allows it.
+         (when (or docstring? doc)
+           (list (dash--docstring-add-signature docstring? arglist)))
+       ;; If the arglist doesn't make use of dash's features, just reuse the
+       ;; docstring directly, because signature hints aren't necessary.
+       (and docstring? (list docstring?)))
      decls
      (if let-bindings
          ;; TODO: `-let*' generates less bytecode, especially with dynamic
@@ -2270,9 +2272,10 @@ additional destructuring, this function behaves exactly like
                            [&optional ("declare" &rest sexp)]
                            [&optional ("interactive" interactive)]
                            def-body)))
-  (let ((match-form (dash--normalize-arglist match-form)))
-    `(defun ,name ,(dash--make-arglist match-form)
-       ,@(dash--destructure-body match-form body t t))))
+  (let* ((match-form (dash--normalize-arglist match-form))
+         (parsed-args (dash--parse-arglist match-form)))
+    `(defun ,name ,(dash--destructure-arglist match-form parsed-args)
+       ,@(dash--destructure-body match-form parsed-args body t t))))
 
 (defmacro -defmacro (name match-form &rest body)
   "Like `-defun', but define macro called NAME instead.
@@ -2282,10 +2285,17 @@ MATCH-FORM and BODY are the same.
   (declare (doc-string 3) (indent 2)
            (debug (&define name dash-lambda-list lambda-doc
                            [&optional ("declare" &rest sexp)]
+                           ;; (interactive) will simply be treated as a normal
+                           ;; BODY form by the debugger, even though it kind of
+                           ;; isn't:
+                           ;;
+                           ;; (defmacro q (x) (interactive (list "X")) (message x))
+                           ;; (command-execute (cdr (symbol-function 'q)))
                            def-body)))
-  (let ((match-form (dash--normalize-arglist match-form)))
-    `(defmacro ,name ,(dash--make-arglist match-form)
-       ,@(dash--destructure-body match-form body t t))))
+  (let* ((match-form (dash--normalize-arglist match-form))
+         (parsed-args (dash--parse-arglist match-form)))
+    `(defmacro ,name ,(dash--destructure-arglist match-form parsed-args)
+       ,@(dash--destructure-body match-form parsed-args body t t))))
 
 (defmacro -lambda (match-form &rest body)
   "Return a lambda which destructures its input as MATCH-FORM and executes BODY.
@@ -2310,9 +2320,10 @@ See `-let' for the description of destructuring mechanism.
            (debug (&define dash-lambda-list lambda-doc
                            [&optional ("interactive" interactive)]
                            def-body)))
-  (let ((match-form (dash--normalize-arglist match-form)))
-    `(lambda ,(dash--make-arglist match-form)
-       ,@(dash--destructure-body match-form body))))
+  (let* ((match-form (dash--normalize-arglist match-form))
+         (parsed-args (dash--parse-arglist match-form)))
+    `(lambda ,(dash--destructure-arglist match-form parsed-args)
+       ,@(dash--destructure-body match-form parsed-args body nil t))))
 
 (defmacro -setq (&rest forms)
   "Bind each MATCH-FORM to the value of its VAL.

@@ -2034,10 +2034,9 @@ if the first element should sort before the second.
 
 #### -list `(&rest args)`
 
-Return a list with `args`.
-
-If first item of `args` is already a list, simply return `args`.  If
-not, return a list with `args` as elements.
+Return a list based on `args`.
+If the first item of `args` is already a list, simply return it.
+Otherwise, return a list with `args` as elements.
 
 ```el
 (-list 1) ;; => '(1)

@@ -3116,10 +3116,9 @@ if the first element should sort before the second.
 
 @anchor{-list}
 @defun -list (&rest args)
-Return a list with @var{args}.
-
-If first item of @var{args} is already a list, simply return @var{args}.  If
-not, return a list with @var{args} as elements.
+Return a list based on @var{args}.
+If the first item of @var{args} is already a list, simply return it.
+Otherwise, return a list with @var{args} as elements.
 
 @example
 @group

@@ -2515,13 +2515,11 @@ if the first element should sort before the second."
   `(-sort (lambda (it other) ,form) ,list))
 
 (defun -list (&rest args)
-  "Return a list with ARGS.
-
-If first item of ARGS is already a list, simply return ARGS.  If
-not, return a list with ARGS as elements."
+  "Return a list based on ARGS.
+If the first item of ARGS is already a list, simply return it.
+Otherwise, return a list with ARGS as elements."
   (declare (pure t) (side-effect-free t))
-  (let ((arg (car args)))
-    (if (listp arg) arg args)))
+  (if (listp (car args)) (car args) args))
 
 (defun -repeat (n x)
   "Return a new list of length N with each element being X.

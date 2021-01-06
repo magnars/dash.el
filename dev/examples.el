@@ -926,7 +926,12 @@ value rather than consuming a list to produce a single value."
     (-list 1) => '(1)
     (-list 1 2 3) => '(1 2 3)
     (-list '(1 2 3)) => '(1 2 3)
-    (-list '((1) (2))) => '((1) (2)))
+    (-list '((1) (2))) => '((1) (2))
+    (-list) => ()
+    (-list ()) => ()
+    (-list () 1) => ()
+    (-list '(())) => '(())
+    (-list '(() 1)) => '(() 1))
 
   (defexamples -fix
     (-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3 4 5 6))) => '((1) (2) (3) (4) (5) (6))

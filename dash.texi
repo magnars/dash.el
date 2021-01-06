@@ -4026,13 +4026,14 @@ if @var{num} is less than 1.
 
 @anchor{-doto}
 @defmac -doto (init &rest forms)
-Evaluate @var{init} and thread the result as the 2nd argument to other @var{forms}.
-@var{init} is evaluated once.  Its result is passed to @var{forms}, which are
-then evaluated sequentially.  Returns the target form.
+Evaluate @var{init} and pass it as argument to @var{forms} with @code{->} (@pxref{->}).
+The @var{result} of evaluating @var{init} is threaded through each of @var{forms}
+individually using @code{->} (@pxref{->}), which see.  The return value is @var{result},
+which @var{forms} may have modified by side effect.
 
 @example
 @group
-(-doto (list 1 2 3) (pop) (pop))
+(-doto (list 1 2 3) pop pop)
     @result{} '(3)
 @end group
 @group

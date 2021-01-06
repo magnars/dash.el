@@ -63,24 +63,23 @@
          (!cdr ,l)))))
 
 (defmacro -doto (init &rest forms)
-  "Evaluate INIT and thread the result as the 2nd argument to other FORMS.
-INIT is evaluated once.  Its result is passed to FORMS, which are
-then evaluated sequentially.  Returns the target form."
-  (declare (indent 1))
-  (let ((retval (make-symbol "value")))
+  "Evaluate INIT and pass it as argument to FORMS with `->'.
+The RESULT of evaluating INIT is threaded through each of FORMS
+individually using `->', which see.  The return value is RESULT,
+which FORMS may have modified by side effect."
+  (declare (debug (form body)) (indent 1))
+  (let ((retval (make-symbol "result")))
     `(let ((,retval ,init))
-       ,@(mapcar (lambda (form)
-                   (if (listp form)
-                       `(,(car form) ,retval ,@(cdr form))
-                     `(funcall form ,retval)))
-                 forms)
+       ,@(mapcar (lambda (form) `(-> ,retval ,form)) forms)
        ,retval)))
 
-(defmacro --doto (eval-initial-value &rest forms)
+(defmacro --doto (init &rest forms)
   "Anaphoric form of `-doto'.
+This just evaluates INIT, binds the result to `it', evaluates
+FORMS, and returns the final value of `it'.
 Note: `it' need not be used in each form."
-  (declare (indent 1))
-  `(let ((it ,eval-initial-value))
+  (declare (debug (form body)) (indent 1))
+  `(let ((it ,init))
      ,@forms
      it))
 

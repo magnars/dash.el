@@ -2650,12 +2650,13 @@ if `num` is less than 1.
 
 #### -doto `(init &rest forms)`
 
-Evaluate `init` and thread the result as the 2nd argument to other `forms`.
-`init` is evaluated once.  Its result is passed to `forms`, which are
-then evaluated sequentially.  Returns the target form.
+Evaluate `init` and pass it as argument to `forms` with [`->`](#--x-optional-form-rest-more).
+The `result` of evaluating `init` is threaded through each of `forms`
+individually using [`->`](#--x-optional-form-rest-more), which see.  The return value is `result`,
+which `forms` may have modified by side effect.
 
 ```el
-(-doto (list 1 2 3) (pop) (pop)) ;; => '(3)
+(-doto (list 1 2 3) pop pop) ;; => '(3)
 (-doto (cons 1 2) (setcar 3) (setcdr 4)) ;; => '(3 . 4)
 (gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) ;; => 'v
 ```

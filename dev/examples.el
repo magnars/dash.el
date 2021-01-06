@@ -1365,7 +1365,7 @@ consuming a list to produce a single value."
     (let (s) (--dotimes 3 (push it s) (setq it -1)) s) => '(2 1 0))
 
   (defexamples -doto
-    (-doto (list 1 2 3) (pop) (pop)) => '(3)
+    (-doto (list 1 2 3) pop pop) => '(3)
     (-doto (cons 1 2) (setcar 3) (setcdr 4)) => '(3 . 4)
     (gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) => 'v
     (-doto (cons 1 2)) => '(1 . 2)))

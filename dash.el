@@ -1895,6 +1895,17 @@ Valid values are &plist, &alist and &hash."
 This works just like `let', there is no destructuring."
   (list (list match-form source)))
 
+(defun dash--as-matcher? (matcher)
+  "Check if MATCHER is an `&as' binding with a variable."
+  (cond ((vectorp matcher) (and (> (length matcher) 2)
+                                (symbolp (aref matcher 0))
+                                (eq '&as (aref matcher 1))
+                                (cons (aref matcher 0) (dash--vector-tail matcher 2))))
+        ((listp matcher) (and (symbolp (car matcher))
+                              (listp (cdr matcher))
+                              (eq '&as (cadr matcher))
+                              (cons (car matcher) (cddr matcher))))))
+
 (defun dash--match (match-form source)
   "Match MATCH-FORM against SOURCE.
 
@@ -1903,31 +1914,21 @@ matchers based on the type of the expression.
 
 Key-value stores are disambiguated by placing a token &plist,
 &alist or &hash as a first item in the MATCH-FORM."
-  (cond
-   ((symbolp match-form)
-    (dash--match-symbol match-form source))
-   ((consp match-form)
+  (let ((as-matcher? (dash--as-matcher? match-form)))
     (cond
-     ;; Handle the "x &as" bindings first.
-     ((and (consp (cdr match-form))
-           (symbolp (car match-form))
-           (eq '&as (cadr match-form)))
-      (let ((s (car match-form)))
-        (cons (list s source)
-              (dash--match (cddr match-form) s))))
-     ((functionp (dash--get-expand-function (car match-form)))
-      (dash--match-kv (dash--match-kv-normalize-match-form match-form) source))
-     (t (dash--match-cons match-form source))))
-   ((vectorp match-form)
-    ;; We support the &as binding in vectors too
-    (cond
-     ((and (> (length match-form) 2)
-           (symbolp (aref match-form 0))
-           (eq '&as (aref match-form 1)))
-      (let ((s (aref match-form 0)))
-        (cons (list s source)
-              (dash--match (dash--vector-tail match-form 2) s))))
-     (t (dash--match-vector match-form source))))))
+     (as-matcher?
+      (let ((as (car as-matcher?))
+            (matcher (cdr as-matcher?)))
+        (cons (list as source) (dash--match matcher as))))
+     ((symbolp match-form)
+      (dash--match-symbol match-form source))
+     ((consp match-form)
+      (cond
+       ((functionp (dash--get-expand-function (car match-form)))
+        (dash--match-kv (dash--match-kv-normalize-match-form match-form) source))
+       (t (dash--match-cons match-form source))))
+     ((vectorp match-form)
+      (dash--match-vector match-form source)))))
 
 (defun dash--normalize-let-varlist (varlist)
   "Normalize VARLIST so that every binding is a list.
@@ -2135,17 +2136,6 @@ because we need to support improper list binding."
            (new-varlist (--map (list (caar it) (cadr it)) (-zip varlist inputs))))
       `(let ,inputs
          (-let* ,new-varlist ,@body)))))
-
-(defun dash--as-matcher? (matcher)
-  "Check if MATCHER is an `&as' binding with a variable."
-  (cond ((vectorp matcher) (and (> (length matcher) 2)
-                                (symbolp (aref matcher 0))
-                                (eq '&as (aref matcher 1))
-                                (cons (aref matcher 0) (dash--vector-tail matcher 2))))
-        ((listp matcher) (and (symbolp (car matcher))
-                              (listp (cdr matcher))
-                              (eq '&as (cadr matcher))
-                              (cons (car matcher) (cddr matcher))))))
 
 (defun dash--parse-arglist (args)
   "Parse ARGS, a normalized `-defun', ... arglist.

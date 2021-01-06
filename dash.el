@@ -2140,21 +2140,12 @@ because we need to support improper list binding."
   "Check if MATCHER is an `&as' binding with a variable."
   (cond ((vectorp matcher) (and (>= (length matcher) 2)
                                 (symbolp (aref matcher 0))
-                                (eq '&as (aref matcher 1))))
+                                (eq '&as (aref matcher 1))
+                                (cons (aref matcher 0) (dash--vector-tail matcher 2))))
         ((listp matcher) (and (symbolp (car matcher))
                               (listp (cdr matcher))
-                              (eq '&as (cadr matcher))))))
-
-(defun dash--as-matcher-variable (matcher)
-  "Get the variable from `&as' matcher MATCHER.
-See `dash--as-matcher?'."
-  (elt matcher 0))
-
-(defun dash--as-matcher-tail (matcher)
-  "Extract the body of `&as'-matcher MATCHER.
-\(sym &as ...) => ...."
-  (cond ((vectorp matcher) (dash--vector-tail matcher 2))
-        (t (cddr matcher))))
+                              (eq '&as (cadr matcher))
+                              (cons (car matcher) (cddr matcher))))))
 
 (defun dash--parse-arglist (args)
   "Parse ARGS, a normalized `-defun', ... arglist.
@@ -2172,14 +2163,9 @@ parsed arglist, since it may contain uninterned symbols."
     (dolist (arg args)
       (unless (symbolp arg)
         (push
-         (cond
-          ;; Optimize &as bindings: the variable before &as becomes the
-          ;; parameter name. This way, less variables need to be bound, reducing
-          ;; bytecode size (especially with dynamic binding).
-          ((dash--as-matcher? arg)
-           (cons (dash--as-matcher-variable arg) (dash--as-matcher-tail arg)))
-          (t (prog1 (cons (make-symbol (format "input%d" i)) arg)
-               (setq i (1+ i)))))
+         (or (dash--as-matcher? arg)
+             (prog1 (cons (make-symbol (format "input%d" i)) arg)
+               (setq i (1+ i))))
          result)))
     (nreverse result)))
 

@@ -2188,7 +2188,7 @@ signature line."
       docstring
     (format "%s\n\n%S" (or docstring "") (cons 'fn arglist))))
 
-(defun dash--destructure-body (arglist parsed-arglist body-forms &optional doc declare?)
+(defun dash--destructure-body (parsed-arglist body-forms &optional arglist declare?)
   "Destructure function ARGLIST using `-let'.
 The result is a list of body forms (including optional docstring
 and declarations) that does the destructuring and executes
@@ -2212,7 +2212,7 @@ PARSED-ARGLIST shall be the result of a call to
      (if let-bindings
          ;; If there is a docstring, add signature hints in any case; otherwise,
          ;; only generate an empty signature docstring if DOC allows it.
-         (when (or docstring? doc)
+         (when (or docstring? arglist)
            (list (dash--docstring-add-signature docstring? arglist)))
        ;; If the arglist doesn't make use of dash's features, just reuse the
        ;; docstring directly, because signature hints aren't necessary.
@@ -2251,7 +2251,7 @@ additional destructuring, this function behaves exactly like
   (let* ((match-form (dash--normalize-arglist match-form))
          (parsed-args (dash--parse-arglist match-form)))
     `(defun ,name ,(dash--destructure-arglist match-form parsed-args)
-       ,@(dash--destructure-body match-form parsed-args body t t))))
+       ,@(dash--destructure-body parsed-args body match-form t))))
 
 (defmacro -defmacro (name match-form &rest body)
   "Like `-defun', but define macro called NAME instead.
@@ -2271,7 +2271,7 @@ MATCH-FORM and BODY are the same.
   (let* ((match-form (dash--normalize-arglist match-form))
          (parsed-args (dash--parse-arglist match-form)))
     `(defmacro ,name ,(dash--destructure-arglist match-form parsed-args)
-       ,@(dash--destructure-body match-form parsed-args body t t))))
+       ,@(dash--destructure-body parsed-args body match-form t))))
 
 (defmacro -lambda (match-form &rest body)
   "Return a lambda which destructures its input as MATCH-FORM and executes BODY.
@@ -2299,7 +2299,7 @@ See `-let' for the description of destructuring mechanism.
   (let* ((match-form (dash--normalize-arglist match-form))
          (parsed-args (dash--parse-arglist match-form)))
     `(lambda ,(dash--destructure-arglist match-form parsed-args)
-       ,@(dash--destructure-body match-form parsed-args body nil t))))
+       ,@(dash--destructure-body parsed-args body nil t))))
 
 (defmacro -setq (&rest forms)
   "Bind each MATCH-FORM to the value of its VAL.

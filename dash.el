@@ -2227,6 +2227,18 @@ If it is a vector, convert it to a single-matcher arglist."
    ((listp arglist) arglist)
    (:else (signal 'wrong-type-argument "match-form must be a vector or list"))))
 
+(defun dash--defun (wrapper name match-form body &optional doc?)
+  "Generate a `defun', ... form for `-defun', etc..
+WRAPPER is the definition form, e.g. `defun'. NAME is the name of
+the definition, or -1 if it should be omitted. MATCH-FORM is the
+original argument list and BODY the body. If DOC? is specified, a
+signature docstring is generated even if BODY itself has none."
+  (let* ((match-form (dash--normalize-arglist match-form))
+         (parsed-args (dash--parse-arglist match-form)))
+    `(,wrapper ,@(and (symbolp name) (list name))
+               ,(dash--destructure-arglist match-form parsed-args)
+               ,@(dash--destructure-body parsed-args body (and doc? match-form)))))
+
 (def-edebug-spec dash-lambda-list sexp)
 
 (defmacro -defun (name match-form &rest body)
@@ -2243,10 +2255,7 @@ additional destructuring, this function behaves exactly like
                            [&optional ("declare" &rest sexp)]
                            [&optional ("interactive" interactive)]
                            def-body)))
-  (let* ((match-form (dash--normalize-arglist match-form))
-         (parsed-args (dash--parse-arglist match-form)))
-    `(defun ,name ,(dash--destructure-arglist match-form parsed-args)
-       ,@(dash--destructure-body parsed-args body match-form))))
+  (dash--defun 'defun name match-form body t))
 
 (defmacro -defmacro (name match-form &rest body)
   "Like `-defun', but define macro called NAME instead.
@@ -2263,10 +2272,7 @@ MATCH-FORM and BODY are the same.
                            ;; (defmacro q (x) (interactive (list "X")) (message x))
                            ;; (command-execute (cdr (symbol-function 'q)))
                            def-body)))
-  (let* ((match-form (dash--normalize-arglist match-form))
-         (parsed-args (dash--parse-arglist match-form)))
-    `(defmacro ,name ,(dash--destructure-arglist match-form parsed-args)
-       ,@(dash--destructure-body parsed-args body match-form))))
+  (dash--defun 'defmacro name match-form body t))
 
 (defmacro -lambda (match-form &rest body)
   "Return a lambda which destructures its input as MATCH-FORM and executes BODY.
@@ -2291,10 +2297,7 @@ See `-let' for the description of destructuring mechanism.
            (debug (&define dash-lambda-list lambda-doc
                            [&optional ("interactive" interactive)]
                            def-body)))
-  (let* ((match-form (dash--normalize-arglist match-form))
-         (parsed-args (dash--parse-arglist match-form)))
-    `(lambda ,(dash--destructure-arglist match-form parsed-args)
-       ,@(dash--destructure-body parsed-args body nil))))
+  (dash--defun 'lambda -1 match-form body))
 
 (defmacro -setq (&rest forms)
   "Bind each MATCH-FORM to the value of its VAL.

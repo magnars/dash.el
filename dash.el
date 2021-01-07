@@ -2176,15 +2176,6 @@ Return a list (DOCSTRING? DECLS REALBODY)."
          (docstring? (and (stringp (car decls)) (pop decls))))
     (list docstring? decls body)))
 
-(defun dash--docstring-add-signature (docstring arglist)
-  "Add an ARGLIST signature to DOCSTRING.
-If DOCSTRING already has a signature line, do nothing and return
-it. If DOCSTRING is nil, make a docstring that only provides a
-signature line."
-  (if (and docstring (string-match-p "\n\n(fn .*)\\'" docstring))
-      docstring
-    (format "%s\n\n%S" (or docstring "") (cons 'fn arglist))))
-
 (defun dash--destructure-body (parsed-arglist body-forms &optional arglist)
   "Destructure function ARGLIST using `-let'.
 The result is a list of body forms (including optional docstring
@@ -2208,7 +2199,7 @@ PARSED-ARGLIST shall be the result of a call to
          ;; If there is a docstring, add signature hints in any case; otherwise,
          ;; only generate an empty signature docstring if DOC allows it.
          (when (or docstring? arglist)
-           (list (dash--docstring-add-signature docstring? arglist)))
+           (list (help-add-fundoc-usage docstring? arglist)))
        ;; If the arglist doesn't make use of dash's features, just reuse the
        ;; docstring directly, because signature hints aren't necessary.
        (and docstring? (list docstring?)))

@@ -354,73 +354,111 @@ new list."
     (-remove-at-indices '(2 3) '((0) (1) (2) (3) (4) (5) (6))) => '((0) (1) (4) (5) (6))))
 
 (def-example-group "Reductions"
-  "Functions reducing lists into single value."
+  "Functions reducing lists to a single value (which may also be a list)."
 
   (defexamples -reduce-from
-    (-reduce-from '- 10 '(1 2 3)) => 4
-    (-reduce-from (lambda (memo item) (format "(%s - %d)" memo item)) "10" '(1 2 3)) => "(((10 - 1) - 2) - 3)"
+    (-reduce-from #'- 10 '(1 2 3)) => 4
+    (-reduce-from #'list 10 '(1 2 3)) => '(((10 1) 2) 3)
     (--reduce-from (concat acc " " it) "START" '("a" "b" "c")) => "START a b c"
     (--reduce-from (- acc it) 10 '(1 2 3)) => 4
     (--reduce-from (- acc it) 10 '(1)) => 9
-    (--reduce-from (- acc it) 10 '()) => 10
-    (-reduce-from '- 7 '(1)) => 6
-    (-reduce-from '- 7 '()) => 7)
+    (--reduce-from (- acc it) 10 ()) => 10
+    (-reduce-from #'- 7 '(1)) => 6
+    (-reduce-from #'- 7 ()) => 7
+    (--reduce-from (list acc it-index) nil '(1 2 3)) => '(((nil 0) 1) 2)
+    (--reduce-from t nil '(1 2 3)) => t)
 
   (defexamples -reduce-r-from
-    (-reduce-r-from '- 10 '(1 2 3)) => -8
-    (-reduce-r-from (lambda (item memo) (format "(%d - %s)" item memo)) "10" '(1 2 3)) => "(1 - (2 - (3 - 10)))"
+    (-reduce-r-from #'- 10 '(1 2 3)) => -8
+    (-reduce-r-from #'list 10 '(1 2 3)) => '(1 (2 (3 10)))
     (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) => "a b c END"
     (--reduce-r-from (- it acc) 10 '(1 2 3)) => -8
     (--reduce-r-from (- it acc) 10 '(1)) => -9
-    (--reduce-r-from (- it acc) 10 '()) => 10
-    (-reduce-r-from '- 7 '(1)) => -6
-    (-reduce-r-from '- 7 '()) => 7)
+    (--reduce-r-from (- it acc) 10 ()) => 10
+    (-reduce-r-from #'- 7 '(1)) => -6
+    (-reduce-r-from #'- 7 ()) => 7
+    (--reduce-r-from (list acc it-index) nil '(1 2 3)) => '(((nil 2) 1) 0)
+    (--reduce-r-from t nil '(1 2 3)) => t)
 
   (defexamples -reduce
-    (-reduce '- '(1 2 3 4)) => -8
-    (-reduce 'list '(1 2 3 4)) => '(((1 2) 3) 4)
+    (-reduce #'- '(1 2 3 4)) => -8
+    (-reduce #'list '(1 2 3 4)) => '(((1 2) 3) 4)
     (--reduce (format "%s-%d" acc it) '(1 2 3)) => "1-2-3"
-    (-reduce '- '()) => 0
-    (-reduce '- '(1)) => 1
+    (-reduce #'- ()) => 0
+    (-reduce #'- '(1)) => 1
     (--reduce (- acc it) '(1)) => 1
-    (--reduce (format "%s-%s" acc it) '()) => "nil-nil")
+    (--reduce (list acc it) ()) => '(nil nil)
+    (--reduce t '(1 2)) => t
+    (-reduce #'vector ()) => []
+    (-reduce #'vector '(1)) => 1
+    (-reduce #'vector '(1 2)) => [1 2])
 
   (defexamples -reduce-r
-    (-reduce-r '- '(1 2 3 4)) => -2
-    (-reduce-r (lambda (item memo) (format "%s-%d" memo item)) '(1 2 3)) => "3-2-1"
+    (-reduce-r #'- '(1 2 3 4)) => -2
+    (-reduce-r #'list '(1 2 3 4)) => '(1 (2 (3 4)))
     (--reduce-r (format "%s-%d" acc it) '(1 2 3)) => "3-2-1"
-    (-reduce-r '+ '()) => 0
-    (-reduce-r '- '(1)) => 1
+    (-reduce-r #'+ ()) => 0
+    (-reduce-r #'- '(1)) => 1
     (--reduce (- it acc) '(1)) => 1
-    (--reduce-r (format "%s-%s" it acc) '()) => "nil-nil")
+    (--reduce-r (list it acc) ()) => '(nil nil)
+    (--reduce-r t '(1 2)) => t
+    (-reduce-r #'vector ()) => []
+    (-reduce-r #'vector '(1)) => 1
+    (-reduce-r #'vector '(1 2)) => [1 2])
 
   (defexamples -reductions-from
-    (-reductions-from (lambda (a i) (format "(%s FN %d)" a i)) "INIT" '(1 2 3 4)) => '("INIT" "(INIT FN 1)" "((INIT FN 1) FN 2)" "(((INIT FN 1) FN 2) FN 3)" "((((INIT FN 1) FN 2) FN 3) FN 4)")
-    (-reductions-from 'max 0 '(2 1 4 3)) => '(0 2 2 4 4)
-    (-reductions-from '* 1 '(1 2 3 4)) => '(1 1 2 6 24)
-    (-reductions-from '- 10 '(1)) => '(10 9)
-    (-reductions-from '- 10 ()) => '(10))
+    (-reductions-from #'max 0 '(2 1 4 3)) => '(0 2 2 4 4)
+    (-reductions-from #'* 1 '(1 2 3 4)) => '(1 1 2 6 24)
+    (--reductions-from (format "(FN %s %d)" acc it) "INIT" '(1 2 3))
+    => '("INIT" "(FN INIT 1)" "(FN (FN INIT 1) 2)" "(FN (FN (FN INIT 1) 2) 3)")
+    (-reductions-from #'- 10 '(1)) => '(10 9)
+    (-reductions-from #'- 10 ()) => '(10)
+    (--reductions-from (- acc it) 10 '(1)) => '(10 9)
+    (--reductions-from (- acc it) 10 ()) => '(10)
+    (--reductions-from t 10 '(1 2 3)) => '(10 t t t)
+    (--reductions-from (list acc it-index) nil '(1 2 3))
+    => '(nil (nil 0) ((nil 0) 1) (((nil 0) 1) 2)))
 
   (defexamples -reductions-r-from
-    (-reductions-r-from (lambda (i a) (format "(%d FN %s)" i a)) "INIT" '(1 2 3 4)) => '("(1 FN (2 FN (3 FN (4 FN INIT))))" "(2 FN (3 FN (4 FN INIT)))" "(3 FN (4 FN INIT))" "(4 FN INIT)" "INIT")
-    (-reductions-r-from 'max 0 '(2 1 4 3)) => '(4 4 4 3 0)
-    (-reductions-r-from '* 1 '(1 2 3 4)) => '(24 24 12 4 1)
-    (-reductions-r-from '- 10 '(1)) => '(-9 10)
-    (-reductions-r-from '- 10 ()) => '(10))
+    (-reductions-r-from #'max 0 '(2 1 4 3)) => '(4 4 4 3 0)
+    (-reductions-r-from #'* 1 '(1 2 3 4)) => '(24 24 12 4 1)
+    (--reductions-r-from (format "(FN %d %s)" it acc) "INIT" '(1 2 3))
+    => '("(FN 1 (FN 2 (FN 3 INIT)))" "(FN 2 (FN 3 INIT))" "(FN 3 INIT)" "INIT")
+    (-reductions-r-from #'- 10 '(1)) => '(-9 10)
+    (-reductions-r-from #'- 10 ()) => '(10)
+    (--reductions-r-from (- acc it) 10 '(1)) => '(9 10)
+    (--reductions-r-from (- acc it) 10 ()) => '(10)
+    (--reductions-r-from t 10 '(1 2 3)) => '(t t t 10)
+    (--reductions-r-from (list acc it-index) nil '(1 2 3))
+    => '((((nil 2) 1) 0) ((nil 2) 1) (nil 2) nil))
 
   (defexamples -reductions
-    (-reductions (lambda (a i) (format "(%s FN %d)" a i)) '(1 2 3 4)) => '(1 "(1 FN 2)" "((1 FN 2) FN 3)" "(((1 FN 2) FN 3) FN 4)")
-    (-reductions '+ '(1 2 3 4)) => '(1 3 6 10)
-    (-reductions '* '(1 2 3 4)) => '(1 2 6 24)
-    (-reductions '- '(1)) => '(1)
-    (-reductions '- ()) => ())
+    (-reductions #'+ '(1 2 3 4)) => '(1 3 6 10)
+    (-reductions #'* '(1 2 3 4)) => '(1 2 6 24)
+    (--reductions (format "(FN %s %d)" acc it) '(1 2 3))
+    => '(1 "(FN 1 2)" "(FN (FN 1 2) 3)")
+    (-reductions #'- '(1)) => '(1)
+    (-reductions #'- ()) => '(0)
+    (-reductions #'vector ()) => '([])
+    (-reductions #'vector '(1)) => '(1)
+    (-reductions #'vector '(1 2)) => '(1 [1 2])
+    (--reductions t '(1 2 3)) => '(1 t t)
+    (--reductions (list it acc) ()) => '((nil nil))
+    (--reductions (list it acc) '(1)) => '(1))
 
   (defexamples -reductions-r
-    (-reductions-r (lambda (i a) (format "(%d FN %s)" i a)) '(1 2 3 4)) => '("(1 FN (2 FN (3 FN 4)))" "(2 FN (3 FN 4))" "(3 FN 4)" 4)
-    (-reductions-r '+ '(1 2 3 4)) => '(10 9 7 4)
-    (-reductions-r '* '(1 2 3 4)) => '(24 24 12 4)
-    (-reductions-r '- '(1)) => '(1)
-    (-reductions-r '- ()) => ())
+    (-reductions-r #'+ '(1 2 3 4)) => '(10 9 7 4)
+    (-reductions-r #'* '(1 2 3 4)) => '(24 24 12 4)
+    (--reductions-r (format "(FN %d %s)" it acc) '(1 2 3))
+    => '("(FN 1 (FN 2 3))" "(FN 2 3)" 3)
+    (-reductions-r #'- '(1)) => '(1)
+    (-reductions-r #'- ()) => '(0)
+    (-reductions-r #'vector ()) => '([])
+    (-reductions-r #'vector '(1)) => '(1)
+    (-reductions-r #'vector '(1 2)) => '([1 2] 2)
+    (--reductions-r t '(1 2 3)) => '(t t 3)
+    (--reductions-r (list it acc) ()) => '((nil nil))
+    (--reductions-r (list it acc) '(1)) => '(1))
 
   (defexamples -count
     (-count 'even? '(1 2 3 4 5)) => 2

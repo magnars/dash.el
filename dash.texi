@@ -1117,29 +1117,27 @@ See also: @code{-remove-at} (@pxref{-remove-at}), @code{-remove} (@pxref{-remove
 @section Reductions
 
 
-Functions reducing lists into single value.
+Functions reducing lists to a single value (which may also be a list).
 
 
 @anchor{-reduce-from}
-@defun -reduce-from (fn initial-value list)
-Return the result of applying @var{fn} to @var{initial-value} and the
-first item in @var{list}, then applying @var{fn} to that result and the 2nd
-item, etc. If @var{list} contains no items, return @var{initial-value} and
-do not call @var{fn}.
+@defun -reduce-from (fn init list)
+Reduce the function @var{fn} across @var{list}, starting with @var{init}.
+Return the result of applying @var{fn} to @var{init} and the first element of
+@var{list}, then applying @var{fn} to that result and the second element,
+etc.  If @var{list} is empty, return @var{init} without calling @var{fn}.
 
-In the anaphoric form @code{--reduce-from}, the accumulated value is
-exposed as symbol @code{acc}.
-
-See also: @code{-reduce} (@pxref{-reduce}), @code{-reduce-r} (@pxref{-reduce-r})
+This function's anaphoric counterpart is @code{--reduce-from}.
+For other folds, see also @code{-reduce} (@pxref{-reduce}) and @code{-reduce-r} (@pxref{-reduce-r}).
 
 @example
 @group
-(-reduce-from '- 10 '(1 2 3))
+(-reduce-from #'- 10 '(1 2 3))
     @result{} 4
 @end group
 @group
-(-reduce-from (lambda (memo item) (format "(%s - %d)" memo item)) "10" '(1 2 3))
-    @result{} "(((10 - 1) - 2) - 3)"
+(-reduce-from #'list 10 '(1 2 3))
+    @result{} '(((10 1) 2) 3)
 @end group
 @group
 (--reduce-from (concat acc " " it) "START" '("a" "b" "c"))
@@ -1149,24 +1147,31 @@ See also: @code{-reduce} (@pxref{-reduce}), @code{-reduce-r} (@pxref{-reduce-r})
 @end defun
 
 @anchor{-reduce-r-from}
-@defun -reduce-r-from (fn initial-value list)
-Replace conses with @var{fn}, nil with @var{initial-value} and evaluate
-the resulting expression. If @var{list} is empty, @var{initial-value} is
-returned and @var{fn} is not called.
+@defun -reduce-r-from (fn init list)
+Reduce the function @var{fn} across @var{list} in reverse, starting with @var{init}.
+Return the result of applying @var{fn} to the last element of @var{list} and
+@var{init}, then applying @var{fn} to the second-to-last element and the
+previous result of @var{fn}, etc.  That is, the first argument of @var{fn} is
+the current element, and its second argument the accumulated
+value.  If @var{list} is empty, return @var{init} without calling @var{fn}.
 
-Note: this function works the same as @code{-reduce-from} (@pxref{-reduce-from}) but the
-operation associates from right instead of from left.
+This function is like @code{-reduce-from} (@pxref{-reduce-from}) but the operation associates
+from the right rather than left.  In other words, it starts from
+the end of @var{list} and flips the arguments to @var{fn}.  Conceptually, it
+is like replacing the conses in @var{list} with applications of @var{fn}, and
+its last link with @var{init}, and evaluating the resulting expression.
 
-See also: @code{-reduce-r} (@pxref{-reduce-r}), @code{-reduce} (@pxref{-reduce})
+This function's anaphoric counterpart is @code{--reduce-r-from}.
+For other folds, see also @code{-reduce-r} (@pxref{-reduce-r}) and @code{-reduce} (@pxref{-reduce}).
 
 @example
 @group
-(-reduce-r-from '- 10 '(1 2 3))
+(-reduce-r-from #'- 10 '(1 2 3))
     @result{} -8
 @end group
 @group
-(-reduce-r-from (lambda (item memo) (format "(%d - %s)" item memo)) "10" '(1 2 3))
-    @result{} "(1 - (2 - (3 - 10)))"
+(-reduce-r-from #'list 10 '(1 2 3))
+    @result{} '(1 (2 (3 10)))
 @end group
 @group
 (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c"))
@@ -1177,24 +1182,23 @@ See also: @code{-reduce-r} (@pxref{-reduce-r}), @code{-reduce} (@pxref{-reduce})
 
 @anchor{-reduce}
 @defun -reduce (fn list)
-Return the result of applying @var{fn} to the first 2 items in @var{list},
-then applying @var{fn} to that result and the 3rd item, etc. If @var{list}
-contains no items, return the result of calling @var{fn} with no
-arguments. If @var{list} contains a single item, return that item
-and do not call @var{fn}.
+Reduce the function @var{fn} across @var{list}.
+Return the result of applying @var{fn} to the first two elements of
+@var{list}, then applying @var{fn} to that result and the third element, etc.
+If @var{list} contains a single element, return it without calling @var{fn}.
+If @var{list} is empty, return the result of calling @var{fn} with no
+arguments.
 
-In the anaphoric form @code{--reduce}, the accumulated value is
-exposed as symbol @code{acc}.
-
-See also: @code{-reduce-from} (@pxref{-reduce-from}), @code{-reduce-r} (@pxref{-reduce-r})
+This function's anaphoric counterpart is @code{--reduce}.
+For other folds, see also @code{-reduce-from} (@pxref{-reduce-from}) and @code{-reduce-r} (@pxref{-reduce-r}).
 
 @example
 @group
-(-reduce '- '(1 2 3 4))
+(-reduce #'- '(1 2 3 4))
     @result{} -8
 @end group
 @group
-(-reduce 'list '(1 2 3 4))
+(-reduce #'list '(1 2 3 4))
     @result{} '(((1 2) 3) 4)
 @end group
 @group
@@ -1206,27 +1210,32 @@ See also: @code{-reduce-from} (@pxref{-reduce-from}), @code{-reduce-r} (@pxref{-
 
 @anchor{-reduce-r}
 @defun -reduce-r (fn list)
-Replace conses with @var{fn} and evaluate the resulting expression.
-The final nil is ignored. If @var{list} contains no items, return the
-result of calling @var{fn} with no arguments. If @var{list} contains a single
-item, return that item and do not call @var{fn}.
+Reduce the function @var{fn} across @var{list} in reverse.
+Return the result of applying @var{fn} to the last two elements of
+@var{list}, then applying @var{fn} to the third-to-last element and the
+previous result of @var{fn}, etc.  That is, the first argument of @var{fn} is
+the current element, and its second argument the accumulated
+value.  If @var{list} contains a single element, return it without
+calling @var{fn}.  If @var{list} is empty, return the result of calling @var{fn}
+with no arguments.
 
-The first argument of @var{fn} is the new item, the second is the
-accumulated value.
+This function is like @code{-reduce} (@pxref{-reduce}) but the operation associates from
+the right rather than left.  In other words, it starts from the
+end of @var{list} and flips the arguments to @var{fn}.  Conceptually, it is
+like replacing the conses in @var{list} with applications of @var{fn},
+ignoring its last link, and evaluating the resulting expression.
 
-Note: this function works the same as @code{-reduce} (@pxref{-reduce}) but the operation
-associates from right instead of from left.
-
-See also: @code{-reduce-r-from} (@pxref{-reduce-r-from}), @code{-reduce} (@pxref{-reduce})
+This function's anaphoric counterpart is @code{--reduce-r}.
+For other folds, see also @code{-reduce-r-from} (@pxref{-reduce-r-from}) and @code{-reduce} (@pxref{-reduce}).
 
 @example
 @group
-(-reduce-r '- '(1 2 3 4))
+(-reduce-r #'- '(1 2 3 4))
     @result{} -2
 @end group
 @group
-(-reduce-r (lambda (item memo) (format "%s-%d" memo item)) '(1 2 3))
-    @result{} "3-2-1"
+(-reduce-r #'list '(1 2 3 4))
+    @result{} '(1 (2 (3 4)))
 @end group
 @group
 (--reduce-r (format "%s-%d" acc it) '(1 2 3))
@@ -1237,96 +1246,99 @@ See also: @code{-reduce-r-from} (@pxref{-reduce-r-from}), @code{-reduce} (@pxref
 
 @anchor{-reductions-from}
 @defun -reductions-from (fn init list)
-Return a list of the intermediate values of the reduction.
-
-See @code{-reduce-from} (@pxref{-reduce-from}) for explanation of the arguments.
-
-See also: @code{-reductions} (@pxref{-reductions}), @code{-reductions-r} (@pxref{-reductions-r}), @code{-reduce-r} (@pxref{-reduce-r})
+Return a list of @var{fn}'s intermediate reductions across @var{list}.
+That is, a list of the intermediate values of the accumulator
+when @code{-reduce-from} (@pxref{-reduce-from}) (which see) is called with the same
+arguments.
+This function's anaphoric counterpart is @code{--reductions-from}.
+For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-reductions-r} (@pxref{-reductions-r}).
 
 @example
 @group
-(-reductions-from (lambda (a i) (format "(%s FN %d)" a i)) "INIT" '(1 2 3 4))
-    @result{} '("INIT" "(INIT FN 1)" "((INIT FN 1) FN 2)" "(((INIT FN 1) FN 2) FN 3)" "((((INIT FN 1) FN 2) FN 3) FN 4)")
-@end group
-@group
-(-reductions-from 'max 0 '(2 1 4 3))
+(-reductions-from #'max 0 '(2 1 4 3))
     @result{} '(0 2 2 4 4)
 @end group
 @group
-(-reductions-from '* 1 '(1 2 3 4))
+(-reductions-from #'* 1 '(1 2 3 4))
     @result{} '(1 1 2 6 24)
+@end group
+@group
+(--reductions-from (format "(FN %s %d)" acc it) "INIT" '(1 2 3))
+    @result{} '("INIT" "(FN INIT 1)" "(FN (FN INIT 1) 2)" "(FN (FN (FN INIT 1) 2) 3)")
 @end group
 @end example
 @end defun
 
 @anchor{-reductions-r-from}
 @defun -reductions-r-from (fn init list)
-Return a list of the intermediate values of the reduction.
-
-See @code{-reduce-r-from} (@pxref{-reduce-r-from}) for explanation of the arguments.
-
-See also: @code{-reductions-r} (@pxref{-reductions-r}), @code{-reductions} (@pxref{-reductions}), @code{-reduce} (@pxref{-reduce})
+Return a list of @var{fn}'s intermediate reductions across reversed @var{list}.
+That is, a list of the intermediate values of the accumulator
+when @code{-reduce-r-from} (@pxref{-reduce-r-from}) (which see) is called with the same
+arguments.
+This function's anaphoric counterpart is @code{--reductions-r-from}.
+For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-reductions-r} (@pxref{-reductions-r}).
 
 @example
 @group
-(-reductions-r-from (lambda (i a) (format "(%d FN %s)" i a)) "INIT" '(1 2 3 4))
-    @result{} '("(1 FN (2 FN (3 FN (4 FN INIT))))" "(2 FN (3 FN (4 FN INIT)))" "(3 FN (4 FN INIT))" "(4 FN INIT)" "INIT")
-@end group
-@group
-(-reductions-r-from 'max 0 '(2 1 4 3))
+(-reductions-r-from #'max 0 '(2 1 4 3))
     @result{} '(4 4 4 3 0)
 @end group
 @group
-(-reductions-r-from '* 1 '(1 2 3 4))
+(-reductions-r-from #'* 1 '(1 2 3 4))
     @result{} '(24 24 12 4 1)
+@end group
+@group
+(--reductions-r-from (format "(FN %d %s)" it acc) "INIT" '(1 2 3))
+    @result{} '("(FN 1 (FN 2 (FN 3 INIT)))" "(FN 2 (FN 3 INIT))" "(FN 3 INIT)" "INIT")
 @end group
 @end example
 @end defun
 
 @anchor{-reductions}
 @defun -reductions (fn list)
-Return a list of the intermediate values of the reduction.
-
-See @code{-reduce} (@pxref{-reduce}) for explanation of the arguments.
-
-See also: @code{-reductions-from} (@pxref{-reductions-from}), @code{-reductions-r} (@pxref{-reductions-r}), @code{-reduce-r} (@pxref{-reduce-r})
+Return a list of @var{fn}'s intermediate reductions across @var{list}.
+That is, a list of the intermediate values of the accumulator
+when @code{-reduce} (@pxref{-reduce}) (which see) is called with the same arguments.
+This function's anaphoric counterpart is @code{--reductions}.
+For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-reductions-r} (@pxref{-reductions-r}).
 
 @example
 @group
-(-reductions (lambda (a i) (format "(%s FN %d)" a i)) '(1 2 3 4))
-    @result{} '(1 "(1 FN 2)" "((1 FN 2) FN 3)" "(((1 FN 2) FN 3) FN 4)")
-@end group
-@group
-(-reductions '+ '(1 2 3 4))
+(-reductions #'+ '(1 2 3 4))
     @result{} '(1 3 6 10)
 @end group
 @group
-(-reductions '* '(1 2 3 4))
+(-reductions #'* '(1 2 3 4))
     @result{} '(1 2 6 24)
+@end group
+@group
+(--reductions (format "(FN %s %d)" acc it) '(1 2 3))
+    @result{} '(1 "(FN 1 2)" "(FN (FN 1 2) 3)")
 @end group
 @end example
 @end defun
 
 @anchor{-reductions-r}
 @defun -reductions-r (fn list)
-Return a list of the intermediate values of the reduction.
-
-See @code{-reduce-r} (@pxref{-reduce-r}) for explanation of the arguments.
-
-See also: @code{-reductions-r-from} (@pxref{-reductions-r-from}), @code{-reductions} (@pxref{-reductions}), @code{-reduce} (@pxref{-reduce})
+Return a list of @var{fn}'s intermediate reductions across reversed @var{list}.
+That is, a list of the intermediate values of the accumulator
+when @code{-reduce-r} (@pxref{-reduce-r}) (which see) is called with the same arguments.
+This function's anaphoric counterpart is @code{--reductions-r}.
+For other folds, see also @code{-reductions-r-from} (@pxref{-reductions-r-from}) and
+@code{-reductions} (@pxref{-reductions}).
 
 @example
 @group
-(-reductions-r (lambda (i a) (format "(%d FN %s)" i a)) '(1 2 3 4))
-    @result{} '("(1 FN (2 FN (3 FN 4)))" "(2 FN (3 FN 4))" "(3 FN 4)" 4)
-@end group
-@group
-(-reductions-r '+ '(1 2 3 4))
+(-reductions-r #'+ '(1 2 3 4))
     @result{} '(10 9 7 4)
 @end group
 @group
-(-reductions-r '* '(1 2 3 4))
+(-reductions-r #'* '(1 2 3 4))
     @result{} '(24 24 12 4)
+@end group
+@group
+(--reductions-r (format "(FN %d %s)" it acc) '(1 2 3))
+    @result{} '("(FN 1 (FN 2 3))" "(FN 2 3)" 3)
 @end group
 @end example
 @end defun

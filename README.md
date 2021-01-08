@@ -291,7 +291,7 @@ Other list functions not fit to be classified elsewhere.
 * [-last-item](#-last-item-list) `(list)`
 * [-butlast](#-butlast-list) `(list)`
 * [-sort](#-sort-comparator-list) `(comparator list)`
-* [-list](#-list-rest-args) `(&rest args)`
+* [-list](#-list-optional-arg-rest-args) `(&optional arg &rest args)`
 * [-fix](#-fix-fn-list) `(fn list)`
 
 ### Tree operations
@@ -2094,15 +2094,20 @@ if the first element should sort before the second.
 (--sort (< it other) '(3 1 2)) ;; => '(1 2 3)
 ```
 
-#### -list `(&rest args)`
+#### -list `(&optional arg &rest args)`
 
-Return a list based on `args`.
-If the first item of `args` is already a list, simply return it.
-Otherwise, return a list with `args` as elements.
+Ensure `arg` is a list.
+If `arg` is already a list, return it as is (not a copy).
+Otherwise, return a new list with `arg` as its only element.
+
+Another supported calling convention is (-list &rest `args`).
+In this case, if `arg` is not a list, a new list with all of
+`args` as elements is returned.  This use is supported for
+backward compatibility and is otherwise deprecated.
 
 ```el
 (-list 1) ;; => '(1)
-(-list 1 2 3) ;; => '(1 2 3)
+(-list nil) ;; => nil
 (-list '(1 2 3)) ;; => '(1 2 3)
 ```
 

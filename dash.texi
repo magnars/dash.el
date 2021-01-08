@@ -3202,10 +3202,15 @@ if the first element should sort before the second.
 @end defun
 
 @anchor{-list}
-@defun -list (&rest args)
-Return a list based on @var{args}.
-If the first item of @var{args} is already a list, simply return it.
-Otherwise, return a list with @var{args} as elements.
+@defun -list (&optional arg &rest args)
+Ensure @var{arg} is a list.
+If @var{arg} is already a list, return it as is (not a copy).
+Otherwise, return a new list with @var{arg} as its only element.
+
+Another supported calling convention is (-list &rest @var{args}).
+In this case, if @var{arg} is not a list, a new list with all of
+@var{args} as elements is returned.  This use is supported for
+backward compatibility and is otherwise deprecated.
 
 @example
 @group
@@ -3213,8 +3218,8 @@ Otherwise, return a list with @var{args} as elements.
     @result{} '(1)
 @end group
 @group
-(-list 1 2 3)
-    @result{} '(1 2 3)
+(-list nil)
+    @result{} nil
 @end group
 @group
 (-list '(1 2 3))

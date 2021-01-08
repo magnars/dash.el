@@ -1009,12 +1009,17 @@ value rather than consuming a list to produce a single value."
 
   (defexamples -list
     (-list 1) => '(1)
-    (-list 1 2 3) => '(1 2 3)
+    (-list ()) => ()
     (-list '(1 2 3)) => '(1 2 3)
+    (-list 1 2 3) => '(1 2 3)
+    (let ((l (list 1 2))) (setcar (-list l) 3) l) => '(3 2)
+    (let ((l (list 1 2))) (setcar (apply #'-list l) 3) l) => '(1 2)
     (-list '((1) (2))) => '((1) (2))
     (-list) => ()
-    (-list ()) => ()
     (-list () 1) => ()
+    (-list () ()) => ()
+    (-list 1 ()) => '(1 ())
+    (-list 1 '(2)) => '(1 (2))
     (-list '(())) => '(())
     (-list '(() 1)) => '(() 1))
 

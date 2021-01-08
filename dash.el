@@ -2618,12 +2618,18 @@ if the first element should sort before the second."
   (declare (debug (form form)))
   `(-sort (lambda (it other) ,form) ,list))
 
-(defun -list (&rest args)
-  "Return a list based on ARGS.
-If the first item of ARGS is already a list, simply return it.
-Otherwise, return a list with ARGS as elements."
-  (declare (pure t) (side-effect-free t))
-  (if (listp (car args)) (car args) args))
+(defun -list (&optional arg &rest args)
+  "Ensure ARG is a list.
+If ARG is already a list, return it as is (not a copy).
+Otherwise, return a new list with ARG as its only element.
+
+Another supported calling convention is (-list &rest ARGS).
+In this case, if ARG is not a list, a new list with all of
+ARGS as elements is returned.  This use is supported for
+backward compatibility and is otherwise deprecated."
+  (declare (advertised-calling-convention (arg) "2.18.0")
+           (pure t) (side-effect-free t))
+  (if (listp arg) arg (cons arg args)))
 
 (defun -repeat (n x)
   "Return a new list of length N with each element being X.

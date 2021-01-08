@@ -58,6 +58,21 @@ either interactively or from your `user-init-file`:
 (global-dash-fontify-mode)
 ```
 
+## Info symbol lookup
+
+While editing Elisp files, you can use `C-h S` (`info-lookup-symbol`)
+to look up Elisp symbols in the relevant Info manuals (see [`(emacs)
+Info
+Lookup`](https://gnu.org/software/emacs/manual/html_node/emacs/Info-Lookup.html)).
+To enable the same for Dash symbols, use the command
+`dash-register-info-lookup`.  It can be called directly when needed,
+or automatically from your `user-init-file`.  For example:
+
+```el
+(with-eval-after-load 'info-look
+  (dash-register-info-lookup))
+```
+
 ## Functions
 
 All functions and constructs in the library use a dash (`-`) prefix.

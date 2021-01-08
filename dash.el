@@ -715,12 +715,17 @@ See also: `-splice', `-insert-at'"
 
 (defun -cons* (&rest args)
   "Make a new list from the elements of ARGS.
-
-The last 2 members of ARGS are used as the final cons of the
-result so if the final member of ARGS is not a list the result is
-a dotted list."
+The last 2 elements of ARGS are used as the final cons of the
+result, so if the final element of ARGS is not a list, the result
+is a dotted list.  With no ARGS, return nil."
   (declare (pure t) (side-effect-free t))
-  (-reduce-r 'cons args))
+  (let* ((len (length args))
+         (tail (nthcdr (- len 2) args))
+         (last (cdr tail)))
+    (if (null last)
+        (car args)
+      (setcdr tail (car last))
+      args)))
 
 (defun -snoc (list elem &rest elements)
   "Append ELEM to the end of the list.

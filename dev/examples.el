@@ -823,7 +823,11 @@ value rather than consuming a list to produce a single value."
     (-cons* 1 2 3) => '(1 2 . 3)
     (-cons* 1) => 1
     (-cons* 1 2 3 4) => '(1 2 3 . 4)
-    (apply '-cons* (number-sequence 1 10)) => '(1 2 3 4 5 6 7 8 9 . 10))
+    (apply #'-cons* (number-sequence 1 10)) => '(1 2 3 4 5 6 7 8 9 . 10)
+    (-cons*) => ()
+    (-cons* ()) => ()
+    (-cons* 1 ()) => '(1)
+    (-cons* 1 '(2)) => '(1 2))
 
   (defexamples -snoc
     (-snoc '(1 2 3) 4) => '(1 2 3 4)

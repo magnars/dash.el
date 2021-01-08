@@ -1714,10 +1714,9 @@ Return nil if `n` is less than 1.
 #### -cons* `(&rest args)`
 
 Make a new list from the elements of `args`.
-
-The last 2 members of `args` are used as the final cons of the
-result so if the final member of `args` is not a list the result is
-a dotted list.
+The last 2 elements of `args` are used as the final cons of the
+result, so if the final element of `args` is not a list, the result
+is a dotted list.  With no `args`, return nil.
 
 ```el
 (-cons* 1 2) ;; => '(1 . 2)

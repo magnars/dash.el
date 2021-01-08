@@ -2574,10 +2574,9 @@ Return nil if @var{n} is less than 1.
 @anchor{-cons*}
 @defun -cons* (&rest args)
 Make a new list from the elements of @var{args}.
-
-The last 2 members of @var{args} are used as the final cons of the
-result so if the final member of @var{args} is not a list the result is
-a dotted list.
+The last 2 elements of @var{args} are used as the final cons of the
+result, so if the final element of @var{args} is not a list, the result
+is a dotted list.  With no @var{args}, return nil.
 
 @example
 @group

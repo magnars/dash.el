@@ -151,10 +151,10 @@ Functions returning a modified copy of the input list.
 ### Reductions
 
 
-Functions reducing lists into single value.
+Functions reducing lists to a single value (which may also be a list).
 
-* [-reduce-from](#-reduce-from-fn-initial-value-list) `(fn initial-value list)`
-* [-reduce-r-from](#-reduce-r-from-fn-initial-value-list) `(fn initial-value list)`
+* [-reduce-from](#-reduce-from-fn-init-list) `(fn init list)`
+* [-reduce-r-from](#-reduce-r-from-fn-init-list) `(fn init list)`
 * [-reduce](#-reduce-fn-list) `(fn list)`
 * [-reduce-r](#-reduce-r-fn-list) `(fn list)`
 * [-reductions-from](#-reductions-from-fn-init-list) `(fn init list)`
@@ -884,137 +884,149 @@ See also: [`-remove-at`](#-remove-at-n-list), [`-remove`](#-remove-pred-list)
 ## Reductions
 
 
-Functions reducing lists into single value.
+Functions reducing lists to a single value (which may also be a list).
 
-#### -reduce-from `(fn initial-value list)`
+#### -reduce-from `(fn init list)`
 
-Return the result of applying `fn` to `initial-value` and the
-first item in `list`, then applying `fn` to that result and the 2nd
-item, etc. If `list` contains no items, return `initial-value` and
-do not call `fn`.
+Reduce the function `fn` across `list`, starting with `init`.
+Return the result of applying `fn` to `init` and the first element of
+`list`, then applying `fn` to that result and the second element,
+etc.  If `list` is empty, return `init` without calling `fn`.
 
-In the anaphoric form `--reduce-from`, the accumulated value is
-exposed as symbol `acc`.
-
-See also: [`-reduce`](#-reduce-fn-list), [`-reduce-r`](#-reduce-r-fn-list)
+This function's anaphoric counterpart is `--reduce-from`.
+For other folds, see also [`-reduce`](#-reduce-fn-list) and [`-reduce-r`](#-reduce-r-fn-list).
 
 ```el
-(-reduce-from '- 10 '(1 2 3)) ;; => 4
-(-reduce-from (lambda (memo item) (format "(%s - %d)" memo item)) "10" '(1 2 3)) ;; => "(((10 - 1) - 2) - 3)"
+(-reduce-from #'- 10 '(1 2 3)) ;; => 4
+(-reduce-from #'list 10 '(1 2 3)) ;; => '(((10 1) 2) 3)
 (--reduce-from (concat acc " " it) "START" '("a" "b" "c")) ;; => "START a b c"
 ```
 
-#### -reduce-r-from `(fn initial-value list)`
+#### -reduce-r-from `(fn init list)`
 
-Replace conses with `fn`, nil with `initial-value` and evaluate
-the resulting expression. If `list` is empty, `initial-value` is
-returned and `fn` is not called.
+Reduce the function `fn` across `list` in reverse, starting with `init`.
+Return the result of applying `fn` to the last element of `list` and
+`init`, then applying `fn` to the second-to-last element and the
+previous result of `fn`, etc.  That is, the first argument of `fn` is
+the current element, and its second argument the accumulated
+value.  If `list` is empty, return `init` without calling `fn`.
 
-Note: this function works the same as [`-reduce-from`](#-reduce-from-fn-initial-value-list) but the
-operation associates from right instead of from left.
+This function is like [`-reduce-from`](#-reduce-from-fn-init-list) but the operation associates
+from the right rather than left.  In other words, it starts from
+the end of `list` and flips the arguments to `fn`.  Conceptually, it
+is like replacing the conses in `list` with applications of `fn`, and
+its last link with `init`, and evaluating the resulting expression.
 
-See also: [`-reduce-r`](#-reduce-r-fn-list), [`-reduce`](#-reduce-fn-list)
+This function's anaphoric counterpart is `--reduce-r-from`.
+For other folds, see also [`-reduce-r`](#-reduce-r-fn-list) and [`-reduce`](#-reduce-fn-list).
 
 ```el
-(-reduce-r-from '- 10 '(1 2 3)) ;; => -8
-(-reduce-r-from (lambda (item memo) (format "(%d - %s)" item memo)) "10" '(1 2 3)) ;; => "(1 - (2 - (3 - 10)))"
+(-reduce-r-from #'- 10 '(1 2 3)) ;; => -8
+(-reduce-r-from #'list 10 '(1 2 3)) ;; => '(1 (2 (3 10)))
 (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) ;; => "a b c END"
 ```
 
 #### -reduce `(fn list)`
 
-Return the result of applying `fn` to the first 2 items in `list`,
-then applying `fn` to that result and the 3rd item, etc. If `list`
-contains no items, return the result of calling `fn` with no
-arguments. If `list` contains a single item, return that item
-and do not call `fn`.
+Reduce the function `fn` across `list`.
+Return the result of applying `fn` to the first two elements of
+`list`, then applying `fn` to that result and the third element, etc.
+If `list` contains a single element, return it without calling `fn`.
+If `list` is empty, return the result of calling `fn` with no
+arguments.
 
-In the anaphoric form `--reduce`, the accumulated value is
-exposed as symbol `acc`.
-
-See also: [`-reduce-from`](#-reduce-from-fn-initial-value-list), [`-reduce-r`](#-reduce-r-fn-list)
+This function's anaphoric counterpart is `--reduce`.
+For other folds, see also [`-reduce-from`](#-reduce-from-fn-init-list) and [`-reduce-r`](#-reduce-r-fn-list).
 
 ```el
-(-reduce '- '(1 2 3 4)) ;; => -8
-(-reduce 'list '(1 2 3 4)) ;; => '(((1 2) 3) 4)
+(-reduce #'- '(1 2 3 4)) ;; => -8
+(-reduce #'list '(1 2 3 4)) ;; => '(((1 2) 3) 4)
 (--reduce (format "%s-%d" acc it) '(1 2 3)) ;; => "1-2-3"
 ```
 
 #### -reduce-r `(fn list)`
 
-Replace conses with `fn` and evaluate the resulting expression.
-The final nil is ignored. If `list` contains no items, return the
-result of calling `fn` with no arguments. If `list` contains a single
-item, return that item and do not call `fn`.
+Reduce the function `fn` across `list` in reverse.
+Return the result of applying `fn` to the last two elements of
+`list`, then applying `fn` to the third-to-last element and the
+previous result of `fn`, etc.  That is, the first argument of `fn` is
+the current element, and its second argument the accumulated
+value.  If `list` contains a single element, return it without
+calling `fn`.  If `list` is empty, return the result of calling `fn`
+with no arguments.
 
-The first argument of `fn` is the new item, the second is the
-accumulated value.
+This function is like [`-reduce`](#-reduce-fn-list) but the operation associates from
+the right rather than left.  In other words, it starts from the
+end of `list` and flips the arguments to `fn`.  Conceptually, it is
+like replacing the conses in `list` with applications of `fn`,
+ignoring its last link, and evaluating the resulting expression.
 
-Note: this function works the same as [`-reduce`](#-reduce-fn-list) but the operation
-associates from right instead of from left.
-
-See also: [`-reduce-r-from`](#-reduce-r-from-fn-initial-value-list), [`-reduce`](#-reduce-fn-list)
+This function's anaphoric counterpart is `--reduce-r`.
+For other folds, see also [`-reduce-r-from`](#-reduce-r-from-fn-init-list) and [`-reduce`](#-reduce-fn-list).
 
 ```el
-(-reduce-r '- '(1 2 3 4)) ;; => -2
-(-reduce-r (lambda (item memo) (format "%s-%d" memo item)) '(1 2 3)) ;; => "3-2-1"
+(-reduce-r #'- '(1 2 3 4)) ;; => -2
+(-reduce-r #'list '(1 2 3 4)) ;; => '(1 (2 (3 4)))
 (--reduce-r (format "%s-%d" acc it) '(1 2 3)) ;; => "3-2-1"
 ```
 
 #### -reductions-from `(fn init list)`
 
-Return a list of the intermediate values of the reduction.
-
-See [`-reduce-from`](#-reduce-from-fn-initial-value-list) for explanation of the arguments.
-
-See also: [`-reductions`](#-reductions-fn-list), [`-reductions-r`](#-reductions-r-fn-list), [`-reduce-r`](#-reduce-r-fn-list)
+Return a list of `fn``s intermediate reductions across `list`.
+That is, a list of the intermediate values of the accumulator
+when [`-reduce-from`](#-reduce-from-fn-init-list) (which see) is called with the same
+arguments.
+This function's anaphoric counterpart is `--reductions-from`.
+For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reductions-r`](#-reductions-r-fn-list).
 
 ```el
-(-reductions-from (lambda (a i) (format "(%s FN %d)" a i)) "INIT" '(1 2 3 4)) ;; => '("INIT" "(INIT FN 1)" "((INIT FN 1) FN 2)" "(((INIT FN 1) FN 2) FN 3)" "((((INIT FN 1) FN 2) FN 3) FN 4)")
-(-reductions-from 'max 0 '(2 1 4 3)) ;; => '(0 2 2 4 4)
-(-reductions-from '* 1 '(1 2 3 4)) ;; => '(1 1 2 6 24)
+(-reductions-from #'max 0 '(2 1 4 3)) ;; => '(0 2 2 4 4)
+(-reductions-from #'* 1 '(1 2 3 4)) ;; => '(1 1 2 6 24)
+(--reductions-from (format "(FN %s %d)" acc it) "INIT" '(1 2 3)) ;; => '("INIT" "(FN INIT 1)" "(FN (FN INIT 1) 2)" "(FN (FN (FN INIT 1) 2) 3)")
 ```
 
 #### -reductions-r-from `(fn init list)`
 
-Return a list of the intermediate values of the reduction.
-
-See [`-reduce-r-from`](#-reduce-r-from-fn-initial-value-list) for explanation of the arguments.
-
-See also: [`-reductions-r`](#-reductions-r-fn-list), [`-reductions`](#-reductions-fn-list), [`-reduce`](#-reduce-fn-list)
+Return a list of `fn``s intermediate reductions across reversed `list`.
+That is, a list of the intermediate values of the accumulator
+when [`-reduce-r-from`](#-reduce-r-from-fn-init-list) (which see) is called with the same
+arguments.
+This function's anaphoric counterpart is `--reductions-r-from`.
+For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reductions-r`](#-reductions-r-fn-list).
 
 ```el
-(-reductions-r-from (lambda (i a) (format "(%d FN %s)" i a)) "INIT" '(1 2 3 4)) ;; => '("(1 FN (2 FN (3 FN (4 FN INIT))))" "(2 FN (3 FN (4 FN INIT)))" "(3 FN (4 FN INIT))" "(4 FN INIT)" "INIT")
-(-reductions-r-from 'max 0 '(2 1 4 3)) ;; => '(4 4 4 3 0)
-(-reductions-r-from '* 1 '(1 2 3 4)) ;; => '(24 24 12 4 1)
+(-reductions-r-from #'max 0 '(2 1 4 3)) ;; => '(4 4 4 3 0)
+(-reductions-r-from #'* 1 '(1 2 3 4)) ;; => '(24 24 12 4 1)
+(--reductions-r-from (format "(FN %d %s)" it acc) "INIT" '(1 2 3)) ;; => '("(FN 1 (FN 2 (FN 3 INIT)))" "(FN 2 (FN 3 INIT))" "(FN 3 INIT)" "INIT")
 ```
 
 #### -reductions `(fn list)`
 
-Return a list of the intermediate values of the reduction.
-
-See [`-reduce`](#-reduce-fn-list) for explanation of the arguments.
-
-See also: [`-reductions-from`](#-reductions-from-fn-init-list), [`-reductions-r`](#-reductions-r-fn-list), [`-reduce-r`](#-reduce-r-fn-list)
+Return a list of `fn``s intermediate reductions across `list`.
+That is, a list of the intermediate values of the accumulator
+when [`-reduce`](#-reduce-fn-list) (which see) is called with the same arguments.
+This function's anaphoric counterpart is `--reductions`.
+For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reductions-r`](#-reductions-r-fn-list).
 
 ```el
-(-reductions (lambda (a i) (format "(%s FN %d)" a i)) '(1 2 3 4)) ;; => '(1 "(1 FN 2)" "((1 FN 2) FN 3)" "(((1 FN 2) FN 3) FN 4)")
-(-reductions '+ '(1 2 3 4)) ;; => '(1 3 6 10)
-(-reductions '* '(1 2 3 4)) ;; => '(1 2 6 24)
+(-reductions #'+ '(1 2 3 4)) ;; => '(1 3 6 10)
+(-reductions #'* '(1 2 3 4)) ;; => '(1 2 6 24)
+(--reductions (format "(FN %s %d)" acc it) '(1 2 3)) ;; => '(1 "(FN 1 2)" "(FN (FN 1 2) 3)")
 ```
 
 #### -reductions-r `(fn list)`
 
-Return a list of the intermediate values of the reduction.
-
-See [`-reduce-r`](#-reduce-r-fn-list) for explanation of the arguments.
-
-See also: [`-reductions-r-from`](#-reductions-r-from-fn-init-list), [`-reductions`](#-reductions-fn-list), [`-reduce`](#-reduce-fn-list)
+Return a list of `fn``s intermediate reductions across reversed `list`.
+That is, a list of the intermediate values of the accumulator
+when [`-reduce-r`](#-reduce-r-fn-list) (which see) is called with the same arguments.
+This function's anaphoric counterpart is `--reductions-r`.
+For other folds, see also [`-reductions-r-from`](#-reductions-r-from-fn-init-list) and
+[`-reductions`](#-reductions-fn-list).
 
 ```el
-(-reductions-r (lambda (i a) (format "(%d FN %s)" i a)) '(1 2 3 4)) ;; => '("(1 FN (2 FN (3 FN 4)))" "(2 FN (3 FN 4))" "(3 FN 4)" 4)
-(-reductions-r '+ '(1 2 3 4)) ;; => '(10 9 7 4)
-(-reductions-r '* '(1 2 3 4)) ;; => '(24 24 12 4)
+(-reductions-r #'+ '(1 2 3 4)) ;; => '(10 9 7 4)
+(-reductions-r #'* '(1 2 3 4)) ;; => '(24 24 12 4)
+(--reductions-r (format "(FN %d %s)" it acc) '(1 2 3)) ;; => '("(FN 1 (FN 2 3))" "(FN 2 3)" 3)
 ```
 
 #### -count `(pred list)`
@@ -2142,7 +2154,7 @@ If elements of `tree` are lists themselves, apply `fn` recursively to
 elements of these nested lists.
 
 Then reduce the resulting lists using `folder` and initial value
-`init-value`. See [`-reduce-r-from`](#-reduce-r-from-fn-initial-value-list).
+`init-value`. See [`-reduce-r-from`](#-reduce-r-from-fn-init-list).
 
 This is the same as calling [`-tree-reduce`](#-tree-reduce-fn-tree) after [`-tree-map`](#-tree-map-fn-tree)
 but is twice as fast as it only traverse the structure once.
@@ -2160,7 +2172,7 @@ If elements of `tree` are lists themselves, apply `fn` recursively to
 elements of these nested lists.
 
 Then reduce the resulting lists using `folder` and initial value
-`init-value`. See [`-reduce-r-from`](#-reduce-r-from-fn-initial-value-list).
+`init-value`. See [`-reduce-r-from`](#-reduce-r-from-fn-init-list).
 
 This is the same as calling [`-tree-reduce-from`](#-tree-reduce-from-fn-init-value-tree) after [`-tree-map`](#-tree-map-fn-tree)
 but is twice as fast as it only traverse the structure once.

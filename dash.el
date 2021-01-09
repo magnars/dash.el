@@ -2699,6 +2699,23 @@ The items for the comparator form are exposed as \"it\" and \"other\"."
   (declare (debug (form form)))
   `(-min-by (lambda (it other) ,form) ,list))
 
+(defun -iota (count &optional start step)
+  "Return a list containing COUNT numbers.
+Starts from START and adds STEP each time.  The default START is
+zero, the default STEP is 1.
+This function takes its name from the corresponding primitive in
+the APL language."
+  (when (not (natnump count))
+    (signal 'wrong-type-argument (list #'natnump count)))
+  (or start (setq start 0))
+  (or step (setq step 1))
+  (if (zerop step) (make-list count start)
+    (let (result)
+      (while (<= 0 (setq count (1- count)))
+        (push start result)
+        (setq start (+ start step)))
+      (nreverse result))))
+
 (defun -fix (fn list)
   "Compute the (least) fixpoint of FN with initial input LIST.
 

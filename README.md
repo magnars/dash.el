@@ -1624,24 +1624,24 @@ predicate `pred`, in ascending order.
 
 #### -grade-up `(comparator list)`
 
-Grade elements of `list` using `comparator` relation, yielding a
-permutation vector such that applying this permutation to `list`
-sorts it in ascending order.
+Grade elements of `list` using `comparator` relation.
+This yields a permutation vector such that applying this
+permutation to `list` sorts it in ascending order.
 
 ```el
-(-grade-up '< '(3 1 4 2 1 3 3)) ;; => '(1 4 3 0 5 6 2)
-(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up '< l) l)) ;; => '(1 1 2 3 3 3 4)
+(-grade-up #'< '(3 1 4 2 1 3 3)) ;; => '(1 4 3 0 5 6 2)
+(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up #'< l) l)) ;; => '(1 1 2 3 3 3 4)
 ```
 
 #### -grade-down `(comparator list)`
 
-Grade elements of `list` using `comparator` relation, yielding a
-permutation vector such that applying this permutation to `list`
-sorts it in descending order.
+Grade elements of `list` using `comparator` relation.
+This yields a permutation vector such that applying this
+permutation to `list` sorts it in descending order.
 
 ```el
-(-grade-down '< '(3 1 4 2 1 3 3)) ;; => '(2 0 5 6 3 1 4)
-(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down '< l) l)) ;; => '(4 3 3 3 2 1 1)
+(-grade-down #'< '(3 1 4 2 1 3 3)) ;; => '(2 0 5 6 3 1 4)
+(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down #'< l) l)) ;; => '(4 3 3 3 2 1 1)
 ```
 
 

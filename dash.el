@@ -1755,24 +1755,20 @@ Note: `it' need not be used in each form."
      it))
 
 (defun -grade-up (comparator list)
-  "Grade elements of LIST using COMPARATOR relation, yielding a
-permutation vector such that applying this permutation to LIST
-sorts it in ascending order."
-  ;; ugly hack to "fix" lack of lexical scope
-  (let ((comp `(lambda (it other) (funcall ',comparator (car it) (car other)))))
-    (->> (--map-indexed (cons it it-index) list)
-         (-sort comp)
-         (-map 'cdr))))
+  "Grade elements of LIST using COMPARATOR relation.
+This yields a permutation vector such that applying this
+permutation to LIST sorts it in ascending order."
+  (->> (--map-indexed (cons it it-index) list)
+       (-sort (lambda (it other) (funcall comparator (car it) (car other))))
+       (mapcar #'cdr)))
 
 (defun -grade-down (comparator list)
-  "Grade elements of LIST using COMPARATOR relation, yielding a
-permutation vector such that applying this permutation to LIST
-sorts it in descending order."
-  ;; ugly hack to "fix" lack of lexical scope
-  (let ((comp `(lambda (it other) (funcall ',comparator (car other) (car it)))))
-    (->> (--map-indexed (cons it it-index) list)
-         (-sort comp)
-         (-map 'cdr))))
+  "Grade elements of LIST using COMPARATOR relation.
+This yields a permutation vector such that applying this
+permutation to LIST sorts it in descending order."
+  (->> (--map-indexed (cons it it-index) list)
+       (-sort (lambda (it other) (funcall comparator (car other) (car it))))
+       (mapcar #'cdr)))
 
 (defvar dash--source-counter 0
   "Monotonic counter for generated symbols.")

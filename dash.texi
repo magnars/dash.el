@@ -2710,6 +2710,30 @@ Return a new list of the first item in each list, then the second etc.
 @end example
 @end defun
 
+@anchor{-iota}
+@defun -iota (count &optional start step)
+Return a list containing @var{count} numbers.
+Starts from @var{start} and adds @var{step} each time.  The default @var{start} is
+zero, the default @var{step} is 1.
+This function takes its name from the corresponding primitive in
+the @var{apl} language.
+
+@example
+@group
+(-iota 6)
+    @result{} '(0 1 2 3 4 5)
+@end group
+@group
+(-iota 4 2.5 -2)
+    @result{} '(2.5 0.5 -1.5 -3.5)
+@end group
+@group
+(-iota -1)
+    @result{} wrong-type-argument
+@end group
+@end example
+@end defun
+
 @anchor{-zip-with}
 @defun -zip-with (fn list1 list2)
 Zip the two lists @var{list1} and @var{list2} using a function @var{fn}.  This

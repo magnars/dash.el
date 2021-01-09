@@ -270,6 +270,7 @@ Other list functions not fit to be classified elsewhere.
 * [-snoc](#-snoc-list-elem-rest-elements) `(list elem &rest elements)`
 * [-interpose](#-interpose-sep-list) `(sep list)`
 * [-interleave](#-interleave-rest-lists) `(&rest lists)`
+* [-iota](#-iota-count-optional-start-step) `(count &optional start step)`
 * [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
 * [-zip](#-zip-rest-lists) `(&rest lists)`
 * [-zip-lists](#-zip-lists-rest-lists) `(&rest lists)`
@@ -1792,6 +1793,20 @@ Return a new list of the first item in each list, then the second etc.
 (-interleave '(1 2) '("a" "b")) ;; => '(1 "a" 2 "b")
 (-interleave '(1 2) '("a" "b") '("A" "B")) ;; => '(1 "a" "A" 2 "b" "B")
 (-interleave '(1 2 3) '("a" "b")) ;; => '(1 "a" 2 "b")
+```
+
+#### -iota `(count &optional start step)`
+
+Return a list containing `count` numbers.
+Starts from `start` and adds `step` each time.  The default `start` is
+zero, the default `step` is 1.
+This function takes its name from the corresponding primitive in
+the `apl` language.
+
+```el
+(-iota 6) ;; => '(0 1 2 3 4 5)
+(-iota 4 2.5 -2) ;; => '(2.5 0.5 -1.5 -3.5)
+(-iota -1) ;; Error
 ```
 
 #### -zip-with `(fn list1 list2)`

@@ -2705,7 +2705,7 @@ Starts from START and adds STEP each time.  The default START is
 zero, the default STEP is 1.
 This function takes its name from the corresponding primitive in
 the APL language."
-  (when (not (natnump count))
+  (unless (natnump count)
     (signal 'wrong-type-argument (list #'natnump count)))
   (or start (setq start 0))
   (or step (setq step 1))

@@ -882,7 +882,12 @@ value rather than consuming a list to produce a single value."
   (defexamples -iota
     (-iota 6) => '(0 1 2 3 4 5)
     (-iota 4 2.5 -2) => '(2.5 0.5 -1.5 -3.5)
-    (-iota -1) !!> wrong-type-argument)
+    (-iota -1) !!> wrong-type-argument
+    (-iota 0) => ()
+    (-iota 0 nil 0) => ()
+    (-iota 1 nil 0) => '(0)
+    (-iota 1) => '(0)
+    (-iota 1 nil -1) => '(0))
 
   (defexamples -zip-with
     (-zip-with '+ '(1 2 3) '(4 5 6)) => '(5 7 9)

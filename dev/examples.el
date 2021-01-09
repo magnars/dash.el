@@ -1403,6 +1403,19 @@ value rather than consuming a list to produce a single value."
     (funcall (-lambda (a b) (+ a b)) 1 2) => 3
     (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6)
 
+  (defexamples -defun
+    (progn
+      (-defun dash-plus ((x y))
+        (+ x y))
+
+      (dash-plus '(1 2))) => 3
+
+    (progn
+      (-defun a+b ((&plist :a a :b b))
+        (+ a b))
+
+      (a+b '(:a 1 :b 2))) => 3)
+
   (defexamples -setq
     (progn (-setq a 1) a) => 1
     (progn (-setq (a b) (list 1 2)) (list a b)) => '(1 2)

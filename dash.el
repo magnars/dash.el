@@ -860,9 +860,10 @@ See also: `-last-item'."
   "Counts the number of items in LIST where (PRED item) is non-nil."
   (--count (funcall pred it) list))
 
-(defun ---truthy? (val)
+(defun ---truthy? (obj)
+  "Return OBJ as a boolean value (t or nil)."
   (declare (pure t) (side-effect-free t))
-  (not (null val)))
+  (and obj t))
 
 (defmacro --any? (form list)
   "Anaphoric form of `-any?'."

@@ -210,6 +210,7 @@ value rather than consuming a list to produce a single value.
 * [-is-prefix?](#-is-prefix-prefix-list) `(prefix list)`
 * [-is-suffix?](#-is-suffix-suffix-list) `(suffix list)`
 * [-is-infix?](#-is-infix-infix-list) `(infix list)`
+* [-cons-pair?](#-cons-pair-obj) `(obj)`
 
 ### Partitioning
 
@@ -1343,6 +1344,18 @@ Alias: `-is-infix-p`
 (-is-infix? '(1 2 3) '(1 2 3 4 5)) ;; => t
 (-is-infix? '(2 3 4) '(1 2 3 4 5)) ;; => t
 (-is-infix? '(3 4 5) '(1 2 3 4 5)) ;; => t
+```
+
+#### -cons-pair? `(obj)`
+
+Return non-nil if `obj` is a true cons pair.
+That is, a cons (`a` . `b`) where `b` is not a list.
+Alias: `-cons-pair-p`.
+
+```el
+(-cons-pair? '(1 . 2)) ;; => t
+(-cons-pair? '(1 2)) ;; => nil
+(-cons-pair? '(1)) ;; => nil
 ```
 
 

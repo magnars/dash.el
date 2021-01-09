@@ -1903,6 +1903,28 @@ Alias: @code{-is-infix-p}
 @end example
 @end defun
 
+@anchor{-cons-pair?}
+@defun -cons-pair? (obj)
+Return non-nil if @var{obj} is a true cons pair.
+That is, a cons (@var{a} . @var{b}) where @var{b} is not a list.
+Alias: @code{-cons-pair-p}.
+
+@example
+@group
+(-cons-pair? '(1 . 2))
+    @result{} t
+@end group
+@group
+(-cons-pair? '(1 2))
+    @result{} nil
+@end group
+@group
+(-cons-pair? '(1))
+    @result{} nil
+@end group
+@end example
+@end defun
+
 
 @node Partitioning
 @section Partitioning

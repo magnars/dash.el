@@ -618,7 +618,16 @@ value rather than consuming a list to produce a single value."
     (-is-infix? '(2 3 4) '(1 2 3 4 5)) => t
     (-is-infix? '(3 4 5) '(1 2 3 4 5)) => t
     (-is-infix? '(2 3 4) '(1 2 4 5)) => nil
-    (-is-infix? '(2 4) '(1 2 3 4 5)) => nil))
+    (-is-infix? '(2 4) '(1 2 3 4 5)) => nil)
+
+  (defexamples -cons-pair?
+    (-cons-pair? '(1 . 2)) => t
+    (-cons-pair? '(1 2)) => nil
+    (-cons-pair? '(1)) => nil
+    (-cons-pair? ()) => nil
+    (-cons-pair? "") => nil
+    (-cons-pair? '(1 2 . 3)) => nil
+    (-cons-pair? '(() . "")) => t))
 
 (def-example-group "Partitioning"
   "Functions partitioning the input list into a list of lists."

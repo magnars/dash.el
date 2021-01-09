@@ -2724,14 +2724,12 @@ the new seed."
   (declare (debug (form form)))
   `(-unfold (lambda (it) ,form) ,seed))
 
-(defun -cons-pair? (con)
-  "Return non-nil if CON is true cons pair.
-That is (A . B) where B is not a list.
-
-Alias: `-cons-pair-p'"
+(defun -cons-pair? (obj)
+  "Return non-nil if OBJ is a true cons pair.
+That is, a cons (A . B) where B is not a list.
+Alias: `-cons-pair-p'."
   (declare (pure t) (side-effect-free t))
-  (and (listp con)
-       (not (listp (cdr con)))))
+  (nlistp (cdr-safe obj)))
 
 (defalias '-cons-pair-p '-cons-pair?)
 

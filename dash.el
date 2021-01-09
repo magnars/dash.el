@@ -2894,7 +2894,7 @@ replaced with new ones.  This is useful when you need to clone a
 structure such as plist or alist."
   (declare (pure t) (side-effect-free t))
   (-tree-map 'identity list))
-
+
 ;;; Font lock
 
 (defvar dash--keywords
@@ -3050,6 +3050,39 @@ See also `dash-fontify-mode-lighter' and
 
 (define-obsolete-function-alias
   'dash-enable-font-lock #'global-dash-fontify-mode "2.18.0")
+
+;;; Info
+
+(defvar dash--info-doc-spec '("(dash) Index" nil "^ -+ .*: " "\\( \\|$\\)")
+  "The Dash :doc-spec entry for `info-lookup-alist'.
+It is based on that for `emacs-lisp-mode'.")
+
+(defun dash--info-elisp-docs ()
+  "Return the `emacs-lisp-mode' symbol docs from `info-lookup-alist'.
+Specifically, return the cons containing their
+`info-lookup->doc-spec' so that we can modify it."
+  (defvar info-lookup-alist)
+  (nthcdr 3 (assq #'emacs-lisp-mode (cdr (assq 'symbol info-lookup-alist)))))
+
+;;;###autoload
+(defun dash-register-info-lookup ()
+  "Register the Dash Info manual with `info-lookup-symbol'.
+This allows Dash symbols to be looked up with \\[info-lookup-symbol]."
+  (interactive)
+  (require 'info-look)
+  (let ((docs (dash--info-elisp-docs)))
+    (setcar docs (append (car docs) (list dash--info-doc-spec)))
+    (info-lookup-reset)))
+
+(defun dash-unload-function ()
+  "Remove Dash from `info-lookup-alist'.
+Used by `unload-feature', which see."
+  (let ((docs (and (featurep 'info-look)
+                   (dash--info-elisp-docs))))
+    (when (member dash--info-doc-spec (car docs))
+      (setcar docs (remove dash--info-doc-spec (car docs)))
+      (info-lookup-reset)))
+  nil)
 
 (provide 'dash)
 ;;; dash.el ends here

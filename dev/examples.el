@@ -776,12 +776,12 @@ value rather than consuming a list to produce a single value."
     (-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz")) => '(1))
 
   (defexamples -grade-up
-    (-grade-up '< '(3 1 4 2 1 3 3)) => '(1 4 3 0 5 6 2)
-    (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up '< l) l)) => '(1 1 2 3 3 3 4))
+    (-grade-up #'< '(3 1 4 2 1 3 3)) => '(1 4 3 0 5 6 2)
+    (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up #'< l) l)) => '(1 1 2 3 3 3 4))
 
   (defexamples -grade-down
-    (-grade-down '< '(3 1 4 2 1 3 3)) => '(2 0 5 6 3 1 4)
-    (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down '< l) l)) => '(4 3 3 3 2 1 1)))
+    (-grade-down #'< '(3 1 4 2 1 3 3)) => '(2 0 5 6 3 1 4)
+    (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down #'< l) l)) => '(4 3 3 3 2 1 1)))
 
 (def-example-group "Set operations"
   "Operations pretending lists are sets."

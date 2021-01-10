@@ -28,12 +28,16 @@
 
 (setq text-quoting-style 'grave)
 
-(defvar functions '())
+(defvar functions ())
 
 (defun example-to-string (example)
-  (let ((actual (car example))
-        (expected (nth 2 example)))
-    (--> (format "@group\n%S\n    @result{} %S\n@end group" actual expected)
+  (let ((actual (pop example))
+        (err (eq (pop example) '!!>))
+        (expected (pop example)))
+    (and err (consp expected)
+         (setq expected (error-message-string expected)))
+    (--> (format "@group\n%S\n    %s %S\n@end group"
+                 actual (if err "@error{}" "@result{}") expected)
       (replace-regexp-in-string "\\\\\\?" "?" it)
       (replace-regexp-in-string "{\"" "@{\"" it t t)
       (replace-regexp-in-string "}\"" "@}\"" it t t)

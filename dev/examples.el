@@ -472,7 +472,7 @@ new list."
   (defexamples -running-sum
     (-running-sum '(1 2 3 4)) => '(1 3 6 10)
     (-running-sum '(1)) => '(1)
-    (-running-sum ()) !!> wrong-type-argument)
+    (-running-sum ()) !!> (wrong-type-argument consp ()))
 
   (defexamples -product
     (-product '()) => 1
@@ -482,7 +482,7 @@ new list."
   (defexamples -running-product
     (-running-product '(1 2 3 4)) => '(1 2 6 24)
     (-running-product '(1)) => '(1)
-    (-running-product ()) !!> wrong-type-argument)
+    (-running-product ()) !!> (wrong-type-argument consp ()))
 
   (defexamples -inits
     (-inits '(1 2 3 4)) => '(nil (1) (1 2) (1 2 3) (1 2 3 4))
@@ -886,7 +886,7 @@ value rather than consuming a list to produce a single value."
   (defexamples -iota
     (-iota 6) => '(0 1 2 3 4 5)
     (-iota 4 2.5 -2) => '(2.5 0.5 -1.5 -3.5)
-    (-iota -1) !!> wrong-type-argument
+    (-iota -1) !!> (wrong-type-argument natnump -1)
     (-iota 0) => ()
     (-iota 0 nil 0) => ()
     (-iota 1 nil 0) => '(0)

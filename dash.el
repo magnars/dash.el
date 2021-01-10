@@ -2705,16 +2705,14 @@ Starts from START and adds STEP each time.  The default START is
 zero, the default STEP is 1.
 This function takes its name from the corresponding primitive in
 the APL language."
+  (declare (pure t) (side-effect-free t))
   (unless (natnump count)
     (signal 'wrong-type-argument (list #'natnump count)))
   (or start (setq start 0))
   (or step (setq step 1))
-  (if (zerop step) (make-list count start)
-    (let (result)
-      (while (<= 0 (setq count (1- count)))
-        (push start result)
-        (setq start (+ start step)))
-      (nreverse result))))
+  (if (zerop step)
+      (make-list count start)
+    (--iterate (+ it step) start count)))
 
 (defun -fix (fn list)
   "Compute the (least) fixpoint of FN with initial input LIST.

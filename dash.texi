@@ -3950,10 +3950,10 @@ such that:
     (-lambda (x y @dots{}) body)
 
 has the usual semantics of @code{lambda}.  Furthermore, these get
-translated into normal lambda, so there is no performance
+translated into normal @code{lambda}, so there is no performance
 penalty.
 
-See @code{-let} (@pxref{-let}) for the description of destructuring mechanism.
+See @code{-let} (@pxref{-let}) for a description of the destructuring mechanism.
 
 @example
 @group

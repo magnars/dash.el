@@ -1416,7 +1416,10 @@ value rather than consuming a list to produce a single value."
     (funcall (-lambda ((a) (b)) (+ a b)) '(1 2 3) '(4 5 6)) => 5
     (-lambda a t) !!> wrong-type-argument
     (funcall (-lambda (a b) (+ a b)) 1 2) => 3
-    (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6)
+    (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6
+    (funcall (-lambda () 1)) => 1
+    (let* ((x 0) (f (-lambda () (setq x (1+ x))))) (--dotimes 3 (funcall f)) x)
+    => 3)
 
   (defexamples -setq
     (progn (-setq a 1) a) => 1

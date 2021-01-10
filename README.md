@@ -2616,10 +2616,10 @@ such that:
     (-lambda (x y ...) body)
 
 has the usual semantics of `lambda`.  Furthermore, these get
-translated into normal lambda, so there is no performance
+translated into normal `lambda`, so there is no performance
 penalty.
 
-See [`-let`](#-let-varlist-rest-body) for the description of destructuring mechanism.
+See [`-let`](#-let-varlist-rest-body) for a description of the destructuring mechanism.
 
 ```el
 (-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6))) ;; => '(3 7 11)

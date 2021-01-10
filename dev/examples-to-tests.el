@@ -30,7 +30,7 @@
          `(should (approx-equal ,actual ,expected)))
         ((eq sym '!!>)
          ;; FIXME: Tests fail on Emacs 24-25 without `eval' for some reason.
-         `(should-error (eval ',actual lexical-binding) :type ',expected))
+         `(should-error (eval ',actual ,lexical-binding) :type ',expected))
         ((error "Invalid test case: %S" `(,actual ,sym ,expected)))))
 
 (defmacro defexamples (cmd &rest examples)

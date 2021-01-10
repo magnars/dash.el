@@ -66,17 +66,17 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
       (help-function-arglist function-symbol))))
 
 (defmacro defexamples (cmd &rest examples)
-  `(add-to-list 'functions (list
-                            ',cmd
-                            (docs--signature ',cmd)
-                            (documentation ',cmd)
-                            (-map 'example-to-string (-partition 3 ',examples)))))
+  `(push (list ',cmd
+               (docs--signature ',cmd)
+               (documentation ',cmd)
+               (mapcar #'example-to-string (-partition 3 ',examples)))
+         functions))
 
 (defmacro def-example-group (group desc &rest examples)
   `(progn
-     (add-to-list 'functions ,(concat "### " group))
+     (push ,(concat "### " group) functions)
      (when ,desc
-       (add-to-list 'functions ,desc))
+       (push ,desc functions))
      ,@examples))
 
 (defun quote-and-downcase (string)

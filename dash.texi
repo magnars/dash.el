@@ -1403,7 +1403,6 @@ Return the sum of @var{list}.
 @anchor{-running-sum}
 @defun -running-sum (list)
 Return a list with running sums of items in @var{list}.
-
 @var{list} must be non-empty.
 
 @example
@@ -1416,8 +1415,8 @@ Return a list with running sums of items in @var{list}.
     @result{} '(1)
 @end group
 @group
-(-running-sum '())
-    @result{} error
+(-running-sum nil)
+    @result{} wrong-type-argument
 @end group
 @end example
 @end defun
@@ -1445,7 +1444,6 @@ Return the product of @var{list}.
 @anchor{-running-product}
 @defun -running-product (list)
 Return a list with running products of items in @var{list}.
-
 @var{list} must be non-empty.
 
 @example
@@ -1458,8 +1456,8 @@ Return a list with running products of items in @var{list}.
     @result{} '(1)
 @end group
 @group
-(-running-product '())
-    @result{} error
+(-running-product nil)
+    @result{} wrong-type-argument
 @end group
 @end example
 @end defun
@@ -3996,15 +3994,15 @@ multiple assignments it does not cause unexpected side effects.
 
 @example
 @group
-(progn (-setq a 1) a)
+(let (a) (-setq a 1) a)
     @result{} 1
 @end group
 @group
-(progn (-setq (a b) (list 1 2)) (list a b))
+(let (a b) (-setq (a b) (list 1 2)) (list a b))
     @result{} '(1 2)
 @end group
 @group
-(progn (-setq (&plist :c c) (list :c "c")) c)
+(let (c) (-setq (&plist :c c) (list :c "c")) c)
     @result{} "c"
 @end group
 @end example

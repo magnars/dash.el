@@ -472,7 +472,7 @@ new list."
   (defexamples -running-sum
     (-running-sum '(1 2 3 4)) => '(1 3 6 10)
     (-running-sum '(1)) => '(1)
-    (-running-sum '()) !!> error)
+    (-running-sum ()) !!> wrong-type-argument)
 
   (defexamples -product
     (-product '()) => 1
@@ -482,7 +482,7 @@ new list."
   (defexamples -running-product
     (-running-product '(1 2 3 4)) => '(1 2 6 24)
     (-running-product '(1)) => '(1)
-    (-running-product '()) !!> error)
+    (-running-product ()) !!> wrong-type-argument)
 
   (defexamples -inits
     (-inits '(1 2 3 4)) => '(nil (1) (1 2) (1 2 3) (1 2 3 4))
@@ -693,13 +693,17 @@ value rather than consuming a list to produce a single value."
     (-partition-in-steps 2 1 '(1 2 3 4)) => '((1 2) (2 3) (3 4))
     (-partition-in-steps 3 2 '(1 2 3 4)) => '((1 2 3))
     (-partition-in-steps 3 2 '(1 2 3 4 5)) => '((1 2 3) (3 4 5))
-    (-partition-in-steps 2 1 '(1)) => '())
+    (-partition-in-steps 2 1 '(1)) => '()
+    (-partition-in-steps 2 0 '(1)) !!> wrong-type-argument
+    (-partition-in-steps 2 -1 '(1)) !!> wrong-type-argument)
 
   (defexamples -partition-all-in-steps
     (-partition-all-in-steps 2 1 '(1 2 3 4)) => '((1 2) (2 3) (3 4) (4))
     (-partition-all-in-steps 3 2 '(1 2 3 4)) => '((1 2 3) (3 4))
     (-partition-all-in-steps 3 2 '(1 2 3 4 5)) => '((1 2 3) (3 4 5) (5))
-    (-partition-all-in-steps 2 1 '(1)) => '((1)))
+    (-partition-all-in-steps 2 1 '(1)) => '((1))
+    (-partition-all-in-steps 2 0 '(1)) !!> wrong-type-argument
+    (-partition-all-in-steps 2 -1 '(1)) !!> wrong-type-argument)
 
   (defexamples -partition-by
     (-partition-by 'even? '()) => '()
@@ -1422,14 +1426,13 @@ value rather than consuming a list to produce a single value."
     => 3)
 
   (defexamples -setq
-    (progn (-setq a 1) a) => 1
-    (progn (-setq (a b) (list 1 2)) (list a b)) => '(1 2)
-    (progn (-setq (&plist :c c) (list :c "c")) c) => "c"
-    (progn (-setq a 1 b 2) (list a b)) => '(1 2)
-    (progn (-setq (&plist :a a) (list :a (list :b 1))
-                  (&plist :b b) a) b) => 1
-    (-setq (a b (&plist 'x x 'y y)) (list 1 2 (list 'x 3 'y 4))
-           z x) => 3))
+    (let (a) (-setq a 1) a) => 1
+    (let (a b) (-setq (a b) (list 1 2)) (list a b)) => '(1 2)
+    (let (c) (-setq (&plist :c c) (list :c "c")) c) => "c"
+    (let (a b) (-setq a 1 b 2) (list a b)) => '(1 2)
+    (let (a b) (-setq (&plist :a a) '(:a (:b 1)) (&plist :b b) a) b) => 1
+    (let (a b) (-setq (a b (&plist 'x x 'y y)) '(1 2 (x 3 y 4)) z x)) => 3
+    (let (a) (-setq a)) !!> wrong-number-of-arguments))
 
 (def-example-group "Side effects"
   "Functions iterating over lists for side effect only."

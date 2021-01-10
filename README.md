@@ -1070,13 +1070,12 @@ Return the sum of `list`.
 #### -running-sum `(list)`
 
 Return a list with running sums of items in `list`.
-
 `list` must be non-empty.
 
 ```el
 (-running-sum '(1 2 3 4)) ;; => '(1 3 6 10)
 (-running-sum '(1)) ;; => '(1)
-(-running-sum '()) ;; Error
+(-running-sum nil) ;; Error
 ```
 
 #### -product `(list)`
@@ -1092,13 +1091,12 @@ Return the product of `list`.
 #### -running-product `(list)`
 
 Return a list with running products of items in `list`.
-
 `list` must be non-empty.
 
 ```el
 (-running-product '(1 2 3 4)) ;; => '(1 2 6 24)
 (-running-product '(1)) ;; => '(1)
-(-running-product '()) ;; Error
+(-running-product nil) ;; Error
 ```
 
 #### -inits `(list)`
@@ -2651,9 +2649,9 @@ multiple assignments it does not cause unexpected side effects.
 (fn [`match-form` `val`]...)
 
 ```el
-(progn (-setq a 1) a) ;; => 1
-(progn (-setq (a b) (list 1 2)) (list a b)) ;; => '(1 2)
-(progn (-setq (&plist :c c) (list :c "c")) c) ;; => "c"
+(let (a) (-setq a 1) a) ;; => 1
+(let (a b) (-setq (a b) (list 1 2)) (list a b)) ;; => '(1 2)
+(let (c) (-setq (&plist :c c) (list :c "c")) c) ;; => "c"
 ```
 
 

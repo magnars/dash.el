@@ -1187,28 +1187,29 @@ This function can be thought of as a generalization of
   "Return a list of ((-filter PRED LIST) (-remove PRED LIST)), in one pass through the list."
   (--separate (funcall pred it) list))
 
-(defun ---partition-all-in-steps-reversed (n step list)
-  "Private: Used by -partition-all-in-steps and -partition-in-steps."
+(defun dash--partition-all-in-steps-reversed (n step list)
+  "Used by `-partition-all-in-steps' and `-partition-in-steps'."
   (when (< step 1)
-    (error "Step must be a positive number, or you're looking at some juicy infinite loops."))
-  (let ((result nil))
+    (signal 'wrong-type-argument
+            `("Step size < 1 results in juicy infinite loops" ,step)))
+  (let (result)
     (while list
-      (!cons (-take n list) result)
-      (setq list (-drop step list)))
+      (push (-take n list) result)
+      (setq list (nthcdr step list)))
     result))
 
 (defun -partition-all-in-steps (n step list)
   "Return a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
 The last groups may contain less than N items."
   (declare (pure t) (side-effect-free t))
-  (nreverse (---partition-all-in-steps-reversed n step list)))
+  (nreverse (dash--partition-all-in-steps-reversed n step list)))
 
 (defun -partition-in-steps (n step list)
   "Return a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
 If there are not enough items to make the last group N-sized,
 those items are discarded."
   (declare (pure t) (side-effect-free t))
-  (let ((result (---partition-all-in-steps-reversed n step list)))
+  (let ((result (dash--partition-all-in-steps-reversed n step list)))
     (while (and result (< (length (car result)) n))
       (!cdr result))
     (nreverse result)))
@@ -2342,7 +2343,7 @@ multiple assignments it does not cause unexpected side effects.
   (declare (debug (&rest sexp form))
            (indent 1))
   (when (= (mod (length forms) 2) 1)
-    (error "Odd number of arguments"))
+    (signal 'wrong-number-of-arguments (list '-setq (1+ (length forms)))))
   (let* ((forms-and-sources
           ;; First get all the necessary mappings with all the
           ;; intermediate bindings.
@@ -2645,12 +2646,10 @@ Return nil if N is less than 1."
 
 (defun -running-sum (list)
   "Return a list with running sums of items in LIST.
-
 LIST must be non-empty."
   (declare (pure t) (side-effect-free t))
-  (unless (consp list)
-    (error "LIST must be non-empty"))
-  (-reductions '+ list))
+  (or list (signal 'wrong-type-argument (list #'consp list)))
+  (-reductions #'+ list))
 
 (defun -product (list)
   "Return the product of LIST."
@@ -2659,12 +2658,10 @@ LIST must be non-empty."
 
 (defun -running-product (list)
   "Return a list with running products of items in LIST.
-
 LIST must be non-empty."
   (declare (pure t) (side-effect-free t))
-  (unless (consp list)
-    (error "LIST must be non-empty"))
-  (-reductions '* list))
+  (or list (signal 'wrong-type-argument (list #'consp list)))
+  (-reductions #'* list))
 
 (defun -max (list)
   "Return the largest value from LIST of numbers or markers."

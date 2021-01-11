@@ -197,7 +197,7 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
 (defun create-info-file ()
   (let ((functions (nreverse functions)))
     (with-temp-file "./dash.texi"
-      (insert-file-contents-literally "./dash-template.texi")
+      (insert-file-contents "./dash-template.texi")
 
       (dolist (pkg '(dash dash-functional))
         (goto-and-remove (format "@c [[ %s-version ]]" pkg))

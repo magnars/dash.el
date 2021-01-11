@@ -179,7 +179,7 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
 (defun create-docs-file ()
   (let ((functions (nreverse functions)))
     (with-temp-file "./README.md"
-      (insert-file-contents-literally "./readme-template.md")
+      (insert-file-contents "./readme-template.md")
 
       (goto-and-remove "[[ function-list ]]")
       (insert (mapconcat 'function-summary functions "\n"))

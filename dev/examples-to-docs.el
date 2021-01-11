@@ -38,9 +38,10 @@
           ((error "Invalid test case: %S" example)))
       (format "%S ;; %s" actual it)
       (replace-regexp-in-string "\\\\\\?" "?" it t t)
-      (replace-regexp-in-string "\n" "\\n" it t t)
-      (replace-regexp-in-string "\t" "\\t" it t t)
-      (replace-regexp-in-string "\r" "\\r" it t t))))
+      (replace-regexp-in-string
+       "[^\n[:print:]]"
+       (lambda (s) (concat "\\" (text-char-description (string-to-char s))))
+       it t t))))
 
 (defun docs--signature (function)
   "Given FUNCTION (a symbol), return its argument list.

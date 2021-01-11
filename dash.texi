@@ -4383,12 +4383,12 @@ See @var{srfi-26} for detailed description.
     @result{} '(1 2 3 4 5)
 @end group
 @group
-(-map (-cut funcall <> 5) '(1+ 1- (lambda (x) (/ 1.0 x))))
+(-map (-cut funcall <> 5) `(1+ 1- ,(lambda (x) (/ 1.0 x))))
     @result{} '(6 4 0.2)
 @end group
 @group
-(-map (-cut <> 1 2 3) (list 'list 'vector 'string))
-    @result{} '((1 2 3) [1 2 3] "")
+(-map (-cut <> 1 2 3) '(list vector string))
+    @result{} '((1 2 3) [1 2 3] "\^A\^B\^C")
 @end group
 @end example
 @end defmac

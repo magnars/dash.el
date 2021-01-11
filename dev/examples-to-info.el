@@ -38,13 +38,17 @@
          (setq expected (error-message-string expected)))
     (--> (format "@group\n%S\n    %s %S\n@end group"
                  actual (if err "@error{}" "@result{}") expected)
-      (replace-regexp-in-string "\\\\\\?" "?" it)
+      (replace-regexp-in-string "\\\\\\?" "?" it t t)
       (replace-regexp-in-string "{\"" "@{\"" it t t)
       (replace-regexp-in-string "}\"" "@}\"" it t t)
       (replace-regexp-in-string " {" " @{" it t t)
       (replace-regexp-in-string "\"{" "\"@{" it t t)
       (replace-regexp-in-string "}," "@{," it t t)
-      (replace-regexp-in-string "}@}" "@}@}" it t t))))
+      (replace-regexp-in-string "}@}" "@}@}" it t t)
+      (replace-regexp-in-string
+       "[^\n[:print:]]"
+       (lambda (s) (concat "\\" (text-char-description (string-to-char s))))
+       it t t))))
 
 (defun docs--signature (function)
   "Given FUNCTION (a symbol), return its argument list.

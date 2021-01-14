@@ -416,39 +416,41 @@ For other folds, see also `-reductions-r-from' and
     (list (funcall fn))))
 
 (defmacro --filter (form list)
-  "Anaphoric form of `-filter'.
-
-See also: `--remove'."
+  "Return a new list of the items in LIST for which FORM evals to non-nil.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.
+This is the anaphoric counterpart to `-filter'.
+For the opposite operation, see also `--remove'."
   (declare (debug (form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
-       (--each ,list (when ,form (!cons it ,r)))
+       (--each ,list (when ,form (push it ,r)))
        (nreverse ,r))))
 
 (defun -filter (pred list)
-  "Return a new list of the items in LIST for which PRED returns a non-nil value.
-
-Alias: `-select'
-
-See also: `-keep', `-remove'."
+  "Return a new list of the items in LIST for which PRED returns non-nil.
+Alias: `-select'.
+This function's anaphoric counterpart `--filter'.
+For similar operations, see also `-keep' and `-remove'."
   (--filter (funcall pred it) list))
 
 (defalias '-select '-filter)
 (defalias '--select '--filter)
 
 (defmacro --remove (form list)
-  "Anaphoric form of `-remove'.
-
-See also `--filter'."
+  "Return a new list of the items in LIST for which FORM evals to nil.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.
+This is the anaphoric counterpart to `-remove'.
+For the opposite operation, see also `--filter'."
   (declare (debug (form form)))
   `(--filter (not ,form) ,list))
 
 (defun -remove (pred list)
   "Return a new list of the items in LIST for which PRED returns nil.
-
-Alias: `-reject'
-
-See also: `-filter'."
+Alias: `-reject'.
+This function's anaphoric counterpart `--remove'.
+For similar operations, see also `-keep' and `-filter'."
   (--remove (funcall pred it) list))
 
 (defalias '-reject '-remove)

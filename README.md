@@ -515,29 +515,27 @@ Functions returning a sublist of the original list.
 
 #### -filter `(pred list)`
 
-Return a new list of the items in `list` for which `pred` returns a non-nil value.
-
-Alias: `-select`
-
-See also: [`-keep`](#-keep-fn-list), [`-remove`](#-remove-pred-list).
+Return a new list of the items in `list` for which `pred` returns non-nil.
+Alias: `-select`.
+This function's anaphoric counterpart `--filter`.
+For similar operations, see also [`-keep`](#-keep-fn-list) and [`-remove`](#-remove-pred-list).
 
 ```el
 (-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(2 4)
-(-filter 'even? '(1 2 3 4)) ;; => '(2 4)
+(-filter #'natnump '(-2 -1 0 1 2)) ;; => '(0 1 2)
 (--filter (= 0 (% it 2)) '(1 2 3 4)) ;; => '(2 4)
 ```
 
 #### -remove `(pred list)`
 
 Return a new list of the items in `list` for which `pred` returns nil.
-
-Alias: `-reject`
-
-See also: [`-filter`](#-filter-pred-list).
+Alias: `-reject`.
+This function's anaphoric counterpart `--remove`.
+For similar operations, see also [`-keep`](#-keep-fn-list) and [`-filter`](#-filter-pred-list).
 
 ```el
 (-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
-(-remove 'even? '(1 2 3 4)) ;; => '(1 3)
+(-remove #'natnump '(-2 -1 0 1 2)) ;; => '(-2 -1)
 (--remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
 ```
 

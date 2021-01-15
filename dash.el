@@ -456,24 +456,34 @@ For similar operations, see also `-keep' and `-filter'."
 (defalias '-reject '-remove)
 (defalias '--reject '--remove)
 
-(defun -remove-first (pred list)
-  "Return a new list with the first item matching PRED removed.
-
-Alias: `-reject-first'
-
-See also: `-remove', `-map-first'"
-  (let (front)
-    (while (and list (not (funcall pred (car list))))
-      (push (car list) front)
-      (!cdr list))
-    (if list
-        (-concat (nreverse front) (cdr list))
-      (nreverse front))))
-
 (defmacro --remove-first (form list)
-  "Anaphoric form of `-remove-first'."
+  "Remove the first item from LIST for which FORM evals to non-nil.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.  This is a
+non-destructive operation, but only the front of LIST leading up
+to the removed item is a copy; the rest is LIST's original tail.
+If no item is removed, then the result is a complete copy.
+This is the anaphoric counterpart to `-remove-first'."
   (declare (debug (form form)))
-  `(-remove-first (lambda (it) ,form) ,list))
+  (let ((front (make-symbol "front"))
+        (tail (make-symbol "tail")))
+    `(let ((,tail ,list) ,front)
+       (--each-while ,tail (not ,form)
+         (push (pop ,tail) ,front))
+       (if ,tail
+           (nconc (nreverse ,front) (cdr ,tail))
+         (nreverse ,front)))))
+
+(defun -remove-first (pred list)
+  "Remove the first item from LIST for which PRED returns non-nil.
+This is a non-destructive operation, but only the front of LIST
+leading up to the removed item is a copy; the rest is LIST's
+original tail.  If no item is removed, then the result is a
+complete copy.
+Alias: `-reject-first'.
+This function's anaphoric counterpart is `--remove-first'.
+See also `-map-first', `-remove-item', and `-remove-last'."
+  (--remove-first (funcall pred it) list))
 
 (defalias '-reject-first '-remove-first)
 (defalias '--reject-first '--remove-first)

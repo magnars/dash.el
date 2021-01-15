@@ -160,13 +160,16 @@ new list."
     (--remove nil '(1)) => '(1))
 
   (defexamples -remove-first
-    (-remove-first 'even? '(1 3 5 4 7 8 10)) => '(1 3 5 7 8 10)
-    (-remove-first 'stringp '(1 2 "first" "second" "third")) => '(1 2 "second" "third")
-    (--remove-first (> it 3) '(1 2 3 4 5 6 7 8 9 10)) => '(1 2 3 5 6 7 8 9 10)
-    (-remove-first 'even? '(2 3 4)) => '(3 4)
-    (-remove-first 'even? '(3 5 7 4)) => '(3 5 7)
-    (-remove-first 'even? '(2)) => nil
-    (-remove-first 'even? '(1 3 5 7)) => '(1 3 5 7))
+    (-remove-first #'natnump '(-2 -1 0 1 2)) => '(-2 -1 1 2)
+    (-remove-first #'stringp '(1 2 "first" "second")) => '(1 2 "second")
+    (--remove-first (> it 3) '(1 2 3 4 5 6)) => '(1 2 3 5 6)
+    (-remove-first #'natnump '(2 3 4)) => '(3 4)
+    (-remove-first #'natnump '(-3 -2 -1 4)) => '(-3 -2 -1)
+    (-remove-first #'natnump '(2)) => '()
+    (-remove-first #'natnump '()) => '()
+    (-remove-first #'null '(1 3 5 7)) => '(1 3 5 7)
+    (let ((l (list 1 2))) (setcar (-remove-first #'identity l) 0) l) => '(1 0)
+    (let ((l (list 1 2))) (setcar (-remove-first #'null l) 0) l) => '(1 2))
 
   (defexamples -remove-last
     (-remove-last 'even? '(1 3 5 4 7 8 10 11)) => '(1 3 5 4 7 8 11)

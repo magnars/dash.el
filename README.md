@@ -541,16 +541,19 @@ For similar operations, see also [`-keep`](#-keep-fn-list) and [`-filter`](#-fil
 
 #### -remove-first `(pred list)`
 
-Return a new list with the first item matching `pred` removed.
-
-Alias: `-reject-first`
-
-See also: [`-remove`](#-remove-pred-list), [`-map-first`](#-map-first-pred-rep-list)
+Remove the first item from `list` for which `pred` returns non-nil.
+This is a non-destructive operation, but only the front of `list`
+leading up to the removed item is a copy; the rest is `list``s
+original tail.  If no item is removed, then the result is a
+complete copy.
+Alias: `-reject-first`.
+This function's anaphoric counterpart is `--remove-first`.
+See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-last`](#-remove-last-pred-list).
 
 ```el
-(-remove-first 'even? '(1 3 5 4 7 8 10)) ;; => '(1 3 5 7 8 10)
-(-remove-first 'stringp '(1 2 "first" "second" "third")) ;; => '(1 2 "second" "third")
-(--remove-first (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 5 6 7 8 9 10)
+(-remove-first #'natnump '(-2 -1 0 1 2)) ;; => '(-2 -1 1 2)
+(-remove-first #'stringp '(1 2 "first" "second")) ;; => '(1 2 "second")
+(--remove-first (> it 3) '(1 2 3 4 5 6)) ;; => '(1 2 3 5 6)
 ```
 
 #### -remove-last `(pred list)`

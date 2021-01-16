@@ -1979,13 +1979,13 @@ This function's anaphoric counterpart is `--first`.
 #### -some `(pred list)`
 
 Return (`pred` x) for the first `list` item where (`pred` x) is non-nil, else nil.
-
-Alias: `-any`
+Alias: `-any`.
+This function's anaphoric counterpart is `--some`.
 
 ```el
-(-some 'even? '(1 2 3)) ;; => t
-(-some 'null '(1 2 3)) ;; => nil
-(-some 'null '(1 2 nil)) ;; => t
+(-some (lambda (s) (string-match-p "x" s)) '("foo" "axe" "xor")) ;; => 1
+(-some (lambda (s) (string-match-p "x" s)) '("foo" "bar" "baz")) ;; => nil
+(--some (member 'foo it) '((foo bar) (baz))) ;; => '(foo bar)
 ```
 
 #### -last `(pred list)`

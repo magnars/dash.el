@@ -765,18 +765,21 @@ This function's anaphoric counterpart is `--first'."
 (defalias '--find '--first)
 
 (defmacro --some (form list)
-  "Anaphoric form of `-some'."
+  "Return non-nil if FORM evals to non-nil for at least one item in LIST.
+If so, return the first such result of FORM.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.
+This is the anaphoric counterpart to `-some'."
   (declare (debug (form form)))
   (let ((n (make-symbol "needle")))
     `(let (,n)
-       (--each-while ,list (not ,n)
-         (setq ,n ,form))
+       (--each-while ,list (not (setq ,n ,form)))
        ,n)))
 
 (defun -some (pred list)
   "Return (PRED x) for the first LIST item where (PRED x) is non-nil, else nil.
-
-Alias: `-any'"
+Alias: `-any'.
+This function's anaphoric counterpart is `--some'."
   (--some (funcall pred it) list))
 
 (defalias '-any '-some)

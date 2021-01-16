@@ -1006,11 +1006,22 @@ value rather than consuming a list to produce a single value."
     (-first #'identity '()) => nil)
 
   (defexamples -some
-    (-some 'even? '(1 2 3)) => t
-    (-some 'null '(1 2 3)) => nil
-    (-some 'null '(1 2 ())) => t
+    (-some (lambda (s) (string-match-p "x" s)) '("foo" "axe" "xor")) => 1
+    (-some (lambda (s) (string-match-p "x" s)) '("foo" "bar" "baz")) => nil
     (--some (member 'foo it) '((foo bar) (baz))) => '(foo bar)
-    (--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3))) => 2)
+    (--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3))) => 2
+    (-some #'null '(1 2 3)) => nil
+    (-some #'null '(1)) => nil
+    (-some #'null '()) => nil
+    (--some (not it) '(1 2 3)) => nil
+    (--some (not it) '(1)) => nil
+    (--some (not it) '()) => nil
+    (-some #'identity '(1 2 3)) => 1
+    (-some #'identity '(1)) => 1
+    (-some #'identity '()) => nil
+    (--some it '(1 2 3)) => 1
+    (--some it '(1)) => 1
+    (--some it '()) => nil)
 
   (defexamples -last
     (-last 'even? '(1 2 3 4 5 6 3 3 3)) => 6

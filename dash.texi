@@ -2998,21 +2998,21 @@ This function's anaphoric counterpart is @code{--first}.
 @anchor{-some}
 @defun -some (pred list)
 Return (@var{pred} x) for the first @var{list} item where (@var{pred} x) is non-nil, else nil.
-
-Alias: @code{-any}
+Alias: @code{-any}.
+This function's anaphoric counterpart is @code{--some}.
 
 @example
 @group
-(-some 'even? '(1 2 3))
-    @result{} t
+(-some (lambda (s) (string-match-p "x" s)) '("foo" "axe" "xor"))
+    @result{} 1
 @end group
 @group
-(-some 'null '(1 2 3))
+(-some (lambda (s) (string-match-p "x" s)) '("foo" "bar" "baz"))
     @result{} nil
 @end group
 @group
-(-some 'null '(1 2 nil))
-    @result{} t
+(--some (member 'foo it) '((foo bar) (baz)))
+    @result{} '(foo bar)
 @end group
 @end example
 @end defun

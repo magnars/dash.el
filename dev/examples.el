@@ -1673,8 +1673,4 @@ value rather than consuming a list to produce a single value."
              (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
                     (funcall (-prodfn (-compose f ff) (-compose g gg)) input3)))) => t)))
 
-;; Local Variables:
-;; eval: (font-lock-add-keywords nil '(("defexamples\\|def-example-group\\| => \\| !!> \\| ~>" (0 'font-lock-keyword-face)) ("(defexamples[[:blank:]]+\\(.*\\)" (1 'font-lock-function-name-face))))
-;; End:
-
 ;;; examples.el ends here

@@ -2941,6 +2941,13 @@ structure such as plist or alist."
     ;; globally; detect and limit to their local anaphoric scope.
     (,(concat "\\_<" (regexp-opt '("acc" "it" "it-index" "other")) "\\_>")
      0 font-lock-variable-name-face)
+    ;; Macros in dev/examples.el.  Based on `lisp-mode-symbol-regexp'.
+    (,(concat "(" (regexp-opt '("defexamples" "def-example-group") t)
+              "\\_>[\t ]+\\(\\(?:\\sw\\|\\s_\\|\\\\.\\)*\\)")
+     (1 font-lock-keyword-face)
+     (2 font-lock-function-name-face))
+    ;; Symbols in dev/examples.el.
+    ,(concat "\\_<" (regexp-opt '("=>" "~>" "!!>")) "\\_>")
     ;; Elisp macro fontification was static prior to Emacs 25.
     ,@(when (< emacs-major-version 25)
         (let ((macs '("!cdr"

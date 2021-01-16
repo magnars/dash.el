@@ -1964,16 +1964,16 @@ See also: [`-flatten-n`](#-flatten-n-num-list), [`-table`](#-table-fn-rest-lists
 
 #### -first `(pred list)`
 
-Return the first x in `list` where (`pred` x) is non-nil, else nil.
-
+Return the first item in `list` for which `pred` returns non-nil.
+Return nil if no such element is found.
 To get the first item in the list no questions asked, use `car`.
-
-Alias: `-find`
+Alias: `-find`.
+This function's anaphoric counterpart is `--first`.
 
 ```el
-(-first 'even? '(1 2 3)) ;; => 2
-(-first 'even? '(1 3 5)) ;; => nil
-(-first 'null '(1 3 5)) ;; => nil
+(-first #'natnump '(-1 0 1)) ;; => 0
+(-first #'null '(1 2 3)) ;; => nil
+(--first (> it 2) '(1 2 3)) ;; => 3
 ```
 
 #### -some `(pred list)`

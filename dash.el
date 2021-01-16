@@ -741,20 +741,24 @@ If ELEMENTS is non nil, append these to the list as well."
   (-concat list (list elem) elements))
 
 (defmacro --first (form list)
-  "Anaphoric form of `-first'."
+  "Return the first item in LIST for which FORM evals to non-nil.
+Return nil if no such element is found.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.
+This is the anaphoric counterpart to `-first'."
   (declare (debug (form form)))
   (let ((n (make-symbol "needle")))
     `(let (,n)
-       (--each-while ,list (not ,n)
-         (when ,form (setq ,n it)))
+       (--each-while ,list (or (not ,form)
+                               (ignore (setq ,n it))))
        ,n)))
 
 (defun -first (pred list)
-  "Return the first x in LIST where (PRED x) is non-nil, else nil.
-
+  "Return the first item in LIST for which PRED returns non-nil.
+Return nil if no such element is found.
 To get the first item in the list no questions asked, use `car'.
-
-Alias: `-find'"
+Alias: `-find'.
+This function's anaphoric counterpart is `--first'."
   (--first (funcall pred it) list))
 
 (defalias '-find '-first)

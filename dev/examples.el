@@ -980,11 +980,30 @@ value rather than consuming a list to produce a single value."
     (-flatten-n 2 (apply '-table 'list (-repeat 3 '(1 2)))) => '((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2)))
 
   (defexamples -first
-    (-first 'even? '(1 2 3)) => 2
-    (-first 'even? '(1 3 5)) => nil
-    (-first 'null '(1 3 5)) => nil
-    (-first 'null '(1 3 ())) => nil
-    (--first (> it 2) '(1 2 3)) => 3)
+    (-first #'natnump '(-1 0 1)) => 0
+    (-first #'null '(1 2 3)) => nil
+    (--first (> it 2) '(1 2 3)) => 3
+    (let ((c 0)) (--first (setq c (1+ c)) '(nil nil nil)) c) => 1
+    (--first nil '(1 2 3)) => nil
+    (--first nil '(1)) => nil
+    (--first nil '()) => nil
+    (-first #'ignore '(1 2 3)) => nil
+    (-first #'ignore '(1)) => nil
+    (-first #'ignore '()) => nil
+    (--first (not it) '(1 2 nil)) => nil
+    (--first (not it) '(nil 1 2)) => nil
+    (--first (not it) '(nil)) => nil
+    (--first (not it) '()) => nil
+    (-first #'null '(1 2 nil)) => nil
+    (-first #'null '(nil 1 2)) => nil
+    (-first #'null '(nil)) => nil
+    (-first #'null '()) => nil
+    (--first t '(1 2 3)) => 1
+    (--first t '(1)) => 1
+    (--first t '()) => nil
+    (-first #'identity '(1 2 3)) => 1
+    (-first #'identity '(1)) => 1
+    (-first #'identity '()) => nil)
 
   (defexamples -some
     (-some 'even? '(1 2 3)) => t

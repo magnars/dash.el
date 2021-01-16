@@ -2973,24 +2973,24 @@ See also: @code{-flatten-n} (@pxref{-flatten-n}), @code{-table} (@pxref{-table})
 
 @anchor{-first}
 @defun -first (pred list)
-Return the first x in @var{list} where (@var{pred} x) is non-nil, else nil.
-
+Return the first item in @var{list} for which @var{pred} returns non-nil.
+Return nil if no such element is found.
 To get the first item in the list no questions asked, use @code{car}.
-
-Alias: @code{-find}
+Alias: @code{-find}.
+This function's anaphoric counterpart is @code{--first}.
 
 @example
 @group
-(-first 'even? '(1 2 3))
-    @result{} 2
+(-first #'natnump '(-1 0 1))
+    @result{} 0
 @end group
 @group
-(-first 'even? '(1 3 5))
+(-first #'null '(1 2 3))
     @result{} nil
 @end group
 @group
-(-first 'null '(1 3 5))
-    @result{} nil
+(--first (> it 2) '(1 2 3))
+    @result{} 3
 @end group
 @end example
 @end defun

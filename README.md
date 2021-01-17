@@ -1509,9 +1509,9 @@ other value (the body).
 Partition directly after each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-after-pred #'odd? '()) ;; => '()
-(-partition-after-pred #'odd? '(1)) ;; => '((1))
-(-partition-after-pred #'odd? '(0 1)) ;; => '((0 1))
+(-partition-after-pred #'booleanp '()) ;; => '()
+(-partition-after-pred #'booleanp '(t t)) ;; => '((t) (t))
+(-partition-after-pred #'booleanp '(0 0 t t 0 t)) ;; => '((0 0 t) (t) (0 t))
 ```
 
 #### -partition-before-pred `(pred list)`
@@ -1519,9 +1519,9 @@ Partition directly after each time `pred` is true on an element of `list`.
 Partition directly before each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-before-pred #'odd? '()) ;; => '()
-(-partition-before-pred #'odd? '(1)) ;; => '((1))
-(-partition-before-pred #'odd? '(0 1)) ;; => '((0) (1))
+(-partition-before-pred #'booleanp '()) ;; => '()
+(-partition-before-pred #'booleanp '(0 t)) ;; => '((0) (t))
+(-partition-before-pred #'booleanp '(0 0 t 0 t t)) ;; => '((0 0) (t 0) (t) (t))
 ```
 
 #### -partition-before-item `(item list)`
@@ -2686,7 +2686,7 @@ Its anaphoric counterpart is `--each-while`.
 ```el
 (let (l) (-each-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) ;; => '(4 2)
 (let (l) (--each-while '(1 2 3 4) (< it 3) (push it l)) l) ;; => '(2 1)
-(let ((s 0)) (--each-while '(1 3 4 5) (odd? it) (setq s (+ s it))) s) ;; => 4
+(let ((s 0)) (--each-while '(1 3 4 5) (< it 5) (setq s (+ s it))) s) ;; => 8
 ```
 
 #### -each-indexed `(list fn)`
@@ -2725,7 +2725,7 @@ Its anaphoric counterpart is `--each-r-while`.
 ```el
 (let (l) (-each-r-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) ;; => '(6)
 (let (l) (--each-r-while '(1 2 3 4) (>= it 3) (push it l)) l) ;; => '(3 4)
-(let ((s 0)) (--each-r-while '(1 2 3 5) (odd? it) (setq s (+ s it))) s) ;; => 8
+(let ((s 0)) (--each-r-while '(1 2 3 5) (> it 1) (setq s (+ s it))) s) ;; => 10
 ```
 
 #### -dotimes `(num fn)`

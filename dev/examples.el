@@ -36,7 +36,6 @@
 
 ;; FIXME: These definitions ought to be exported along with the
 ;; examples, if they are going to be used there.
-(defun odd? (num) (= 1 (% num 2)))
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))
 
@@ -291,7 +290,7 @@ new list."
     (--drop-while nil '(1 2)) => '(1 2)
     (--drop-while t '(1)) => ()
     (--drop-while t '(1 2)) => ()
-    (let ((l (list 1 2))) (setcar (-drop-while #'odd? l) 0) l) => '(1 0)
+    (let ((l (list t 2))) (setcar (-drop-while #'booleanp l) 0) l) => '(t 0)
     (let ((l (list 1 2))) (eq (--drop-while nil l) l)) => t)
 
   (defexamples -select-by-indices
@@ -761,19 +760,19 @@ value rather than consuming a list to produce a single value."
     (-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1)) => '((2 1 1 1) (4 1 3 5) (6 6 1)))
 
   (defexamples -partition-after-pred
-    (-partition-after-pred #'odd? '()) => '()
-    (-partition-after-pred #'odd? '(1)) => '((1))
-    (-partition-after-pred #'odd? '(0 1)) => '((0 1))
-    (-partition-after-pred #'odd? '(1 1)) => '((1) (1))
-    (-partition-after-pred #'odd? '(0 0 0 1 0 1 1 0 1)) => '((0 0 0 1) (0 1) (1) (0 1)))
+    (-partition-after-pred #'booleanp '()) => '()
+    (-partition-after-pred #'booleanp '(t t)) => '((t) (t))
+    (-partition-after-pred #'booleanp '(0 0 t t 0 t)) => '((0 0 t) (t) (0 t))
+    (-partition-after-pred #'booleanp '(t)) => '((t))
+    (-partition-after-pred #'booleanp '(0 t)) => '((0 t)))
 
   (defexamples -partition-before-pred
-    (-partition-before-pred #'odd? '()) => '()
-    (-partition-before-pred #'odd? '(1)) => '((1))
-    (-partition-before-pred #'odd? '(0 1)) => '((0) (1))
-    (-partition-before-pred #'odd? '(1 1)) => '((1) (1))
-    (-partition-before-pred #'odd? '(0 1 0)) => '((0) (1 0))
-    (-partition-before-pred #'odd? '(0 0 0 1 0 1 1 0 1)) => '((0 0 0) (1 0) (1) (1 0) (1)))
+    (-partition-before-pred #'booleanp '()) => '()
+    (-partition-before-pred #'booleanp '(0 t)) => '((0) (t))
+    (-partition-before-pred #'booleanp '(0 0 t 0 t t)) => '((0 0) (t 0) (t) (t))
+    (-partition-before-pred #'booleanp '(t)) => '((t))
+    (-partition-before-pred #'booleanp '(t t)) => '((t) (t))
+    (-partition-before-pred #'booleanp '(0 t 0)) => '((0) (t 0)))
 
   (defexamples -partition-before-item
     (-partition-before-item 3 '()) => '()
@@ -1525,7 +1524,7 @@ value rather than consuming a list to produce a single value."
   (defexamples -each-while
     (let (l) (-each-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) => '(4 2)
     (let (l) (--each-while '(1 2 3 4) (< it 3) (push it l)) l) => '(2 1)
-    (let ((s 0)) (--each-while '(1 3 4 5) (odd? it) (setq s (+ s it))) s) => 4
+    (let ((s 0)) (--each-while '(1 3 4 5) (< it 5) (setq s (+ s it))) s) => 8
     (let (s) (-each-while () (lambda (_) t) (lambda (_) (setq s t))) s) => nil
     (let (s) (--each-while () t (setq s t)) s) => nil
     (let (s) (--each-while '(1) t (setq s it)) s) => 1
@@ -1552,7 +1551,7 @@ value rather than consuming a list to produce a single value."
   (defexamples -each-r-while
     (let (l) (-each-r-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) => '(6)
     (let (l) (--each-r-while '(1 2 3 4) (>= it 3) (push it l)) l) => '(3 4)
-    (let ((s 0)) (--each-r-while '(1 2 3 5) (odd? it) (setq s (+ s it))) s) => 8
+    (let ((s 0)) (--each-r-while '(1 2 3 5) (> it 1) (setq s (+ s it))) s) => 10
     (let (s) (-each-r-while () (lambda (_) t) (lambda (_) (setq s t))) s) => nil
     (let (s) (--each-r-while () t (setq s t)) s) => nil
     (let (s) (--each-r-while '(1) t (setq s it)) s) => 1

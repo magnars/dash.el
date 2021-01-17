@@ -488,18 +488,23 @@ See also `-map-first', `-remove-item', and `-remove-last'."
 (defalias '-reject-first '-remove-first)
 (defalias '--reject-first '--remove-first)
 
-(defun -remove-last (pred list)
-  "Return a new list with the last item matching PRED removed.
-
-Alias: `-reject-last'
-
-See also: `-remove', `-map-last'"
-  (nreverse (-remove-first pred (reverse list))))
-
 (defmacro --remove-last (form list)
-  "Anaphoric form of `-remove-last'."
+  "Remove the last item from LIST for which FORM evals to non-nil.
+Each element of LIST in turn is bound to `it' before evaluating
+FORM.  The result is a copy of LIST regardless of whether an
+element is removed.
+This is the anaphoric counterpart to `-remove-last'."
   (declare (debug (form form)))
-  `(-remove-last (lambda (it) ,form) ,list))
+  `(nreverse (--remove-first ,form (reverse ,list))))
+
+(defun -remove-last (pred list)
+  "Remove the last item from LIST for which PRED returns non-nil.
+The result is a copy of LIST regardless of whether an element is
+removed.
+Alias: `-reject-last'.
+This function's anaphoric counterpart is `--remove-last'.
+See also `-map-last', `-remove-item', and `-remove-first'."
+  (--remove-last (funcall pred it) list))
 
 (defalias '-reject-last '-remove-last)
 (defalias '--reject-last '--remove-last)

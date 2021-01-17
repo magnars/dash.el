@@ -555,20 +555,21 @@ See also @code{-map-first} (@pxref{-map-first}), @code{-remove-item} (@pxref{-re
 
 @anchor{-remove-last}
 @defun -remove-last (pred list)
-Return a new list with the last item matching @var{pred} removed.
-
-Alias: @code{-reject-last}
-
-See also: @code{-remove} (@pxref{-remove}), @code{-map-last} (@pxref{-map-last})
+Remove the last item from @var{list} for which @var{pred} returns non-nil.
+The result is a copy of @var{list} regardless of whether an element is
+removed.
+Alias: @code{-reject-last}.
+This function's anaphoric counterpart is @code{--remove-last}.
+See also @code{-map-last} (@pxref{-map-last}), @code{-remove-item} (@pxref{-remove-item}), and @code{-remove-first} (@pxref{-remove-first}).
 
 @example
 @group
-(-remove-last 'even? '(1 3 5 4 7 8 10 11))
-    @result{} '(1 3 5 4 7 8 11)
+(-remove-last #'natnump '(1 3 5 4 7 8 10 -11))
+    @result{} '(1 3 5 4 7 8 -11)
 @end group
 @group
-(-remove-last 'stringp '(1 2 "last" "second" "third"))
-    @result{} '(1 2 "last" "second")
+(-remove-last #'stringp '(1 2 "last" "second"))
+    @result{} '(1 2 "last")
 @end group
 @group
 (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10))

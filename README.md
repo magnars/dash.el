@@ -558,15 +558,16 @@ See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-it
 
 #### -remove-last `(pred list)`
 
-Return a new list with the last item matching `pred` removed.
-
-Alias: `-reject-last`
-
-See also: [`-remove`](#-remove-pred-list), [`-map-last`](#-map-last-pred-rep-list)
+Remove the last item from `list` for which `pred` returns non-nil.
+The result is a copy of `list` regardless of whether an element is
+removed.
+Alias: `-reject-last`.
+This function's anaphoric counterpart is `--remove-last`.
+See also [`-map-last`](#-map-last-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-first`](#-remove-first-pred-list).
 
 ```el
-(-remove-last 'even? '(1 3 5 4 7 8 10 11)) ;; => '(1 3 5 4 7 8 11)
-(-remove-last 'stringp '(1 2 "last" "second" "third")) ;; => '(1 2 "last" "second")
+(-remove-last #'natnump '(1 3 5 4 7 8 10 -11)) ;; => '(1 3 5 4 7 8 -11)
+(-remove-last #'stringp '(1 2 "last" "second")) ;; => '(1 2 "last")
 (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 5 6 7 8 9)
 ```
 

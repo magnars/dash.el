@@ -172,12 +172,32 @@ new list."
     (let ((l (list 1 2))) (setcar (-remove-first #'null l) 0) l) => '(1 2))
 
   (defexamples -remove-last
-    (-remove-last 'even? '(1 3 5 4 7 8 10 11)) => '(1 3 5 4 7 8 11)
-    (-remove-last 'stringp '(1 2 "last" "second" "third")) => '(1 2 "last" "second")
+    (-remove-last #'natnump '(1 3 5 4 7 8 10 -11)) => '(1 3 5 4 7 8 -11)
+    (-remove-last #'stringp '(1 2 "last" "second")) => '(1 2 "last")
     (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) => '(1 2 3 4 5 6 7 8 9)
-    ;; the next two tests assert that the input list is not modified #158
-    (let ((l '(1 2 3))) (list (--remove-last (< it 2) l) l)) => '((2 3) (1 2 3))
-    (let ((l '(1 2 3))) (list (--remove-last (< it 4) l) l)) => '((1 2) (1 2 3)))
+    ;; The next two tests assert that the input list is not modified (#158).
+    (let ((l (list 1 2))) (setcar (--remove-last (= it 2) l) 0) l) => '(1 2)
+    (let ((l (list 1 2))) (setcar (--remove-last (= it 0) l) 0) l) => '(1 2)
+    (-remove-last #'identity '()) => '()
+    (-remove-last #'identity '(1)) => '()
+    (-remove-last #'identity '(nil)) => '(nil)
+    (-remove-last #'identity '(1 2)) => '(1)
+    (-remove-last #'identity '(1 nil)) => '(nil)
+    (--remove-last t '()) => '()
+    (--remove-last t '(1)) => '()
+    (--remove-last t '(nil)) => '()
+    (--remove-last t '(1 2)) => '(1)
+    (--remove-last t '(1 2 nil)) => '(1 2)
+    (--remove-last it '(1 nil)) => '(nil)
+    (-remove-last #'null '()) => '()
+    (-remove-last #'null '(1)) => '(1)
+    (-remove-last #'null '(nil)) => '()
+    (-remove-last #'null '(1 2)) => '(1 2)
+    (-remove-last #'null '(nil 1)) => '(1)
+    (--remove-last nil '()) => '()
+    (--remove-last nil '(1)) => '(1)
+    (--remove-last nil '(nil)) => '(nil)
+    (--remove-last nil '(1 2)) => '(1 2))
 
   (defexamples -remove-item
     (-remove-item 3 '(1 2 3 2 3 4 5 3)) => '(1 2 2 4 5)

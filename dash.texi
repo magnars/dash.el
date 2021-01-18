@@ -872,21 +872,22 @@ Functions returning a modified copy of the input list.
 
 @anchor{-keep}
 @defun -keep (fn list)
-Return a new list of the non-nil results of applying @var{fn} to the items in @var{list}.
-
-If you want to select the original items satisfying a predicate use @code{-filter} (@pxref{-filter}).
+Return a new list of the non-nil results of applying @var{fn} to each item in @var{list}.
+Like @code{-filter} (@pxref{-filter}), but returns the non-nil results of @var{fn} instead of
+the corresponding elements of @var{list}.
+Its anaphoric counterpart is @code{--keep}.
 
 @example
 @group
-(-keep 'cdr '((1 2 3) (4 5) (6)))
+(-keep #'cdr '((1 2 3) (4 5) (6)))
     @result{} '((2 3) (5))
 @end group
 @group
-(-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6))
+(-keep (lambda (n) (and (> n 3) (* 10 n))) '(1 2 3 4 5 6))
     @result{} '(40 50 60)
 @end group
 @group
-(--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6))
+(--keep (and (> it 3) (* 10 it)) '(1 2 3 4 5 6))
     @result{} '(40 50 60)
 @end group
 @end example

@@ -320,9 +320,14 @@ new list."
   "Functions returning a modified copy of the input list."
 
   (defexamples -keep
-    (-keep 'cdr '((1 2 3) (4 5) (6))) => '((2 3) (5))
-    (-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) => '(40 50 60)
-    (--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) => '(40 50 60))
+    (-keep #'cdr '((1 2 3) (4 5) (6))) => '((2 3) (5))
+    (-keep (lambda (n) (and (> n 3) (* 10 n))) '(1 2 3 4 5 6)) => '(40 50 60)
+    (--keep (and (> it 3) (* 10 it)) '(1 2 3 4 5 6)) => '(40 50 60)
+    (-keep #'null '(nil)) => '(t)
+    (--keep it '(nil)) => '()
+    (--keep t '(nil)) => '(t)
+    (--keep t '()) => '()
+    (-keep #'identity '()) => '())
 
   (defexamples -concat
     (-concat '(1)) => '(1)

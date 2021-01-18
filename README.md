@@ -749,14 +749,15 @@ Functions returning a modified copy of the input list.
 
 #### -keep `(fn list)`
 
-Return a new list of the non-nil results of applying `fn` to the items in `list`.
-
-If you want to select the original items satisfying a predicate use [`-filter`](#-filter-pred-list).
+Return a new list of the non-nil results of applying `fn` to each item in `list`.
+Like [`-filter`](#-filter-pred-list), but returns the non-nil results of `fn` instead of
+the corresponding elements of `list`.
+Its anaphoric counterpart is `--keep`.
 
 ```el
-(-keep 'cdr '((1 2 3) (4 5) (6))) ;; => '((2 3) (5))
-(-keep (lambda (num) (when (> num 3) (* 10 num))) '(1 2 3 4 5 6)) ;; => '(40 50 60)
-(--keep (when (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => '(40 50 60)
+(-keep #'cdr '((1 2 3) (4 5) (6))) ;; => '((2 3) (5))
+(-keep (lambda (n) (and (> n 3) (* 10 n))) '(1 2 3 4 5 6)) ;; => '(40 50 60)
+(--keep (and (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => '(40 50 60)
 ```
 
 #### -concat `(&rest lists)`

@@ -515,18 +515,24 @@ The comparison is done with `equal'.
 \n(fn ITEM LIST)")
 
 (defmacro --keep (form list)
-  "Anaphoric form of `-keep'."
+  "Eval FORM for each item in LIST and return the non-nil results.
+Like `--filter', but returns the non-nil results of FORM instead
+of the corresponding elements of LIST.  Each element of LIST in
+turn is bound to `it' and its index within LIST to `it-index'
+before evaluating FORM.
+This is the anaphoric counterpart to `-keep'."
   (declare (debug (form form)))
   (let ((r (make-symbol "result"))
         (m (make-symbol "mapped")))
     `(let (,r)
-       (--each ,list (let ((,m ,form)) (when ,m (!cons ,m ,r))))
+       (--each ,list (let ((,m ,form)) (when ,m (push ,m ,r))))
        (nreverse ,r))))
 
 (defun -keep (fn list)
-  "Return a new list of the non-nil results of applying FN to the items in LIST.
-
-If you want to select the original items satisfying a predicate use `-filter'."
+  "Return a new list of the non-nil results of applying FN to each item in LIST.
+Like `-filter', but returns the non-nil results of FN instead of
+the corresponding elements of LIST.
+Its anaphoric counterpart is `--keep'."
   (--keep (funcall fn it) list))
 
 (defun -non-nil (list)

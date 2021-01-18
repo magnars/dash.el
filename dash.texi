@@ -344,11 +344,12 @@ See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-last} (@pxref{-re
 
 @anchor{-map-indexed}
 @defun -map-indexed (fn list)
-Return a new list consisting of the result of (@var{fn} index item) for each item in @var{list}.
+Apply @var{fn} to each index and item in @var{list} and return the list of results.
+This is like @code{-map} (@pxref{-map}), but @var{fn} takes two arguments: the index of the
+current element within @var{list}, and the element itself.
 
-In the anaphoric form @code{--map-indexed}, the index is exposed as symbol @code{it-index}.
-
-See also: @code{-each-indexed} (@pxref{-each-indexed}).
+This function's anaphoric counterpart is @code{--map-indexed}.
+For a side-effecting variant, see also @code{-each-indexed} (@pxref{-each-indexed}).
 
 @example
 @group
@@ -358,6 +359,10 @@ See also: @code{-each-indexed} (@pxref{-each-indexed}).
 @group
 (--map-indexed (- it it-index) '(1 2 3 4))
     @result{} '(1 1 1 1)
+@end group
+@group
+(-map-indexed #'* '(1 2 3 4))
+    @result{} '(0 2 6 12)
 @end group
 @end example
 @end defun

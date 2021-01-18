@@ -433,15 +433,17 @@ See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-last`](#-replace-l
 
 #### -map-indexed `(fn list)`
 
-Return a new list consisting of the result of (`fn` index item) for each item in `list`.
+Apply `fn` to each index and item in `list` and return the list of results.
+This is like [`-map`](#-map-fn-list), but `fn` takes two arguments: the index of the
+current element within `list`, and the element itself.
 
-In the anaphoric form `--map-indexed`, the index is exposed as symbol `it-index`.
-
-See also: [`-each-indexed`](#-each-indexed-list-fn).
+This function's anaphoric counterpart is `--map-indexed`.
+For a side-effecting variant, see also [`-each-indexed`](#-each-indexed-list-fn).
 
 ```el
 (-map-indexed (lambda (index item) (- item index)) '(1 2 3 4)) ;; => '(1 1 1 1)
 (--map-indexed (- it it-index) '(1 2 3 4)) ;; => '(1 1 1 1)
+(-map-indexed #'* '(1 2 3 4)) ;; => '(0 2 6 12)
 ```
 
 #### -annotate `(fn list)`

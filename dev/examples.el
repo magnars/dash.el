@@ -95,7 +95,12 @@ new list."
 
   (defexamples -map-indexed
     (-map-indexed (lambda (index item) (- item index)) '(1 2 3 4)) => '(1 1 1 1)
-    (--map-indexed (- it it-index) '(1 2 3 4)) => '(1 1 1 1))
+    (--map-indexed (- it it-index) '(1 2 3 4)) => '(1 1 1 1)
+    (-map-indexed #'* '(1 2 3 4)) => '(0 2 6 12)
+    (-map-indexed #'ignore '(1 2 3 4)) => '(nil nil nil nil)
+    (-map-indexed #'ignore '()) => '()
+    (--map-indexed t '(1 2 3 4)) => '(t t t t)
+    (--map-indexed t '()) => '())
 
   (defexamples -annotate
     (-annotate '1+ '(1 2 3)) => '((2 . 1) (3 . 2) (4 . 3))

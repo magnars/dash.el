@@ -204,7 +204,8 @@ This function's anaphoric counterpart is `--map'."
 (defmacro --map (form list)
   "Eval FORM for each item in LIST and return the list of results.
 Each element of LIST in turn is bound to `it' before evaluating
-BODY.
+FORM.
+
 This is the anaphoric counterpart to `-map'."
   (declare (debug (def-form form)))
   `(mapcar (lambda (it) (ignore it) ,form) ,list))
@@ -541,20 +542,26 @@ Its anaphoric counterpart is `--keep'."
   (--filter it list))
 
 (defmacro --map-indexed (form list)
-  "Anaphoric form of `-map-indexed'."
+  "Eval FORM for each item in LIST and return the list of results.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.  This is like
+`--map', but additionally makes `it-index' available to FORM.
+
+This is the anaphoric counterpart to `-map-indexed'."
   (declare (debug (form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
        (--each ,list
-         (!cons ,form ,r))
+         (push ,form ,r))
        (nreverse ,r))))
 
 (defun -map-indexed (fn list)
-  "Return a new list consisting of the result of (FN index item) for each item in LIST.
+  "Apply FN to each index and item in LIST and return the list of results.
+This is like `-map', but FN takes two arguments: the index of the
+current element within LIST, and the element itself.
 
-In the anaphoric form `--map-indexed', the index is exposed as symbol `it-index'.
-
-See also: `-each-indexed'."
+This function's anaphoric counterpart is `--map-indexed'.
+For a side-effecting variant, see also `-each-indexed'."
   (--map-indexed (funcall fn it-index it) list))
 
 (defmacro --map-when (pred rep list)

@@ -46,7 +46,8 @@
        it t t))))
 
 (defun dash--describe (fn)
-  "Return the (ARGLIST DOCSTRING) of FN symbol."
+  "Return the (ARGLIST DOCSTRING) of FN symbol.
+Based on `describe-function-1'."
   (with-temp-buffer
     (pcase-let* ((`(,real-fn ,def ,_alias ,real-def)
                   (help-fns--analyze-function fn))
@@ -73,12 +74,6 @@
        (push ,desc functions))
      ,@examples))
 
-(defun quote-and-downcase (string)
-  (format "`%s`" (downcase string)))
-
-(defun unquote-and-link (string)
-  (format-link (substring string 1 -1)))
-
 (defun format-link (string-name)
   (-let* ((name (intern string-name))
           ((_ signature _ _) (assoc name functions)))
@@ -86,15 +81,51 @@
         (format "[`%s`](#%s)" name (github-id name signature))
       (format "`%s`" name))))
 
-(defun format-docstring (docstring)
-  (let ((case-fold-search nil))
-    (--> docstring
-      (replace-regexp-in-string
-       (rx bow (in upper) (* (in upper ?-)) (* num) eow)
-       #'quote-and-downcase it t t)
-      (replace-regexp-in-string (rx ?` (+? (not (in " `"))) ?\')
-                                #'unquote-and-link it t t)
-      (replace-regexp-in-string (rx bol "  ") "    " it t t))))
+(defun dash--quote-argnames ()
+  "Downcase and quote arg names in current buffer for Markdown."
+  (let ((beg (point-min)))
+    (while (setq beg (text-property-any beg (point-max)
+                                        'face 'help-argument-name))
+      (goto-char beg)
+      (insert ?`)
+      (goto-char (or (next-single-property-change (point) 'face)
+                     (point-max)))
+      (downcase-region (1+ beg) (point))
+      (insert ?`)
+      (setq beg (point)))))
+
+(defun dash--quote-metavars ()
+  "Downcase and quote metavariables in current buffer for Markdown."
+  (goto-char (point-min))
+  (while (re-search-forward (rx bow (group (in upper) (* (in upper ?-)) (* num))
+                                (| (group ?\() (: (group (? "th")) eow)))
+                            nil t)
+    (unless (match-beginning 2)
+      (let* ((suf (match-string 3))
+             (var (format "`%s`%s" (downcase (match-string 1)) suf)))
+        (replace-match var t t)))))
+
+(defun dash--quote-hyperlinks ()
+  "Convert hyperlinks in current buffer from Elisp to Markdown."
+  (goto-char (point-min))
+  (while (re-search-forward (rx ?` (+? (not (in " `"))) ?\') nil t)
+    (replace-match (format-link (substring (match-string 0) 1 -1)) t t)))
+
+(defun dash--indent-blocks ()
+  "Indent example blocks in current buffer for Markdown."
+  (goto-char (point-min))
+  (while (re-search-forward (rx bol "  ") nil t)
+    (replace-match "    " t t)))
+
+(defun dash--format-docstring (docstring)
+  (with-temp-buffer
+    (let ((case-fold-search nil))
+      (insert docstring)
+      (dash--quote-argnames)
+      (dash--quote-metavars)
+      (dash--quote-hyperlinks)
+      (dash--indent-blocks)
+      (buffer-string))))
 
 (defun function-to-md (function)
   (if (stringp function)
@@ -103,8 +134,8 @@
       (format "#### %s `%s`\n\n%s\n\n```el\n%s\n```\n"
               command-name
               signature
-              (format-docstring docstring)
-              (mapconcat 'identity (-take 3 examples) "\n")))))
+              (dash--format-docstring docstring)
+              (mapconcat #'identity (-take 3 examples) "\n")))))
 
 (defun docs--chop-prefix (prefix s)
   "Remove PREFIX if it is at the start of S."

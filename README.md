@@ -597,7 +597,7 @@ Return copy of `list`, starting from index `from` to index `to`.
 `from` or `to` may be negative.  These values are then interpreted
 modulo the length of the list.
 
-If `step` is a number, only each STEPth item in the resulting
+If `step` is a number, only each `step`th item in the resulting
 section is returned.  Defaults to 1.
 
 ```el
@@ -851,7 +851,7 @@ See also: [`-splice`](#-splice-pred-fun-list), [`-splice-list`](#-splice-list-pr
 
 #### -replace-at `(n x list)`
 
-Return a list with element at Nth position in `list` replaced with `x`.
+Return a list with element at `n`th position in `list` replaced with `x`.
 
 See also: [`-replace`](#-replace-old-new-list)
 
@@ -863,7 +863,7 @@ See also: [`-replace`](#-replace-old-new-list)
 
 #### -update-at `(n func list)`
 
-Return a list with element at Nth position in `list` replaced with `(func (nth n list))`.
+Return a list with element at `n`th position in `list` replaced with `(func (nth n list))`.
 
 See also: [`-map-when`](#-map-when-pred-rep-list)
 
@@ -875,7 +875,7 @@ See also: [`-map-when`](#-map-when-pred-rep-list)
 
 #### -remove-at `(n list)`
 
-Return a list with element at Nth position in `list` removed.
+Return a list with element at `n`th position in `list` removed.
 
 See also: [`-remove-at-indices`](#-remove-at-indices-indices-list), [`-remove`](#-remove-pred-list)
 
@@ -1337,7 +1337,7 @@ Alias: `-is-suffix-p`
 
 Return non-nil if `infix` is infix of `list`.
 
-This operation runs in `o`(n^2) time
+This operation runs in O(n^2) time
 
 Alias: `-is-infix-p`
 
@@ -1367,7 +1367,7 @@ Functions partitioning the input list into a list of lists.
 
 #### -split-at `(n list)`
 
-Split `list` into two sublists after the Nth element.
+Split `list` into two sublists after the `n`th element.
 The result is a list of two elements (`take` `drop`) where `take` is a
 new list of the first `n` elements of `list`, and `drop` is the
 remaining elements of `list` (not a copy).  `take` and `drop` are like
@@ -1727,7 +1727,7 @@ Other list functions not fit to be classified elsewhere.
 #### -rotate `(n list)`
 
 Rotate `list` `n` places to the right.  With `n` negative, rotate to the left.
-The time complexity is `o`(n).
+The time complexity is O(n).
 
 ```el
 (-rotate 3 '(1 2 3 4 5 6 7)) ;; => '(5 6 7 1 2 3 4)
@@ -2452,7 +2452,7 @@ Conses and lists:
 
     (a1 a2 a3 ...) - bind 0th car of list to `a1`, 1st to `a2`, 2nd to `a3`...
 
-    (a1 a2 a3 ... aN . rest) - as above, but bind the Nth cdr to `rest`.
+    (a1 a2 a3 ... aN . rest) - as above, but bind the `n`th cdr to `rest`.
 
 Vectors:
 

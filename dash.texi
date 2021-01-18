@@ -603,12 +603,20 @@ The comparison is done with @code{equal}.
 
 @anchor{-non-nil}
 @defun -non-nil (list)
-Return all non-nil elements of @var{list}.
+Return a copy of @var{list} with all nil items removed.
 
 @example
 @group
-(-non-nil '(1 nil 2 nil nil 3 4 nil 5 nil))
+(-non-nil '(nil 1 nil 2 nil nil 3 4 nil 5 nil))
     @result{} '(1 2 3 4 5)
+@end group
+@group
+(-non-nil '((nil)))
+    @result{} '((nil))
+@end group
+@group
+(-non-nil '())
+    @result{} '()
 @end group
 @end example
 @end defun

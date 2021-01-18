@@ -586,10 +586,12 @@ The comparison is done with `equal`.
 
 #### -non-nil `(list)`
 
-Return all non-nil elements of `list`.
+Return a copy of `list` with all nil items removed.
 
 ```el
-(-non-nil '(1 nil 2 nil nil 3 4 nil 5 nil)) ;; => '(1 2 3 4 5)
+(-non-nil '(nil 1 nil 2 nil nil 3 4 nil 5 nil)) ;; => '(1 2 3 4 5)
+(-non-nil '((nil))) ;; => '((nil))
+(-non-nil '()) ;; => '()
 ```
 
 #### -slice `(list from &optional to step)`

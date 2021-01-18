@@ -530,9 +530,9 @@ If you want to select the original items satisfying a predicate use `-filter'."
   (--keep (funcall fn it) list))
 
 (defun -non-nil (list)
-  "Return all non-nil elements of LIST."
+  "Return a copy of LIST with all nil items removed."
   (declare (pure t) (side-effect-free t))
-  (-remove 'null list))
+  (--filter it list))
 
 (defmacro --map-indexed (form list)
   "Anaphoric form of `-map-indexed'."

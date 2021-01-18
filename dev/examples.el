@@ -209,7 +209,12 @@ new list."
     (let ((l (list 1 2))) (setcar (-remove-item 2 l) 0) l) => '(1 2))
 
   (defexamples -non-nil
-    (-non-nil '(1 nil 2 nil nil 3 4 nil 5 nil)) => '(1 2 3 4 5))
+    (-non-nil '(nil 1 nil 2 nil nil 3 4 nil 5 nil)) => '(1 2 3 4 5)
+    (-non-nil '((()))) => '((()))
+    (-non-nil '()) => '()
+    (let ((l (list 1 2))) (setcar (-non-nil l) 0) l) => '(1 2)
+    (let ((l (list nil 1))) (setcar (-non-nil l) 0) l) => '(nil 1)
+    (let ((l (list 1 nil))) (setcar (-non-nil l) 0) l) => '(1 nil))
 
   (defexamples -slice
     (-slice '(1 2 3 4 5) 1) => '(2 3 4 5)

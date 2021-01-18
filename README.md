@@ -132,7 +132,7 @@ Functions returning a sublist of the original list.
 * [-remove](#-remove-pred-list) `(pred list)`
 * [-remove-first](#-remove-first-pred-list) `(pred list)`
 * [-remove-last](#-remove-last-pred-list) `(pred list)`
-* [-remove-item](#-remove-item-item-list) `(item list)`
+* [-remove-item](#-remove-item-arg1-arg2) `(arg1 arg2)`
 * [-non-nil](#-non-nil-list) `(list)`
 * [-slice](#-slice-list-from-optional-to-step) `(list from &optional to step)`
 * [-take](#-take-n-list) `(n list)`
@@ -548,7 +548,7 @@ original tail.  If no item is removed, then the result is a
 complete copy.
 Alias: `-reject-first`.
 This function's anaphoric counterpart is `--remove-first`.
-See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-last`](#-remove-last-pred-list).
+See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-item-arg1-arg2), and [`-remove-last`](#-remove-last-pred-list).
 
 ```el
 (-remove-first #'natnump '(-2 -1 0 1 2)) ;; => '(-2 -1 1 2)
@@ -563,7 +563,7 @@ The result is a copy of `list` regardless of whether an element is
 removed.
 Alias: `-reject-last`.
 This function's anaphoric counterpart is `--remove-last`.
-See also [`-map-last`](#-map-last-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-first`](#-remove-first-pred-list).
+See also [`-map-last`](#-map-last-pred-rep-list), [`-remove-item`](#-remove-item-arg1-arg2), and [`-remove-first`](#-remove-first-pred-list).
 
 ```el
 (-remove-last #'natnump '(1 3 5 4 7 8 10 -11)) ;; => '(1 3 5 4 7 8 -11)
@@ -571,16 +571,17 @@ See also [`-map-last`](#-map-last-pred-rep-list), [`-remove-item`](#-remove-item
 (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 5 6 7 8 9)
 ```
 
-#### -remove-item `(item list)`
+#### -remove-item `(arg1 arg2)`
 
-Remove all occurrences of `item` from `list`.
+Return a copy of `list` with all occurrences of `item` removed.
+The comparison is done with `equal`.
 
-Comparison is done with `equal`.
+(fn `item` `list`)
 
 ```el
 (-remove-item 3 '(1 2 3 2 3 4 5 3)) ;; => '(1 2 2 4 5)
 (-remove-item 'foo '(foo bar baz foo)) ;; => '(bar baz)
-(-remove-item "bob" '("alice" "bob" "eve" "bob" "dave")) ;; => '("alice" "eve" "dave")
+(-remove-item "bob" '("alice" "bob" "eve" "bob")) ;; => '("alice" "eve")
 ```
 
 #### -non-nil `(list)`

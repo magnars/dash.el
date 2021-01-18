@@ -579,10 +579,11 @@ See also @code{-map-last} (@pxref{-map-last}), @code{-remove-item} (@pxref{-remo
 @end defun
 
 @anchor{-remove-item}
-@defun -remove-item (item list)
-Remove all occurrences of @var{item} from @var{list}.
+@defun -remove-item (arg1 arg2)
+Return a copy of @var{list} with all occurrences of @var{item} removed.
+The comparison is done with @code{equal}.
 
-Comparison is done with @code{equal}.
+(fn @var{item} @var{list})
 
 @example
 @group
@@ -594,8 +595,8 @@ Comparison is done with @code{equal}.
     @result{} '(bar baz)
 @end group
 @group
-(-remove-item "bob" '("alice" "bob" "eve" "bob" "dave"))
-    @result{} '("alice" "eve" "dave")
+(-remove-item "bob" '("alice" "bob" "eve" "bob"))
+    @result{} '("alice" "eve")
 @end group
 @end example
 @end defun

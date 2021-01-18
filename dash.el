@@ -509,12 +509,10 @@ See also `-map-last', `-remove-item', and `-remove-first'."
 (defalias '-reject-last '-remove-last)
 (defalias '--reject-last '--remove-last)
 
-(defun -remove-item (item list)
-  "Remove all occurrences of ITEM from LIST.
-
-Comparison is done with `equal'."
-  (declare (pure t) (side-effect-free t))
-  (--remove (equal it item) list))
+(defalias '-remove-item #'remove
+  "Return a copy of LIST with all occurrences of ITEM removed.
+The comparison is done with `equal'.
+\n(fn ITEM LIST)")
 
 (defmacro --keep (form list)
   "Anaphoric form of `-keep'."

@@ -201,7 +201,12 @@ new list."
   (defexamples -remove-item
     (-remove-item 3 '(1 2 3 2 3 4 5 3)) => '(1 2 2 4 5)
     (-remove-item 'foo '(foo bar baz foo)) => '(bar baz)
-    (-remove-item "bob" '("alice" "bob" "eve" "bob" "dave")) => '("alice" "eve" "dave"))
+    (-remove-item "bob" '("alice" "bob" "eve" "bob")) => '("alice" "eve")
+    (-remove-item nil '()) => '()
+    (-remove-item nil '(nil)) => '()
+    (let ((l (list 1 2))) (setcar (-remove-item 0 l) 0) l) => '(1 2)
+    (let ((l (list 1 2))) (setcar (-remove-item 1 l) 0) l) => '(1 2)
+    (let ((l (list 1 2))) (setcar (-remove-item 2 l) 0) l) => '(1 2))
 
   (defexamples -non-nil
     (-non-nil '(1 nil 2 nil nil 3 4 nil 5 nil)) => '(1 2 3 4 5))

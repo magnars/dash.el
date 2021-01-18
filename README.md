@@ -517,7 +517,7 @@ Functions returning a sublist of the original list.
 
 Return a new list of the items in `list` for which `pred` returns non-nil.
 Alias: `-select`.
-This function's anaphoric counterpart `--filter`.
+This function's anaphoric counterpart is `--filter`.
 For similar operations, see also [`-keep`](#-keep-fn-list) and [`-remove`](#-remove-pred-list).
 
 ```el
@@ -530,7 +530,7 @@ For similar operations, see also [`-keep`](#-keep-fn-list) and [`-remove`](#-rem
 
 Return a new list of the items in `list` for which `pred` returns nil.
 Alias: `-reject`.
-This function's anaphoric counterpart `--remove`.
+This function's anaphoric counterpart is `--remove`.
 For similar operations, see also [`-keep`](#-keep-fn-list) and [`-filter`](#-filter-pred-list).
 
 ```el

@@ -430,7 +430,7 @@ For the opposite operation, see also `--remove'."
 (defun -filter (pred list)
   "Return a new list of the items in LIST for which PRED returns non-nil.
 Alias: `-select'.
-This function's anaphoric counterpart `--filter'.
+This function's anaphoric counterpart is `--filter'.
 For similar operations, see also `-keep' and `-remove'."
   (--filter (funcall pred it) list))
 
@@ -449,7 +449,7 @@ For the opposite operation, see also `--filter'."
 (defun -remove (pred list)
   "Return a new list of the items in LIST for which PRED returns nil.
 Alias: `-reject'.
-This function's anaphoric counterpart `--remove'.
+This function's anaphoric counterpart is `--remove'.
 For similar operations, see also `-keep' and `-filter'."
   (--remove (funcall pred it) list))
 

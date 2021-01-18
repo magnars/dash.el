@@ -484,7 +484,7 @@ Functions returning a sublist of the original list.
 @defun -filter (pred list)
 Return a new list of the items in @var{list} for which @var{pred} returns non-nil.
 Alias: @code{-select}.
-This function's anaphoric counterpart @code{--filter}.
+This function's anaphoric counterpart is @code{--filter}.
 For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-remove} (@pxref{-remove}).
 
 @example
@@ -507,7 +507,7 @@ For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-remove}
 @defun -remove (pred list)
 Return a new list of the items in @var{list} for which @var{pred} returns nil.
 Alias: @code{-reject}.
-This function's anaphoric counterpart @code{--remove}.
+This function's anaphoric counterpart is @code{--remove}.
 For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-filter} (@pxref{-filter}).
 
 @example

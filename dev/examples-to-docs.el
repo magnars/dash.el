@@ -23,6 +23,8 @@
 
 (require 'dash)
 (require 'dash-functional)
+
+(require 'help-fns)
 (require 'lisp-mnt)
 
 (setq text-quoting-style 'grave)
@@ -43,34 +45,25 @@
        (lambda (s) (concat "\\" (text-char-description (string-to-char s))))
        it t t))))
 
-(defun docs--signature (function)
-  "Given FUNCTION (a symbol), return its argument list.
-FUNCTION may reference an elisp function, alias, macro or a subr."
-  (let* ((function-value (indirect-function function))
-         (is-alias (not (eq function-value (symbol-function function))))
-         ;; if FUNCTION isn't an alias, function-symbol is simply FUNCTION
-         (function-symbol function))
-
-    (when is-alias
-      ;; find the last symbol in the alias chain
-      (while (symbolp (symbol-function function-symbol))
-        (setq function-symbol (symbol-function function-symbol))))
-
-    (if (subrp function-value)
-        ;; read the docstring to find the signature for subrs
-        (let* ((docstring-args (car (help-split-fundoc
-                                     (documentation function-value)
-                                     function-symbol)))
-               (fun-with-args (read (downcase docstring-args))))
-          (cdr fun-with-args))
-      ;; otherwise get the signature directly
-      (help-function-arglist function-symbol))))
+(defun dash--describe (fn)
+  "Return the (ARGLIST DOCSTRING) of FN symbol."
+  (with-temp-buffer
+    (pcase-let* ((`(,real-fn ,def ,_alias ,real-def)
+                  (help-fns--analyze-function fn))
+                 (buf (current-buffer))
+                 (doc-raw (documentation fn t))
+                 (doc (help-fns--signature fn doc-raw real-def real-fn buf)))
+      (goto-char (1+ (point-min)))
+      (delete-region (point) (progn (forward-sexp) (1+ (point))))
+      (downcase-region (point) (point-max))
+      (backward-char)
+      (list (read buf) doc))))
 
 (defmacro defexamples (cmd &rest examples)
-  `(push (list ',cmd
-               (docs--signature ',cmd)
-               (documentation ',cmd)
-               (mapcar #'example-to-string (-partition 3 ',examples)))
+  `(push (cons ',cmd
+               (nconc (dash--describe ',cmd)
+                      (list (mapcar #'example-to-string
+                                    (-partition 3 ',examples)))))
          functions))
 
 (defmacro def-example-group (group desc &rest examples)

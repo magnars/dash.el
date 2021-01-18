@@ -121,7 +121,7 @@ new list.
 * [-splice](#-splice-pred-fun-list) `(pred fun list)`
 * [-splice-list](#-splice-list-pred-new-list-list) `(pred new-list list)`
 * [-mapcat](#-mapcat-fn-list) `(fn list)`
-* [-copy](#-copy-arg) `(arg)`
+* [-copy](#-copy-list) `(list)`
 
 ### Sublist selection
 
@@ -132,7 +132,7 @@ Functions returning a sublist of the original list.
 * [-remove](#-remove-pred-list) `(pred list)`
 * [-remove-first](#-remove-first-pred-list) `(pred list)`
 * [-remove-last](#-remove-last-pred-list) `(pred list)`
-* [-remove-item](#-remove-item-arg1-arg2) `(arg1 arg2)`
+* [-remove-item](#-remove-item-item-list) `(item list)`
 * [-non-nil](#-non-nil-list) `(list)`
 * [-slice](#-slice-list-from-optional-to-step) `(list from &optional to step)`
 * [-take](#-take-n-list) `(n list)`
@@ -284,14 +284,14 @@ Other list functions not fit to be classified elsewhere.
 * [-some](#-some-pred-list) `(pred list)`
 * [-last](#-last-pred-list) `(pred list)`
 * [-first-item](#-first-item-list) `(list)`
-* [-second-item](#-second-item-arg1) `(arg1)`
-* [-third-item](#-third-item-arg1) `(arg1)`
+* [-second-item](#-second-item-list) `(list)`
+* [-third-item](#-third-item-list) `(list)`
 * [-fourth-item](#-fourth-item-list) `(list)`
 * [-fifth-item](#-fifth-item-list) `(list)`
 * [-last-item](#-last-item-list) `(list)`
 * [-butlast](#-butlast-list) `(list)`
 * [-sort](#-sort-comparator-list) `(comparator list)`
-* [-list](#-list-optional-arg-rest-args) `(&optional arg &rest args)`
+* [-list](#-list-arg) `(arg)`
 * [-fix](#-fix-fn-list) `(fn list)`
 
 ### Tree operations
@@ -324,14 +324,14 @@ Functions pretending lists are trees.
 
 Convenient versions of `let` and `let*` constructs combined with flow control.
 
-* [-when-let](#-when-let-var-val-rest-body) `(var-val &rest body)`
+* [-when-let](#-when-let-var-val-rest-body) `((var val) &rest body)`
 * [-when-let*](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
-* [-if-let](#-if-let-var-val-then-rest-else) `(var-val then &rest else)`
+* [-if-let](#-if-let-var-val-then-rest-else) `((var val) then &rest else)`
 * [-if-let*](#-if-let-vars-vals-then-rest-else) `(vars-vals then &rest else)`
 * [-let](#-let-varlist-rest-body) `(varlist &rest body)`
 * [-let*](#-let-varlist-rest-body) `(varlist &rest body)`
 * [-lambda](#-lambda-match-form-rest-body) `(match-form &rest body)`
-* [-setq](#-setq-rest-forms) `(&rest forms)`
+* [-setq](#-setq-match-form-val) `([match-form val] ...)`
 
 ### Side effects
 
@@ -496,11 +496,9 @@ Thus function `fn` should return a list.
 (--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
 ```
 
-#### -copy `(arg)`
+#### -copy `(list)`
 
 Create a shallow copy of `list`.
-
-(fn `list`)
 
 ```el
 (-copy '(1 2 3)) ;; => '(1 2 3)
@@ -548,7 +546,7 @@ original tail.  If no item is removed, then the result is a
 complete copy.
 Alias: `-reject-first`.
 This function's anaphoric counterpart is `--remove-first`.
-See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-item-arg1-arg2), and [`-remove-last`](#-remove-last-pred-list).
+See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-last`](#-remove-last-pred-list).
 
 ```el
 (-remove-first #'natnump '(-2 -1 0 1 2)) ;; => '(-2 -1 1 2)
@@ -563,7 +561,7 @@ The result is a copy of `list` regardless of whether an element is
 removed.
 Alias: `-reject-last`.
 This function's anaphoric counterpart is `--remove-last`.
-See also [`-map-last`](#-map-last-pred-rep-list), [`-remove-item`](#-remove-item-arg1-arg2), and [`-remove-first`](#-remove-first-pred-list).
+See also [`-map-last`](#-map-last-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-first`](#-remove-first-pred-list).
 
 ```el
 (-remove-last #'natnump '(1 3 5 4 7 8 10 -11)) ;; => '(1 3 5 4 7 8 -11)
@@ -571,12 +569,10 @@ See also [`-map-last`](#-map-last-pred-rep-list), [`-remove-item`](#-remove-item
 (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 5 6 7 8 9)
 ```
 
-#### -remove-item `(arg1 arg2)`
+#### -remove-item `(item list)`
 
 Return a copy of `list` with all occurrences of `item` removed.
 The comparison is done with `equal`.
-
-(fn `item` `list`)
 
 ```el
 (-remove-item 3 '(1 2 3 2 3 4 5 3)) ;; => '(1 2 2 4 5)
@@ -644,8 +640,6 @@ Return the tail (not a copy) of `list` without the first `n` items.
 Return nil if `list` contains `n` items or fewer.
 Return `list` if `n` is zero or less.
 For another variant, see also [`-drop-last`](#-drop-last-n-list).
-
-(fn `n` `list`)
 
 ```el
 (-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
@@ -2007,9 +2001,7 @@ Return the last x in `list` where (`pred` x) is non-nil, else nil.
 
 Return the first item of `list`, or nil on an empty list.
 
-See also: [`-second-item`](#-second-item-arg1), [`-last-item`](#-last-item-list).
-
-(fn `list`)
+See also: [`-second-item`](#-second-item-list), [`-last-item`](#-last-item-list).
 
 ```el
 (-first-item '(1 2 3)) ;; => 1
@@ -2017,26 +2009,22 @@ See also: [`-second-item`](#-second-item-arg1), [`-last-item`](#-last-item-list)
 (let ((list (list 1 2 3))) (setf (-first-item list) 5) list) ;; => '(5 2 3)
 ```
 
-#### -second-item `(arg1)`
+#### -second-item `(list)`
 
 Return the second item of `list`, or nil if `list` is too short.
 
-See also: [`-third-item`](#-third-item-arg1).
-
-(fn `list`)
+See also: [`-third-item`](#-third-item-list).
 
 ```el
 (-second-item '(1 2 3)) ;; => 2
 (-second-item nil) ;; => nil
 ```
 
-#### -third-item `(arg1)`
+#### -third-item `(list)`
 
 Return the third item of `list`, or nil if `list` is too short.
 
 See also: [`-fourth-item`](#-fourth-item-list).
-
-(fn `list`)
 
 ```el
 (-third-item '(1 2 3)) ;; => 3
@@ -2098,7 +2086,7 @@ if the first element should sort before the second.
 (--sort (< it other) '(3 1 2)) ;; => '(1 2 3)
 ```
 
-#### -list `(&optional arg &rest args)`
+#### -list `(arg)`
 
 Ensure `arg` is a list.
 If `arg` is already a list, return it as is (not a copy).
@@ -2361,13 +2349,11 @@ which `forms` may have modified by side effect.
 
 Convenient versions of `let` and `let*` constructs combined with flow control.
 
-#### -when-let `(var-val &rest body)`
+#### -when-let `((var val) &rest body)`
 
 If `val` evaluates to non-nil, bind it to `var` and execute body.
 
 Note: binding is done according to [`-let`](#-let-varlist-rest-body).
-
-(fn (`var` `val`) &rest `body`)
 
 ```el
 (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2)) ;; => 5
@@ -2390,14 +2376,12 @@ encountered.
 (-when-let* ((x 5) (y nil) (z 7)) (+ x y z)) ;; => nil
 ```
 
-#### -if-let `(var-val then &rest else)`
+#### -if-let `((var val) then &rest else)`
 
 If `val` evaluates to non-nil, bind it to `var` and do `then`,
 otherwise do `else`.
 
 Note: binding is done according to [`-let`](#-let-varlist-rest-body).
-
-(fn (`var` `val`) `then` &rest `else`)
 
 ```el
 (-if-let (match-index (string-match "d" "abc")) (+ match-index 3) 7) ;; => 7
@@ -2631,7 +2615,7 @@ See [`-let`](#-let-varlist-rest-body) for a description of the destructuring mec
 (funcall (-lambda ((_ . a) (_ . b)) (-concat a b)) '(1 2 3) '(4 5 6)) ;; => '(2 3 5 6)
 ```
 
-#### -setq `(&rest forms)`
+#### -setq `([match-form val] ...)`
 
 Bind each `match-form` to the value of its `val`.
 
@@ -2651,8 +2635,6 @@ expands roughly speaking to the following code
 
 Care is taken to only evaluate each `val` once so that in case of
 multiple assignments it does not cause unexpected side effects.
-
-(fn [`match-form` `val`]...)
 
 ```el
 (let (a) (-setq a 1) a) ;; => 1

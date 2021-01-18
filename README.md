@@ -543,7 +543,7 @@ For similar operations, see also [`-keep`](#-keep-fn-list) and [`-filter`](#-fil
 
 Remove the first item from `list` for which `pred` returns non-nil.
 This is a non-destructive operation, but only the front of `list`
-leading up to the removed item is a copy; the rest is `list``s
+leading up to the removed item is a copy; the rest is `list`'s
 original tail.  If no item is removed, then the result is a
 complete copy.
 Alias: `-reject-first`.
@@ -997,7 +997,7 @@ For other folds, see also [`-reduce-r-from`](#-reduce-r-from-fn-init-list) and [
 
 #### -reductions-from `(fn init list)`
 
-Return a list of `fn``s intermediate reductions across `list`.
+Return a list of `fn`'s intermediate reductions across `list`.
 That is, a list of the intermediate values of the accumulator
 when [`-reduce-from`](#-reduce-from-fn-init-list) (which see) is called with the same
 arguments.
@@ -1012,7 +1012,7 @@ For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reduction
 
 #### -reductions-r-from `(fn init list)`
 
-Return a list of `fn``s intermediate reductions across reversed `list`.
+Return a list of `fn`'s intermediate reductions across reversed `list`.
 That is, a list of the intermediate values of the accumulator
 when [`-reduce-r-from`](#-reduce-r-from-fn-init-list) (which see) is called with the same
 arguments.
@@ -1027,7 +1027,7 @@ For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reduction
 
 #### -reductions `(fn list)`
 
-Return a list of `fn``s intermediate reductions across `list`.
+Return a list of `fn`'s intermediate reductions across `list`.
 That is, a list of the intermediate values of the accumulator
 when [`-reduce`](#-reduce-fn-list) (which see) is called with the same arguments.
 This function's anaphoric counterpart is `--reductions`.
@@ -1041,7 +1041,7 @@ For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reduction
 
 #### -reductions-r `(fn list)`
 
-Return a list of `fn``s intermediate reductions across reversed `list`.
+Return a list of `fn`'s intermediate reductions across reversed `list`.
 That is, a list of the intermediate values of the accumulator
 when [`-reduce-r`](#-reduce-r-fn-list) (which see) is called with the same arguments.
 This function's anaphoric counterpart is `--reductions-r`.
@@ -1441,8 +1441,8 @@ Return a list of ((-filter `pred` `list`) (-remove `pred` `list`)), in one pass 
 
 #### -partition `(n list)`
 
-Return a new list with the items in `list` grouped into `n-`sized sublists.
-If there are not enough items to make the last group `n-`sized,
+Return a new list with the items in `list` grouped into `n`-sized sublists.
+If there are not enough items to make the last group `n`-sized,
 those items are discarded.
 
 ```el
@@ -1453,7 +1453,7 @@ those items are discarded.
 
 #### -partition-all `(n list)`
 
-Return a new list with the items in `list` grouped into `n-`sized sublists.
+Return a new list with the items in `list` grouped into `n`-sized sublists.
 The last group may contain less than `n` items.
 
 ```el
@@ -1464,8 +1464,8 @@ The last group may contain less than `n` items.
 
 #### -partition-in-steps `(n step list)`
 
-Return a new list with the items in `list` grouped into `n-`sized sublists at offsets `step` apart.
-If there are not enough items to make the last group `n-`sized,
+Return a new list with the items in `list` grouped into `n`-sized sublists at offsets `step` apart.
+If there are not enough items to make the last group `n`-sized,
 those items are discarded.
 
 ```el
@@ -1476,7 +1476,7 @@ those items are discarded.
 
 #### -partition-all-in-steps `(n step list)`
 
-Return a new list with the items in `list` grouped into `n-`sized sublists at offsets `step` apart.
+Return a new list with the items in `list` grouped into `n`-sized sublists at offsets `step` apart.
 The last groups may contain less than `n` items.
 
 ```el

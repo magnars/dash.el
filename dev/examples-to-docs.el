@@ -94,11 +94,14 @@ FUNCTION may reference an elisp function, alias, macro or a subr."
       (format "`%s`" name))))
 
 (defun format-docstring (docstring)
-  (let (case-fold-search)
+  (let ((case-fold-search nil))
     (--> docstring
-      (replace-regexp-in-string "\\b\\([A-Z][A-Z-]*[0-9]*\\)\\b" 'quote-and-downcase it t)
-      (replace-regexp-in-string "`\\([^ ]+\\)'" 'unquote-and-link it t)
-      (replace-regexp-in-string "^  " "    " it))))
+      (replace-regexp-in-string
+       (rx bow (in upper) (* (in upper ?-)) (* num) eow)
+       #'quote-and-downcase it t t)
+      (replace-regexp-in-string (rx ?` (+? (not (in " `"))) ?\')
+                                #'unquote-and-link it t t)
+      (replace-regexp-in-string (rx bol "  ") "    " it t t))))
 
 (defun function-to-md (function)
   (if (stringp function)

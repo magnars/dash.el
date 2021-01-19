@@ -128,7 +128,7 @@ Regenerate the docs with:
 I highly recommend that you install these as a pre-commit hook, so
 that the tests are always running and the docs are always in sync:
 
-    cp pre-commit.sh .git/hooks/pre-commit
+    cp dev/pre-commit.sh .git/hooks/pre-commit
 
 Oh, and don't edit `README.md` or `dash.texi` directly; they are
 auto-generated.  Change `readme-template.md` or `dash-template.texi`

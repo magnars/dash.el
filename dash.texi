@@ -4605,7 +4605,7 @@ commands as a Git pre-commit hook, so that the tests are always
 running and the docs are always in sync:
 
 @example
-$ cp pre-commit.sh .git/hooks/pre-commit
+$ cp dev/pre-commit.sh .git/hooks/pre-commit
 @end example
 
 Oh, and don't edit @file{README.md} or @file{dash.texi} directly, as

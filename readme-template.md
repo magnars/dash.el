@@ -2,7 +2,7 @@
 [![MELPA](https://melpa.org/packages/dash-badge.svg)](https://melpa.org/#/dash)
 [![MELPA Stable](https://stable.melpa.org/packages/dash-badge.svg)](https://stable.melpa.org/#/dash)
 
-# <img align="right" src="https://raw.github.com/magnars/dash.el/master/rainbow-dash.png"> dash.el
+# <img align="right" src="rainbow-dash.png"> dash.el
 
 A modern list API for Emacs.  No
 [`'cl`](https://gnu.org/software/emacs/manual/html_node/cl/) required.

@@ -1854,9 +1854,9 @@ Alias: @code{-same-items-p}
 
 @anchor{-is-prefix?}
 @defun -is-prefix? (prefix list)
-Return non-nil if @var{prefix} is prefix of @var{list}.
+Return non-nil if @var{prefix} is a prefix of @var{list}.
 
-Alias: @code{-is-prefix-p}
+Alias: @code{-is-prefix-p}.
 
 @example
 @group
@@ -1876,9 +1876,9 @@ Alias: @code{-is-prefix-p}
 
 @anchor{-is-suffix?}
 @defun -is-suffix? (suffix list)
-Return non-nil if @var{suffix} is suffix of @var{list}.
+Return non-nil if @var{suffix} is a suffix of @var{list}.
 
-Alias: @code{-is-suffix-p}
+Alias: @code{-is-suffix-p}.
 
 @example
 @group

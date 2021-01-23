@@ -1313,9 +1313,9 @@ Alias: `-same-items-p`
 
 #### -is-prefix? `(prefix list)`
 
-Return non-nil if `prefix` is prefix of `list`.
+Return non-nil if `prefix` is a prefix of `list`.
 
-Alias: `-is-prefix-p`
+Alias: `-is-prefix-p`.
 
 ```el
 (-is-prefix? '(1 2 3) '(1 2 3 4 5)) ;; => t
@@ -1325,9 +1325,9 @@ Alias: `-is-prefix-p`
 
 #### -is-suffix? `(suffix list)`
 
-Return non-nil if `suffix` is suffix of `list`.
+Return non-nil if `suffix` is a suffix of `list`.
 
-Alias: `-is-suffix-p`
+Alias: `-is-suffix-p`.
 
 ```el
 (-is-suffix? '(3 4 5) '(1 2 3 4 5)) ;; => t

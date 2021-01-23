@@ -2604,20 +2604,22 @@ Alias: `-same-items-p'"
 (defalias '-same-items-p '-same-items?)
 
 (defun -is-prefix? (prefix list)
-  "Return non-nil if PREFIX is prefix of LIST.
+  "Return non-nil if PREFIX is a prefix of LIST.
 
-Alias: `-is-prefix-p'"
+Alias: `-is-prefix-p'."
   (declare (pure t) (side-effect-free t))
-  (--each-while list (equal (car prefix) it)
-    (!cdr prefix))
-  (not prefix))
+  (--each-while list (and (equal (car prefix) it)
+                          (!cdr prefix)))
+  (null prefix))
 
 (defun -is-suffix? (suffix list)
-  "Return non-nil if SUFFIX is suffix of LIST.
+  "Return non-nil if SUFFIX is a suffix of LIST.
 
-Alias: `-is-suffix-p'"
+Alias: `-is-suffix-p'."
   (declare (pure t) (side-effect-free t))
-  (-is-prefix? (reverse suffix) (reverse list)))
+  (cond ((null suffix))
+        ((setq list (member (car suffix) list))
+         (equal (cdr suffix) (cdr list)))))
 
 (defun -is-infix? (infix list)
   "Return non-nil if INFIX is infix of LIST.

@@ -666,16 +666,39 @@ value rather than consuming a list to produce a single value."
     (-is-prefix? '(1 2 3) '(1 2 3 4 5)) => t
     (-is-prefix? '(1 2 3 4 5) '(1 2 3)) => nil
     (-is-prefix? '(1 3) '(1 2 3 4 5)) => nil
-    (-is-prefix? '(1 2 3) '(1 2 4 5)) => nil)
+    (-is-prefix? '(1 2 3) '(1 2 4 5)) => nil
+    (-is-prefix? '(1 2 3) '(1 2)) => nil
+    (-is-prefix? '(1 2) '(1 2)) => t
+    (-is-prefix? '(1) '(1 2)) => t
+    (-is-prefix? '(1) '(1)) => t
+    (-is-prefix? '() '(1)) => t
+    (-is-prefix? '() '()) => t
+    (-is-prefix? '() '(nil)) => t
+    (-is-prefix? '(nil) '(nil)) => t
+    (-is-prefix? '(nil) '()) => nil
+    (-is-prefix? '(2 3) '(1 2 3)) => nil
+    (let* ((p (list 1 2)) (l p) (c (copy-sequence p)))
+      (and (-is-prefix? p l) (equal p c) (equal l c)))
+    => t)
 
   (defexamples -is-suffix?
     (-is-suffix? '(3 4 5) '(1 2 3 4 5)) => t
     (-is-suffix? '(1 2 3 4 5) '(3 4 5)) => nil
     (-is-suffix? '(3 5) '(1 2 3 4 5)) => nil
     (-is-suffix? '(3 4 5) '(1 2 3 5)) => nil
-    (let ((l '(1 2 3)))
-      (list (-is-suffix? '(3) l)
-            l)) => '(t (1 2 3)))
+    (-is-suffix? '(1 2 3) '(2 3)) => nil
+    (-is-suffix? '(1 2) '(1 2)) => t
+    (-is-suffix? '(2) '(1 2)) => t
+    (-is-suffix? '(1) '(1)) => t
+    (-is-suffix? '() '(1)) => t
+    (-is-suffix? '() '()) => t
+    (-is-suffix? '() '(nil)) => t
+    (-is-suffix? '(nil) '(nil)) => t
+    (-is-suffix? '(nil) '()) => nil
+    (-is-suffix? '(1 2) '(1 2 3)) => nil
+    (let* ((s (list 1 2)) (l s) (c (copy-sequence s)))
+      (and (-is-suffix? s l) (equal s c) (equal l c)))
+    => t)
 
   (defexamples -is-infix?
     (-is-infix? '(1 2 3) '(1 2 3 4 5)) => t

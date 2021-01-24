@@ -1751,14 +1751,15 @@ and when that result is non-nil, through the next form, etc."
                    (->> ,result ,form))
                  ,@more))))
 
-(defmacro -some--> (x &rest forms)
-  "When expr is non-nil, thread it through the first form (via `-->'),
-and when that result is non-nil, through the next form, etc."
-  (declare (debug ->)
-           (indent 1))
-  (if (null forms) x
+(defmacro -some--> (expr &rest forms)
+  "Thread EXPR through FORMS via `-->', while the result is non-nil.
+When EXPR evaluates to non-nil, thread the result through the
+first of FORMS, and when that result is non-nil, thread it
+through the next form, etc."
+  (declare (debug (form &rest &or symbolp consp)) (indent 1))
+  (if (null forms) expr
     (let ((result (make-symbol "result")))
-      `(-some--> (-when-let (,result ,x)
+      `(-some--> (-when-let (,result ,expr)
                    (--> ,result ,(car forms)))
          ,@(cdr forms)))))
 

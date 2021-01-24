@@ -3601,9 +3601,11 @@ and when that result is non-nil, through the next form, etc.
 @end defmac
 
 @anchor{-some-->}
-@defmac -some--> (x &rest forms)
-When expr is non-nil, thread it through the first form (via @code{-->} (@pxref{-->})),
-and when that result is non-nil, through the next form, etc.
+@defmac -some--> (expr &rest forms)
+Thread @var{expr} through @var{forms} via @code{-->} (@pxref{-->}), while the result is non-nil.
+When @var{expr} evaluates to non-nil, thread the result through the
+first of @var{forms}, and when that result is non-nil, thread it
+through the next form, etc.
 
 @example
 @group
@@ -3615,8 +3617,8 @@ and when that result is non-nil, through the next form, etc.
     @result{} nil
 @end group
 @group
-(-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it))
-    @result{} nil
+(-some--> '(0 1) (-remove #'natnump it) (append it it) (-map #'1+ it))
+    @result{} '()
 @end group
 @end example
 @end defmac

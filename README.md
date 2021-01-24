@@ -316,7 +316,7 @@ Functions pretending lists are trees.
 * [-as->](#-as--value-variable-rest-forms) `(value variable &rest forms)`
 * [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
-* [-some-->](#-some---x-rest-forms) `(x &rest forms)`
+* [-some-->](#-some---expr-rest-forms) `(expr &rest forms)`
 * [-doto](#-doto-init-rest-forms) `(init &rest forms)`
 
 ### Binding
@@ -2321,15 +2321,17 @@ and when that result is non-nil, through the next form, etc.
 (-some->> '(2 4 6) (-last 'even?) (+ 100)) ;; => 106
 ```
 
-#### -some--> `(x &rest forms)`
+#### -some--> `(expr &rest forms)`
 
-When expr is non-nil, thread it through the first form (via [`-->`](#---x-rest-forms)),
-and when that result is non-nil, through the next form, etc.
+Thread `expr` through `forms` via [`-->`](#---x-rest-forms), while the result is non-nil.
+When `expr` evaluates to non-nil, thread the result through the
+first of `forms`, and when that result is non-nil, thread it
+through the next form, etc.
 
 ```el
 (-some--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
 (-some--> nil (concat "abc" it "ghi")) ;; => nil
-(-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) ;; => nil
+(-some--> '(0 1) (-remove #'natnump it) (append it it) (-map #'1+ it)) ;; => '()
 ```
 
 #### -doto `(init &rest forms)`

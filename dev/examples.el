@@ -1283,9 +1283,13 @@ value rather than consuming a list to produce a single value."
   (defexamples -some-->
     (-some--> "def" (concat "abc" it "ghi")) => "abcdefghi"
     (-some--> nil (concat "abc" it "ghi")) => nil
-    (-some--> '(1 3 5) (-filter 'even? it) (append it it) (-map 'square it)) => nil
-    (-some--> '(2 4 6) (-filter 'even? it) (append it it) (-map 'square it)) => '(4 16 36 4 16 36)
-    (-some--> 1 nil) !!> (void-function nil))
+    (-some--> '(0 1) (-remove #'natnump it) (append it it) (-map #'1+ it))
+    => '()
+    (-some--> '(0 1) (-filter #'natnump it) (append it it) (-map #'1+ it))
+    => '(1 2 1 2)
+    (-some--> 1 nil) !!> (void-function nil)
+    (-some--> nil) => nil
+    (-some--> t) => t)
 
   (defexamples -doto
     (-doto (list 1 2 3) pop pop) => '(3)

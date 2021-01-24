@@ -1768,7 +1768,7 @@ through the next form, etc."
 The RESULT of evaluating INIT is threaded through each of FORMS
 individually using `->', which see.  The return value is RESULT,
 which FORMS may have modified by side effect."
-  (declare (debug (form body)) (indent 1))
+  (declare (debug (form &rest &or symbolp consp)) (indent 1))
   (let ((retval (make-symbol "result")))
     `(let ((,retval ,init))
        ,@(mapcar (lambda (form) `(-> ,retval ,form)) forms)

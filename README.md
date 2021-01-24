@@ -316,7 +316,7 @@ Functions pretending lists are trees.
 * [-as->](#-as--value-variable-rest-forms) `(value variable &rest forms)`
 * [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
-* [-some-->](#-some---x-optional-form-rest-more) `(x &optional form &rest more)`
+* [-some-->](#-some---x-rest-forms) `(x &rest forms)`
 * [-doto](#-doto-init-rest-forms) `(init &rest forms)`
 
 ### Binding
@@ -2321,7 +2321,7 @@ and when that result is non-nil, through the next form, etc.
 (-some->> '(2 4 6) (-last 'even?) (+ 100)) ;; => 106
 ```
 
-#### -some--> `(x &optional form &rest more)`
+#### -some--> `(x &rest forms)`
 
 When expr is non-nil, thread it through the first form (via [`-->`](#---x-rest-forms)),
 and when that result is non-nil, through the next form, etc.

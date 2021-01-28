@@ -1200,7 +1200,7 @@ value rather than consuming a list to produce a single value."
     => "foo bar baz quux qwop"
     (--tree-mapreduce (if (-cons-pair? it) (list (cdr it)) nil)
                       (append it acc)
-                      '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam))))
+                      '((elisp-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam))))
     => '(booze qux bla bam))
 
   (defexamples -tree-mapreduce-from
@@ -1215,8 +1215,8 @@ value rather than consuming a list to produce a single value."
                                         (equal (substring it (1- (length it))) "{"))
                               ", ") acc)
                  "}"
-                 '((elips-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam)))))
-    => "{elips-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}")
+                 '((elisp-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam)))))
+    => "{elisp-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}")
 
   (defexamples -clone
     (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) => '(1 2 3)))

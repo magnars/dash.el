@@ -28,25 +28,37 @@
 
 (defvar functions ())
 
+(defun dash--print-lisp-as-texi (obj)
+  "Print Lisp OBJ suitably for Texinfo."
+  (save-excursion (prin1 obj))
+  (while (re-search-forward (rx (| (group "\\?")
+                                   (group (in "{}"))
+                                   (not (in ?\n print))))
+                            nil 'move)
+    (cond ((match-beginning 1)
+           ;; Unescape `-any\?' -> `-any?'.
+           (delete-region (- (point) 2) (1- (point))))
+          ((match-beginning 2)
+           ;; Escape braces with @.
+           (backward-char)
+           (insert ?@)
+           (forward-char))
+          ((let ((desc (text-char-description (preceding-char))))
+             ;; Translate unprintable characters such as ?\^A.
+             (replace-match (concat "\\" desc) t t))))))
+
 (defun example-to-string (example)
-  (let ((actual (pop example))
-        (err (eq (pop example) '!!>))
-        (expected (pop example)))
+  (pcase-let* ((`(,actual ,err ,expected) example)
+               (err (eq err '!!>)))
     (and err (consp expected)
          (setq expected (error-message-string expected)))
-    (--> (format "@group\n%S\n    %s %S\n@end group"
-                 actual (if err "@error{}" "@result{}") expected)
-      (replace-regexp-in-string "\\\\\\?" "?" it t t)
-      (replace-regexp-in-string "{\"" "@{\"" it t t)
-      (replace-regexp-in-string "}\"" "@}\"" it t t)
-      (replace-regexp-in-string " {" " @{" it t t)
-      (replace-regexp-in-string "\"{" "\"@{" it t t)
-      (replace-regexp-in-string "}," "@}," it t t)
-      (replace-regexp-in-string "}@}" "@}@}" it t t)
-      (replace-regexp-in-string
-       "[^\n[:print:]]"
-       (lambda (s) (concat "\\" (text-char-description (string-to-char s))))
-       it t t))))
+    (with-output-to-string
+      (with-current-buffer standard-output
+        (insert "@group\n")
+        (dash--print-lisp-as-texi actual)
+        (insert "\n    " (if err "@error{}" "@result{}") ?\s)
+        (dash--print-lisp-as-texi expected)
+        (insert "\n@end group")))))
 
 (defun dash--describe (fn)
   "Return the (ARGLIST DOCSTRING) of FN symbol.
@@ -78,31 +90,37 @@ Based on `describe-function-1'."
        (push ,desc functions))
      ,@examples))
 
-(defun quote-and-downcase (string)
-  (format "@var{%s}" (downcase string)))
-
-(defun unquote-and-link (string)
-  (format-link (substring string 1 -1)))
-
-(defun format-link (string-name)
-  (-let* ((name (intern string-name))
-          ((_ signature _ _) (assoc name functions)))
-    (if signature
-        (format "@code{%s} (@pxref{%s})" name name)
-      (format "@code{%s}" name))))
-
 (defun format-docstring (docstring)
-  (let (case-fold-search)
-    (--> docstring
-      (replace-regexp-in-string "@" "@@" it t t)
-      (replace-regexp-in-string "\\<\\([A-Z][A-Z-]*[0-9]*\\)\\>"
-                                #'quote-and-downcase it t t)
-      (replace-regexp-in-string "`\\([^ ]+\\)'" #'unquote-and-link it t t)
-      (replace-regexp-in-string "^  " "    " it t t)
-      (replace-regexp-in-string
-       "\\.\\.\\.\\($\\)?"
-       (lambda (_) (if (match-beginning 1) "@enddots{}" "@dots{}"))
-       it t t))))
+  (let ((case-fold-search nil))
+    (with-output-to-string
+      (with-current-buffer standard-output
+        (insert docstring)
+        (goto-char (point-min))
+        ;; Escape literal ?@.
+        (while (search-forward "@" nil t) (insert ?@))
+        (goto-char (point-min))
+        (while (re-search-forward
+                (rx (| (group bow (in "A-Z") (* (in "A-Z" ?-)) (* num) eow)
+                       (: ?` (group (+ (not (in ?\s)))) ?\')
+                       (group bol "  ")
+                       (: "..." (? (group eol)))))
+                nil t)
+          (cond ((match-beginning 1)
+                 ;; Downcase metavariable reference.
+                 (downcase-region (match-beginning 1) (match-end 1))
+                 (replace-match "@var{\\1}" t))
+                ((match-beginning 2)
+                 ;; `quoted' symbol.
+                 (replace-match (if (assq (intern (match-string 2)) functions)
+                                    "@code{\\2} (@pxref{\\2})"
+                                  "@code{\\2}")
+                                t))
+                ;; Indent examples within docstrings.
+                ;; FIXME: This has no effect in Texinfo.
+                ((match-beginning 3) (insert "  "))
+                ;; Ellipses.
+                ((match-beginning 4) (replace-match "@enddots{}" t t))
+                ((replace-match "@dots{}" t t))))))))
 
 (defun function-to-node (function)
   (concat (replace-regexp-in-string (rx bos "### ") "* " function t t) "::"))

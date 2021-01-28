@@ -22,11 +22,9 @@
 ;;; Code:
 
 (require 'dash)
-(require 'dash-functional)
+
 (require 'help-fns)
 (require 'lisp-mnt)
-
-(setq text-quoting-style 'grave)
 
 (defvar functions ())
 
@@ -54,7 +52,8 @@
   "Return the (ARGLIST DOCSTRING) of FN symbol.
 Based on `describe-function-1'."
   (with-temp-buffer
-    (pcase-let* ((`(,real-fn ,def ,_alias ,real-def)
+    (pcase-let* ((text-quoting-style 'grave)
+                 (`(,real-fn ,def ,_alias ,real-def)
                   (help-fns--analyze-function fn))
                  (buf (current-buffer))
                  (doc-raw (documentation fn t))

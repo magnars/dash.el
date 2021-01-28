@@ -41,7 +41,7 @@
       (replace-regexp-in-string "}\"" "@}\"" it t t)
       (replace-regexp-in-string " {" " @{" it t t)
       (replace-regexp-in-string "\"{" "\"@{" it t t)
-      (replace-regexp-in-string "}," "@{," it t t)
+      (replace-regexp-in-string "}," "@}," it t t)
       (replace-regexp-in-string "}@}" "@}@}" it t t)
       (replace-regexp-in-string
        "[^\n[:print:]]"

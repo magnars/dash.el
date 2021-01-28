@@ -460,10 +460,8 @@ Thus function @var{fn} should return a list.
 @end defun
 
 @anchor{-copy}
-@defun -copy (arg)
+@defun -copy (list)
 Create a shallow copy of @var{list}.
-
-(fn @var{list})
 
 @example
 @group
@@ -584,11 +582,9 @@ See also @code{-map-last} (@pxref{-map-last}), @code{-remove-item} (@pxref{-remo
 @end defun
 
 @anchor{-remove-item}
-@defun -remove-item (arg1 arg2)
+@defun -remove-item (item list)
 Return a copy of @var{list} with all occurrences of @var{item} removed.
 The comparison is done with @code{equal}.
-
-(fn @var{item} @var{list})
 
 @example
 @group
@@ -706,8 +702,6 @@ Return the tail (not a copy) of @var{list} without the first @var{n} items.
 Return nil if @var{list} contains @var{n} items or fewer.
 Return @var{list} if @var{n} is zero or less.
 For another variant, see also @code{-drop-last} (@pxref{-drop-last}).
-
-(fn @var{n} @var{list})
 
 @example
 @group
@@ -3059,8 +3053,6 @@ Return the first item of @var{list}, or nil on an empty list.
 
 See also: @code{-second-item} (@pxref{-second-item}), @code{-last-item} (@pxref{-last-item}).
 
-(fn @var{list})
-
 @example
 @group
 (-first-item '(1 2 3))
@@ -3078,12 +3070,10 @@ See also: @code{-second-item} (@pxref{-second-item}), @code{-last-item} (@pxref{
 @end defun
 
 @anchor{-second-item}
-@defun -second-item (arg1)
+@defun -second-item (list)
 Return the second item of @var{list}, or nil if @var{list} is too short.
 
 See also: @code{-third-item} (@pxref{-third-item}).
-
-(fn @var{list})
 
 @example
 @group
@@ -3098,12 +3088,10 @@ See also: @code{-third-item} (@pxref{-third-item}).
 @end defun
 
 @anchor{-third-item}
-@defun -third-item (arg1)
+@defun -third-item (list)
 Return the third item of @var{list}, or nil if @var{list} is too short.
 
 See also: @code{-fourth-item} (@pxref{-fourth-item}).
-
-(fn @var{list})
 
 @example
 @group
@@ -3217,7 +3205,7 @@ if the first element should sort before the second.
 @end defun
 
 @anchor{-list}
-@defun -list (&optional arg &rest args)
+@defun -list (arg)
 Ensure @var{arg} is a list.
 If @var{arg} is already a list, return it as is (not a copy).
 Otherwise, return a new list with @var{arg} as its only element.
@@ -3655,12 +3643,10 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 
 
 @anchor{-when-let}
-@defmac -when-let (var-val &rest body)
+@defmac -when-let ((var val) &rest body)
 If @var{val} evaluates to non-nil, bind it to @var{var} and execute body.
 
 Note: binding is done according to @code{-let} (@pxref{-let}).
-
-(fn (@var{var} @var{val}) &rest @var{body})
 
 @example
 @group
@@ -3701,13 +3687,11 @@ encountered.
 @end defmac
 
 @anchor{-if-let}
-@defmac -if-let (var-val then &rest else)
+@defmac -if-let ((var val) then &rest else)
 If @var{val} evaluates to non-nil, bind it to @var{var} and do @var{then},
 otherwise do @var{else}.
 
 Note: binding is done according to @code{-let} (@pxref{-let}).
-
-(fn (@var{var} @var{val}) @var{then} &rest @var{else})
 
 @example
 @group
@@ -3989,7 +3973,7 @@ See @code{-let} (@pxref{-let}) for a description of the destructuring mechanism.
 @end defmac
 
 @anchor{-setq}
-@defmac -setq (&rest forms)
+@defmac -setq ([match-form val] ...)
 Bind each @var{match-form} to the value of its @var{val}.
 
 @var{match-form} destructuring is done according to the rules of @code{-let} (@pxref{-let}).
@@ -4008,8 +3992,6 @@ expands roughly speaking to the following code
 
 Care is taken to only evaluate each @var{val} once so that in case of
 multiple assignments it does not cause unexpected side effects.
-
-(fn [@var{match-form} @var{val}]@dots{})
 
 @example
 @group

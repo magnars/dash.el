@@ -2064,8 +2064,8 @@ Return a list of ((-filter @var{pred} @var{list}) (-remove @var{pred} @var{list}
 
 @anchor{-partition}
 @defun -partition (n list)
-Return a new list with the items in @var{list} grouped into @var{n-}sized sublists.
-If there are not enough items to make the last group @var{n-}sized,
+Return a new list with the items in @var{list} grouped into @var{n}-sized sublists.
+If there are not enough items to make the last group @var{n}-sized,
 those items are discarded.
 
 @example
@@ -2086,7 +2086,7 @@ those items are discarded.
 
 @anchor{-partition-all}
 @defun -partition-all (n list)
-Return a new list with the items in @var{list} grouped into @var{n-}sized sublists.
+Return a new list with the items in @var{list} grouped into @var{n}-sized sublists.
 The last group may contain less than @var{n} items.
 
 @example
@@ -2107,8 +2107,8 @@ The last group may contain less than @var{n} items.
 
 @anchor{-partition-in-steps}
 @defun -partition-in-steps (n step list)
-Return a new list with the items in @var{list} grouped into @var{n-}sized sublists at offsets @var{step} apart.
-If there are not enough items to make the last group @var{n-}sized,
+Return a new list with the items in @var{list} grouped into @var{n}-sized sublists at offsets @var{step} apart.
+If there are not enough items to make the last group @var{n}-sized,
 those items are discarded.
 
 @example
@@ -2129,7 +2129,7 @@ those items are discarded.
 
 @anchor{-partition-all-in-steps}
 @defun -partition-all-in-steps (n step list)
-Return a new list with the items in @var{list} grouped into @var{n-}sized sublists at offsets @var{step} apart.
+Return a new list with the items in @var{list} grouped into @var{n}-sized sublists at offsets @var{step} apart.
 The last groups may contain less than @var{n} items.
 
 @example

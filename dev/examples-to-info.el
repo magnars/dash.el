@@ -105,8 +105,8 @@ Based on `describe-function-1'."
        it t t))))
 
 (defun function-to-node (function)
-  (when (and (stringp function)
-             (string-match "^\\(### [[:upper:]][[:alpha:]- ]+\\)$" function))
+  (let ((case-fold-search nil))
+    (string-match "^\\(### [[:upper:]][[:alpha:]- ]+\\)$" function)
     (concat (s-replace "### " "* " (match-string 1 function)) "::")))
 
 (defun function-to-info (function)
@@ -128,39 +128,9 @@ Based on `describe-function-1'."
               (format-docstring docstring)
               (mapconcat 'identity (-take 3 examples) "\n")))))
 
-(defun docs--chop-prefix (prefix s)
-  "Remove PREFIX if it is at the start of S."
-  (let ((pos (length prefix)))
-    (if (and (>= (length s) (length prefix))
-             (string= prefix (substring s 0 pos)))
-        (substring s pos)
-      s)))
-
-(defun docs--chop-suffix (suffix s)
-  "Remove SUFFIX if it is at end of S."
-  (let ((pos (- (length suffix))))
-    (if (and (>= (length s) (length suffix))
-             (string= suffix (substring s pos)))
-        (substring s 0 pos)
-      s)))
-
-(defun github-id (command-name signature)
-  (docs--chop-suffix
-   "-"
-   (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (docs--chop-prefix
-                                                   "!"
-                                                   (format "%S %S" command-name signature)))))
-
 (defun s-replace (old new s)
   "Replace OLD with NEW in S."
   (replace-regexp-in-string (regexp-quote old) new s t t))
-
-(defun function-summary (function)
-  (if (stringp function)
-      (concat "\n" function "\n")
-    (let ((command-name (car function))
-          (signature (cadr function)))
-      (format "* [%s](#%s) `%s`" command-name (github-id command-name signature) signature))))
 
 (defun simplify-quotes ()
   (goto-char (point-min))

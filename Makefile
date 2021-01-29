@@ -21,14 +21,18 @@ EMACS ?= emacs
 BATCH := $(EMACS) -Q -batch -L .
 ELS := dash.el dash-functional.el
 ELCS := $(addsuffix c,$(ELS))
+DOCS := README.md dash.texi
 
 # Targets.
 
 lisp: $(ELCS)
 .PHONY: lisp
 
-docs: README.md dash.texi
+docs: $(DOCS)
 .PHONY: docs
+
+force-docs: maintainer-clean docs
+.PHONY: force-docs
 
 # ERT_SELECTOR is a Lisp expression determining which tests to run.
 # Its format is described in (info "(ert) Test Selectors").  It
@@ -43,9 +47,16 @@ check: lisp
 all: lisp docs check
 .PHONY: all
 
+force-all: maintainer-clean lisp docs check
+.PHONY: force-all
+
 clean:
 	$(RM) $(ELCS)
 .PHONY: clean
+
+maintainer-clean: clean
+	$(RM) $(DOCS)
+.PHONY: maintainer-clean
 
 # Files.
 

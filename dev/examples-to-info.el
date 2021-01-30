@@ -33,6 +33,7 @@
   (save-excursion (prin1 obj))
   (while (re-search-forward (rx (| (group "\\?")
                                    (group (in "{}"))
+                                   (group ?\' symbol-start "nil" symbol-end)
                                    (not (in ?\n print))))
                             nil 'move)
     (cond ((match-beginning 1)
@@ -43,13 +44,16 @@
            (backward-char)
            (insert ?@)
            (forward-char))
+          ;; Don't let '() be printed as 'nil.
+          ((match-beginning 3) (replace-match "'()" t t))
+          ;; Translate unprintable characters such as ?\^A.
           ((let ((desc (text-char-description (preceding-char))))
-             ;; Translate unprintable characters such as ?\^A.
              (replace-match (concat "\\" desc) t t))))))
 
 (defun example-to-string (example)
   (pcase-let* ((`(,actual ,err ,expected) example)
-               (err (eq err '!!>)))
+               (err (eq err '!!>))
+               (case-fold-search nil))
     (and err (consp expected)
          (setq expected (error-message-string expected)))
     (with-output-to-string
@@ -135,12 +139,10 @@ Based on `describe-function-1'."
      (concat "\n@node " function "\n@section " function))
     (_ (concat "\n" function))))
 
-(defun dash--replace-all (old new &optional regexp)
-  "Replace occurrences of OLD with NEW in current buffer.
-If REGEXP is non-nil, interpret OLD as a regexp."
-  (or regexp (setq old (regexp-quote old)))
+(defun dash--replace-all (old new)
+  "Replace occurrences of OLD with NEW in current buffer."
   (goto-char (point-min))
-  (while (re-search-forward old nil t)
+  (while (search-forward old nil t)
     (replace-match new t t)))
 
 (defun create-info-file ()
@@ -162,8 +164,6 @@ If REGEXP is non-nil, interpret OLD as a regexp."
                   "\n"))
 
       (dash--replace-all "@c [[ function-docs ]]"
-                         (mapconcat #'function-to-info functions "\n"))
-
-      (dash--replace-all (rx (or "'nil" "(quote nil)")) "'()" t))))
+                         (mapconcat #'function-to-info functions "\n")))))
 
 ;;; examples-to-info.el ends here

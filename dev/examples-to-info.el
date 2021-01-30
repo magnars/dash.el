@@ -86,30 +86,30 @@ Based on `describe-function-1'."
 
 (defun format-docstring (docstring)
   (let ((case-fold-search nil))
-    (with-output-to-string
-      (with-current-buffer standard-output
-        (insert docstring)
-        ;; Escape literal ?@.
-        (dash--replace-all "@" "@@")
-        (goto-char (point-min))
-        (while (re-search-forward
-                (rx (| (group bow (in "A-Z") (* (in "A-Z" ?-)) (* num) eow)
-                       (: ?` (group (+ (not (in ?\s)))) ?\')
-                       (: "..." (? (group eol)))))
-                nil t)
-          (cond ((match-beginning 1)
-                 ;; Downcase metavariable reference.
-                 (downcase-region (match-beginning 1) (match-end 1))
-                 (replace-match "@var{\\1}" t))
-                ((match-beginning 2)
-                 ;; `quoted' symbol.
-                 (replace-match (if (assq (intern (match-string 2)) functions)
-                                    "@code{\\2} (@pxref{\\2})"
-                                  "@code{\\2}")
-                                t))
-                ;; Ellipses.
-                ((match-beginning 3) (replace-match "@enddots{}" t t))
-                ((replace-match "@dots{}" t t))))))))
+    (with-temp-buffer
+      (insert docstring)
+      ;; Escape literal ?@.
+      (dash--replace-all "@" "@@")
+      (goto-char (point-min))
+      (while (re-search-forward
+              (rx (| (group bow (in "A-Z") (* (in "A-Z" ?-)) (* num) eow)
+                     (: ?` (group (+ (not (in ?\s)))) ?\')
+                     (: "..." (? (group eol)))))
+              nil t)
+        (cond ((match-beginning 1)
+               ;; Downcase metavariable reference.
+               (downcase-region (match-beginning 1) (match-end 1))
+               (replace-match "@var{\\1}" t))
+              ((match-beginning 2)
+               ;; `quoted' symbol.
+               (replace-match (if (assq (intern (match-string 2)) functions)
+                                  "@code{\\2} (@pxref{\\2})"
+                                "@code{\\2}")
+                              t))
+              ;; Ellipses.
+              ((match-beginning 3) (replace-match "@enddots{}" t t))
+              ((replace-match "@dots{}" t t))))
+      (buffer-string))))
 
 (defun function-to-info (function)
   (pcase function
@@ -145,7 +145,7 @@ Based on `describe-function-1'."
                            (lm-version (format "%s.el" pkg))))
 
       (dash--replace-all
-       "@c [[ function-nodes ]]"
+       "@c [[ function-list ]]"
        (mapconcat (lambda (s) (concat "* " s "::"))
                   (-filter (lambda (s)
                              (and (stringp s)

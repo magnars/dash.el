@@ -68,7 +68,7 @@ Installation
 
 Functions
 
-@c [[ function-nodes ]]
+@c [[ function-list ]]
 
 Development
 
@@ -205,7 +205,7 @@ example, which demonstrates the utility of both versions.
 @end lisp
 
 @menu
-@c [[ function-nodes ]]
+@c [[ function-list ]]
 @end menu
 @c [[ function-docs ]]
 

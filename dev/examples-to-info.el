@@ -79,13 +79,12 @@ Based on `describe-function-1'."
 (defmacro defexamples (cmd &rest examples)
   `(push (cons ',cmd
                (nconc (dash--describe ',cmd)
-                      (list (mapcar #'example-to-string
-                                    (-partition 3 ',examples)))))
+                      (list (-partition 3 ',examples))))
          functions))
 
 (defmacro def-example-group (group desc &rest examples)
   `(progn
-     (push ,(concat "### " group) functions)
+     (push ,(propertize group 'dash-group t) functions)
      (when ,desc
        (push ,desc functions))
      ,@examples))
@@ -118,9 +117,6 @@ Based on `describe-function-1'."
                 ((match-beginning 3) (replace-match "@enddots{}" t t))
                 ((replace-match "@dots{}" t t))))))))
 
-(defun function-to-node (function)
-  (concat (replace-regexp-in-string (rx bos "### ") "* " function t t) "::"))
-
 (defun function-to-info (function)
   (pcase function
     (`(,command-name ,signature ,docstring ,examples)
@@ -134,68 +130,40 @@ Based on `describe-function-1'."
                command-name
                signature
                (format-docstring docstring)
-               (mapconcat #'identity (-take 3 examples) "\n"))))
-    ((rx bos "### ")
-     (setq function (substring function (match-end 0)))
+               (mapconcat #'example-to-string (-take 3 examples) "\n"))))
+    ((pred (get-text-property 0 'dash-group))
      (concat "\n@node " function "\n@section " function))
     (_ (concat "\n" function))))
 
-(defun simplify-quotes ()
+(defun dash--replace-all (old new &optional regexp)
+  "Replace occurrences of OLD with NEW in current buffer.
+If REGEXP is non-nil, interpret OLD as a regexp."
+  (or regexp (setq old (regexp-quote old)))
   (goto-char (point-min))
-  (while (re-search-forward (rx (or "'nil" "(quote nil)")) nil t)
-    (replace-match "'()" t t))
-  (goto-char (point-min))
-  (while (search-forward "(quote " nil t)
-    (forward-char -7)
-    (let ((p (point)))
-      (forward-sexp 1)
-      (delete-char -1)
-      (goto-char p)
-      (delete-char 7)
-      (insert "'")))
-  (goto-char (point-min))
-  (while (search-forward "(function " nil t)
-    (forward-char -10)
-    (let ((p (point)))
-      (forward-sexp 1)
-      (delete-char -1)
-      (goto-char p)
-      (delete-char 10)
-      (insert "#'"))))
-
-(defun goto-and-remove (s)
-  (goto-char (point-min))
-  (search-forward s)
-  (delete-char (- (length s))))
+  (while (re-search-forward old nil t)
+    (replace-match new t t)))
 
 (defun create-info-file ()
-  (let ((functions (nreverse functions)))
-    (with-temp-file "./dash.texi"
-      (insert-file-contents "./dash-template.texi")
+  (let ((functions (reverse functions)))
+    (with-temp-file "dash.texi"
+      (insert-file-contents "dash-template.texi")
 
       (dolist (pkg '(dash dash-functional))
-        (goto-and-remove (format "@c [[ %s-version ]]" pkg))
-        (insert (lm-version (format "%s.el" pkg))))
+        (dash--replace-all (format "@c [[ %s-version ]]" pkg)
+                           (lm-version (format "%s.el" pkg))))
 
-      (goto-and-remove "@c [[ function-nodes ]]")
-      (insert (mapconcat 'function-to-node
-                         (-filter (lambda (s)
-                                    (when (stringp s)
-                                      (string-match "^### " s)))
-                                  functions)
-                         "\n"))
+      (dash--replace-all
+       "@c [[ function-nodes ]]"
+       (mapconcat (lambda (s) (concat "* " s "::"))
+                  (-filter (lambda (s)
+                             (and (stringp s)
+                                  (get-text-property 0 'dash-group s)))
+                           functions)
+                  "\n"))
 
-      (goto-and-remove "@c [[ function-nodes ]]")
-      (insert (mapconcat 'function-to-node
-                         (-filter (lambda (s)
-                                    (when (stringp s)
-                                      (string-match "^### " s)))
-                                  functions)
-                         "\n"))
+      (dash--replace-all "@c [[ function-docs ]]"
+                         (mapconcat #'function-to-info functions "\n"))
 
-      (goto-and-remove "@c [[ function-docs ]]")
-      (insert (mapconcat 'function-to-info functions "\n"))
-
-      (simplify-quotes))))
+      (dash--replace-all (rx (or "'nil" "(quote nil)")) "'()" t))))
 
 ;;; examples-to-info.el ends here

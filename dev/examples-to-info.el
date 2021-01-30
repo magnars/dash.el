@@ -102,7 +102,6 @@ Based on `describe-function-1'."
         (while (re-search-forward
                 (rx (| (group bow (in "A-Z") (* (in "A-Z" ?-)) (* num) eow)
                        (: ?` (group (+ (not (in ?\s)))) ?\')
-                       (group bol "  ")
                        (: "..." (? (group eol)))))
                 nil t)
           (cond ((match-beginning 1)
@@ -115,11 +114,8 @@ Based on `describe-function-1'."
                                     "@code{\\2} (@pxref{\\2})"
                                   "@code{\\2}")
                                 t))
-                ;; Indent examples within docstrings.
-                ;; FIXME: This has no effect in Texinfo.
-                ((match-beginning 3) (insert "  "))
                 ;; Ellipses.
-                ((match-beginning 4) (replace-match "@enddots{}" t t))
+                ((match-beginning 3) (replace-match "@enddots{}" t t))
                 ((replace-match "@dots{}" t t))))))))
 
 (defun function-to-node (function)

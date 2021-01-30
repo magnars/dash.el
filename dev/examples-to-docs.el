@@ -170,54 +170,23 @@ Based on `describe-function-1'."
           (signature (cadr function)))
       (format "* [%s](#%s) `%s`" command-name (github-id command-name signature) signature))))
 
-(defun simplify-quotes ()
+(defun dash--replace-all (old new)
+  "Replace occurrences of OLD with NEW in current buffer."
   (goto-char (point-min))
-  (while (re-search-forward (rx (or "'nil" "(quote nil)")) nil t)
-    (replace-match "'()" t t))
-  (goto-char (point-min))
-  (while (search-forward "(quote " nil t)
-    (forward-char -7)
-    (let ((p (point)))
-      (forward-sexp 1)
-      (delete-char -1)
-      (goto-char p)
-      (delete-char 7)
-      (insert "'")))
-  (goto-char (point-min))
-  (while (search-forward "(function " nil t)
-    (forward-char -10)
-    (let ((p (point)))
-      (forward-sexp 1)
-      (delete-char -1)
-      (goto-char p)
-      (delete-char 10)
-      (insert "#'"))))
-
-(defun goto-and-remove (s)
-  (goto-char (point-min))
-  (search-forward s)
-  (delete-char (- (length s))))
-
-(defun goto-and-replace-all (s replacement)
-  (while (progn (goto-char (point-min)) (search-forward s nil t))
-    (delete-char (- (length s)))
-    (insert replacement)))
+  (while (search-forward old nil t)
+    (replace-match new t t)))
 
 (defun create-docs-file ()
-  (let ((functions (nreverse functions)))
-    (with-temp-file "./README.md"
-      (insert-file-contents "./readme-template.md")
-
-      (goto-and-remove "[[ function-list ]]")
-      (insert (mapconcat 'function-summary functions "\n"))
-
-      (goto-and-remove "[[ function-docs ]]")
-      (insert (mapconcat 'function-to-md functions "\n"))
-
+  (let ((functions (reverse functions)))
+    (with-temp-file "README.md"
+      (insert-file-contents "readme-template.md")
       (dolist (pkg '(dash dash-functional))
-        (goto-and-replace-all (format "[[ %s-version ]]" pkg)
-                              (lm-version (format "%s.el" pkg))))
-
-      (simplify-quotes))))
+        (dash--replace-all (format "[[ %s-version ]]" pkg)
+                           (lm-version (format "%s.el" pkg))))
+      (dash--replace-all "[[ function-list ]]"
+                         (mapconcat #'function-summary functions "\n"))
+      (dash--replace-all "[[ function-docs ]]"
+                         (mapconcat #'function-to-md functions "\n"))
+      (dash--replace-all "'nil" "'()"))))
 
 ;;; examples-to-docs.el ends here

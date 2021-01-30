@@ -30,25 +30,16 @@
 
 (defun dash--print-lisp-as-texi (obj)
   "Print Lisp OBJ suitably for Texinfo."
-  (save-excursion (let ((print-quoted t)) (prin1 obj)))
-  (while (re-search-forward (rx (| (group "\\?")
-                                   (group (in "{}"))
-                                   (group ?\' symbol-start "nil" symbol-end)
-                                   (not (in ?\n print))))
+  (let ((print-quoted t)
+        (print-escape-control-characters t))
+    (save-excursion (prin1 obj)))
+  (while (re-search-forward (rx (| (group ?\' symbol-start "nil" symbol-end)
+                                   (group "\\?") (in "{}")))
                             nil 'move)
-    (cond ((match-beginning 1)
-           ;; Unescape `-any\?' -> `-any?'.
-           (delete-region (- (point) 2) (1- (point))))
-          ((match-beginning 2)
-           ;; Escape braces with @.
-           (backward-char)
-           (insert ?@)
-           (forward-char))
-          ;; Don't let '() be printed as 'nil.
-          ((match-beginning 3) (replace-match "'()" t t))
-          ;; Translate unprintable characters such as ?\^A.
-          ((let ((desc (text-char-description (preceding-char))))
-             (replace-match (concat "\\" desc) t t))))))
+    (replace-match (cond ((match-beginning 1) "'()") ; 'nil -> '().
+                         ((match-beginning 2) "?")   ; `-any\?' -> `-any?'.
+                         ("@\\&"))                   ; { -> @{.
+                   t)))
 
 (defun example-to-string (example)
   (pcase-let* ((`(,actual ,err ,expected) example)

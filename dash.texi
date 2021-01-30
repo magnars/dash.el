@@ -4345,7 +4345,7 @@ See @var{srfi-26} for detailed description.
 @end group
 @group
 (-map (-cut <> 1 2 3) '(list vector string))
-    @result{} '((1 2 3) [1 2 3] "\^A\^B\^C")
+    @result{} '((1 2 3) [1 2 3] "\1\2\3")
 @end group
 @end example
 @end defmac

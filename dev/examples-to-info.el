@@ -30,7 +30,7 @@
 
 (defun dash--print-lisp-as-texi (obj)
   "Print Lisp OBJ suitably for Texinfo."
-  (save-excursion (prin1 obj))
+  (save-excursion (let ((print-quoted t)) (prin1 obj)))
   (while (re-search-forward (rx (| (group "\\?")
                                    (group (in "{}"))
                                    (group ?\' symbol-start "nil" symbol-end)

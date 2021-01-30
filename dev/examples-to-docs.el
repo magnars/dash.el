@@ -29,7 +29,8 @@
 (defvar functions ())
 
 (defun example-to-string (example)
-  (-let [(actual sym expected) example]
+  (-let (((actual sym expected) example)
+         (print-quoted t))
     (--> (cond
           ((eq sym '=>) (format "=> %S" expected))
           ((eq sym '~>) (format "~> %S" expected))

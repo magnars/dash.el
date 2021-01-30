@@ -89,9 +89,8 @@ Based on `describe-function-1'."
     (with-output-to-string
       (with-current-buffer standard-output
         (insert docstring)
-        (goto-char (point-min))
         ;; Escape literal ?@.
-        (while (search-forward "@" nil t) (insert ?@))
+        (dash--replace-all "@" "@@")
         (goto-char (point-min))
         (while (re-search-forward
                 (rx (| (group bow (in "A-Z") (* (in "A-Z" ?-)) (* num) eow)

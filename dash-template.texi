@@ -78,8 +78,6 @@ Development
 @end detailmenu
 @end menu
 
-
-
 @node Installation
 @chapter Installation
 
@@ -209,7 +207,6 @@ example, which demonstrates the utility of both versions.
 @menu
 @c [[ function-nodes ]]
 @end menu
-
 @c [[ function-docs ]]
 
 @node Development

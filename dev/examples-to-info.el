@@ -105,32 +105,26 @@ Based on `describe-function-1'."
        it t t))))
 
 (defun function-to-node (function)
-  (let ((case-fold-search nil))
-    (string-match "^\\(### [[:upper:]][[:alpha:]- ]+\\)$" function)
-    (concat (s-replace "### " "* " (match-string 1 function)) "::")))
+  (concat (replace-regexp-in-string (rx bos "### ") "* " function t t) "::"))
 
 (defun function-to-info (function)
-  (if (stringp function)
-      (concat "\n" (s-replace "### " "@node " function) "\n"
-              (when (string-match "^### " function)
-                (s-replace "### " "@section " function)) "\n")
-    (-let [(command-name signature docstring examples) function]
-      (format (concat "@anchor{%s}\n"
-                      (if (macrop command-name) "@defmac" "@defun")
-                      " %s %s\n"
-                      "%s\n\n"
-                      "@example\n%s\n@end example\n"
-                      "@end "
-                      (if (macrop command-name) "defmac" "defun") "\n")
-              command-name
-              command-name
-              signature
-              (format-docstring docstring)
-              (mapconcat 'identity (-take 3 examples) "\n")))))
-
-(defun s-replace (old new s)
-  "Replace OLD with NEW in S."
-  (replace-regexp-in-string (regexp-quote old) new s t t))
+  (pcase function
+    (`(,command-name ,signature ,docstring ,examples)
+     (let ((type (if (macrop command-name) "defmac" "defun")))
+       (format (concat "\n@anchor{%s}\n"
+                       "@" type " %s %s\n"
+                       "%s\n\n"
+                       "@example\n%s\n@end example\n"
+                       "@end " type)
+               command-name
+               command-name
+               signature
+               (format-docstring docstring)
+               (mapconcat #'identity (-take 3 examples) "\n"))))
+    ((rx bos "### ")
+     (setq function (substring function (match-end 0)))
+     (concat "\n@node " function "\n@section " function))
+    (_ (concat "\n" function))))
 
 (defun simplify-quotes ()
   (goto-char (point-min))

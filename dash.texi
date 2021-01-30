@@ -93,8 +93,6 @@ Development
 @end detailmenu
 @end menu
 
-
-
 @node Installation
 @chapter Installation
 
@@ -240,16 +238,13 @@ example, which demonstrates the utility of both versions.
 * Function combinators::
 @end menu
 
-
 @node Maps
 @section Maps
-
 
 Functions in this category take a transforming function, which
 is then applied sequentially to each or selected elements of the
 input list.  The results are collected in order and returned as a
 new list.
-
 
 @anchor{-map}
 @defun -map (fn list)
@@ -475,13 +470,10 @@ Create a shallow copy of @var{list}.
 @end example
 @end defun
 
-
 @node Sublist selection
 @section Sublist selection
 
-
 Functions returning a sublist of the original list.
-
 
 @anchor{-filter}
 @defun -filter (pred list)
@@ -861,13 +853,10 @@ See also: @code{-select-columns} (@pxref{-select-columns}), @code{-select-by-ind
 @end example
 @end defun
 
-
 @node List to list
 @section List to list
 
-
 Functions returning a modified copy of the input list.
-
 
 @anchor{-keep}
 @defun -keep (fn list)
@@ -1144,13 +1133,10 @@ See also: @code{-remove-at} (@pxref{-remove-at}), @code{-remove} (@pxref{-remove
 @end example
 @end defun
 
-
 @node Reductions
 @section Reductions
 
-
 Functions reducing lists to a single value (which may also be a list).
-
 
 @anchor{-reduce-from}
 @defun -reduce-from (fn init list)
@@ -1641,14 +1627,11 @@ comparing them.
 @end example
 @end defun
 
-
 @node Unfolding
 @section Unfolding
 
-
 Operations dual to reductions, building lists from a seed
 value rather than consuming a list to produce a single value.
-
 
 @anchor{-iterate}
 @defun -iterate (fun init n)
@@ -1703,7 +1686,6 @@ the new seed.
 @end group
 @end example
 @end defun
-
 
 @node Predicates
 @section Predicates
@@ -1936,13 +1918,10 @@ Alias: @code{-cons-pair-p}.
 @end example
 @end defun
 
-
 @node Partitioning
 @section Partitioning
 
-
 Functions partitioning the input list into a list of lists.
-
 
 @anchor{-split-at}
 @defun -split-at (n list)
@@ -2292,13 +2271,10 @@ elements of @var{list}.  Keys are compared by @code{equal}.
 @end example
 @end defun
 
-
 @node Indexing
 @section Indexing
 
-
 Return indices of elements based on predicates, sort elements by indices etc.
-
 
 @anchor{-elem-index}
 @defun -elem-index (elem list)
@@ -2448,13 +2424,10 @@ permutation to @var{list} sorts it in descending order.
 @end example
 @end defun
 
-
 @node Set operations
 @section Set operations
 
-
 Operations pretending lists are sets.
-
 
 @anchor{-union}
 @defun -union (list list2)
@@ -2582,13 +2555,10 @@ Alias: @code{-uniq}
 @end example
 @end defun
 
-
 @node Other list operations
 @section Other list operations
 
-
 Other list functions not fit to be classified elsewhere.
-
 
 @anchor{-rotate}
 @defun -rotate (n list)
@@ -3249,13 +3219,10 @@ Compute the (least) fixpoint of @var{fn} with initial input @var{list}.
 @end example
 @end defun
 
-
 @node Tree operations
 @section Tree operations
 
-
 Functions pretending lists are trees.
-
 
 @anchor{-tree-seq}
 @defun -tree-seq (branch children tree)
@@ -3449,7 +3416,6 @@ structure such as plist or alist.
 @end example
 @end defun
 
-
 @node Threading macros
 @section Threading macros
 
@@ -3634,13 +3600,10 @@ which @var{forms} may have modified by side effect.
 @end example
 @end defmac
 
-
 @node Binding
 @section Binding
 
-
 Convenient versions of `let` and `let*` constructs combined with flow control.
-
 
 @anchor{-when-let}
 @defmac -when-let ((var val) &rest body)
@@ -4009,13 +3972,10 @@ multiple assignments it does not cause unexpected side effects.
 @end example
 @end defmac
 
-
 @node Side effects
 @section Side effects
 
-
 Functions iterating over lists for side effect only.
-
 
 @anchor{-each}
 @defun -each (list fn)
@@ -4157,7 +4117,6 @@ This function's anaphoric counterpart is @code{--dotimes}.
 @end example
 @end defun
 
-
 @node Destructive operations
 @section Destructive operations
 
@@ -4193,13 +4152,10 @@ Destructive: Set @var{list} to the cdr of @var{list}.
 @end example
 @end defmac
 
-
 @node Function combinators
 @section Function combinators
 
-
 These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
-
 
 @anchor{-partial}
 @defun -partial (fn &rest args)
@@ -4561,7 +4517,6 @@ This function satisfies the following laws:
 @end group
 @end example
 @end defun
-
 
 @node Development
 @chapter Development

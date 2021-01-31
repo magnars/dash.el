@@ -31,21 +31,21 @@
 (defun dash--print-lisp-as-texi (obj)
   "Print Lisp OBJ suitably for Texinfo."
   (let ((print-quoted t)
-        (print-escape-control-characters t))
-    (save-excursion (prin1 obj)))
-  (while (re-search-forward (rx (| (group ?\' symbol-start "nil" symbol-end)
-                                   (group "\\?") (group "\\00") (in "{}")))
-                            nil 'move)
-    (replace-match (cond ((match-beginning 1) "'()")  ; 'nil -> '().
-                         ((match-beginning 2) "?")    ; `-any\?' -> `-any?'.
-                         ((match-beginning 3) "\\\\") ; \00N -> \N.
-                         ("@\\&"))                    ; { -> @{.
-                   t)))
+        (print-escape-control-characters t)
+        (case-fold-search nil))
+    (save-excursion (prin1 obj))
+    (while (re-search-forward (rx (| (group ?\' symbol-start "nil" symbol-end)
+                                     (group "\\?") (group "\\00") (in "{}")))
+                              nil 'move)
+      (replace-match (cond ((match-beginning 1) "'()")  ; 'nil -> '().
+                           ((match-beginning 2) "?")    ; `-any\?' -> `-any?'.
+                           ((match-beginning 3) "\\\\") ; \00N -> \N.
+                           ("@\\&"))                    ; { -> @{.
+                     t))))
 
 (defun example-to-string (example)
   (pcase-let* ((`(,actual ,err ,expected) example)
-               (err (eq err '!!>))
-               (case-fold-search nil))
+               (err (eq err '!!>)))
     (and err (consp expected)
          (setq expected (error-message-string expected)))
     (with-output-to-string

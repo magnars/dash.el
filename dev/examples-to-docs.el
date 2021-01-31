@@ -38,12 +38,15 @@
     (save-excursion (prin1 obj)))
   (while (re-search-forward
           (rx (| (group ?\' symbol-start "nil" symbol-end) "\\?")) nil 'move)
-    ;; 'nil -> '(), `-any\?' -> `-any?'.
-    (replace-match (if (match-beginning 1) "'()" "?") t t)))
+    ;; 'nil -> (), `-any\?' -> `-any?'.
+    (replace-match (if (match-beginning 1) "()" "?") t t)))
 
 (defun example-to-string (example)
   (pcase-let ((`(,actual ,sym ,expected) example)
               (print-quoted t))
+    (and (eq (car-safe expected) 'quote)
+         (not (equal expected ''()))
+         (setq expected (cadr expected)))
     (with-output-to-string
       (with-current-buffer standard-output
         (dash--print-lisp-as-md actual)

@@ -372,9 +372,9 @@ Apply `fn` to each item in `list` and return the list of results.
 This function's anaphoric counterpart is `--map`.
 
 ```el
-(-map (lambda (num) (* num num)) '(1 2 3 4)) ;; => '(1 4 9 16)
-(-map #'1+ '(1 2 3 4)) ;; => '(2 3 4 5)
-(--map (* it it) '(1 2 3 4)) ;; => '(1 4 9 16)
+(-map (lambda (num) (* num num)) '(1 2 3 4)) ;; => (1 4 9 16)
+(-map #'1+ '(1 2 3 4)) ;; => (2 3 4 5)
+(--map (* it it) '(1 2 3 4)) ;; => (1 4 9 16)
 ```
 
 #### -map-when `(pred rep list)`
@@ -388,9 +388,9 @@ Alias: `-replace-where`
 See also: [`-update-at`](#-update-at-n-func-list)
 
 ```el
-(-map-when 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 16)
-(--map-when (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 16)
-(--map-when (= it 2) 17 '(1 2 3 4)) ;; => '(1 17 3 4)
+(-map-when 'even? 'square '(1 2 3 4)) ;; => (1 4 3 16)
+(--map-when (> it 2) (* it it) '(1 2 3 4)) ;; => (1 2 9 16)
+(--map-when (= it 2) 17 '(1 2 3 4)) ;; => (1 17 3 4)
 ```
 
 #### -map-first `(pred rep list)`
@@ -400,9 +400,9 @@ Replace first item in `list` satisfying `pred` with result of `rep` called on th
 See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-first`](#-replace-first-old-new-list)
 
 ```el
-(-map-first 'even? 'square '(1 2 3 4)) ;; => '(1 4 3 4)
-(--map-first (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 9 4)
-(--map-first (= it 2) 17 '(1 2 3 2)) ;; => '(1 17 3 2)
+(-map-first 'even? 'square '(1 2 3 4)) ;; => (1 4 3 4)
+(--map-first (> it 2) (* it it) '(1 2 3 4)) ;; => (1 2 9 4)
+(--map-first (= it 2) 17 '(1 2 3 2)) ;; => (1 17 3 2)
 ```
 
 #### -map-last `(pred rep list)`
@@ -412,9 +412,9 @@ Replace last item in `list` satisfying `pred` with result of `rep` called on thi
 See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-last`](#-replace-last-old-new-list)
 
 ```el
-(-map-last 'even? 'square '(1 2 3 4)) ;; => '(1 2 3 16)
-(--map-last (> it 2) (* it it) '(1 2 3 4)) ;; => '(1 2 3 16)
-(--map-last (= it 2) 17 '(1 2 3 2)) ;; => '(1 2 3 17)
+(-map-last 'even? 'square '(1 2 3 4)) ;; => (1 2 3 16)
+(--map-last (> it 2) (* it it) '(1 2 3 4)) ;; => (1 2 3 16)
+(--map-last (= it 2) 17 '(1 2 3 2)) ;; => (1 2 3 17)
 ```
 
 #### -map-indexed `(fn list)`
@@ -428,9 +428,9 @@ This function's anaphoric counterpart is `--map-indexed`.
 For a side-effecting variant, see also [`-each-indexed`](#-each-indexed-list-fn).
 
 ```el
-(-map-indexed (lambda (index item) (- item index)) '(1 2 3 4)) ;; => '(1 1 1 1)
-(--map-indexed (- it it-index) '(1 2 3 4)) ;; => '(1 1 1 1)
-(-map-indexed #'* '(1 2 3 4)) ;; => '(0 2 6 12)
+(-map-indexed (lambda (index item) (- item index)) '(1 2 3 4)) ;; => (1 1 1 1)
+(--map-indexed (- it it-index) '(1 2 3 4)) ;; => (1 1 1 1)
+(-map-indexed #'* '(1 2 3 4)) ;; => (0 2 6 12)
 ```
 
 #### -annotate `(fn list)`
@@ -439,9 +439,9 @@ Return a list of cons cells where each cell is `fn` applied to each
 element of `list` paired with the unmodified element of `list`.
 
 ```el
-(-annotate '1+ '(1 2 3)) ;; => '((2 . 1) (3 . 2) (4 . 3))
-(-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world"))) ;; => '((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
-(--annotate (< 1 it) '(0 1 2 3)) ;; => '((nil . 0) (nil . 1) (t . 2) (t . 3))
+(-annotate '1+ '(1 2 3)) ;; => ((2 . 1) (3 . 2) (4 . 3))
+(-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world"))) ;; => ((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
+(--annotate (< 1 it) '(0 1 2 3)) ;; => ((nil . 0) (nil . 1) (t . 2) (t . 3))
 ```
 
 #### -splice `(pred fun list)`
@@ -457,9 +457,9 @@ with keywords).
 See also: [`-splice-list`](#-splice-list-pred-new-list-list), [`-insert-at`](#-insert-at-n-x-list)
 
 ```el
-(-splice 'even? (lambda (x) (list x x)) '(1 2 3 4)) ;; => '(1 2 2 3 4 4)
-(--splice 't (list it it) '(1 2 3 4)) ;; => '(1 1 2 2 3 3 4 4)
-(--splice (equal it :magic) '((list of) (magical) (code)) '((foo) (bar) :magic (baz))) ;; => '((foo) (bar) (list of) (magical) (code) (baz))
+(-splice 'even? (lambda (x) (list x x)) '(1 2 3 4)) ;; => (1 2 2 3 4 4)
+(--splice 't (list it it) '(1 2 3 4)) ;; => (1 1 2 2 3 3 4 4)
+(--splice (equal it :magic) '((list of) (magical) (code)) '((foo) (bar) :magic (baz))) ;; => ((foo) (bar) (list of) (magical) (code) (baz))
 ```
 
 #### -splice-list `(pred new-list list)`
@@ -469,9 +469,9 @@ Splice `new-list` in place of elements matching `pred` in `list`.
 See also: [`-splice`](#-splice-pred-fun-list), [`-insert-at`](#-insert-at-n-x-list)
 
 ```el
-(-splice-list 'keywordp '(a b c) '(1 :foo 2)) ;; => '(1 a b c 2)
-(-splice-list 'keywordp nil '(1 :foo 2)) ;; => '(1 2)
-(--splice-list (keywordp it) '(a b c) '(1 :foo 2)) ;; => '(1 a b c 2)
+(-splice-list 'keywordp '(a b c) '(1 :foo 2)) ;; => (1 a b c 2)
+(-splice-list 'keywordp nil '(1 :foo 2)) ;; => (1 2)
+(--splice-list (keywordp it) '(a b c) '(1 :foo 2)) ;; => (1 a b c 2)
 ```
 
 #### -mapcat `(fn list)`
@@ -480,9 +480,9 @@ Return the concatenation of the result of mapping `fn` over `list`.
 Thus function `fn` should return a list.
 
 ```el
-(-mapcat 'list '(1 2 3)) ;; => '(1 2 3)
-(-mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => '(0 1 0 2 0 3)
-(--mapcat (list 0 it) '(1 2 3)) ;; => '(0 1 0 2 0 3)
+(-mapcat 'list '(1 2 3)) ;; => (1 2 3)
+(-mapcat (lambda (item) (list 0 item)) '(1 2 3)) ;; => (0 1 0 2 0 3)
+(--mapcat (list 0 it) '(1 2 3)) ;; => (0 1 0 2 0 3)
 ```
 
 #### -copy `(list)`
@@ -490,7 +490,7 @@ Thus function `fn` should return a list.
 Create a shallow copy of `list`.
 
 ```el
-(-copy '(1 2 3)) ;; => '(1 2 3)
+(-copy '(1 2 3)) ;; => (1 2 3)
 (let ((a '(1 2 3))) (eq a (-copy a))) ;; => nil
 ```
 
@@ -509,9 +509,9 @@ This function's anaphoric counterpart is `--filter`.
 For similar operations, see also [`-keep`](#-keep-fn-list) and [`-remove`](#-remove-pred-list).
 
 ```el
-(-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(2 4)
-(-filter #'natnump '(-2 -1 0 1 2)) ;; => '(0 1 2)
-(--filter (= 0 (% it 2)) '(1 2 3 4)) ;; => '(2 4)
+(-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => (2 4)
+(-filter #'natnump '(-2 -1 0 1 2)) ;; => (0 1 2)
+(--filter (= 0 (% it 2)) '(1 2 3 4)) ;; => (2 4)
 ```
 
 #### -remove `(pred list)`
@@ -525,9 +525,9 @@ This function's anaphoric counterpart is `--remove`.
 For similar operations, see also [`-keep`](#-keep-fn-list) and [`-filter`](#-filter-pred-list).
 
 ```el
-(-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => '(1 3)
-(-remove #'natnump '(-2 -1 0 1 2)) ;; => '(-2 -1)
-(--remove (= 0 (% it 2)) '(1 2 3 4)) ;; => '(1 3)
+(-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4)) ;; => (1 3)
+(-remove #'natnump '(-2 -1 0 1 2)) ;; => (-2 -1)
+(--remove (= 0 (% it 2)) '(1 2 3 4)) ;; => (1 3)
 ```
 
 #### -remove-first `(pred list)`
@@ -545,9 +545,9 @@ This function's anaphoric counterpart is `--remove-first`.
 See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-last`](#-remove-last-pred-list).
 
 ```el
-(-remove-first #'natnump '(-2 -1 0 1 2)) ;; => '(-2 -1 1 2)
-(-remove-first #'stringp '(1 2 "first" "second")) ;; => '(1 2 "second")
-(--remove-first (> it 3) '(1 2 3 4 5 6)) ;; => '(1 2 3 5 6)
+(-remove-first #'natnump '(-2 -1 0 1 2)) ;; => (-2 -1 1 2)
+(-remove-first #'stringp '(1 2 "first" "second")) ;; => (1 2 "second")
+(--remove-first (> it 3) '(1 2 3 4 5 6)) ;; => (1 2 3 5 6)
 ```
 
 #### -remove-last `(pred list)`
@@ -563,9 +563,9 @@ This function's anaphoric counterpart is `--remove-last`.
 See also [`-map-last`](#-map-last-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-first`](#-remove-first-pred-list).
 
 ```el
-(-remove-last #'natnump '(1 3 5 4 7 8 10 -11)) ;; => '(1 3 5 4 7 8 -11)
-(-remove-last #'stringp '(1 2 "last" "second")) ;; => '(1 2 "last")
-(--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 5 6 7 8 9)
+(-remove-last #'natnump '(1 3 5 4 7 8 10 -11)) ;; => (1 3 5 4 7 8 -11)
+(-remove-last #'stringp '(1 2 "last" "second")) ;; => (1 2 "last")
+(--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10)) ;; => (1 2 3 4 5 6 7 8 9)
 ```
 
 #### -remove-item `(item list)`
@@ -574,9 +574,9 @@ Return a copy of `list` with all occurrences of `item` removed.
 The comparison is done with `equal`.
 
 ```el
-(-remove-item 3 '(1 2 3 2 3 4 5 3)) ;; => '(1 2 2 4 5)
-(-remove-item 'foo '(foo bar baz foo)) ;; => '(bar baz)
-(-remove-item "bob" '("alice" "bob" "eve" "bob")) ;; => '("alice" "eve")
+(-remove-item 3 '(1 2 3 2 3 4 5 3)) ;; => (1 2 2 4 5)
+(-remove-item 'foo '(foo bar baz foo)) ;; => (bar baz)
+(-remove-item "bob" '("alice" "bob" "eve" "bob")) ;; => ("alice" "eve")
 ```
 
 #### -non-nil `(list)`
@@ -584,9 +584,9 @@ The comparison is done with `equal`.
 Return a copy of `list` with all nil items removed.
 
 ```el
-(-non-nil '(nil 1 nil 2 nil nil 3 4 nil 5 nil)) ;; => '(1 2 3 4 5)
-(-non-nil '((nil))) ;; => '((nil))
-(-non-nil '()) ;; => '()
+(-non-nil '(nil 1 nil 2 nil nil 3 4 nil 5 nil)) ;; => (1 2 3 4 5)
+(-non-nil '((nil))) ;; => ((nil))
+(-non-nil ()) ;; => ()
 ```
 
 #### -slice `(list from &optional to step)`
@@ -600,9 +600,9 @@ If `step` is a number, only each `step`th item in the resulting
 section is returned.  Defaults to 1.
 
 ```el
-(-slice '(1 2 3 4 5) 1) ;; => '(2 3 4 5)
-(-slice '(1 2 3 4 5) 0 3) ;; => '(1 2 3)
-(-slice '(1 2 3 4 5 6 7 8 9) 1 -1 2) ;; => '(2 4 6 8)
+(-slice '(1 2 3 4 5) 1) ;; => (2 3 4 5)
+(-slice '(1 2 3 4 5) 0 3) ;; => (1 2 3)
+(-slice '(1 2 3 4 5 6 7 8 9) 1 -1 2) ;; => (2 4 6 8)
 ```
 
 #### -take `(n list)`
@@ -614,9 +614,9 @@ Return nil if `n` is zero or less.
 See also: [`-take-last`](#-take-last-n-list).
 
 ```el
-(-take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
-(-take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
-(-take 0 '(1 2 3 4 5)) ;; => '()
+(-take 3 '(1 2 3 4 5)) ;; => (1 2 3)
+(-take 17 '(1 2 3 4 5)) ;; => (1 2 3 4 5)
+(-take 0 '(1 2 3 4 5)) ;; => ()
 ```
 
 #### -take-last `(n list)`
@@ -628,9 +628,9 @@ Return nil if `n` is zero or less.
 See also: [`-take`](#-take-n-list).
 
 ```el
-(-take-last 3 '(1 2 3 4 5)) ;; => '(3 4 5)
-(-take-last 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
-(-take-last 1 '(1 2 3 4 5)) ;; => '(5)
+(-take-last 3 '(1 2 3 4 5)) ;; => (3 4 5)
+(-take-last 17 '(1 2 3 4 5)) ;; => (1 2 3 4 5)
+(-take-last 1 '(1 2 3 4 5)) ;; => (5)
 ```
 
 #### -drop `(n list)`
@@ -642,9 +642,9 @@ Return `list` if `n` is zero or less.
 For another variant, see also [`-drop-last`](#-drop-last-n-list).
 
 ```el
-(-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
-(-drop 17 '(1 2 3 4 5)) ;; => '()
-(-drop 0 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
+(-drop 3 '(1 2 3 4 5)) ;; => (4 5)
+(-drop 17 '(1 2 3 4 5)) ;; => ()
+(-drop 0 '(1 2 3 4 5)) ;; => (1 2 3 4 5)
 ```
 
 #### -drop-last `(n list)`
@@ -656,9 +656,9 @@ Return nil if `list` contains `n` items or fewer.
 See also: [`-drop`](#-drop-n-list).
 
 ```el
-(-drop-last 3 '(1 2 3 4 5)) ;; => '(1 2)
-(-drop-last 17 '(1 2 3 4 5)) ;; => '()
-(-drop-last 0 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
+(-drop-last 3 '(1 2 3 4 5)) ;; => (1 2)
+(-drop-last 17 '(1 2 3 4 5)) ;; => ()
+(-drop-last 0 '(1 2 3 4 5)) ;; => (1 2 3 4 5)
 ```
 
 #### -take-while `(pred list)`
@@ -673,9 +673,9 @@ This function's anaphoric counterpart is `--take-while`.
 For another variant, see also [`-drop-while`](#-drop-while-pred-list).
 
 ```el
-(-take-while #'even? '(1 2 3 4)) ;; => '()
-(-take-while #'even? '(2 4 5 6)) ;; => '(2 4)
-(--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
+(-take-while #'even? '(1 2 3 4)) ;; => ()
+(-take-while #'even? '(2 4 5 6)) ;; => (2 4)
+(--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => (1 2 3)
 ```
 
 #### -drop-while `(pred list)`
@@ -690,9 +690,9 @@ This function's anaphoric counterpart is `--drop-while`.
 For another variant, see also [`-take-while`](#-take-while-pred-list).
 
 ```el
-(-drop-while #'even? '(1 2 3 4)) ;; => '(1 2 3 4)
-(-drop-while #'even? '(2 4 5 6)) ;; => '(5 6)
-(--drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(4 3 2 1)
+(-drop-while #'even? '(1 2 3 4)) ;; => (1 2 3 4)
+(-drop-while #'even? '(2 4 5 6)) ;; => (5 6)
+(--drop-while (< it 4) '(1 2 3 4 3 2 1)) ;; => (4 3 2 1)
 ```
 
 #### -select-by-indices `(indices list)`
@@ -701,9 +701,9 @@ Return a list whose elements are elements from `list` selected
 as `(nth i list)` for all i from `indices`.
 
 ```el
-(-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r")) ;; => '("c" "o" "l" "o" "r")
-(-select-by-indices '(2 1 0) '("a" "b" "c")) ;; => '("c" "b" "a")
-(-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l")) ;; => '("f" "a" "r" "f" "a" "l" "l" "a")
+(-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r")) ;; => ("c" "o" "l" "o" "r")
+(-select-by-indices '(2 1 0) '("a" "b" "c")) ;; => ("c" "b" "a")
+(-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l")) ;; => ("f" "a" "r" "f" "a" "l" "l" "a")
 ```
 
 #### -select-columns `(columns table)`
@@ -719,9 +719,9 @@ selected.
 See also: [`-select-column`](#-select-column-column-table), [`-select-by-indices`](#-select-by-indices-indices-list)
 
 ```el
-(-select-columns '(0 2) '((1 2 3) (a b c) (:a :b :c))) ;; => '((1 3) (a c) (:a :c))
-(-select-columns '(1) '((1 2 3) (a b c) (:a :b :c))) ;; => '((2) (b) (:b))
-(-select-columns nil '((1 2 3) (a b c) (:a :b :c))) ;; => '(nil nil nil)
+(-select-columns '(0 2) '((1 2 3) (a b c) (:a :b :c))) ;; => ((1 3) (a c) (:a :c))
+(-select-columns '(1) '((1 2 3) (a b c) (:a :b :c))) ;; => ((2) (b) (:b))
+(-select-columns nil '((1 2 3) (a b c) (:a :b :c))) ;; => (nil nil nil)
 ```
 
 #### -select-column `(column table)`
@@ -736,7 +736,7 @@ The single selected column is returned as a list.
 See also: [`-select-columns`](#-select-columns-columns-table), [`-select-by-indices`](#-select-by-indices-indices-list)
 
 ```el
-(-select-column 1 '((1 2 3) (a b c) (:a :b :c))) ;; => '(2 b :b)
+(-select-column 1 '((1 2 3) (a b c) (:a :b :c))) ;; => (2 b :b)
 ```
 
 ## List to list
@@ -752,9 +752,9 @@ the corresponding elements of `list`.
 Its anaphoric counterpart is `--keep`.
 
 ```el
-(-keep #'cdr '((1 2 3) (4 5) (6))) ;; => '((2 3) (5))
-(-keep (lambda (n) (and (> n 3) (* 10 n))) '(1 2 3 4 5 6)) ;; => '(40 50 60)
-(--keep (and (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => '(40 50 60)
+(-keep #'cdr '((1 2 3) (4 5) (6))) ;; => ((2 3) (5))
+(-keep (lambda (n) (and (> n 3) (* 10 n))) '(1 2 3 4 5 6)) ;; => (40 50 60)
+(--keep (and (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => (40 50 60)
 ```
 
 #### -concat `(&rest lists)`
@@ -762,9 +762,9 @@ Its anaphoric counterpart is `--keep`.
 Return a new list with the concatenation of the elements in the supplied `lists`.
 
 ```el
-(-concat '(1)) ;; => '(1)
-(-concat '(1) '(2)) ;; => '(1 2)
-(-concat '(1) '(2 3) '(4)) ;; => '(1 2 3 4)
+(-concat '(1)) ;; => (1)
+(-concat '(1) '(2)) ;; => (1 2)
+(-concat '(1) '(2 3) '(4)) ;; => (1 2 3 4)
 ```
 
 #### -flatten `(l)`
@@ -782,9 +782,9 @@ aren't flattened further.
 See also: [`-flatten-n`](#-flatten-n-num-list)
 
 ```el
-(-flatten '((1))) ;; => '(1)
-(-flatten '((1 (2 3) (((4 (5))))))) ;; => '(1 2 3 4 5)
-(-flatten '(1 2 (3 . 4))) ;; => '(1 2 (3 . 4))
+(-flatten '((1))) ;; => (1)
+(-flatten '((1 (2 3) (((4 (5))))))) ;; => (1 2 3 4 5)
+(-flatten '(1 2 (3 . 4))) ;; => (1 2 (3 . 4))
 ```
 
 #### -flatten-n `(num list)`
@@ -794,9 +794,9 @@ Flatten `num` levels of a nested `list`.
 See also: [`-flatten`](#-flatten-l)
 
 ```el
-(-flatten-n 1 '((1 2) ((3 4) ((5 6))))) ;; => '(1 2 (3 4) ((5 6)))
-(-flatten-n 2 '((1 2) ((3 4) ((5 6))))) ;; => '(1 2 3 4 (5 6))
-(-flatten-n 3 '((1 2) ((3 4) ((5 6))))) ;; => '(1 2 3 4 5 6)
+(-flatten-n 1 '((1 2) ((3 4) ((5 6))))) ;; => (1 2 (3 4) ((5 6)))
+(-flatten-n 2 '((1 2) ((3 4) ((5 6))))) ;; => (1 2 3 4 (5 6))
+(-flatten-n 3 '((1 2) ((3 4) ((5 6))))) ;; => (1 2 3 4 5 6)
 ```
 
 #### -replace `(old new list)`
@@ -808,8 +808,8 @@ Elements are compared using `equal`.
 See also: [`-replace-at`](#-replace-at-n-x-list)
 
 ```el
-(-replace 1 "1" '(1 2 3 4 3 2 1)) ;; => '("1" 2 3 4 3 2 "1")
-(-replace "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => '("a" "nice" "bar" "sentence" "about" "bar")
+(-replace 1 "1" '(1 2 3 4 3 2 1)) ;; => ("1" 2 3 4 3 2 "1")
+(-replace "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => ("a" "nice" "bar" "sentence" "about" "bar")
 (-replace 1 2 nil) ;; => nil
 ```
 
@@ -822,8 +822,8 @@ Elements are compared using `equal`.
 See also: [`-map-first`](#-map-first-pred-rep-list)
 
 ```el
-(-replace-first 1 "1" '(1 2 3 4 3 2 1)) ;; => '("1" 2 3 4 3 2 1)
-(-replace-first "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => '("a" "nice" "bar" "sentence" "about" "foo")
+(-replace-first 1 "1" '(1 2 3 4 3 2 1)) ;; => ("1" 2 3 4 3 2 1)
+(-replace-first "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => ("a" "nice" "bar" "sentence" "about" "foo")
 (-replace-first 1 2 nil) ;; => nil
 ```
 
@@ -836,8 +836,8 @@ Elements are compared using `equal`.
 See also: [`-map-last`](#-map-last-pred-rep-list)
 
 ```el
-(-replace-last 1 "1" '(1 2 3 4 3 2 1)) ;; => '(1 2 3 4 3 2 "1")
-(-replace-last "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => '("a" "nice" "foo" "sentence" "about" "bar")
+(-replace-last 1 "1" '(1 2 3 4 3 2 1)) ;; => (1 2 3 4 3 2 "1")
+(-replace-last "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo")) ;; => ("a" "nice" "foo" "sentence" "about" "bar")
 (-replace-last 1 2 nil) ;; => nil
 ```
 
@@ -848,8 +848,8 @@ Return a list with `x` inserted into `list` at position `n`.
 See also: [`-splice`](#-splice-pred-fun-list), [`-splice-list`](#-splice-list-pred-new-list-list)
 
 ```el
-(-insert-at 1 'x '(a b c)) ;; => '(a x b c)
-(-insert-at 12 'x '(a b c)) ;; => '(a b c x)
+(-insert-at 1 'x '(a b c)) ;; => (a x b c)
+(-insert-at 12 'x '(a b c)) ;; => (a b c x)
 ```
 
 #### -replace-at `(n x list)`
@@ -859,9 +859,9 @@ Return a list with element at `n`th position in `list` replaced with `x`.
 See also: [`-replace`](#-replace-old-new-list)
 
 ```el
-(-replace-at 0 9 '(0 1 2 3 4 5)) ;; => '(9 1 2 3 4 5)
-(-replace-at 1 9 '(0 1 2 3 4 5)) ;; => '(0 9 2 3 4 5)
-(-replace-at 4 9 '(0 1 2 3 4 5)) ;; => '(0 1 2 3 9 5)
+(-replace-at 0 9 '(0 1 2 3 4 5)) ;; => (9 1 2 3 4 5)
+(-replace-at 1 9 '(0 1 2 3 4 5)) ;; => (0 9 2 3 4 5)
+(-replace-at 4 9 '(0 1 2 3 4 5)) ;; => (0 1 2 3 9 5)
 ```
 
 #### -update-at `(n func list)`
@@ -871,9 +871,9 @@ Return a list with element at `n`th position in `list` replaced with `(func (nth
 See also: [`-map-when`](#-map-when-pred-rep-list)
 
 ```el
-(-update-at 0 (lambda (x) (+ x 9)) '(0 1 2 3 4 5)) ;; => '(9 1 2 3 4 5)
-(-update-at 1 (lambda (x) (+ x 8)) '(0 1 2 3 4 5)) ;; => '(0 9 2 3 4 5)
-(--update-at 2 (length it) '("foo" "bar" "baz" "quux")) ;; => '("foo" "bar" 3 "quux")
+(-update-at 0 (lambda (x) (+ x 9)) '(0 1 2 3 4 5)) ;; => (9 1 2 3 4 5)
+(-update-at 1 (lambda (x) (+ x 8)) '(0 1 2 3 4 5)) ;; => (0 9 2 3 4 5)
+(--update-at 2 (length it) '("foo" "bar" "baz" "quux")) ;; => ("foo" "bar" 3 "quux")
 ```
 
 #### -remove-at `(n list)`
@@ -883,9 +883,9 @@ Return a list with element at `n`th position in `list` removed.
 See also: [`-remove-at-indices`](#-remove-at-indices-indices-list), [`-remove`](#-remove-pred-list)
 
 ```el
-(-remove-at 0 '("0" "1" "2" "3" "4" "5")) ;; => '("1" "2" "3" "4" "5")
-(-remove-at 1 '("0" "1" "2" "3" "4" "5")) ;; => '("0" "2" "3" "4" "5")
-(-remove-at 2 '("0" "1" "2" "3" "4" "5")) ;; => '("0" "1" "3" "4" "5")
+(-remove-at 0 '("0" "1" "2" "3" "4" "5")) ;; => ("1" "2" "3" "4" "5")
+(-remove-at 1 '("0" "1" "2" "3" "4" "5")) ;; => ("0" "2" "3" "4" "5")
+(-remove-at 2 '("0" "1" "2" "3" "4" "5")) ;; => ("0" "1" "3" "4" "5")
 ```
 
 #### -remove-at-indices `(indices list)`
@@ -897,9 +897,9 @@ from `indices`.
 See also: [`-remove-at`](#-remove-at-n-list), [`-remove`](#-remove-pred-list)
 
 ```el
-(-remove-at-indices '(0) '("0" "1" "2" "3" "4" "5")) ;; => '("1" "2" "3" "4" "5")
-(-remove-at-indices '(0 2 4) '("0" "1" "2" "3" "4" "5")) ;; => '("1" "3" "5")
-(-remove-at-indices '(0 5) '("0" "1" "2" "3" "4" "5")) ;; => '("1" "2" "3" "4")
+(-remove-at-indices '(0) '("0" "1" "2" "3" "4" "5")) ;; => ("1" "2" "3" "4" "5")
+(-remove-at-indices '(0 2 4) '("0" "1" "2" "3" "4" "5")) ;; => ("1" "3" "5")
+(-remove-at-indices '(0 5) '("0" "1" "2" "3" "4" "5")) ;; => ("1" "2" "3" "4")
 ```
 
 ## Reductions
@@ -919,7 +919,7 @@ For other folds, see also [`-reduce`](#-reduce-fn-list) and [`-reduce-r`](#-redu
 
 ```el
 (-reduce-from #'- 10 '(1 2 3)) ;; => 4
-(-reduce-from #'list 10 '(1 2 3)) ;; => '(((10 1) 2) 3)
+(-reduce-from #'list 10 '(1 2 3)) ;; => (((10 1) 2) 3)
 (--reduce-from (concat acc " " it) "START" '("a" "b" "c")) ;; => "START a b c"
 ```
 
@@ -944,7 +944,7 @@ For other folds, see also [`-reduce-r`](#-reduce-r-fn-list) and [`-reduce`](#-re
 
 ```el
 (-reduce-r-from #'- 10 '(1 2 3)) ;; => -8
-(-reduce-r-from #'list 10 '(1 2 3)) ;; => '(1 (2 (3 10)))
+(-reduce-r-from #'list 10 '(1 2 3)) ;; => (1 (2 (3 10)))
 (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c")) ;; => "a b c END"
 ```
 
@@ -963,7 +963,7 @@ For other folds, see also [`-reduce-from`](#-reduce-from-fn-init-list) and [`-re
 
 ```el
 (-reduce #'- '(1 2 3 4)) ;; => -8
-(-reduce #'list '(1 2 3 4)) ;; => '(((1 2) 3) 4)
+(-reduce #'list '(1 2 3 4)) ;; => (((1 2) 3) 4)
 (--reduce (format "%s-%d" acc it) '(1 2 3)) ;; => "1-2-3"
 ```
 
@@ -990,7 +990,7 @@ For other folds, see also [`-reduce-r-from`](#-reduce-r-from-fn-init-list) and [
 
 ```el
 (-reduce-r #'- '(1 2 3 4)) ;; => -2
-(-reduce-r #'list '(1 2 3 4)) ;; => '(1 (2 (3 4)))
+(-reduce-r #'list '(1 2 3 4)) ;; => (1 (2 (3 4)))
 (--reduce-r (format "%s-%d" acc it) '(1 2 3)) ;; => "3-2-1"
 ```
 
@@ -1006,9 +1006,9 @@ This function's anaphoric counterpart is `--reductions-from`.
 For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reductions-r`](#-reductions-r-fn-list).
 
 ```el
-(-reductions-from #'max 0 '(2 1 4 3)) ;; => '(0 2 2 4 4)
-(-reductions-from #'* 1 '(1 2 3 4)) ;; => '(1 1 2 6 24)
-(--reductions-from (format "(FN %s %d)" acc it) "INIT" '(1 2 3)) ;; => '("INIT" "(FN INIT 1)" "(FN (FN INIT 1) 2)" "(FN (FN (FN INIT 1) 2) 3)")
+(-reductions-from #'max 0 '(2 1 4 3)) ;; => (0 2 2 4 4)
+(-reductions-from #'* 1 '(1 2 3 4)) ;; => (1 1 2 6 24)
+(--reductions-from (format "(FN %s %d)" acc it) "INIT" '(1 2 3)) ;; => ("INIT" "(FN INIT 1)" "(FN (FN INIT 1) 2)" "(FN (FN (FN INIT 1) 2) 3)")
 ```
 
 #### -reductions-r-from `(fn init list)`
@@ -1023,9 +1023,9 @@ This function's anaphoric counterpart is `--reductions-r-from`.
 For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reductions-r`](#-reductions-r-fn-list).
 
 ```el
-(-reductions-r-from #'max 0 '(2 1 4 3)) ;; => '(4 4 4 3 0)
-(-reductions-r-from #'* 1 '(1 2 3 4)) ;; => '(24 24 12 4 1)
-(--reductions-r-from (format "(FN %d %s)" it acc) "INIT" '(1 2 3)) ;; => '("(FN 1 (FN 2 (FN 3 INIT)))" "(FN 2 (FN 3 INIT))" "(FN 3 INIT)" "INIT")
+(-reductions-r-from #'max 0 '(2 1 4 3)) ;; => (4 4 4 3 0)
+(-reductions-r-from #'* 1 '(1 2 3 4)) ;; => (24 24 12 4 1)
+(--reductions-r-from (format "(FN %d %s)" it acc) "INIT" '(1 2 3)) ;; => ("(FN 1 (FN 2 (FN 3 INIT)))" "(FN 2 (FN 3 INIT))" "(FN 3 INIT)" "INIT")
 ```
 
 #### -reductions `(fn list)`
@@ -1039,9 +1039,9 @@ This function's anaphoric counterpart is `--reductions`.
 For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reductions-r`](#-reductions-r-fn-list).
 
 ```el
-(-reductions #'+ '(1 2 3 4)) ;; => '(1 3 6 10)
-(-reductions #'* '(1 2 3 4)) ;; => '(1 2 6 24)
-(--reductions (format "(FN %s %d)" acc it) '(1 2 3)) ;; => '(1 "(FN 1 2)" "(FN (FN 1 2) 3)")
+(-reductions #'+ '(1 2 3 4)) ;; => (1 3 6 10)
+(-reductions #'* '(1 2 3 4)) ;; => (1 2 6 24)
+(--reductions (format "(FN %s %d)" acc it) '(1 2 3)) ;; => (1 "(FN 1 2)" "(FN (FN 1 2) 3)")
 ```
 
 #### -reductions-r `(fn list)`
@@ -1056,9 +1056,9 @@ For other folds, see also [`-reductions-r-from`](#-reductions-r-from-fn-init-lis
 [`-reductions`](#-reductions-fn-list).
 
 ```el
-(-reductions-r #'+ '(1 2 3 4)) ;; => '(10 9 7 4)
-(-reductions-r #'* '(1 2 3 4)) ;; => '(24 24 12 4)
-(--reductions-r (format "(FN %d %s)" it acc) '(1 2 3)) ;; => '("(FN 1 (FN 2 3))" "(FN 2 3)" 3)
+(-reductions-r #'+ '(1 2 3 4)) ;; => (10 9 7 4)
+(-reductions-r #'* '(1 2 3 4)) ;; => (24 24 12 4)
+(--reductions-r (format "(FN %d %s)" it acc) '(1 2 3)) ;; => ("(FN 1 (FN 2 3))" "(FN 2 3)" 3)
 ```
 
 #### -count `(pred list)`
@@ -1075,7 +1075,7 @@ Counts the number of items in `list` where (`pred` item) is non-nil.
 Return the sum of `list`.
 
 ```el
-(-sum '()) ;; => 0
+(-sum ()) ;; => 0
 (-sum '(1)) ;; => 1
 (-sum '(1 2 3 4)) ;; => 10
 ```
@@ -1086,9 +1086,9 @@ Return a list with running sums of items in `list`.
 `list` must be non-empty.
 
 ```el
-(-running-sum '(1 2 3 4)) ;; => '(1 3 6 10)
-(-running-sum '(1)) ;; => '(1)
-(-running-sum '()) ;; Error
+(-running-sum '(1 2 3 4)) ;; => (1 3 6 10)
+(-running-sum '(1)) ;; => (1)
+(-running-sum ()) ;; Error
 ```
 
 #### -product `(list)`
@@ -1096,7 +1096,7 @@ Return a list with running sums of items in `list`.
 Return the product of `list`.
 
 ```el
-(-product '()) ;; => 1
+(-product ()) ;; => 1
 (-product '(1)) ;; => 1
 (-product '(1 2 3 4)) ;; => 24
 ```
@@ -1107,9 +1107,9 @@ Return a list with running products of items in `list`.
 `list` must be non-empty.
 
 ```el
-(-running-product '(1 2 3 4)) ;; => '(1 2 6 24)
-(-running-product '(1)) ;; => '(1)
-(-running-product '()) ;; Error
+(-running-product '(1 2 3 4)) ;; => (1 2 6 24)
+(-running-product '(1)) ;; => (1)
+(-running-product ()) ;; Error
 ```
 
 #### -inits `(list)`
@@ -1117,9 +1117,9 @@ Return a list with running products of items in `list`.
 Return all prefixes of `list`.
 
 ```el
-(-inits '(1 2 3 4)) ;; => '(nil (1) (1 2) (1 2 3) (1 2 3 4))
-(-inits nil) ;; => '(nil)
-(-inits '(1)) ;; => '(nil (1))
+(-inits '(1 2 3 4)) ;; => (nil (1) (1 2) (1 2 3) (1 2 3 4))
+(-inits nil) ;; => (nil)
+(-inits '(1)) ;; => (nil (1))
 ```
 
 #### -tails `(list)`
@@ -1127,9 +1127,9 @@ Return all prefixes of `list`.
 Return all suffixes of `list`
 
 ```el
-(-tails '(1 2 3 4)) ;; => '((1 2 3 4) (2 3 4) (3 4) (4) nil)
-(-tails nil) ;; => '(nil)
-(-tails '(1)) ;; => '((1) nil)
+(-tails '(1 2 3 4)) ;; => ((1 2 3 4) (2 3 4) (3 4) (4) nil)
+(-tails nil) ;; => (nil)
+(-tails '(1)) ;; => ((1) nil)
 ```
 
 #### -common-prefix `(&rest lists)`
@@ -1137,9 +1137,9 @@ Return all suffixes of `list`
 Return the longest common prefix of `lists`.
 
 ```el
-(-common-prefix '(1)) ;; => '(1)
-(-common-prefix '(1 2) '(3 4) '(1 2)) ;; => '()
-(-common-prefix '(1 2) '(1 2 3) '(1 2 3 4)) ;; => '(1 2)
+(-common-prefix '(1)) ;; => (1)
+(-common-prefix '(1 2) '(3 4) '(1 2)) ;; => ()
+(-common-prefix '(1 2) '(1 2 3) '(1 2 3 4)) ;; => (1 2)
 ```
 
 #### -common-suffix `(&rest lists)`
@@ -1147,9 +1147,9 @@ Return the longest common prefix of `lists`.
 Return the longest common suffix of `lists`.
 
 ```el
-(-common-suffix '(1)) ;; => '(1)
-(-common-suffix '(1 2) '(3 4) '(1 2)) ;; => '()
-(-common-suffix '(1 2 3 4) '(2 3 4) '(3 4)) ;; => '(3 4)
+(-common-suffix '(1)) ;; => (1)
+(-common-suffix '(1 2) '(3 4) '(1 2)) ;; => ()
+(-common-suffix '(1 2 3 4) '(2 3 4) '(3 4)) ;; => (3 4)
 ```
 
 #### -min `(list)`
@@ -1172,8 +1172,8 @@ comparing them.
 
 ```el
 (-min-by '> '(4 3 6 1)) ;; => 1
-(--min-by (> (car it) (car other)) '((1 2 3) (2) (3 2))) ;; => '(1 2 3)
-(--min-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) ;; => '(2)
+(--min-by (> (car it) (car other)) '((1 2 3) (2) (3 2))) ;; => (1 2 3)
+(--min-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) ;; => (2)
 ```
 
 #### -max `(list)`
@@ -1196,8 +1196,8 @@ comparing them.
 
 ```el
 (-max-by '> '(4 3 6 1)) ;; => 6
-(--max-by (> (car it) (car other)) '((1 2 3) (2) (3 2))) ;; => '(3 2)
-(--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) ;; => '(1 2 3)
+(--max-by (> (car it) (car other)) '((1 2 3) (2) (3 2))) ;; => (3 2)
+(--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) ;; => (1 2 3)
 ```
 
 ## Unfolding
@@ -1216,9 +1216,9 @@ This means a list of the form:
 `n` is the length of the returned list.
 
 ```el
-(-iterate #'1+ 1 10) ;; => '(1 2 3 4 5 6 7 8 9 10)
-(-iterate (lambda (x) (+ x x)) 2 5) ;; => '(2 4 8 16 32)
-(--iterate (* it it) 2 5) ;; => '(2 4 16 256 65536)
+(-iterate #'1+ 1 10) ;; => (1 2 3 4 5 6 7 8 9 10)
+(-iterate (lambda (x) (+ x x)) 2 5) ;; => (2 4 8 16 32)
+(--iterate (* it it) 2 5) ;; => (2 4 16 256 65536)
 ```
 
 #### -unfold `(fun seed)`
@@ -1234,9 +1234,9 @@ cons (`a` . `b`), where `a` will be prepended to the result and `b` is
 the new seed.
 
 ```el
-(-unfold (lambda (x) (unless (= x 0) (cons x (1- x)))) 10) ;; => '(10 9 8 7 6 5 4 3 2 1)
-(--unfold (when it (cons it (cdr it))) '(1 2 3 4)) ;; => '((1 2 3 4) (2 3 4) (3 4) (4))
-(--unfold (when it (cons it (butlast it))) '(1 2 3 4)) ;; => '((1 2 3 4) (1 2 3) (1 2) (1))
+(-unfold (lambda (x) (unless (= x 0) (cons x (1- x)))) 10) ;; => (10 9 8 7 6 5 4 3 2 1)
+(--unfold (when it (cons it (cdr it))) '(1 2 3 4)) ;; => ((1 2 3 4) (2 3 4) (3 4) (4))
+(--unfold (when it (cons it (butlast it))) '(1 2 3 4)) ;; => ((1 2 3 4) (1 2 3) (1 2) (1))
 ```
 
 ## Predicates
@@ -1384,9 +1384,9 @@ the results of [`-take`](#-take-n-list) and [`-drop`](#-drop-n-list), respective
 is done in a single list traversal.
 
 ```el
-(-split-at 3 '(1 2 3 4 5)) ;; => '((1 2 3) (4 5))
-(-split-at 17 '(1 2 3 4 5)) ;; => '((1 2 3 4 5) nil)
-(-split-at 0 '(1 2 3 4 5)) ;; => '(nil (1 2 3 4 5))
+(-split-at 3 '(1 2 3 4 5)) ;; => ((1 2 3) (4 5))
+(-split-at 17 '(1 2 3 4 5)) ;; => ((1 2 3 4 5) nil)
+(-split-at 0 '(1 2 3 4 5)) ;; => (nil (1 2 3 4 5))
 ```
 
 #### -split-with `(pred list)`
@@ -1394,9 +1394,9 @@ is done in a single list traversal.
 Return a list of ((-take-while `pred` `list`) (-drop-while `pred` `list`)), in no more than one pass through the list.
 
 ```el
-(-split-with 'even? '(1 2 3 4)) ;; => '(nil (1 2 3 4))
-(-split-with 'even? '(2 4 5 6)) ;; => '((2 4) (5 6))
-(--split-with (< it 4) '(1 2 3 4 3 2 1)) ;; => '((1 2 3) (4 3 2 1))
+(-split-with 'even? '(1 2 3 4)) ;; => (nil (1 2 3 4))
+(-split-with 'even? '(2 4 5 6)) ;; => ((2 4) (5 6))
+(--split-with (< it 4) '(1 2 3 4 3 2 1)) ;; => ((1 2 3) (4 3 2 1))
 ```
 
 #### -split-on `(item list)`
@@ -1411,9 +1411,9 @@ Comparison is done by `equal`.
 See also [`-split-when`](#-split-when-fn-list)
 
 ```el
-(-split-on '| '(Nil | Leaf a | Node [Tree a])) ;; => '((Nil) (Leaf a) (Node [Tree a]))
-(-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e")) ;; => '(("a" "b") ("c") ("d" "e"))
-(-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e")) ;; => '(("a" "b") ("d" "e"))
+(-split-on '| '(Nil | Leaf a | Node [Tree a])) ;; => ((Nil) (Leaf a) (Node [Tree a]))
+(-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e")) ;; => (("a" "b") ("c") ("d" "e"))
+(-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e")) ;; => (("a" "b") ("d" "e"))
 ```
 
 #### -split-when `(fn list)`
@@ -1427,9 +1427,9 @@ This function can be thought of as a generalization of
 `split-string`.
 
 ```el
-(-split-when 'even? '(1 2 3 4 5 6)) ;; => '((1) (3) (5))
-(-split-when 'even? '(1 2 3 4 6 8 9)) ;; => '((1) (3) (9))
-(--split-when (memq it '(&optional &rest)) '(a b &optional c d &rest args)) ;; => '((a b) (c d) (args))
+(-split-when 'even? '(1 2 3 4 5 6)) ;; => ((1) (3) (5))
+(-split-when 'even? '(1 2 3 4 6 8 9)) ;; => ((1) (3) (9))
+(--split-when (memq it '(&optional &rest)) '(a b &optional c d &rest args)) ;; => ((a b) (c d) (args))
 ```
 
 #### -separate `(pred list)`
@@ -1437,9 +1437,9 @@ This function can be thought of as a generalization of
 Return a list of ((-filter `pred` `list`) (-remove `pred` `list`)), in one pass through the list.
 
 ```el
-(-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7)) ;; => '((2 4 6) (1 3 5 7))
-(--separate (< it 5) '(3 7 5 9 3 2 1 4 6)) ;; => '((3 3 2 1 4) (7 5 9 6))
-(-separate 'cdr '((1 2) (1) (1 2 3) (4))) ;; => '(((1 2) (1 2 3)) ((1) (4)))
+(-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7)) ;; => ((2 4 6) (1 3 5 7))
+(--separate (< it 5) '(3 7 5 9 3 2 1 4 6)) ;; => ((3 3 2 1 4) (7 5 9 6))
+(-separate 'cdr '((1 2) (1) (1 2 3) (4))) ;; => (((1 2) (1 2 3)) ((1) (4)))
 ```
 
 #### -partition `(n list)`
@@ -1449,9 +1449,9 @@ If there are not enough items to make the last group `n`-sized,
 those items are discarded.
 
 ```el
-(-partition 2 '(1 2 3 4 5 6)) ;; => '((1 2) (3 4) (5 6))
-(-partition 2 '(1 2 3 4 5 6 7)) ;; => '((1 2) (3 4) (5 6))
-(-partition 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6))
+(-partition 2 '(1 2 3 4 5 6)) ;; => ((1 2) (3 4) (5 6))
+(-partition 2 '(1 2 3 4 5 6 7)) ;; => ((1 2) (3 4) (5 6))
+(-partition 3 '(1 2 3 4 5 6 7)) ;; => ((1 2 3) (4 5 6))
 ```
 
 #### -partition-all `(n list)`
@@ -1460,9 +1460,9 @@ Return a new list with the items in `list` grouped into `n`-sized sublists.
 The last group may contain less than `n` items.
 
 ```el
-(-partition-all 2 '(1 2 3 4 5 6)) ;; => '((1 2) (3 4) (5 6))
-(-partition-all 2 '(1 2 3 4 5 6 7)) ;; => '((1 2) (3 4) (5 6) (7))
-(-partition-all 3 '(1 2 3 4 5 6 7)) ;; => '((1 2 3) (4 5 6) (7))
+(-partition-all 2 '(1 2 3 4 5 6)) ;; => ((1 2) (3 4) (5 6))
+(-partition-all 2 '(1 2 3 4 5 6 7)) ;; => ((1 2) (3 4) (5 6) (7))
+(-partition-all 3 '(1 2 3 4 5 6 7)) ;; => ((1 2 3) (4 5 6) (7))
 ```
 
 #### -partition-in-steps `(n step list)`
@@ -1472,9 +1472,9 @@ If there are not enough items to make the last group `n`-sized,
 those items are discarded.
 
 ```el
-(-partition-in-steps 2 1 '(1 2 3 4)) ;; => '((1 2) (2 3) (3 4))
-(-partition-in-steps 3 2 '(1 2 3 4)) ;; => '((1 2 3))
-(-partition-in-steps 3 2 '(1 2 3 4 5)) ;; => '((1 2 3) (3 4 5))
+(-partition-in-steps 2 1 '(1 2 3 4)) ;; => ((1 2) (2 3) (3 4))
+(-partition-in-steps 3 2 '(1 2 3 4)) ;; => ((1 2 3))
+(-partition-in-steps 3 2 '(1 2 3 4 5)) ;; => ((1 2 3) (3 4 5))
 ```
 
 #### -partition-all-in-steps `(n step list)`
@@ -1483,9 +1483,9 @@ Return a new list with the items in `list` grouped into `n`-sized sublists at of
 The last groups may contain less than `n` items.
 
 ```el
-(-partition-all-in-steps 2 1 '(1 2 3 4)) ;; => '((1 2) (2 3) (3 4) (4))
-(-partition-all-in-steps 3 2 '(1 2 3 4)) ;; => '((1 2 3) (3 4))
-(-partition-all-in-steps 3 2 '(1 2 3 4 5)) ;; => '((1 2 3) (3 4 5) (5))
+(-partition-all-in-steps 2 1 '(1 2 3 4)) ;; => ((1 2) (2 3) (3 4) (4))
+(-partition-all-in-steps 3 2 '(1 2 3 4)) ;; => ((1 2 3) (3 4))
+(-partition-all-in-steps 3 2 '(1 2 3 4 5)) ;; => ((1 2 3) (3 4 5) (5))
 ```
 
 #### -partition-by `(fn list)`
@@ -1493,9 +1493,9 @@ The last groups may contain less than `n` items.
 Apply `fn` to each item in `list`, splitting it each time `fn` returns a new value.
 
 ```el
-(-partition-by 'even? '()) ;; => '()
-(-partition-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => '((1 1) (2 2 2) (3) (4 6 8))
-(--partition-by (< it 3) '(1 2 3 4 3 2 1)) ;; => '((1 2) (3 4 3) (2 1))
+(-partition-by 'even? ()) ;; => ()
+(-partition-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => ((1 1) (2 2 2) (3) (4 6 8))
+(--partition-by (< it 3) '(1 2 3 4 3 2 1)) ;; => ((1 2) (3 4 3) (2 1))
 ```
 
 #### -partition-by-header `(fn list)`
@@ -1506,9 +1506,9 @@ returns the header value, but only after seeing at least one
 other value (the body).
 
 ```el
-(--partition-by-header (= it 1) '(1 2 3 1 2 1 2 3 4)) ;; => '((1 2 3) (1 2) (1 2 3 4))
-(--partition-by-header (> it 0) '(1 2 0 1 0 1 2 3 0)) ;; => '((1 2 0) (1 0) (1 2 3 0))
-(-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1)) ;; => '((2 1 1 1) (4 1 3 5) (6 6 1))
+(--partition-by-header (= it 1) '(1 2 3 1 2 1 2 3 4)) ;; => ((1 2 3) (1 2) (1 2 3 4))
+(--partition-by-header (> it 0) '(1 2 0 1 0 1 2 3 0)) ;; => ((1 2 0) (1 0) (1 2 3 0))
+(-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1)) ;; => ((2 1 1 1) (4 1 3 5) (6 6 1))
 ```
 
 #### -partition-after-pred `(pred list)`
@@ -1516,9 +1516,9 @@ other value (the body).
 Partition directly after each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-after-pred #'booleanp '()) ;; => '()
-(-partition-after-pred #'booleanp '(t t)) ;; => '((t) (t))
-(-partition-after-pred #'booleanp '(0 0 t t 0 t)) ;; => '((0 0 t) (t) (0 t))
+(-partition-after-pred #'booleanp ()) ;; => ()
+(-partition-after-pred #'booleanp '(t t)) ;; => ((t) (t))
+(-partition-after-pred #'booleanp '(0 0 t t 0 t)) ;; => ((0 0 t) (t) (0 t))
 ```
 
 #### -partition-before-pred `(pred list)`
@@ -1526,9 +1526,9 @@ Partition directly after each time `pred` is true on an element of `list`.
 Partition directly before each time `pred` is true on an element of `list`.
 
 ```el
-(-partition-before-pred #'booleanp '()) ;; => '()
-(-partition-before-pred #'booleanp '(0 t)) ;; => '((0) (t))
-(-partition-before-pred #'booleanp '(0 0 t 0 t t)) ;; => '((0 0) (t 0) (t) (t))
+(-partition-before-pred #'booleanp ()) ;; => ()
+(-partition-before-pred #'booleanp '(0 t)) ;; => ((0) (t))
+(-partition-before-pred #'booleanp '(0 0 t 0 t t)) ;; => ((0 0) (t 0) (t) (t))
 ```
 
 #### -partition-before-item `(item list)`
@@ -1536,9 +1536,9 @@ Partition directly before each time `pred` is true on an element of `list`.
 Partition directly before each time `item` appears in `list`.
 
 ```el
-(-partition-before-item 3 '()) ;; => '()
-(-partition-before-item 3 '(1)) ;; => '((1))
-(-partition-before-item 3 '(3)) ;; => '((3))
+(-partition-before-item 3 ()) ;; => ()
+(-partition-before-item 3 '(1)) ;; => ((1))
+(-partition-before-item 3 '(3)) ;; => ((3))
 ```
 
 #### -partition-after-item `(item list)`
@@ -1546,9 +1546,9 @@ Partition directly before each time `item` appears in `list`.
 Partition directly after each time `item` appears in `list`.
 
 ```el
-(-partition-after-item 3 '()) ;; => '()
-(-partition-after-item 3 '(1)) ;; => '((1))
-(-partition-after-item 3 '(3)) ;; => '((3))
+(-partition-after-item 3 ()) ;; => ()
+(-partition-after-item 3 '(1)) ;; => ((1))
+(-partition-after-item 3 '(3)) ;; => ((3))
 ```
 
 #### -group-by `(fn list)`
@@ -1557,9 +1557,9 @@ Separate `list` into an alist whose keys are `fn` applied to the
 elements of `list`.  Keys are compared by `equal`.
 
 ```el
-(-group-by 'even? '()) ;; => '()
-(-group-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => '((nil 1 1 3) (t 2 2 2 4 6 8))
-(--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) ;; => '(("a" "a/b" "a/e") ("c" "c/d"))
+(-group-by 'even? ()) ;; => ()
+(-group-by 'even? '(1 1 2 2 2 3 4 6 8)) ;; => ((nil 1 1 3) (t 2 2 2 4 6 8))
+(--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) ;; => (("a" "a/b" "a/e") ("c" "c/d"))
 ```
 
 ## Indexing
@@ -1584,9 +1584,9 @@ Return the indices of all elements in `list` equal to the query
 element `elem`, in ascending order.
 
 ```el
-(-elem-indices 2 '(6 7 8 2 3 4 2 1)) ;; => '(3 6)
-(-elem-indices "bar" '("foo" "bar" "baz")) ;; => '(1)
-(-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil)) ;; => '(1 3)
+(-elem-indices 2 '(6 7 8 2 3 4 2 1)) ;; => (3 6)
+(-elem-indices "bar" '("foo" "bar" "baz")) ;; => (1)
+(-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil)) ;; => (1 3)
 ```
 
 #### -find-index `(pred list)`
@@ -1623,9 +1623,9 @@ Return the indices of all elements in `list` satisfying the
 predicate `pred`, in ascending order.
 
 ```el
-(-find-indices 'even? '(2 4 1 6 3 3 5 8)) ;; => '(0 1 3 7)
-(--find-indices (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => '(3 7)
-(-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz")) ;; => '(1)
+(-find-indices 'even? '(2 4 1 6 3 3 5 8)) ;; => (0 1 3 7)
+(--find-indices (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => (3 7)
+(-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz")) ;; => (1)
 ```
 
 #### -grade-up `(comparator list)`
@@ -1635,8 +1635,8 @@ This yields a permutation vector such that applying this
 permutation to `list` sorts it in ascending order.
 
 ```el
-(-grade-up #'< '(3 1 4 2 1 3 3)) ;; => '(1 4 3 0 5 6 2)
-(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up #'< l) l)) ;; => '(1 1 2 3 3 3 4)
+(-grade-up #'< '(3 1 4 2 1 3 3)) ;; => (1 4 3 0 5 6 2)
+(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up #'< l) l)) ;; => (1 1 2 3 3 3 4)
 ```
 
 #### -grade-down `(comparator list)`
@@ -1646,8 +1646,8 @@ This yields a permutation vector such that applying this
 permutation to `list` sorts it in descending order.
 
 ```el
-(-grade-down #'< '(3 1 4 2 1 3 3)) ;; => '(2 0 5 6 3 1 4)
-(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down #'< l) l)) ;; => '(4 3 3 3 2 1 1)
+(-grade-down #'< '(3 1 4 2 1 3 3)) ;; => (2 0 5 6 3 1 4)
+(let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down #'< l) l)) ;; => (4 3 3 3 2 1 1)
 ```
 
 ## Set operations
@@ -1661,9 +1661,9 @@ The test for equality is done with `equal`,
 or with `-compare-fn` if that's non-nil.
 
 ```el
-(-union '(1 2 3) '(3 4 5)) ;; => '(1 2 3 4 5)
-(-union '(1 2 3 4) '()) ;; => '(1 2 3 4)
-(-union '(1 1 2 2) '(3 2 1)) ;; => '(1 1 2 2 3)
+(-union '(1 2 3) '(3 4 5)) ;; => (1 2 3 4 5)
+(-union '(1 2 3 4) ()) ;; => (1 2 3 4)
+(-union '(1 1 2 2) '(3 2 1)) ;; => (1 1 2 2 3)
 ```
 
 #### -difference `(list list2)`
@@ -1673,9 +1673,9 @@ The test for equality is done with `equal`,
 or with `-compare-fn` if that's non-nil.
 
 ```el
-(-difference '() '()) ;; => '()
-(-difference '(1 2 3) '(4 5 6)) ;; => '(1 2 3)
-(-difference '(1 2 3 4) '(3 4 5 6)) ;; => '(1 2)
+(-difference () ()) ;; => ()
+(-difference '(1 2 3) '(4 5 6)) ;; => (1 2 3)
+(-difference '(1 2 3 4) '(3 4 5 6)) ;; => (1 2)
 ```
 
 #### -intersection `(list list2)`
@@ -1685,9 +1685,9 @@ The test for equality is done with `equal`,
 or with `-compare-fn` if that's non-nil.
 
 ```el
-(-intersection '() '()) ;; => '()
-(-intersection '(1 2 3) '(4 5 6)) ;; => '()
-(-intersection '(1 2 3 4) '(3 4 5 6)) ;; => '(3 4)
+(-intersection () ()) ;; => ()
+(-intersection '(1 2 3) '(4 5 6)) ;; => ()
+(-intersection '(1 2 3 4) '(3 4 5 6)) ;; => (3 4)
 ```
 
 #### -powerset `(list)`
@@ -1695,8 +1695,8 @@ or with `-compare-fn` if that's non-nil.
 Return the power set of `list`.
 
 ```el
-(-powerset '()) ;; => '(nil)
-(-powerset '(x y z)) ;; => '((x y z) (x y) (x z) (x) (y z) (y) (z) nil)
+(-powerset ()) ;; => (nil)
+(-powerset '(x y z)) ;; => ((x y z) (x y) (x z) (x) (y z) (y) (z) nil)
 ```
 
 #### -permutations `(list)`
@@ -1704,9 +1704,9 @@ Return the power set of `list`.
 Return the permutations of `list`.
 
 ```el
-(-permutations '()) ;; => '(nil)
-(-permutations '(1 2)) ;; => '((1 2) (2 1))
-(-permutations '(a b c)) ;; => '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
+(-permutations ()) ;; => (nil)
+(-permutations '(1 2)) ;; => ((1 2) (2 1))
+(-permutations '(a b c)) ;; => ((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
 ```
 
 #### -distinct `(list)`
@@ -1718,9 +1718,9 @@ or with `-compare-fn` if that's non-nil.
 Alias: `-uniq`
 
 ```el
-(-distinct '()) ;; => '()
-(-distinct '(1 2 2 4)) ;; => '(1 2 4)
-(-distinct '(t t t)) ;; => '(t)
+(-distinct ()) ;; => ()
+(-distinct '(1 2 2 4)) ;; => (1 2 4)
+(-distinct '(t t t)) ;; => (t)
 ```
 
 ## Other list operations
@@ -1733,9 +1733,9 @@ Rotate `list` `n` places to the right.  With `n` negative, rotate to the left.
 The time complexity is O(n).
 
 ```el
-(-rotate 3 '(1 2 3 4 5 6 7)) ;; => '(5 6 7 1 2 3 4)
-(-rotate -3 '(1 2 3 4 5 6 7)) ;; => '(4 5 6 7 1 2 3)
-(-rotate 16 '(1 2 3 4 5 6 7)) ;; => '(6 7 1 2 3 4 5)
+(-rotate 3 '(1 2 3 4 5 6 7)) ;; => (5 6 7 1 2 3 4)
+(-rotate -3 '(1 2 3 4 5 6 7)) ;; => (4 5 6 7 1 2 3)
+(-rotate 16 '(1 2 3 4 5 6 7)) ;; => (6 7 1 2 3 4 5)
 ```
 
 #### -repeat `(n x)`
@@ -1744,8 +1744,8 @@ Return a new list of length `n` with each element being `x`.
 Return nil if `n` is less than 1.
 
 ```el
-(-repeat 3 :a) ;; => '(:a :a :a)
-(-repeat 1 :a) ;; => '(:a)
+(-repeat 3 :a) ;; => (:a :a :a)
+(-repeat 1 :a) ;; => (:a)
 (-repeat 0 :a) ;; => nil
 ```
 
@@ -1757,8 +1757,8 @@ result, so if the final element of `args` is not a list, the result
 is a dotted list.  With no `args`, return nil.
 
 ```el
-(-cons* 1 2) ;; => '(1 . 2)
-(-cons* 1 2 3) ;; => '(1 2 . 3)
+(-cons* 1 2) ;; => (1 . 2)
+(-cons* 1 2 3) ;; => (1 2 . 3)
 (-cons* 1) ;; => 1
 ```
 
@@ -1771,9 +1771,9 @@ This is like `cons`, but operates on the end of list.
 If `elements` is non nil, append these to the list as well.
 
 ```el
-(-snoc '(1 2 3) 4) ;; => '(1 2 3 4)
-(-snoc '(1 2 3) 4 5 6) ;; => '(1 2 3 4 5 6)
-(-snoc '(1 2 3) '(4 5 6)) ;; => '(1 2 3 (4 5 6))
+(-snoc '(1 2 3) 4) ;; => (1 2 3 4)
+(-snoc '(1 2 3) 4 5 6) ;; => (1 2 3 4 5 6)
+(-snoc '(1 2 3) '(4 5 6)) ;; => (1 2 3 (4 5 6))
 ```
 
 #### -interpose `(sep list)`
@@ -1781,9 +1781,9 @@ If `elements` is non nil, append these to the list as well.
 Return a new list of all elements in `list` separated by `sep`.
 
 ```el
-(-interpose "-" '()) ;; => '()
-(-interpose "-" '("a")) ;; => '("a")
-(-interpose "-" '("a" "b" "c")) ;; => '("a" "-" "b" "-" "c")
+(-interpose "-" ()) ;; => ()
+(-interpose "-" '("a")) ;; => ("a")
+(-interpose "-" '("a" "b" "c")) ;; => ("a" "-" "b" "-" "c")
 ```
 
 #### -interleave `(&rest lists)`
@@ -1791,9 +1791,9 @@ Return a new list of all elements in `list` separated by `sep`.
 Return a new list of the first item in each list, then the second etc.
 
 ```el
-(-interleave '(1 2) '("a" "b")) ;; => '(1 "a" 2 "b")
-(-interleave '(1 2) '("a" "b") '("A" "B")) ;; => '(1 "a" "A" 2 "b" "B")
-(-interleave '(1 2 3) '("a" "b")) ;; => '(1 "a" 2 "b")
+(-interleave '(1 2) '("a" "b")) ;; => (1 "a" 2 "b")
+(-interleave '(1 2) '("a" "b") '("A" "B")) ;; => (1 "a" "A" 2 "b" "B")
+(-interleave '(1 2 3) '("a" "b")) ;; => (1 "a" 2 "b")
 ```
 
 #### -iota `(count &optional start step)`
@@ -1805,8 +1805,8 @@ This function takes its name from the corresponding primitive in
 the `apl` language.
 
 ```el
-(-iota 6) ;; => '(0 1 2 3 4 5)
-(-iota 4 2.5 -2) ;; => '(2.5 0.5 -1.5 -3.5)
+(-iota 6) ;; => (0 1 2 3 4 5)
+(-iota 4 2.5 -2) ;; => (2.5 0.5 -1.5 -3.5)
 (-iota -1) ;; Error
 ```
 
@@ -1821,9 +1821,9 @@ The anaphoric form `--zip-with` binds the elements from `list1` as symbol `it`,
 and the elements from `list2` as symbol `other`.
 
 ```el
-(-zip-with '+ '(1 2 3) '(4 5 6)) ;; => '(5 7 9)
-(-zip-with 'cons '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
-(--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde")) ;; => '("Batman and Robin" "Jekyll and Hyde")
+(-zip-with '+ '(1 2 3) '(4 5 6)) ;; => (5 7 9)
+(-zip-with 'cons '(1 2 3) '(4 5 6)) ;; => ((1 . 4) (2 . 5) (3 . 6))
+(--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde")) ;; => ("Batman and Robin" "Jekyll and Hyde")
 ```
 
 #### -zip `(&rest lists)`
@@ -1843,9 +1843,9 @@ Alias: `-zip-pair`
 See also: [`-zip-lists`](#-zip-lists-rest-lists)
 
 ```el
-(-zip '(1 2 3) '(4 5 6)) ;; => '((1 . 4) (2 . 5) (3 . 6))
-(-zip '(1 2 3) '(4 5 6 7)) ;; => '((1 . 4) (2 . 5) (3 . 6))
-(-zip '(1 2) '(3 4 5) '(6)) ;; => '((1 3 6))
+(-zip '(1 2 3) '(4 5 6)) ;; => ((1 . 4) (2 . 5) (3 . 6))
+(-zip '(1 2 3) '(4 5 6 7)) ;; => ((1 . 4) (2 . 5) (3 . 6))
+(-zip '(1 2) '(3 4 5) '(6)) ;; => ((1 3 6))
 ```
 
 #### -zip-lists `(&rest lists)`
@@ -1861,9 +1861,9 @@ lists are provided.
 See also: [`-zip`](#-zip-rest-lists)
 
 ```el
-(-zip-lists '(1 2 3) '(4 5 6)) ;; => '((1 4) (2 5) (3 6))
-(-zip-lists '(1 2 3) '(4 5 6 7)) ;; => '((1 4) (2 5) (3 6))
-(-zip-lists '(1 2) '(3 4 5) '(6)) ;; => '((1 3 6))
+(-zip-lists '(1 2 3) '(4 5 6)) ;; => ((1 4) (2 5) (3 6))
+(-zip-lists '(1 2 3) '(4 5 6 7)) ;; => ((1 4) (2 5) (3 6))
+(-zip-lists '(1 2) '(3 4 5) '(6)) ;; => ((1 3 6))
 ```
 
 #### -zip-fill `(fill-value &rest lists)`
@@ -1873,7 +1873,7 @@ lengths of the returned groupings are equal to the length of the
 longest input list.
 
 ```el
-(-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9)) ;; => '((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
+(-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9)) ;; => ((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
 ```
 
 #### -unzip `(lists)`
@@ -1893,9 +1893,9 @@ return a list of cons-cells such that the above identity works.
 See also: [`-zip`](#-zip-rest-lists)
 
 ```el
-(-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g"))) ;; => '((1 2 3) (a b c) ("e" "f" "g"))
-(-unzip '((1 2) (3 4) (5 6) (7 8) (9 10))) ;; => '((1 3 5 7 9) (2 4 6 8 10))
-(-unzip '((1 2) (3 4))) ;; => '((1 . 3) (2 . 4))
+(-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g"))) ;; => ((1 2 3) (a b c) ("e" "f" "g"))
+(-unzip '((1 2) (3 4) (5 6) (7 8) (9 10))) ;; => ((1 3 5 7 9) (2 4 6 8 10))
+(-unzip '((1 2) (3 4))) ;; => ((1 . 3) (2 . 4))
 ```
 
 #### -cycle `(list)`
@@ -1905,9 +1905,9 @@ The returned list cycles through the elements of `list` and repeats
 from the beginning.
 
 ```el
-(-take 5 (-cycle '(1 2 3))) ;; => '(1 2 3 1 2)
-(-take 7 (-cycle '(1 "and" 3))) ;; => '(1 "and" 3 1 "and" 3 1)
-(-zip (-cycle '(1 2 3)) '(1 2)) ;; => '((1 . 1) (2 . 2))
+(-take 5 (-cycle '(1 2 3))) ;; => (1 2 3 1 2)
+(-take 7 (-cycle '(1 "and" 3))) ;; => (1 "and" 3 1 "and" 3 1)
+(-zip (-cycle '(1 2 3)) '(1 2)) ;; => ((1 . 1) (2 . 2))
 ```
 
 #### -pad `(fill-value &rest lists)`
@@ -1916,9 +1916,9 @@ Appends `fill-value` to the end of each list in `lists` such that they
 will all have the same length.
 
 ```el
-(-pad 0 '()) ;; => '(nil)
-(-pad 0 '(1)) ;; => '((1))
-(-pad 0 '(1 2 3) '(4 5)) ;; => '((1 2 3) (4 5 0))
+(-pad 0 ()) ;; => (nil)
+(-pad 0 '(1)) ;; => ((1))
+(-pad 0 '(1 2 3) '(4 5)) ;; => ((1 2 3) (4 5 0))
 ```
 
 #### -table `(fn &rest lists)`
@@ -1935,9 +1935,9 @@ order.  The dimension of the result is (length lists).
 See also: [`-table-flat`](#-table-flat-fn-rest-lists)
 
 ```el
-(-table '* '(1 2 3) '(1 2 3)) ;; => '((1 2 3) (2 4 6) (3 6 9))
-(-table (lambda (a b) (-sum (-zip-with '* a b))) '((1 2) (3 4)) '((1 3) (2 4))) ;; => '((7 15) (10 22))
-(apply '-table 'list (-repeat 3 '(1 2))) ;; => '((((1 1 1) (2 1 1)) ((1 2 1) (2 2 1))) (((1 1 2) (2 1 2)) ((1 2 2) (2 2 2))))
+(-table '* '(1 2 3) '(1 2 3)) ;; => ((1 2 3) (2 4 6) (3 6 9))
+(-table (lambda (a b) (-sum (-zip-with '* a b))) '((1 2) (3 4)) '((1 3) (2 4))) ;; => ((7 15) (10 22))
+(apply '-table 'list (-repeat 3 '(1 2))) ;; => ((((1 1 1) (2 1 1)) ((1 2 1) (2 2 1))) (((1 1 2) (2 1 2)) ((1 2 2) (2 2 2))))
 ```
 
 #### -table-flat `(fn &rest lists)`
@@ -1959,9 +1959,9 @@ but the implementation here is much more efficient.
 See also: [`-flatten-n`](#-flatten-n-num-list), [`-table`](#-table-fn-rest-lists)
 
 ```el
-(-table-flat 'list '(1 2 3) '(a b c)) ;; => '((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
-(-table-flat '* '(1 2 3) '(1 2 3)) ;; => '(1 2 3 2 4 6 3 6 9)
-(apply '-table-flat 'list (-repeat 3 '(1 2))) ;; => '((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2))
+(-table-flat 'list '(1 2 3) '(a b c)) ;; => ((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
+(-table-flat '* '(1 2 3) '(1 2 3)) ;; => (1 2 3 2 4 6 3 6 9)
+(apply '-table-flat 'list (-repeat 3 '(1 2))) ;; => ((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2))
 ```
 
 #### -first `(pred list)`
@@ -1991,7 +1991,7 @@ This function's anaphoric counterpart is `--some`.
 ```el
 (-some (lambda (s) (string-match-p "x" s)) '("foo" "axe" "xor")) ;; => 1
 (-some (lambda (s) (string-match-p "x" s)) '("foo" "bar" "baz")) ;; => nil
-(--some (member 'foo it) '((foo bar) (baz))) ;; => '(foo bar)
+(--some (member 'foo it) '((foo bar) (baz))) ;; => (foo bar)
 ```
 
 #### -last `(pred list)`
@@ -2013,7 +2013,7 @@ See also: [`-second-item`](#-second-item-list), [`-last-item`](#-last-item-list)
 ```el
 (-first-item '(1 2 3)) ;; => 1
 (-first-item nil) ;; => nil
-(let ((list (list 1 2 3))) (setf (-first-item list) 5) list) ;; => '(5 2 3)
+(let ((list (list 1 2 3))) (setf (-first-item list) 5) list) ;; => (5 2 3)
 ```
 
 #### -second-item `(list)`
@@ -2067,7 +2067,7 @@ Return the last item of `list`, or nil on an empty list.
 ```el
 (-last-item '(1 2 3)) ;; => 3
 (-last-item nil) ;; => nil
-(let ((list (list 1 2 3))) (setf (-last-item list) 5) list) ;; => '(1 2 5)
+(let ((list (list 1 2 3))) (setf (-last-item list) 5) list) ;; => (1 2 5)
 ```
 
 #### -butlast `(list)`
@@ -2075,8 +2075,8 @@ Return the last item of `list`, or nil on an empty list.
 Return a list of all items in list except for the last.
 
 ```el
-(-butlast '(1 2 3)) ;; => '(1 2)
-(-butlast '(1 2)) ;; => '(1)
+(-butlast '(1 2 3)) ;; => (1 2)
+(-butlast '(1 2)) ;; => (1)
 (-butlast '(1)) ;; => nil
 ```
 
@@ -2088,9 +2088,9 @@ Return the sorted list.  `list` is `not` modified by side effects.
 if the first element should sort before the second.
 
 ```el
-(-sort '< '(3 1 2)) ;; => '(1 2 3)
-(-sort '> '(3 1 2)) ;; => '(3 2 1)
-(--sort (< it other) '(3 1 2)) ;; => '(1 2 3)
+(-sort '< '(3 1 2)) ;; => (1 2 3)
+(-sort '> '(3 1 2)) ;; => (3 2 1)
+(--sort (< it other) '(3 1 2)) ;; => (1 2 3)
 ```
 
 #### -list `(arg)`
@@ -2105,9 +2105,9 @@ In this case, if `arg` is not a list, a new list with all of
 backward compatibility and is otherwise deprecated.
 
 ```el
-(-list 1) ;; => '(1)
-(-list '()) ;; => '()
-(-list '(1 2 3)) ;; => '(1 2 3)
+(-list 1) ;; => (1)
+(-list ()) ;; => ()
+(-list '(1 2 3)) ;; => (1 2 3)
 ```
 
 #### -fix `(fn list)`
@@ -2117,8 +2117,8 @@ Compute the (least) fixpoint of `fn` with initial input `list`.
 `fn` is called at least once, results are compared with `equal`.
 
 ```el
-(-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3))) ;; => '((1) (2) (3))
-(let ((l '((starwars scifi) (jedi starwars warrior)))) (--fix (-uniq (--mapcat (cons it (cdr (assq it l))) it)) '(jedi book))) ;; => '(jedi starwars warrior scifi book)
+(-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3))) ;; => ((1) (2) (3))
+(let ((l '((starwars scifi) (jedi starwars warrior)))) (--fix (-uniq (--mapcat (cons it (cdr (assq it l))) it)) '(jedi book))) ;; => (jedi starwars warrior scifi book)
 ```
 
 ## Tree operations
@@ -2138,9 +2138,9 @@ of the passed branch node.
 Non-branch nodes are simply copied.
 
 ```el
-(-tree-seq 'listp 'identity '(1 (2 3) 4 (5 (6 7)))) ;; => '((1 (2 3) 4 (5 (6 7))) 1 (2 3) 2 3 4 (5 (6 7)) 5 (6 7) 6 7)
-(-tree-seq 'listp 'reverse '(1 (2 3) 4 (5 (6 7)))) ;; => '((1 (2 3) 4 (5 (6 7))) (5 (6 7)) (6 7) 7 6 5 4 (2 3) 3 2 1)
-(--tree-seq (vectorp it) (append it nil) [1 [2 3] 4 [5 [6 7]]]) ;; => '([1 [2 3] 4 [5 [6 7]]] 1 [2 3] 2 3 4 [5 [6 7]] 5 [6 7] 6 7)
+(-tree-seq 'listp 'identity '(1 (2 3) 4 (5 (6 7)))) ;; => ((1 (2 3) 4 (5 (6 7))) 1 (2 3) 2 3 4 (5 (6 7)) 5 (6 7) 6 7)
+(-tree-seq 'listp 'reverse '(1 (2 3) 4 (5 (6 7)))) ;; => ((1 (2 3) 4 (5 (6 7))) (5 (6 7)) (6 7) 7 6 5 4 (2 3) 3 2 1)
+(--tree-seq (vectorp it) (append it nil) [1 [2 3] 4 [5 [6 7]]]) ;; => ([1 [2 3] 4 [5 [6 7]]] 1 [2 3] 2 3 4 [5 [6 7]] 5 [6 7] 6 7)
 ```
 
 #### -tree-map `(fn tree)`
@@ -2148,9 +2148,9 @@ Non-branch nodes are simply copied.
 Apply `fn` to each element of `tree` while preserving the tree structure.
 
 ```el
-(-tree-map '1+ '(1 (2 3) (4 (5 6) 7))) ;; => '(2 (3 4) (5 (6 7) 8))
-(-tree-map '(lambda (x) (cons x (expt 2 x))) '(1 (2 3) 4)) ;; => '((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
-(--tree-map (length it) '("<body>" ("<p>" "text" "</p>") "</body>")) ;; => '(6 (3 4 4) 7)
+(-tree-map '1+ '(1 (2 3) (4 (5 6) 7))) ;; => (2 (3 4) (5 (6 7) 8))
+(-tree-map '(lambda (x) (cons x (expt 2 x))) '(1 (2 3) 4)) ;; => ((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
+(--tree-map (length it) '("<body>" ("<p>" "text" "</p>") "</body>")) ;; => (6 (3 4 4) 7)
 ```
 
 #### -tree-map-nodes `(pred fun tree)`
@@ -2162,9 +2162,9 @@ returns non-nil, apply `fun` to this node and do not descend
 further.
 
 ```el
-(-tree-map-nodes 'vectorp (lambda (x) (-sum (append x nil))) '(1 [2 3] 4 (5 [6 7] 8))) ;; => '(1 5 4 (5 13 8))
-(-tree-map-nodes 'keywordp (lambda (x) (symbol-name x)) '(1 :foo 4 ((5 6 :bar) :baz 8))) ;; => '(1 ":foo" 4 ((5 6 ":bar") ":baz" 8))
-(--tree-map-nodes (eq (car-safe it) 'add-mode) (-concat it (list :mode 'emacs-lisp-mode)) '(with-mode emacs-lisp-mode (foo bar) (add-mode a b) (baz (add-mode c d)))) ;; => '(with-mode emacs-lisp-mode (foo bar) (add-mode a b :mode emacs-lisp-mode) (baz (add-mode c d :mode emacs-lisp-mode)))
+(-tree-map-nodes 'vectorp (lambda (x) (-sum (append x nil))) '(1 [2 3] 4 (5 [6 7] 8))) ;; => (1 5 4 (5 13 8))
+(-tree-map-nodes 'keywordp (lambda (x) (symbol-name x)) '(1 :foo 4 ((5 6 :bar) :baz 8))) ;; => (1 ":foo" 4 ((5 6 ":bar") ":baz" 8))
+(--tree-map-nodes (eq (car-safe it) 'add-mode) (-concat it (list :mode 'emacs-lisp-mode)) '(with-mode emacs-lisp-mode (foo bar) (add-mode a b) (baz (add-mode c d)))) ;; => (with-mode emacs-lisp-mode (foo bar) (add-mode a b :mode emacs-lisp-mode) (baz (add-mode c d :mode emacs-lisp-mode)))
 ```
 
 #### -tree-reduce `(fn tree)`
@@ -2196,7 +2196,7 @@ two elements.
 
 ```el
 (-tree-reduce-from '+ 1 '(1 (1 1) ((1)))) ;; => 8
-(--tree-reduce-from (-concat acc (list it)) nil '(1 (2 3 (4 5)) (6 7))) ;; => '((7 6) ((5 4) 3 2) 1)
+(--tree-reduce-from (-concat acc (list it)) nil '(1 (2 3 (4 5)) (6 7))) ;; => ((7 6) ((5 4) 3 2) 1)
 ```
 
 #### -tree-mapreduce `(fn folder tree)`
@@ -2212,7 +2212,7 @@ This is the same as calling [`-tree-reduce`](#-tree-reduce-fn-tree) after [`-tre
 but is twice as fast as it only traverse the structure once.
 
 ```el
-(-tree-mapreduce 'list 'append '(1 (2 (3 4) (5 6)) (7 (8 9)))) ;; => '(1 2 3 4 5 6 7 8 9)
+(-tree-mapreduce 'list 'append '(1 (2 (3 4) (5 6)) (7 (8 9)))) ;; => (1 2 3 4 5 6 7 8 9)
 (--tree-mapreduce 1 (+ it acc) '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => 9
 (--tree-mapreduce 0 (max acc (1+ it)) '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => 3
 ```
@@ -2231,7 +2231,7 @@ but is twice as fast as it only traverse the structure once.
 
 ```el
 (-tree-mapreduce-from 'identity '* 1 '(1 (2 (3 4) (5 6)) (7 (8 9)))) ;; => 362880
-(--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => '(2 (4 (8 18) (4 2)) (14 (8 6)))
+(--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3)))) ;; => (2 (4 (8 18) (4 2)) (14 (8 6)))
 (concat "{" (--tree-mapreduce-from (cond ((-cons-pair? it) (concat (symbol-name (car it)) " -> " (symbol-name (cdr it)))) (t (concat (symbol-name it) " : {"))) (concat it (unless (or (equal acc "}") (equal (substring it (1- (length it))) "{")) ", ") acc) "}" '((elisp-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam))))) ;; => "{elisp-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}"
 ```
 
@@ -2243,7 +2243,7 @@ replaced with new ones.  This is useful when you need to clone a
 structure such as plist or alist.
 
 ```el
-(let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) ;; => '(1 2 3)
+(let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) ;; => (1 2 3)
 ```
 
 ## Threading macros
@@ -2256,9 +2256,9 @@ already. If there are more forms, insert the first form as the
 second item in second form, etc.
 
 ```el
-(-> '(2 3 5)) ;; => '(2 3 5)
-(-> '(2 3 5) (append '(8 13))) ;; => '(2 3 5 8 13)
-(-> '(2 3 5) (append '(8 13)) (-slice 1 -1)) ;; => '(3 5 8)
+(-> '(2 3 5)) ;; => (2 3 5)
+(-> '(2 3 5) (append '(8 13))) ;; => (2 3 5 8 13)
+(-> '(2 3 5) (append '(8 13)) (-slice 1 -1)) ;; => (3 5 8)
 ```
 
 #### ->> `(x &optional form &rest more)`
@@ -2269,8 +2269,8 @@ already. If there are more forms, insert the first form as the
 last item in second form, etc.
 
 ```el
-(->> '(1 2 3) (-map 'square)) ;; => '(1 4 9)
-(->> '(1 2 3) (-map 'square) (-remove 'even?)) ;; => '(1 9)
+(->> '(1 2 3) (-map 'square)) ;; => (1 4 9)
+(->> '(1 2 3) (-map 'square) (-remove 'even?)) ;; => (1 9)
 (->> '(1 2 3) (-map 'square) (-reduce '+)) ;; => 14
 ```
 
@@ -2296,7 +2296,7 @@ In the first form, bind `variable` to `value`.  In the second form, bind
 `variable` to the result of the first form, and so forth.
 
 ```el
-(-as-> 3 my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) my-var)) ;; => '(8)
+(-as-> 3 my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) my-var)) ;; => (8)
 (-as-> 3 my-var 1+) ;; => 4
 (-as-> 3 my-var) ;; => 3
 ```
@@ -2307,7 +2307,7 @@ When expr is non-nil, thread it through the first form (via [`->`](#--x-optional
 and when that result is non-nil, through the next form, etc.
 
 ```el
-(-some-> '(2 3 5)) ;; => '(2 3 5)
+(-some-> '(2 3 5)) ;; => (2 3 5)
 (-some-> 5 square) ;; => 25
 (-some-> 5 even? square) ;; => nil
 ```
@@ -2318,7 +2318,7 @@ When expr is non-nil, thread it through the first form (via [`->>`](#--x-optiona
 and when that result is non-nil, through the next form, etc.
 
 ```el
-(-some->> '(1 2 3) (-map 'square)) ;; => '(1 4 9)
+(-some->> '(1 2 3) (-map 'square)) ;; => (1 4 9)
 (-some->> '(1 3 5) (-last 'even?) (+ 100)) ;; => nil
 (-some->> '(2 4 6) (-last 'even?) (+ 100)) ;; => 106
 ```
@@ -2333,7 +2333,7 @@ through the next form, etc.
 ```el
 (-some--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"
 (-some--> nil (concat "abc" it "ghi")) ;; => nil
-(-some--> '(0 1) (-remove #'natnump it) (append it it) (-map #'1+ it)) ;; => '()
+(-some--> '(0 1) (-remove #'natnump it) (append it it) (-map #'1+ it)) ;; => ()
 ```
 
 #### -doto `(init &rest forms)`
@@ -2344,9 +2344,9 @@ individually using [`->`](#--x-optional-form-rest-more), which see.  The return 
 which `forms` may have modified by side effect.
 
 ```el
-(-doto (list 1 2 3) pop pop) ;; => '(3)
-(-doto (cons 1 2) (setcar 3) (setcdr 4)) ;; => '(3 . 4)
-(gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) ;; => 'v
+(-doto (list 1 2 3) pop pop) ;; => (3)
+(-doto (cons 1 2) (setcar 3) (setcdr 4)) ;; => (3 . 4)
+(gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) ;; => v
 ```
 
 ## Binding
@@ -2572,9 +2572,9 @@ binding".  The difference is that we put the &as at the front
 because we need to support improper list binding.
 
 ```el
-(-let (([a (b c) d] [1 (2 3) 4])) (list a b c d)) ;; => '(1 2 3 4)
-(-let [(a b c . d) (list 1 2 3 4 5 6)] (list a b c d)) ;; => '(1 2 3 (4 5 6))
-(-let [(&plist :foo foo :bar bar) (list :baz 3 :foo 1 :qux 4 :bar 2)] (list foo bar)) ;; => '(1 2)
+(-let (([a (b c) d] [1 (2 3) 4])) (list a b c d)) ;; => (1 2 3 4)
+(-let [(a b c . d) (list 1 2 3 4 5 6)] (list a b c d)) ;; => (1 2 3 (4 5 6))
+(-let [(&plist :foo foo :bar bar) (list :baz 3 :foo 1 :qux 4 :bar 2)] (list foo bar)) ;; => (1 2)
 ```
 
 #### -let* `(varlist &rest body)`
@@ -2592,9 +2592,9 @@ recursively but also want to name the intermediate structures.
 See [`-let`](#-let-varlist-rest-body) for the list of all possible patterns.
 
 ```el
-(-let* (((a . b) (cons 1 2)) ((c . d) (cons 3 4))) (list a b c d)) ;; => '(1 2 3 4)
-(-let* (((a . b) (cons 1 (cons 2 3))) ((c . d) b)) (list a b c d)) ;; => '(1 (2 . 3) 2 3)
-(-let* (((&alist "foo" foo "bar" bar) (list (cons "foo" 1) (cons "bar" (list 'a 'b 'c)))) ((a b c) bar)) (list foo a b c bar)) ;; => '(1 a b c (a b c))
+(-let* (((a . b) (cons 1 2)) ((c . d) (cons 3 4))) (list a b c d)) ;; => (1 2 3 4)
+(-let* (((a . b) (cons 1 (cons 2 3))) ((c . d) b)) (list a b c d)) ;; => (1 (2 . 3) 2 3)
+(-let* (((&alist "foo" foo "bar" bar) (list (cons "foo" 1) (cons "bar" (list 'a 'b 'c)))) ((a b c) bar)) (list foo a b c bar)) ;; => (1 a b c (a b c))
 ```
 
 #### -lambda `(match-form &rest body)`
@@ -2614,9 +2614,9 @@ penalty.
 See [`-let`](#-let-varlist-rest-body) for a description of the destructuring mechanism.
 
 ```el
-(-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6))) ;; => '(3 7 11)
-(-map (-lambda ([x y]) (+ x y)) '([1 2] [3 4] [5 6])) ;; => '(3 7 11)
-(funcall (-lambda ((_ . a) (_ . b)) (-concat a b)) '(1 2 3) '(4 5 6)) ;; => '(2 3 5 6)
+(-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6))) ;; => (3 7 11)
+(-map (-lambda ([x y]) (+ x y)) '([1 2] [3 4] [5 6])) ;; => (3 7 11)
+(funcall (-lambda ((_ . a) (_ . b)) (-concat a b)) '(1 2 3) '(4 5 6)) ;; => (2 3 5 6)
 ```
 
 #### -setq `([match-form val] ...)`
@@ -2642,7 +2642,7 @@ multiple assignments it does not cause unexpected side effects.
 
 ```el
 (let (a) (-setq a 1) a) ;; => 1
-(let (a b) (-setq (a b) (list 1 2)) (list a b)) ;; => '(1 2)
+(let (a b) (-setq (a b) (list 1 2)) (list a b)) ;; => (1 2)
 (let (c) (-setq (&plist :c c) (list :c "c")) c) ;; => "c"
 ```
 
@@ -2661,8 +2661,8 @@ For access to the current element's index in `list`, see
 [`-each-indexed`](#-each-indexed-list-fn).
 
 ```el
-(let (l) (-each '(1 2 3) (lambda (x) (push x l))) l) ;; => '(3 2 1)
-(let (l) (--each '(1 2 3) (push it l)) l) ;; => '(3 2 1)
+(let (l) (-each '(1 2 3) (lambda (x) (push x l))) l) ;; => (3 2 1)
+(let (l) (--each '(1 2 3) (push it l)) l) ;; => (3 2 1)
 (-each '(1 2 3) #'identity) ;; => nil
 ```
 
@@ -2676,8 +2676,8 @@ effects.
 Its anaphoric counterpart is `--each-while`.
 
 ```el
-(let (l) (-each-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) ;; => '(4 2)
-(let (l) (--each-while '(1 2 3 4) (< it 3) (push it l)) l) ;; => '(2 1)
+(let (l) (-each-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) ;; => (4 2)
+(let (l) (--each-while '(1 2 3 4) (< it 3) (push it l)) l) ;; => (2 1)
 (let ((s 0)) (--each-while '(1 3 4 5) (< it 5) (setq s (+ s it))) s) ;; => 8
 ```
 
@@ -2690,9 +2690,9 @@ Return nil; this function is intended for side effects.
 See also: [`-map-indexed`](#-map-indexed-fn-list).
 
 ```el
-(let (l) (-each-indexed '(a b c) (lambda (i x) (push (list x i) l))) l) ;; => '((c 2) (b 1) (a 0))
-(let (l) (--each-indexed '(a b c) (push (list it it-index) l)) l) ;; => '((c 2) (b 1) (a 0))
-(let (l) (--each-indexed '() (push it l)) l) ;; => '()
+(let (l) (-each-indexed '(a b c) (lambda (i x) (push (list x i) l))) l) ;; => ((c 2) (b 1) (a 0))
+(let (l) (--each-indexed '(a b c) (push (list it it-index) l)) l) ;; => ((c 2) (b 1) (a 0))
+(let (l) (--each-indexed () (push it l)) l) ;; => ()
 ```
 
 #### -each-r `(list fn)`
@@ -2703,8 +2703,8 @@ Return nil; this function is intended for side effects.
 Its anaphoric counterpart is `--each-r`.
 
 ```el
-(let (l) (-each-r '(1 2 3) (lambda (x) (push x l))) l) ;; => '(1 2 3)
-(let (l) (--each-r '(1 2 3) (push it l)) l) ;; => '(1 2 3)
+(let (l) (-each-r '(1 2 3) (lambda (x) (push x l))) l) ;; => (1 2 3)
+(let (l) (--each-r '(1 2 3) (push it l)) l) ;; => (1 2 3)
 (-each-r '(1 2 3) #'identity) ;; => nil
 ```
 
@@ -2718,8 +2718,8 @@ effects.
 Its anaphoric counterpart is `--each-r-while`.
 
 ```el
-(let (l) (-each-r-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) ;; => '(6)
-(let (l) (--each-r-while '(1 2 3 4) (>= it 3) (push it l)) l) ;; => '(3 4)
+(let (l) (-each-r-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l) ;; => (6)
+(let (l) (--each-r-while '(1 2 3 4) (>= it 3) (push it l)) l) ;; => (3 4)
 (let ((s 0)) (--each-r-while '(1 2 3 5) (> it 1) (setq s (+ s it))) s) ;; => 10
 ```
 
@@ -2733,9 +2733,9 @@ if `num` is less than 1.
 This function's anaphoric counterpart is `--dotimes`.
 
 ```el
-(let (s) (-dotimes 3 (lambda (n) (push n s))) s) ;; => '(2 1 0)
-(let (s) (-dotimes 0 (lambda (n) (push n s))) s) ;; => '()
-(let (s) (--dotimes 5 (push it s)) s) ;; => '(4 3 2 1 0)
+(let (s) (-dotimes 3 (lambda (n) (push n s))) s) ;; => (2 1 0)
+(let (s) (-dotimes 0 (lambda (n) (push n s))) s) ;; => ()
+(let (s) (--dotimes 5 (push it s)) s) ;; => (4 3 2 1 0)
 ```
 
 ## Destructive operations
@@ -2745,8 +2745,8 @@ This function's anaphoric counterpart is `--dotimes`.
 Destructive: Set `cdr` to the cons of `car` and `cdr`.
 
 ```el
-(let (l) (!cons 5 l) l) ;; => '(5)
-(let ((l '(3))) (!cons 5 l) l) ;; => '(5 3)
+(let (l) (!cons 5 l) l) ;; => (5)
+(let ((l '(3))) (!cons 5 l) l) ;; => (5 3)
 ```
 
 #### !cdr `(list)`
@@ -2754,8 +2754,8 @@ Destructive: Set `cdr` to the cons of `car` and `cdr`.
 Destructive: Set `list` to the cdr of `list`.
 
 ```el
-(let ((l '(3))) (!cdr l) l) ;; => '()
-(let ((l '(3 5))) (!cdr l) l) ;; => '(5)
+(let ((l '(3))) (!cdr l) l) ;; => ()
+(let ((l '(3 5))) (!cdr l) l) ;; => (5)
 ```
 
 ## Function combinators
@@ -2794,8 +2794,8 @@ number of args, and returns a list containing the result of
 applying each fn to the args (left-to-right).
 
 ```el
-(funcall (-juxt '+ '-) 3 5) ;; => '(8 -2)
-(-map (-juxt 'identity 'square) '(1 2 3)) ;; => '((1 1) (2 4) (3 9))
+(funcall (-juxt '+ '-) 3 5) ;; => (8 -2)
+(-map (-juxt 'identity 'square) '(1 2 3)) ;; => ((1 1) (2 4) (3 9))
 ```
 
 #### -compose `(&rest fns)`
@@ -2818,8 +2818,8 @@ Changes an n-arity function `fn` to a 1-arity function that
 expects a list with n items as arguments
 
 ```el
-(-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => '(3 6 15)
-(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+(-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => (3 6 15)
+(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => ((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
 (funcall (-applify '<) '(3 6)) ;; => t
 ```
 
@@ -2832,8 +2832,8 @@ results (in the same order).
 In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
 
 ```el
-(-sort (-on '< 'length) '((1 2 3) (1) (1 2))) ;; => '((1) (1 2) (1 2 3))
-(-min-by (-on '> 'length) '((1 2 3) (4) (1 2))) ;; => '(4)
+(-sort (-on '< 'length) '((1 2 3) (1) (1 2))) ;; => ((1) (1 2) (1 2 3))
+(-min-by (-on '> 'length) '((1 2 3) (4) (1 2))) ;; => (4)
 (-min-by (-on 'string-lessp 'number-to-string) '(2 100 22)) ;; => 22
 ```
 
@@ -2846,7 +2846,7 @@ In types: (a -> b -> c) -> b -> a -> c
 ```el
 (funcall (-flip '<) 2 1) ;; => t
 (funcall (-flip '-) 3 8) ;; => 5
-(-sort (-flip '<) '(4 3 6 1)) ;; => '(6 4 3 1)
+(-sort (-flip '<) '(4 3 6 1)) ;; => (6 4 3 1)
 ```
 
 #### -const `(c)`
@@ -2857,7 +2857,7 @@ In types: a -> b -> a
 
 ```el
 (funcall (-const 2) 1 3 "foo") ;; => 2
-(-map (-const 1) '("a" "b" "c" "d")) ;; => '(1 1 1 1)
+(-map (-const 1) '("a" "b" "c" "d")) ;; => (1 1 1 1)
 (-sum (-map (-const 1) '("a" "b" "c" "d"))) ;; => 4
 ```
 
@@ -2869,9 +2869,9 @@ Arguments denoted by <> will be left unspecialized.
 See `srfi-26` for detailed description.
 
 ```el
-(funcall (-cut list 1 <> 3 <> 5) 2 4) ;; => '(1 2 3 4 5)
-(-map (-cut funcall <> 5) `(1+ 1- ,(lambda (x) (/ 1.0 x)))) ;; => '(6 4 0.2)
-(-map (-cut <> 1 2 3) '(list vector string)) ;; => '((1 2 3) [1 2 3] "\1\2\3")
+(funcall (-cut list 1 <> 3 <> 5) 2 4) ;; => (1 2 3 4 5)
+(-map (-cut funcall <> 5) `(1+ 1- ,(lambda (x) (/ 1.0 x)))) ;; => (6 4 0.2)
+(-map (-cut <> 1 2 3) '(list vector string)) ;; => ((1 2 3) [1 2 3] "\1\2\3")
 ```
 
 #### -not `(pred)`
@@ -2882,7 +2882,7 @@ non-nil.
 
 ```el
 (funcall (-not 'even?) 5) ;; => t
-(-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8)) ;; => '(1 2 3 4)
+(-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8)) ;; => (1 2 3 4)
 ```
 
 #### -orfn `(&rest preds)`
@@ -2894,7 +2894,7 @@ the `preds` returns non-nil on x.
 In types: [a -> Bool] -> a -> Bool
 
 ```el
-(-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 2 3 4 6 8 10)
+(-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) ;; => (1 2 3 4 6 8 10)
 (funcall (-orfn 'stringp 'even?) "foo") ;; => t
 ```
 
@@ -2909,7 +2909,7 @@ In types: [a -> Bool] -> a -> Bool
 ```el
 (funcall (-andfn (-cut < <> 10) 'even?) 6) ;; => t
 (funcall (-andfn (-cut < <> 10) 'even?) 12) ;; => nil
-(-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) ;; => '(1 3 5)
+(-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) ;; => (1 3 5)
 ```
 
 #### -iteratefn `(fn n)`
@@ -2930,7 +2930,7 @@ This function satisfies the following law:
 ```el
 (funcall (-iteratefn (lambda (x) (* x x)) 3) 2) ;; => 256
 (funcall (-iteratefn '1+ 3) 1) ;; => 4
-(funcall (-iteratefn 'cdr 3) '(1 2 3 4 5)) ;; => '(4 5)
+(funcall (-iteratefn 'cdr 3) '(1 2 3 4 5)) ;; => (4 5)
 ```
 
 #### -fixfn `(fn &optional equal-test halt-test)`
@@ -2964,7 +2964,7 @@ In types: (a -> a) -> a -> a.
 ```el
 (funcall (-fixfn 'cos 'approx-equal) 0.7) ;; ~> 0.7390851332151607
 (funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0) ;; => 1.8555845286409378
-(funcall (-fixfn 'sin 'approx-equal) 0.1) ;; => '(halted . t)
+(funcall (-fixfn 'sin 'approx-equal) 0.1) ;; => (halted . t)
 ```
 
 #### -prodfn `(&rest fns)`
@@ -2983,8 +2983,8 @@ This function satisfies the following laws:
     (-compose (-partial 'nth n) (-prod f1 f2 ...)) = (-compose fn (-partial 'nth n))
 
 ```el
-(funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3)) ;; => '(2 1 "3")
-(-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) ;; => '((2 1) (4 3) (6 5) (8 7))
+(funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3)) ;; => (2 1 "3")
+(-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) ;; => ((2 1) (4 3) (6 5) (8 7))
 (apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15"))) ;; => 18
 ```
 

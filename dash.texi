@@ -249,6 +249,7 @@ new list.
 @anchor{-map}
 @defun -map (fn list)
 Apply @var{fn} to each item in @var{list} and return the list of results.
+
 This function's anaphoric counterpart is @code{--map}.
 
 @example
@@ -344,6 +345,7 @@ This is like @code{-map} (@pxref{-map}), but @var{fn} takes two arguments: the i
 current element within @var{list}, and the element itself.
 
 This function's anaphoric counterpart is @code{--map-indexed}.
+
 For a side-effecting variant, see also @code{-each-indexed} (@pxref{-each-indexed}).
 
 @example
@@ -478,8 +480,11 @@ Functions returning a sublist of the original list.
 @anchor{-filter}
 @defun -filter (pred list)
 Return a new list of the items in @var{list} for which @var{pred} returns non-nil.
+
 Alias: @code{-select}.
+
 This function's anaphoric counterpart is @code{--filter}.
+
 For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-remove} (@pxref{-remove}).
 
 @example
@@ -501,8 +506,11 @@ For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-remove}
 @anchor{-remove}
 @defun -remove (pred list)
 Return a new list of the items in @var{list} for which @var{pred} returns nil.
+
 Alias: @code{-reject}.
+
 This function's anaphoric counterpart is @code{--remove}.
+
 For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-filter} (@pxref{-filter}).
 
 @example
@@ -528,8 +536,11 @@ This is a non-destructive operation, but only the front of @var{list}
 leading up to the removed item is a copy; the rest is @var{list}'s
 original tail.  If no item is removed, then the result is a
 complete copy.
+
 Alias: @code{-reject-first}.
+
 This function's anaphoric counterpart is @code{--remove-first}.
+
 See also @code{-map-first} (@pxref{-map-first}), @code{-remove-item} (@pxref{-remove-item}), and @code{-remove-last} (@pxref{-remove-last}).
 
 @example
@@ -553,8 +564,11 @@ See also @code{-map-first} (@pxref{-map-first}), @code{-remove-item} (@pxref{-re
 Remove the last item from @var{list} for which @var{pred} returns non-nil.
 The result is a copy of @var{list} regardless of whether an element is
 removed.
+
 Alias: @code{-reject-last}.
+
 This function's anaphoric counterpart is @code{--remove-last}.
+
 See also @code{-map-last} (@pxref{-map-last}), @code{-remove-item} (@pxref{-remove-item}), and @code{-remove-first} (@pxref{-remove-first}).
 
 @example
@@ -693,6 +707,7 @@ See also: @code{-take} (@pxref{-take}).
 Return the tail (not a copy) of @var{list} without the first @var{n} items.
 Return nil if @var{list} contains @var{n} items or fewer.
 Return @var{list} if @var{n} is zero or less.
+
 For another variant, see also @code{-drop-last} (@pxref{-drop-last}).
 
 @example
@@ -741,7 +756,9 @@ Take successive items from @var{list} for which @var{pred} returns non-nil.
 @var{pred} is a function of one argument.  Return a new list of the
 successive elements from the start of @var{list} for which @var{pred} returns
 non-nil.
+
 This function's anaphoric counterpart is @code{--take-while}.
+
 For another variant, see also @code{-drop-while} (@pxref{-drop-while}).
 
 @example
@@ -766,7 +783,9 @@ Drop successive items from @var{list} for which @var{pred} returns non-nil.
 @var{pred} is a function of one argument.  Return the tail (not a copy)
 of @var{list} starting from its first element for which @var{pred} returns
 nil.
+
 This function's anaphoric counterpart is @code{--drop-while}.
+
 For another variant, see also @code{-take-while} (@pxref{-take-while}).
 
 @example
@@ -863,6 +882,7 @@ Functions returning a modified copy of the input list.
 Return a new list of the non-nil results of applying @var{fn} to each item in @var{list}.
 Like @code{-filter} (@pxref{-filter}), but returns the non-nil results of @var{fn} instead of
 the corresponding elements of @var{list}.
+
 Its anaphoric counterpart is @code{--keep}.
 
 @example
@@ -1146,6 +1166,7 @@ Return the result of applying @var{fn} to @var{init} and the first element of
 etc.  If @var{list} is empty, return @var{init} without calling @var{fn}.
 
 This function's anaphoric counterpart is @code{--reduce-from}.
+
 For other folds, see also @code{-reduce} (@pxref{-reduce}) and @code{-reduce-r} (@pxref{-reduce-r}).
 
 @example
@@ -1180,6 +1201,7 @@ is like replacing the conses in @var{list} with applications of @var{fn}, and
 its last link with @var{init}, and evaluating the resulting expression.
 
 This function's anaphoric counterpart is @code{--reduce-r-from}.
+
 For other folds, see also @code{-reduce-r} (@pxref{-reduce-r}) and @code{-reduce} (@pxref{-reduce}).
 
 @example
@@ -1208,6 +1230,7 @@ If @var{list} is empty, return the result of calling @var{fn} with no
 arguments.
 
 This function's anaphoric counterpart is @code{--reduce}.
+
 For other folds, see also @code{-reduce-from} (@pxref{-reduce-from}) and @code{-reduce-r} (@pxref{-reduce-r}).
 
 @example
@@ -1244,6 +1267,7 @@ like replacing the conses in @var{list} with applications of @var{fn},
 ignoring its last link, and evaluating the resulting expression.
 
 This function's anaphoric counterpart is @code{--reduce-r}.
+
 For other folds, see also @code{-reduce-r-from} (@pxref{-reduce-r-from}) and @code{-reduce} (@pxref{-reduce}).
 
 @example
@@ -1268,7 +1292,9 @@ Return a list of @var{fn}'s intermediate reductions across @var{list}.
 That is, a list of the intermediate values of the accumulator
 when @code{-reduce-from} (@pxref{-reduce-from}) (which see) is called with the same
 arguments.
+
 This function's anaphoric counterpart is @code{--reductions-from}.
+
 For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-reductions-r} (@pxref{-reductions-r}).
 
 @example
@@ -1293,7 +1319,9 @@ Return a list of @var{fn}'s intermediate reductions across reversed @var{list}.
 That is, a list of the intermediate values of the accumulator
 when @code{-reduce-r-from} (@pxref{-reduce-r-from}) (which see) is called with the same
 arguments.
+
 This function's anaphoric counterpart is @code{--reductions-r-from}.
+
 For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-reductions-r} (@pxref{-reductions-r}).
 
 @example
@@ -1317,7 +1345,9 @@ For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-re
 Return a list of @var{fn}'s intermediate reductions across @var{list}.
 That is, a list of the intermediate values of the accumulator
 when @code{-reduce} (@pxref{-reduce}) (which see) is called with the same arguments.
+
 This function's anaphoric counterpart is @code{--reductions}.
+
 For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-reductions-r} (@pxref{-reductions-r}).
 
 @example
@@ -1341,7 +1371,9 @@ For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-re
 Return a list of @var{fn}'s intermediate reductions across reversed @var{list}.
 That is, a list of the intermediate values of the accumulator
 when @code{-reduce-r} (@pxref{-reduce-r}) (which see) is called with the same arguments.
+
 This function's anaphoric counterpart is @code{--reductions-r}.
+
 For other folds, see also @code{-reductions-r-from} (@pxref{-reductions-r-from}) and
 @code{-reductions} (@pxref{-reductions}).
 
@@ -1900,6 +1932,7 @@ Alias: @code{-is-infix-p}
 @defun -cons-pair? (obj)
 Return non-nil if @var{obj} is a true cons pair.
 That is, a cons (@var{a} . @var{b}) where @var{b} is not a list.
+
 Alias: @code{-cons-pair-p}.
 
 @example
@@ -2956,7 +2989,9 @@ See also: @code{-flatten-n} (@pxref{-flatten-n}), @code{-table} (@pxref{-table})
 Return the first item in @var{list} for which @var{pred} returns non-nil.
 Return nil if no such element is found.
 To get the first item in the list no questions asked, use @code{car}.
+
 Alias: @code{-find}.
+
 This function's anaphoric counterpart is @code{--first}.
 
 @example
@@ -2978,7 +3013,9 @@ This function's anaphoric counterpart is @code{--first}.
 @anchor{-some}
 @defun -some (pred list)
 Return (@var{pred} x) for the first @var{list} item where (@var{pred} x) is non-nil, else nil.
+
 Alias: @code{-any}.
+
 This function's anaphoric counterpart is @code{--some}.
 
 @example
@@ -3981,8 +4018,11 @@ Functions iterating over lists for side effect only.
 @defun -each (list fn)
 Call @var{fn} on each element of @var{list}.
 Return nil; this function is intended for side effects.
-Its anaphoric counterpart is @code{--each}.  For access to the current
-element's index in @var{list}, see @code{-each-indexed} (@pxref{-each-indexed}).
+
+Its anaphoric counterpart is @code{--each}.
+
+For access to the current element's index in @var{list}, see
+@code{-each-indexed} (@pxref{-each-indexed}).
 
 @example
 @group
@@ -4006,6 +4046,7 @@ Call @var{fn} on each @var{item} in @var{list}, while (@var{pred} @var{item}) is
 Once an @var{item} is reached for which @var{pred} returns nil, @var{fn} is no
 longer called.  Return nil; this function is intended for side
 effects.
+
 Its anaphoric counterpart is @code{--each-while}.
 
 @example
@@ -4029,6 +4070,7 @@ Its anaphoric counterpart is @code{--each-while}.
 Call @var{fn} on each index and element of @var{list}.
 For each @var{item} at @var{index} in @var{list}, call (funcall @var{fn} @var{index} @var{item}).
 Return nil; this function is intended for side effects.
+
 See also: @code{-map-indexed} (@pxref{-map-indexed}).
 
 @example
@@ -4051,6 +4093,7 @@ See also: @code{-map-indexed} (@pxref{-map-indexed}).
 @defun -each-r (list fn)
 Call @var{fn} on each element of @var{list} in reversed order.
 Return nil; this function is intended for side effects.
+
 Its anaphoric counterpart is @code{--each-r}.
 
 @example
@@ -4075,6 +4118,7 @@ Call @var{fn} on each @var{item} in reversed @var{list}, while (@var{pred} @var{
 Once an @var{item} is reached for which @var{pred} returns nil, @var{fn} is no
 longer called.  Return nil; this function is intended for side
 effects.
+
 Its anaphoric counterpart is @code{--each-r-while}.
 
 @example
@@ -4099,6 +4143,7 @@ Call @var{fn} @var{num} times, presumably for side effects.
 @var{fn} is called with a single argument on successive integers
 running from 0, inclusive, to @var{num}, exclusive.  @var{fn} is not called
 if @var{num} is less than 1.
+
 This function's anaphoric counterpart is @code{--dotimes}.
 
 @example

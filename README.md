@@ -368,6 +368,7 @@ new list.
 #### -map `(fn list)`
 
 Apply `fn` to each item in `list` and return the list of results.
+
 This function's anaphoric counterpart is `--map`.
 
 ```el
@@ -423,6 +424,7 @@ This is like [`-map`](#-map-fn-list), but `fn` takes two arguments: the index of
 current element within `list`, and the element itself.
 
 This function's anaphoric counterpart is `--map-indexed`.
+
 For a side-effecting variant, see also [`-each-indexed`](#-each-indexed-list-fn).
 
 ```el
@@ -499,8 +501,11 @@ Functions returning a sublist of the original list.
 #### -filter `(pred list)`
 
 Return a new list of the items in `list` for which `pred` returns non-nil.
+
 Alias: `-select`.
+
 This function's anaphoric counterpart is `--filter`.
+
 For similar operations, see also [`-keep`](#-keep-fn-list) and [`-remove`](#-remove-pred-list).
 
 ```el
@@ -512,8 +517,11 @@ For similar operations, see also [`-keep`](#-keep-fn-list) and [`-remove`](#-rem
 #### -remove `(pred list)`
 
 Return a new list of the items in `list` for which `pred` returns nil.
+
 Alias: `-reject`.
+
 This function's anaphoric counterpart is `--remove`.
+
 For similar operations, see also [`-keep`](#-keep-fn-list) and [`-filter`](#-filter-pred-list).
 
 ```el
@@ -529,8 +537,11 @@ This is a non-destructive operation, but only the front of `list`
 leading up to the removed item is a copy; the rest is `list`'s
 original tail.  If no item is removed, then the result is a
 complete copy.
+
 Alias: `-reject-first`.
+
 This function's anaphoric counterpart is `--remove-first`.
+
 See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-last`](#-remove-last-pred-list).
 
 ```el
@@ -544,8 +555,11 @@ See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-it
 Remove the last item from `list` for which `pred` returns non-nil.
 The result is a copy of `list` regardless of whether an element is
 removed.
+
 Alias: `-reject-last`.
+
 This function's anaphoric counterpart is `--remove-last`.
+
 See also [`-map-last`](#-map-last-pred-rep-list), [`-remove-item`](#-remove-item-item-list), and [`-remove-first`](#-remove-first-pred-list).
 
 ```el
@@ -624,6 +638,7 @@ See also: [`-take`](#-take-n-list).
 Return the tail (not a copy) of `list` without the first `n` items.
 Return nil if `list` contains `n` items or fewer.
 Return `list` if `n` is zero or less.
+
 For another variant, see also [`-drop-last`](#-drop-last-n-list).
 
 ```el
@@ -652,7 +667,9 @@ Take successive items from `list` for which `pred` returns non-nil.
 `pred` is a function of one argument.  Return a new list of the
 successive elements from the start of `list` for which `pred` returns
 non-nil.
+
 This function's anaphoric counterpart is `--take-while`.
+
 For another variant, see also [`-drop-while`](#-drop-while-pred-list).
 
 ```el
@@ -667,7 +684,9 @@ Drop successive items from `list` for which `pred` returns non-nil.
 `pred` is a function of one argument.  Return the tail (not a copy)
 of `list` starting from its first element for which `pred` returns
 nil.
+
 This function's anaphoric counterpart is `--drop-while`.
+
 For another variant, see also [`-take-while`](#-take-while-pred-list).
 
 ```el
@@ -729,6 +748,7 @@ Functions returning a modified copy of the input list.
 Return a new list of the non-nil results of applying `fn` to each item in `list`.
 Like [`-filter`](#-filter-pred-list), but returns the non-nil results of `fn` instead of
 the corresponding elements of `list`.
+
 Its anaphoric counterpart is `--keep`.
 
 ```el
@@ -894,6 +914,7 @@ Return the result of applying `fn` to `init` and the first element of
 etc.  If `list` is empty, return `init` without calling `fn`.
 
 This function's anaphoric counterpart is `--reduce-from`.
+
 For other folds, see also [`-reduce`](#-reduce-fn-list) and [`-reduce-r`](#-reduce-r-fn-list).
 
 ```el
@@ -918,6 +939,7 @@ is like replacing the conses in `list` with applications of `fn`, and
 its last link with `init`, and evaluating the resulting expression.
 
 This function's anaphoric counterpart is `--reduce-r-from`.
+
 For other folds, see also [`-reduce-r`](#-reduce-r-fn-list) and [`-reduce`](#-reduce-fn-list).
 
 ```el
@@ -936,6 +958,7 @@ If `list` is empty, return the result of calling `fn` with no
 arguments.
 
 This function's anaphoric counterpart is `--reduce`.
+
 For other folds, see also [`-reduce-from`](#-reduce-from-fn-init-list) and [`-reduce-r`](#-reduce-r-fn-list).
 
 ```el
@@ -962,6 +985,7 @@ like replacing the conses in `list` with applications of `fn`,
 ignoring its last link, and evaluating the resulting expression.
 
 This function's anaphoric counterpart is `--reduce-r`.
+
 For other folds, see also [`-reduce-r-from`](#-reduce-r-from-fn-init-list) and [`-reduce`](#-reduce-fn-list).
 
 ```el
@@ -976,7 +1000,9 @@ Return a list of `fn`'s intermediate reductions across `list`.
 That is, a list of the intermediate values of the accumulator
 when [`-reduce-from`](#-reduce-from-fn-init-list) (which see) is called with the same
 arguments.
+
 This function's anaphoric counterpart is `--reductions-from`.
+
 For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reductions-r`](#-reductions-r-fn-list).
 
 ```el
@@ -991,7 +1017,9 @@ Return a list of `fn`'s intermediate reductions across reversed `list`.
 That is, a list of the intermediate values of the accumulator
 when [`-reduce-r-from`](#-reduce-r-from-fn-init-list) (which see) is called with the same
 arguments.
+
 This function's anaphoric counterpart is `--reductions-r-from`.
+
 For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reductions-r`](#-reductions-r-fn-list).
 
 ```el
@@ -1005,7 +1033,9 @@ For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reduction
 Return a list of `fn`'s intermediate reductions across `list`.
 That is, a list of the intermediate values of the accumulator
 when [`-reduce`](#-reduce-fn-list) (which see) is called with the same arguments.
+
 This function's anaphoric counterpart is `--reductions`.
+
 For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reductions-r`](#-reductions-r-fn-list).
 
 ```el
@@ -1019,7 +1049,9 @@ For other folds, see also [`-reductions`](#-reductions-fn-list) and [`-reduction
 Return a list of `fn`'s intermediate reductions across reversed `list`.
 That is, a list of the intermediate values of the accumulator
 when [`-reduce-r`](#-reduce-r-fn-list) (which see) is called with the same arguments.
+
 This function's anaphoric counterpart is `--reductions-r`.
+
 For other folds, see also [`-reductions-r-from`](#-reductions-r-from-fn-init-list) and
 [`-reductions`](#-reductions-fn-list).
 
@@ -1329,6 +1361,7 @@ Alias: `-is-infix-p`
 
 Return non-nil if `obj` is a true cons pair.
 That is, a cons (`a` . `b`) where `b` is not a list.
+
 Alias: `-cons-pair-p`.
 
 ```el
@@ -1936,7 +1969,9 @@ See also: [`-flatten-n`](#-flatten-n-num-list), [`-table`](#-table-fn-rest-lists
 Return the first item in `list` for which `pred` returns non-nil.
 Return nil if no such element is found.
 To get the first item in the list no questions asked, use `car`.
+
 Alias: `-find`.
+
 This function's anaphoric counterpart is `--first`.
 
 ```el
@@ -1948,7 +1983,9 @@ This function's anaphoric counterpart is `--first`.
 #### -some `(pred list)`
 
 Return (`pred` x) for the first `list` item where (`pred` x) is non-nil, else nil.
+
 Alias: `-any`.
+
 This function's anaphoric counterpart is `--some`.
 
 ```el
@@ -2617,8 +2654,11 @@ Functions iterating over lists for side effect only.
 
 Call `fn` on each element of `list`.
 Return nil; this function is intended for side effects.
-Its anaphoric counterpart is `--each`.  For access to the current
-element's index in `list`, see [`-each-indexed`](#-each-indexed-list-fn).
+
+Its anaphoric counterpart is `--each`.
+
+For access to the current element's index in `list`, see
+[`-each-indexed`](#-each-indexed-list-fn).
 
 ```el
 (let (l) (-each '(1 2 3) (lambda (x) (push x l))) l) ;; => '(3 2 1)
@@ -2632,6 +2672,7 @@ Call `fn` on each `item` in `list`, while (`pred` `item`) is non-nil.
 Once an `item` is reached for which `pred` returns nil, `fn` is no
 longer called.  Return nil; this function is intended for side
 effects.
+
 Its anaphoric counterpart is `--each-while`.
 
 ```el
@@ -2645,6 +2686,7 @@ Its anaphoric counterpart is `--each-while`.
 Call `fn` on each index and element of `list`.
 For each `item` at `index` in `list`, call (funcall `fn` `index` `item`).
 Return nil; this function is intended for side effects.
+
 See also: [`-map-indexed`](#-map-indexed-fn-list).
 
 ```el
@@ -2657,6 +2699,7 @@ See also: [`-map-indexed`](#-map-indexed-fn-list).
 
 Call `fn` on each element of `list` in reversed order.
 Return nil; this function is intended for side effects.
+
 Its anaphoric counterpart is `--each-r`.
 
 ```el
@@ -2671,6 +2714,7 @@ Call `fn` on each `item` in reversed `list`, while (`pred` `item`) is non-nil.
 Once an `item` is reached for which `pred` returns nil, `fn` is no
 longer called.  Return nil; this function is intended for side
 effects.
+
 Its anaphoric counterpart is `--each-r-while`.
 
 ```el
@@ -2685,6 +2729,7 @@ Call `fn` `num` times, presumably for side effects.
 `fn` is called with a single argument on successive integers
 running from 0, inclusive, to `num`, exclusive.  `fn` is not called
 if `num` is less than 1.
+
 This function's anaphoric counterpart is `--dotimes`.
 
 ```el

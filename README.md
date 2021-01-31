@@ -1088,7 +1088,7 @@ Return a list with running sums of items in `list`.
 ```el
 (-running-sum '(1 2 3 4)) ;; => (1 3 6 10)
 (-running-sum '(1)) ;; => (1)
-(-running-sum ()) ;; Error
+(-running-sum ()) ;; Wrong type argument: consp, nil
 ```
 
 #### -product `(list)`
@@ -1109,7 +1109,7 @@ Return a list with running products of items in `list`.
 ```el
 (-running-product '(1 2 3 4)) ;; => (1 2 6 24)
 (-running-product '(1)) ;; => (1)
-(-running-product ()) ;; Error
+(-running-product ()) ;; Wrong type argument: consp, nil
 ```
 
 #### -inits `(list)`
@@ -1807,7 +1807,7 @@ the `apl` language.
 ```el
 (-iota 6) ;; => (0 1 2 3 4 5)
 (-iota 4 2.5 -2) ;; => (2.5 0.5 -1.5 -3.5)
-(-iota -1) ;; Error
+(-iota -1) ;; Wrong type argument: natnump, -1
 ```
 
 #### -zip-with `(fn list1 list2)`

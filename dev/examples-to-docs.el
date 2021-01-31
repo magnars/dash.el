@@ -44,9 +44,13 @@
 (defun example-to-string (example)
   (pcase-let ((`(,actual ,sym ,expected) example)
               (print-quoted t))
-    (and (eq (car-safe expected) 'quote)
-         (not (equal expected ''()))
-         (setq expected (cadr expected)))
+    (cond ((eq sym '!!>)
+           ;; Print actual error message.
+           (setq expected (error-message-string (-list expected))))
+          ((and (eq (car-safe expected) 'quote)
+                (not (equal expected ''())))
+           ;; Unquote expected result.
+           (setq expected (cadr expected))))
     (with-output-to-string
       (with-current-buffer standard-output
         (dash--print-lisp-as-md actual)
@@ -55,7 +59,7 @@
                (princ sym)
                (insert ?\s)
                (dash--print-lisp-as-md expected))
-              ((eq sym '!!>) (insert "Error"))
+              ((eq sym '!!>) (princ expected))
               ((error "Invalid test case: %S" example)))))))
 
 (defun dash--describe (fn)

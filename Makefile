@@ -54,7 +54,10 @@ clean:
 	$(RM) $(ELCS)
 .PHONY: clean
 
+maintainer-clean: VER := 26
+maintainer-clean: MSG := Doc regeneration requires $(VER)+
 maintainer-clean: clean
+	$(BATCH) -eval '(if (< emacs-major-version $(VER)) (error "$(MSG)"))'
 	$(RM) $(DOCS)
 .PHONY: maintainer-clean
 

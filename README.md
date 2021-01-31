@@ -106,7 +106,6 @@ This demonstrates the utility of both versions.
 
 ### Maps
 
-
 Functions in this category take a transforming function, which
 is then applied sequentially to each or selected elements of the
 input list.  The results are collected in order and returned as a
@@ -124,7 +123,6 @@ new list.
 * [`-copy`](#-copy-list) `(list)`
 
 ### Sublist selection
-
 
 Functions returning a sublist of the original list.
 
@@ -147,7 +145,6 @@ Functions returning a sublist of the original list.
 
 ### List to list
 
-
 Functions returning a modified copy of the input list.
 
 * [`-keep`](#-keep-fn-list) `(fn list)`
@@ -164,7 +161,6 @@ Functions returning a modified copy of the input list.
 * [`-remove-at-indices`](#-remove-at-indices-indices-list) `(indices list)`
 
 ### Reductions
-
 
 Functions reducing lists to a single value (which may also be a list).
 
@@ -192,7 +188,6 @@ Functions reducing lists to a single value (which may also be a list).
 
 ### Unfolding
 
-
 Operations dual to reductions, building lists from a seed
 value rather than consuming a list to produce a single value.
 
@@ -213,7 +208,6 @@ value rather than consuming a list to produce a single value.
 * [`-cons-pair?`](#-cons-pair-obj) `(obj)`
 
 ### Partitioning
-
 
 Functions partitioning the input list into a list of lists.
 
@@ -236,7 +230,6 @@ Functions partitioning the input list into a list of lists.
 
 ### Indexing
 
-
 Return indices of elements based on predicates, sort elements by indices etc.
 
 * [`-elem-index`](#-elem-index-elem-list) `(elem list)`
@@ -249,7 +242,6 @@ Return indices of elements based on predicates, sort elements by indices etc.
 
 ### Set operations
 
-
 Operations pretending lists are sets.
 
 * [`-union`](#-union-list-list2) `(list list2)`
@@ -260,7 +252,6 @@ Operations pretending lists are sets.
 * [`-distinct`](#-distinct-list) `(list)`
 
 ### Other list operations
-
 
 Other list functions not fit to be classified elsewhere.
 
@@ -296,7 +287,6 @@ Other list functions not fit to be classified elsewhere.
 
 ### Tree operations
 
-
 Functions pretending lists are trees.
 
 * [`-tree-seq`](#-tree-seq-branch-children-tree) `(branch children tree)`
@@ -321,7 +311,6 @@ Functions pretending lists are trees.
 
 ### Binding
 
-
 Convenient versions of `let` and `let*` constructs combined with flow control.
 
 * [`-when-let`](#-when-let-var-val-rest-body) `((var val) &rest body)`
@@ -334,7 +323,6 @@ Convenient versions of `let` and `let*` constructs combined with flow control.
 * [`-setq`](#-setq-match-form-val) `([match-form val] ...)`
 
 ### Side effects
-
 
 Functions iterating over lists for side effect only.
 
@@ -351,7 +339,6 @@ Functions iterating over lists for side effect only.
 * [`!cdr`](#cdr-list) `(list)`
 
 ### Function combinators
-
 
 These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
 
@@ -371,9 +358,7 @@ These combinators require Emacs 24 for its lexical scope. So they are offered in
 * [`-fixfn`](#-fixfn-fn-optional-equal-test-halt-test) `(fn &optional equal-test halt-test)`
 * [`-prodfn`](#-prodfn-rest-fns) `(&rest fns)`
 
-
 ## Maps
-
 
 Functions in this category take a transforming function, which
 is then applied sequentially to each or selected elements of the
@@ -507,9 +492,7 @@ Create a shallow copy of `list`.
 (let ((a '(1 2 3))) (eq a (-copy a))) ;; => nil
 ```
 
-
 ## Sublist selection
-
 
 Functions returning a sublist of the original list.
 
@@ -737,9 +720,7 @@ See also: [`-select-columns`](#-select-columns-columns-table), [`-select-by-indi
 (-select-column 1 '((1 2 3) (a b c) (:a :b :c))) ;; => '(2 b :b)
 ```
 
-
 ## List to list
-
 
 Functions returning a modified copy of the input list.
 
@@ -901,9 +882,7 @@ See also: [`-remove-at`](#-remove-at-n-list), [`-remove`](#-remove-pred-list)
 (-remove-at-indices '(0 5) '("0" "1" "2" "3" "4" "5")) ;; => '("1" "2" "3" "4")
 ```
 
-
 ## Reductions
-
 
 Functions reducing lists to a single value (which may also be a list).
 
@@ -1189,9 +1168,7 @@ comparing them.
 (--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) ;; => '(1 2 3)
 ```
 
-
 ## Unfolding
-
 
 Operations dual to reductions, building lists from a seed
 value rather than consuming a list to produce a single value.
@@ -1229,7 +1206,6 @@ the new seed.
 (--unfold (when it (cons it (cdr it))) '(1 2 3 4)) ;; => '((1 2 3 4) (2 3 4) (3 4) (4))
 (--unfold (when it (cons it (butlast it))) '(1 2 3 4)) ;; => '((1 2 3 4) (1 2 3) (1 2) (1))
 ```
-
 
 ## Predicates
 
@@ -1361,9 +1337,7 @@ Alias: `-cons-pair-p`.
 (-cons-pair? '(1)) ;; => nil
 ```
 
-
 ## Partitioning
-
 
 Functions partitioning the input list into a list of lists.
 
@@ -1555,9 +1529,7 @@ elements of `list`.  Keys are compared by `equal`.
 (--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) ;; => '(("a" "a/b" "a/e") ("c" "c/d"))
 ```
 
-
 ## Indexing
-
 
 Return indices of elements based on predicates, sort elements by indices etc.
 
@@ -1645,9 +1617,7 @@ permutation to `list` sorts it in descending order.
 (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down #'< l) l)) ;; => '(4 3 3 3 2 1 1)
 ```
 
-
 ## Set operations
-
 
 Operations pretending lists are sets.
 
@@ -1720,9 +1690,7 @@ Alias: `-uniq`
 (-distinct '(t t t)) ;; => '(t)
 ```
 
-
 ## Other list operations
-
 
 Other list functions not fit to be classified elsewhere.
 
@@ -2116,9 +2084,7 @@ Compute the (least) fixpoint of `fn` with initial input `list`.
 (let ((l '((starwars scifi) (jedi starwars warrior)))) (--fix (-uniq (--mapcat (cons it (cdr (assq it l))) it)) '(jedi book))) ;; => '(jedi starwars warrior scifi book)
 ```
 
-
 ## Tree operations
-
 
 Functions pretending lists are trees.
 
@@ -2243,7 +2209,6 @@ structure such as plist or alist.
 (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) ;; => '(1 2 3)
 ```
 
-
 ## Threading macros
 
 #### -> `(x &optional form &rest more)`
@@ -2347,9 +2312,7 @@ which `forms` may have modified by side effect.
 (gethash 'k (--doto (make-hash-table) (puthash 'k 'v it))) ;; => 'v
 ```
 
-
 ## Binding
-
 
 Convenient versions of `let` and `let*` constructs combined with flow control.
 
@@ -2646,9 +2609,7 @@ multiple assignments it does not cause unexpected side effects.
 (let (c) (-setq (&plist :c c) (list :c "c")) c) ;; => "c"
 ```
 
-
 ## Side effects
-
 
 Functions iterating over lists for side effect only.
 
@@ -2732,7 +2693,6 @@ This function's anaphoric counterpart is `--dotimes`.
 (let (s) (--dotimes 5 (push it s)) s) ;; => '(4 3 2 1 0)
 ```
 
-
 ## Destructive operations
 
 #### !cons `(car cdr)`
@@ -2753,9 +2713,7 @@ Destructive: Set `list` to the cdr of `list`.
 (let ((l '(3 5))) (!cdr l) l) ;; => '(5)
 ```
 
-
 ## Function combinators
-
 
 These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
 

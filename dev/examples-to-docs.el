@@ -79,7 +79,7 @@ Based on `describe-function-1'."
 
 (defmacro def-example-group (group desc &rest examples)
   `(progn
-     (push ,(concat "### " group) functions)
+     (push ,(propertize group 'dash-group t) functions)
      (when ,desc
        (push ,desc functions))
      ,@examples))
@@ -136,15 +136,16 @@ Based on `describe-function-1'."
       (buffer-string))))
 
 (defun function-to-md (function)
-  (if (stringp function)
-      (concat "\n" (replace-regexp-in-string (rx bos "### ") "## " function)
-              "\n")
-    (-let [(command-name signature docstring examples) function]
-      (format "#### %s `%s`\n\n%s\n\n```el\n%s\n```\n"
-              command-name
-              signature
-              (dash--format-docstring docstring)
-              (mapconcat #'example-to-string (-take 3 examples) "\n")))))
+  (pcase function
+    (`(,command-name ,signature ,docstring ,examples)
+     (format "#### %s `%s`\n\n%s\n\n```el\n%s\n```\n"
+             command-name
+             signature
+             (dash--format-docstring docstring)
+             (mapconcat #'example-to-string (-take 3 examples) "\n")))
+    ((pred (get-text-property 0 'dash-group))
+     (concat "## " function "\n"))
+    (_ (concat function "\n"))))
 
 (defun dash--github-link (fn signature)
   (--> (string-remove-prefix "!" (format "%s%s" fn signature))
@@ -155,7 +156,9 @@ Based on `describe-function-1'."
   (pcase function
     (`(,fn ,signature . ,_)
      (format "* %s `%s`" (dash--github-link fn signature) signature))
-    (_ (concat "\n" function "\n"))))
+    ((pred (get-text-property 0 'dash-group))
+     (concat "\n### " function "\n"))
+    (_ (concat function "\n"))))
 
 (defun dash--replace-all (old new)
   "Replace occurrences of OLD with NEW in current buffer."

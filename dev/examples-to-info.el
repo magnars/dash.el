@@ -46,14 +46,14 @@
 (defun example-to-string (example)
   (pcase-let* ((`(,actual ,err ,expected) example)
                (err (eq err '!!>)))
-    (and err (consp expected)
-         (setq expected (error-message-string expected)))
+    (when err
+      (setq expected (error-message-string (-list expected))))
     (with-output-to-string
       (with-current-buffer standard-output
         (insert "@group\n")
         (dash--print-lisp-as-texi actual)
         (insert "\n    " (if err "@error{}" "@result{}") ?\s)
-        (dash--print-lisp-as-texi expected)
+        (funcall (if err #'princ #'dash--print-lisp-as-texi) expected)
         (insert "\n@end group")))))
 
 (defun dash--describe (fn)

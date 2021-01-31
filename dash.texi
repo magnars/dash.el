@@ -1445,7 +1445,7 @@ Return a list with running sums of items in @var{list}.
 @end group
 @group
 (-running-sum '())
-    @error{} "Wrong type argument: consp, nil"
+    @error{} Wrong type argument: consp, nil
 @end group
 @end example
 @end defun
@@ -1486,7 +1486,7 @@ Return a list with running products of items in @var{list}.
 @end group
 @group
 (-running-product '())
-    @error{} "Wrong type argument: consp, nil"
+    @error{} Wrong type argument: consp, nil
 @end group
 @end example
 @end defun
@@ -2741,7 +2741,7 @@ the @var{apl} language.
 @end group
 @group
 (-iota -1)
-    @error{} "Wrong type argument: natnump, -1"
+    @error{} Wrong type argument: natnump, -1
 @end group
 @end example
 @end defun

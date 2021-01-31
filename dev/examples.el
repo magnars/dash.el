@@ -244,7 +244,7 @@ new list."
   (defexamples -take
     (-take 3 '(1 2 3 4 5)) => '(1 2 3)
     (-take 17 '(1 2 3 4 5)) => '(1 2 3 4 5)
-    (-take 0 '(1 2 3 4 5)) => ()
+    (-take 0 '(1 2 3 4 5)) => '()
     (-take 0 ()) => ()
     (-take -1 ()) => ()
     (-take -1 '(1)) => ()
@@ -264,7 +264,7 @@ new list."
 
   (defexamples -drop
     (-drop 3 '(1 2 3 4 5)) => '(4 5)
-    (-drop 17 '(1 2 3 4 5)) => ()
+    (-drop 17 '(1 2 3 4 5)) => '()
     (-drop 0 '(1 2 3 4 5)) => '(1 2 3 4 5)
     (-drop 0 ()) => ()
     (-drop -1 ()) => ()
@@ -275,7 +275,7 @@ new list."
 
   (defexamples -drop-last
     (-drop-last 3 '(1 2 3 4 5)) => '(1 2)
-    (-drop-last 17 '(1 2 3 4 5)) => ()
+    (-drop-last 17 '(1 2 3 4 5)) => '()
     (-drop-last 0 '(1 2 3 4 5)) => '(1 2 3 4 5)
     (-drop-last 0 ()) => ()
     (-drop-last -1 ()) => ()
@@ -285,7 +285,7 @@ new list."
     (let ((l (list 1 2))) (eq (-drop-last 0 l) l)) => nil)
 
   (defexamples -take-while
-    (-take-while #'even? '(1 2 3 4)) => ()
+    (-take-while #'even? '(1 2 3 4)) => '()
     (-take-while #'even? '(2 4 5 6)) => '(2 4)
     (--take-while (< it 4) '(1 2 3 4 3 2 1)) => '(1 2 3)
     (--take-while t ()) => ()
@@ -536,7 +536,7 @@ new list."
   (defexamples -running-sum
     (-running-sum '(1 2 3 4)) => '(1 3 6 10)
     (-running-sum '(1)) => '(1)
-    (-running-sum ()) !!> (wrong-type-argument consp ()))
+    (-running-sum '()) !!> (wrong-type-argument consp ()))
 
   (defexamples -product
     (-product '()) => 1
@@ -546,7 +546,7 @@ new list."
   (defexamples -running-product
     (-running-product '(1 2 3 4)) => '(1 2 6 24)
     (-running-product '(1)) => '(1)
-    (-running-product ()) !!> (wrong-type-argument consp ()))
+    (-running-product '()) !!> (wrong-type-argument consp ()))
 
   (defexamples -inits
     (-inits '(1 2 3 4)) => '(nil (1) (1 2) (1 2 3) (1 2 3 4))
@@ -560,7 +560,7 @@ new list."
 
   (defexamples -common-prefix
     (-common-prefix '(1)) => '(1)
-    (-common-prefix '(1 2) '(3 4) '(1 2)) => ()
+    (-common-prefix '(1 2) '(3 4) '(1 2)) => '()
     (-common-prefix '(1 2) '(1 2 3) '(1 2 3 4)) => '(1 2)
     (-common-prefix () '(1 2) '(1 2)) => ()
     (-common-prefix '(1 2) '(1 2) ()) => ()
@@ -572,7 +572,7 @@ new list."
 
   (defexamples -common-suffix
     (-common-suffix '(1)) => '(1)
-    (-common-suffix '(1 2) '(3 4) '(1 2)) => ()
+    (-common-suffix '(1 2) '(3 4) '(1 2)) => '()
     (-common-suffix '(1 2 3 4) '(2 3 4) '(3 4)) => '(3 4)
     (-common-suffix () '(1 2) '(1 2)) => ()
     (-common-suffix '(1 2) '(1 2) ()) => ()
@@ -1130,7 +1130,7 @@ value rather than consuming a list to produce a single value."
 
   (defexamples -list
     (-list 1) => '(1)
-    (-list ()) => ()
+    (-list '()) => '()
     (-list '(1 2 3)) => '(1 2 3)
     (-list 1 2 3) => '(1 2 3)
     (let ((l (list 1 2))) (setcar (-list l) 3) l) => '(3 2)
@@ -1583,7 +1583,7 @@ value rather than consuming a list to produce a single value."
   (defexamples -each-indexed
     (let (l) (-each-indexed '(a b c) (lambda (i x) (push (list x i) l))) l) => '((c 2) (b 1) (a 0))
     (let (l) (--each-indexed '(a b c) (push (list it it-index) l)) l) => '((c 2) (b 1) (a 0))
-    (let (l) (--each-indexed () (push it l)) l) => ()
+    (let (l) (--each-indexed '() (push it l)) l) => '()
     (let (l) (-each-indexed () (lambda (_ x) (push x l))) l) => ())
 
   (defexamples -each-r
@@ -1609,7 +1609,7 @@ value rather than consuming a list to produce a single value."
 
   (defexamples -dotimes
     (let (s) (-dotimes 3 (lambda (n) (push n s))) s) => '(2 1 0)
-    (let (s) (-dotimes 0 (lambda (n) (push n s))) s) => ()
+    (let (s) (-dotimes 0 (lambda (n) (push n s))) s) => '()
     (let (s) (--dotimes 5 (push it s)) s) => '(4 3 2 1 0)
     (let (s) (--dotimes 0 (push it s)) s) => ()
     (let (s) (--dotimes 3 (push it s) (setq it -1)) s) => '(2 1 0)

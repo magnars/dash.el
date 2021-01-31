@@ -616,7 +616,7 @@ See also: [`-take-last`](#-take-last-n-list).
 ```el
 (-take 3 '(1 2 3 4 5)) ;; => '(1 2 3)
 (-take 17 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
-(-take 0 '(1 2 3 4 5)) ;; => nil
+(-take 0 '(1 2 3 4 5)) ;; => '()
 ```
 
 #### -take-last `(n list)`
@@ -643,7 +643,7 @@ For another variant, see also [`-drop-last`](#-drop-last-n-list).
 
 ```el
 (-drop 3 '(1 2 3 4 5)) ;; => '(4 5)
-(-drop 17 '(1 2 3 4 5)) ;; => nil
+(-drop 17 '(1 2 3 4 5)) ;; => '()
 (-drop 0 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
 ```
 
@@ -657,7 +657,7 @@ See also: [`-drop`](#-drop-n-list).
 
 ```el
 (-drop-last 3 '(1 2 3 4 5)) ;; => '(1 2)
-(-drop-last 17 '(1 2 3 4 5)) ;; => nil
+(-drop-last 17 '(1 2 3 4 5)) ;; => '()
 (-drop-last 0 '(1 2 3 4 5)) ;; => '(1 2 3 4 5)
 ```
 
@@ -673,7 +673,7 @@ This function's anaphoric counterpart is `--take-while`.
 For another variant, see also [`-drop-while`](#-drop-while-pred-list).
 
 ```el
-(-take-while #'even? '(1 2 3 4)) ;; => nil
+(-take-while #'even? '(1 2 3 4)) ;; => '()
 (-take-while #'even? '(2 4 5 6)) ;; => '(2 4)
 (--take-while (< it 4) '(1 2 3 4 3 2 1)) ;; => '(1 2 3)
 ```
@@ -1088,7 +1088,7 @@ Return a list with running sums of items in `list`.
 ```el
 (-running-sum '(1 2 3 4)) ;; => '(1 3 6 10)
 (-running-sum '(1)) ;; => '(1)
-(-running-sum nil) ;; Error
+(-running-sum '()) ;; Error
 ```
 
 #### -product `(list)`
@@ -1109,7 +1109,7 @@ Return a list with running products of items in `list`.
 ```el
 (-running-product '(1 2 3 4)) ;; => '(1 2 6 24)
 (-running-product '(1)) ;; => '(1)
-(-running-product nil) ;; Error
+(-running-product '()) ;; Error
 ```
 
 #### -inits `(list)`
@@ -1138,7 +1138,7 @@ Return the longest common prefix of `lists`.
 
 ```el
 (-common-prefix '(1)) ;; => '(1)
-(-common-prefix '(1 2) '(3 4) '(1 2)) ;; => nil
+(-common-prefix '(1 2) '(3 4) '(1 2)) ;; => '()
 (-common-prefix '(1 2) '(1 2 3) '(1 2 3 4)) ;; => '(1 2)
 ```
 
@@ -1148,7 +1148,7 @@ Return the longest common suffix of `lists`.
 
 ```el
 (-common-suffix '(1)) ;; => '(1)
-(-common-suffix '(1 2) '(3 4) '(1 2)) ;; => nil
+(-common-suffix '(1 2) '(3 4) '(1 2)) ;; => '()
 (-common-suffix '(1 2 3 4) '(2 3 4) '(3 4)) ;; => '(3 4)
 ```
 
@@ -2106,7 +2106,7 @@ backward compatibility and is otherwise deprecated.
 
 ```el
 (-list 1) ;; => '(1)
-(-list nil) ;; => nil
+(-list '()) ;; => '()
 (-list '(1 2 3)) ;; => '(1 2 3)
 ```
 
@@ -2692,7 +2692,7 @@ See also: [`-map-indexed`](#-map-indexed-fn-list).
 ```el
 (let (l) (-each-indexed '(a b c) (lambda (i x) (push (list x i) l))) l) ;; => '((c 2) (b 1) (a 0))
 (let (l) (--each-indexed '(a b c) (push (list it it-index) l)) l) ;; => '((c 2) (b 1) (a 0))
-(let (l) (--each-indexed nil (push it l)) l) ;; => nil
+(let (l) (--each-indexed '() (push it l)) l) ;; => '()
 ```
 
 #### -each-r `(list fn)`
@@ -2734,7 +2734,7 @@ This function's anaphoric counterpart is `--dotimes`.
 
 ```el
 (let (s) (-dotimes 3 (lambda (n) (push n s))) s) ;; => '(2 1 0)
-(let (s) (-dotimes 0 (lambda (n) (push n s))) s) ;; => nil
+(let (s) (-dotimes 0 (lambda (n) (push n s))) s) ;; => '()
 (let (s) (--dotimes 5 (push it s)) s) ;; => '(4 3 2 1 0)
 ```
 

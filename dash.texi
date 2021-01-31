@@ -673,7 +673,7 @@ See also: @code{-take-last} (@pxref{-take-last}).
 @end group
 @group
 (-take 0 '(1 2 3 4 5))
-    @result{} nil
+    @result{} '()
 @end group
 @end example
 @end defun
@@ -717,7 +717,7 @@ For another variant, see also @code{-drop-last} (@pxref{-drop-last}).
 @end group
 @group
 (-drop 17 '(1 2 3 4 5))
-    @result{} nil
+    @result{} '()
 @end group
 @group
 (-drop 0 '(1 2 3 4 5))
@@ -741,7 +741,7 @@ See also: @code{-drop} (@pxref{-drop}).
 @end group
 @group
 (-drop-last 17 '(1 2 3 4 5))
-    @result{} nil
+    @result{} '()
 @end group
 @group
 (-drop-last 0 '(1 2 3 4 5))
@@ -764,7 +764,7 @@ For another variant, see also @code{-drop-while} (@pxref{-drop-while}).
 @example
 @group
 (-take-while #'even? '(1 2 3 4))
-    @result{} nil
+    @result{} '()
 @end group
 @group
 (-take-while #'even? '(2 4 5 6))
@@ -1444,7 +1444,7 @@ Return a list with running sums of items in @var{list}.
     @result{} '(1)
 @end group
 @group
-(-running-sum nil)
+(-running-sum '())
     @error{} "Wrong type argument: consp, nil"
 @end group
 @end example
@@ -1485,7 +1485,7 @@ Return a list with running products of items in @var{list}.
     @result{} '(1)
 @end group
 @group
-(-running-product nil)
+(-running-product '())
     @error{} "Wrong type argument: consp, nil"
 @end group
 @end example
@@ -1542,7 +1542,7 @@ Return the longest common prefix of @var{lists}.
 @end group
 @group
 (-common-prefix '(1 2) '(3 4) '(1 2))
-    @result{} nil
+    @result{} '()
 @end group
 @group
 (-common-prefix '(1 2) '(1 2 3) '(1 2 3 4))
@@ -1562,7 +1562,7 @@ Return the longest common suffix of @var{lists}.
 @end group
 @group
 (-common-suffix '(1 2) '(3 4) '(1 2))
-    @result{} nil
+    @result{} '()
 @end group
 @group
 (-common-suffix '(1 2 3 4) '(2 3 4) '(3 4))
@@ -3228,8 +3228,8 @@ backward compatibility and is otherwise deprecated.
     @result{} '(1)
 @end group
 @group
-(-list nil)
-    @result{} nil
+(-list '())
+    @result{} '()
 @end group
 @group
 (-list '(1 2 3))
@@ -4083,8 +4083,8 @@ See also: @code{-map-indexed} (@pxref{-map-indexed}).
     @result{} '((c 2) (b 1) (a 0))
 @end group
 @group
-(let (l) (--each-indexed nil (push it l)) l)
-    @result{} nil
+(let (l) (--each-indexed '() (push it l)) l)
+    @result{} '()
 @end group
 @end example
 @end defun
@@ -4153,7 +4153,7 @@ This function's anaphoric counterpart is @code{--dotimes}.
 @end group
 @group
 (let (s) (-dotimes 0 (lambda (n) (push n s))) s)
-    @result{} nil
+    @result{} '()
 @end group
 @group
 (let (s) (--dotimes 5 (push it s)) s)

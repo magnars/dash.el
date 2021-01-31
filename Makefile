@@ -39,9 +39,9 @@ force-docs: maintainer-clean docs
 # defaults to selecting all tests.  Note that in batch mode, a nil
 # selector is the same as t.
 check: ERT_SELECTOR ?= t
+check: RUN := '(ert-run-tests-batch-and-exit (quote $(ERT_SELECTOR)))'
 check: lisp
-	$(BATCH) -l dev/examples-to-tests.el -l dev/examples.el \
-	  -eval '(ert-run-tests-batch-and-exit (quote $(ERT_SELECTOR)))'
+	$(BATCH) -l dev/examples-to-tests.el -l dev/examples.el -eval $(RUN)
 .PHONY: check
 
 all: lisp docs check
@@ -63,9 +63,9 @@ maintainer-clean: clean
 
 # Files.
 
+%.elc: WERROR := '(setq byte-compile-error-on-warn t)'
 %.elc: %.el
-	$(BATCH) -eval '(setq byte-compile-error-on-warn t)' \
-	  -f batch-byte-compile $<
+	$(BATCH) -eval $(WERROR) -f batch-byte-compile $<
 
 dash-functional.elc: dash.elc
 

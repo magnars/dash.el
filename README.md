@@ -112,83 +112,83 @@ is then applied sequentially to each or selected elements of the
 input list.  The results are collected in order and returned as a
 new list.
 
-* [-map](#-map-fn-list) `(fn list)`
-* [-map-when](#-map-when-pred-rep-list) `(pred rep list)`
-* [-map-first](#-map-first-pred-rep-list) `(pred rep list)`
-* [-map-last](#-map-last-pred-rep-list) `(pred rep list)`
-* [-map-indexed](#-map-indexed-fn-list) `(fn list)`
-* [-annotate](#-annotate-fn-list) `(fn list)`
-* [-splice](#-splice-pred-fun-list) `(pred fun list)`
-* [-splice-list](#-splice-list-pred-new-list-list) `(pred new-list list)`
-* [-mapcat](#-mapcat-fn-list) `(fn list)`
-* [-copy](#-copy-list) `(list)`
+* [`-map`](#-map-fn-list) `(fn list)`
+* [`-map-when`](#-map-when-pred-rep-list) `(pred rep list)`
+* [`-map-first`](#-map-first-pred-rep-list) `(pred rep list)`
+* [`-map-last`](#-map-last-pred-rep-list) `(pred rep list)`
+* [`-map-indexed`](#-map-indexed-fn-list) `(fn list)`
+* [`-annotate`](#-annotate-fn-list) `(fn list)`
+* [`-splice`](#-splice-pred-fun-list) `(pred fun list)`
+* [`-splice-list`](#-splice-list-pred-new-list-list) `(pred new-list list)`
+* [`-mapcat`](#-mapcat-fn-list) `(fn list)`
+* [`-copy`](#-copy-list) `(list)`
 
 ### Sublist selection
 
 
 Functions returning a sublist of the original list.
 
-* [-filter](#-filter-pred-list) `(pred list)`
-* [-remove](#-remove-pred-list) `(pred list)`
-* [-remove-first](#-remove-first-pred-list) `(pred list)`
-* [-remove-last](#-remove-last-pred-list) `(pred list)`
-* [-remove-item](#-remove-item-item-list) `(item list)`
-* [-non-nil](#-non-nil-list) `(list)`
-* [-slice](#-slice-list-from-optional-to-step) `(list from &optional to step)`
-* [-take](#-take-n-list) `(n list)`
-* [-take-last](#-take-last-n-list) `(n list)`
-* [-drop](#-drop-n-list) `(n list)`
-* [-drop-last](#-drop-last-n-list) `(n list)`
-* [-take-while](#-take-while-pred-list) `(pred list)`
-* [-drop-while](#-drop-while-pred-list) `(pred list)`
-* [-select-by-indices](#-select-by-indices-indices-list) `(indices list)`
-* [-select-columns](#-select-columns-columns-table) `(columns table)`
-* [-select-column](#-select-column-column-table) `(column table)`
+* [`-filter`](#-filter-pred-list) `(pred list)`
+* [`-remove`](#-remove-pred-list) `(pred list)`
+* [`-remove-first`](#-remove-first-pred-list) `(pred list)`
+* [`-remove-last`](#-remove-last-pred-list) `(pred list)`
+* [`-remove-item`](#-remove-item-item-list) `(item list)`
+* [`-non-nil`](#-non-nil-list) `(list)`
+* [`-slice`](#-slice-list-from-optional-to-step) `(list from &optional to step)`
+* [`-take`](#-take-n-list) `(n list)`
+* [`-take-last`](#-take-last-n-list) `(n list)`
+* [`-drop`](#-drop-n-list) `(n list)`
+* [`-drop-last`](#-drop-last-n-list) `(n list)`
+* [`-take-while`](#-take-while-pred-list) `(pred list)`
+* [`-drop-while`](#-drop-while-pred-list) `(pred list)`
+* [`-select-by-indices`](#-select-by-indices-indices-list) `(indices list)`
+* [`-select-columns`](#-select-columns-columns-table) `(columns table)`
+* [`-select-column`](#-select-column-column-table) `(column table)`
 
 ### List to list
 
 
 Functions returning a modified copy of the input list.
 
-* [-keep](#-keep-fn-list) `(fn list)`
-* [-concat](#-concat-rest-lists) `(&rest lists)`
-* [-flatten](#-flatten-l) `(l)`
-* [-flatten-n](#-flatten-n-num-list) `(num list)`
-* [-replace](#-replace-old-new-list) `(old new list)`
-* [-replace-first](#-replace-first-old-new-list) `(old new list)`
-* [-replace-last](#-replace-last-old-new-list) `(old new list)`
-* [-insert-at](#-insert-at-n-x-list) `(n x list)`
-* [-replace-at](#-replace-at-n-x-list) `(n x list)`
-* [-update-at](#-update-at-n-func-list) `(n func list)`
-* [-remove-at](#-remove-at-n-list) `(n list)`
-* [-remove-at-indices](#-remove-at-indices-indices-list) `(indices list)`
+* [`-keep`](#-keep-fn-list) `(fn list)`
+* [`-concat`](#-concat-rest-lists) `(&rest lists)`
+* [`-flatten`](#-flatten-l) `(l)`
+* [`-flatten-n`](#-flatten-n-num-list) `(num list)`
+* [`-replace`](#-replace-old-new-list) `(old new list)`
+* [`-replace-first`](#-replace-first-old-new-list) `(old new list)`
+* [`-replace-last`](#-replace-last-old-new-list) `(old new list)`
+* [`-insert-at`](#-insert-at-n-x-list) `(n x list)`
+* [`-replace-at`](#-replace-at-n-x-list) `(n x list)`
+* [`-update-at`](#-update-at-n-func-list) `(n func list)`
+* [`-remove-at`](#-remove-at-n-list) `(n list)`
+* [`-remove-at-indices`](#-remove-at-indices-indices-list) `(indices list)`
 
 ### Reductions
 
 
 Functions reducing lists to a single value (which may also be a list).
 
-* [-reduce-from](#-reduce-from-fn-init-list) `(fn init list)`
-* [-reduce-r-from](#-reduce-r-from-fn-init-list) `(fn init list)`
-* [-reduce](#-reduce-fn-list) `(fn list)`
-* [-reduce-r](#-reduce-r-fn-list) `(fn list)`
-* [-reductions-from](#-reductions-from-fn-init-list) `(fn init list)`
-* [-reductions-r-from](#-reductions-r-from-fn-init-list) `(fn init list)`
-* [-reductions](#-reductions-fn-list) `(fn list)`
-* [-reductions-r](#-reductions-r-fn-list) `(fn list)`
-* [-count](#-count-pred-list) `(pred list)`
-* [-sum](#-sum-list) `(list)`
-* [-running-sum](#-running-sum-list) `(list)`
-* [-product](#-product-list) `(list)`
-* [-running-product](#-running-product-list) `(list)`
-* [-inits](#-inits-list) `(list)`
-* [-tails](#-tails-list) `(list)`
-* [-common-prefix](#-common-prefix-rest-lists) `(&rest lists)`
-* [-common-suffix](#-common-suffix-rest-lists) `(&rest lists)`
-* [-min](#-min-list) `(list)`
-* [-min-by](#-min-by-comparator-list) `(comparator list)`
-* [-max](#-max-list) `(list)`
-* [-max-by](#-max-by-comparator-list) `(comparator list)`
+* [`-reduce-from`](#-reduce-from-fn-init-list) `(fn init list)`
+* [`-reduce-r-from`](#-reduce-r-from-fn-init-list) `(fn init list)`
+* [`-reduce`](#-reduce-fn-list) `(fn list)`
+* [`-reduce-r`](#-reduce-r-fn-list) `(fn list)`
+* [`-reductions-from`](#-reductions-from-fn-init-list) `(fn init list)`
+* [`-reductions-r-from`](#-reductions-r-from-fn-init-list) `(fn init list)`
+* [`-reductions`](#-reductions-fn-list) `(fn list)`
+* [`-reductions-r`](#-reductions-r-fn-list) `(fn list)`
+* [`-count`](#-count-pred-list) `(pred list)`
+* [`-sum`](#-sum-list) `(list)`
+* [`-running-sum`](#-running-sum-list) `(list)`
+* [`-product`](#-product-list) `(list)`
+* [`-running-product`](#-running-product-list) `(list)`
+* [`-inits`](#-inits-list) `(list)`
+* [`-tails`](#-tails-list) `(list)`
+* [`-common-prefix`](#-common-prefix-rest-lists) `(&rest lists)`
+* [`-common-suffix`](#-common-suffix-rest-lists) `(&rest lists)`
+* [`-min`](#-min-list) `(list)`
+* [`-min-by`](#-min-by-comparator-list) `(comparator list)`
+* [`-max`](#-max-list) `(list)`
+* [`-max-by`](#-max-by-comparator-list) `(comparator list)`
 
 ### Unfolding
 
@@ -196,180 +196,180 @@ Functions reducing lists to a single value (which may also be a list).
 Operations dual to reductions, building lists from a seed
 value rather than consuming a list to produce a single value.
 
-* [-iterate](#-iterate-fun-init-n) `(fun init n)`
-* [-unfold](#-unfold-fun-seed) `(fun seed)`
+* [`-iterate`](#-iterate-fun-init-n) `(fun init n)`
+* [`-unfold`](#-unfold-fun-seed) `(fun seed)`
 
 ### Predicates
 
-* [-any?](#-any-pred-list) `(pred list)`
-* [-all?](#-all-pred-list) `(pred list)`
-* [-none?](#-none-pred-list) `(pred list)`
-* [-only-some?](#-only-some-pred-list) `(pred list)`
-* [-contains?](#-contains-list-element) `(list element)`
-* [-same-items?](#-same-items-list-list2) `(list list2)`
-* [-is-prefix?](#-is-prefix-prefix-list) `(prefix list)`
-* [-is-suffix?](#-is-suffix-suffix-list) `(suffix list)`
-* [-is-infix?](#-is-infix-infix-list) `(infix list)`
-* [-cons-pair?](#-cons-pair-obj) `(obj)`
+* [`-any?`](#-any-pred-list) `(pred list)`
+* [`-all?`](#-all-pred-list) `(pred list)`
+* [`-none?`](#-none-pred-list) `(pred list)`
+* [`-only-some?`](#-only-some-pred-list) `(pred list)`
+* [`-contains?`](#-contains-list-element) `(list element)`
+* [`-same-items?`](#-same-items-list-list2) `(list list2)`
+* [`-is-prefix?`](#-is-prefix-prefix-list) `(prefix list)`
+* [`-is-suffix?`](#-is-suffix-suffix-list) `(suffix list)`
+* [`-is-infix?`](#-is-infix-infix-list) `(infix list)`
+* [`-cons-pair?`](#-cons-pair-obj) `(obj)`
 
 ### Partitioning
 
 
 Functions partitioning the input list into a list of lists.
 
-* [-split-at](#-split-at-n-list) `(n list)`
-* [-split-with](#-split-with-pred-list) `(pred list)`
-* [-split-on](#-split-on-item-list) `(item list)`
-* [-split-when](#-split-when-fn-list) `(fn list)`
-* [-separate](#-separate-pred-list) `(pred list)`
-* [-partition](#-partition-n-list) `(n list)`
-* [-partition-all](#-partition-all-n-list) `(n list)`
-* [-partition-in-steps](#-partition-in-steps-n-step-list) `(n step list)`
-* [-partition-all-in-steps](#-partition-all-in-steps-n-step-list) `(n step list)`
-* [-partition-by](#-partition-by-fn-list) `(fn list)`
-* [-partition-by-header](#-partition-by-header-fn-list) `(fn list)`
-* [-partition-after-pred](#-partition-after-pred-pred-list) `(pred list)`
-* [-partition-before-pred](#-partition-before-pred-pred-list) `(pred list)`
-* [-partition-before-item](#-partition-before-item-item-list) `(item list)`
-* [-partition-after-item](#-partition-after-item-item-list) `(item list)`
-* [-group-by](#-group-by-fn-list) `(fn list)`
+* [`-split-at`](#-split-at-n-list) `(n list)`
+* [`-split-with`](#-split-with-pred-list) `(pred list)`
+* [`-split-on`](#-split-on-item-list) `(item list)`
+* [`-split-when`](#-split-when-fn-list) `(fn list)`
+* [`-separate`](#-separate-pred-list) `(pred list)`
+* [`-partition`](#-partition-n-list) `(n list)`
+* [`-partition-all`](#-partition-all-n-list) `(n list)`
+* [`-partition-in-steps`](#-partition-in-steps-n-step-list) `(n step list)`
+* [`-partition-all-in-steps`](#-partition-all-in-steps-n-step-list) `(n step list)`
+* [`-partition-by`](#-partition-by-fn-list) `(fn list)`
+* [`-partition-by-header`](#-partition-by-header-fn-list) `(fn list)`
+* [`-partition-after-pred`](#-partition-after-pred-pred-list) `(pred list)`
+* [`-partition-before-pred`](#-partition-before-pred-pred-list) `(pred list)`
+* [`-partition-before-item`](#-partition-before-item-item-list) `(item list)`
+* [`-partition-after-item`](#-partition-after-item-item-list) `(item list)`
+* [`-group-by`](#-group-by-fn-list) `(fn list)`
 
 ### Indexing
 
 
 Return indices of elements based on predicates, sort elements by indices etc.
 
-* [-elem-index](#-elem-index-elem-list) `(elem list)`
-* [-elem-indices](#-elem-indices-elem-list) `(elem list)`
-* [-find-index](#-find-index-pred-list) `(pred list)`
-* [-find-last-index](#-find-last-index-pred-list) `(pred list)`
-* [-find-indices](#-find-indices-pred-list) `(pred list)`
-* [-grade-up](#-grade-up-comparator-list) `(comparator list)`
-* [-grade-down](#-grade-down-comparator-list) `(comparator list)`
+* [`-elem-index`](#-elem-index-elem-list) `(elem list)`
+* [`-elem-indices`](#-elem-indices-elem-list) `(elem list)`
+* [`-find-index`](#-find-index-pred-list) `(pred list)`
+* [`-find-last-index`](#-find-last-index-pred-list) `(pred list)`
+* [`-find-indices`](#-find-indices-pred-list) `(pred list)`
+* [`-grade-up`](#-grade-up-comparator-list) `(comparator list)`
+* [`-grade-down`](#-grade-down-comparator-list) `(comparator list)`
 
 ### Set operations
 
 
 Operations pretending lists are sets.
 
-* [-union](#-union-list-list2) `(list list2)`
-* [-difference](#-difference-list-list2) `(list list2)`
-* [-intersection](#-intersection-list-list2) `(list list2)`
-* [-powerset](#-powerset-list) `(list)`
-* [-permutations](#-permutations-list) `(list)`
-* [-distinct](#-distinct-list) `(list)`
+* [`-union`](#-union-list-list2) `(list list2)`
+* [`-difference`](#-difference-list-list2) `(list list2)`
+* [`-intersection`](#-intersection-list-list2) `(list list2)`
+* [`-powerset`](#-powerset-list) `(list)`
+* [`-permutations`](#-permutations-list) `(list)`
+* [`-distinct`](#-distinct-list) `(list)`
 
 ### Other list operations
 
 
 Other list functions not fit to be classified elsewhere.
 
-* [-rotate](#-rotate-n-list) `(n list)`
-* [-repeat](#-repeat-n-x) `(n x)`
-* [-cons*](#-cons-rest-args) `(&rest args)`
-* [-snoc](#-snoc-list-elem-rest-elements) `(list elem &rest elements)`
-* [-interpose](#-interpose-sep-list) `(sep list)`
-* [-interleave](#-interleave-rest-lists) `(&rest lists)`
-* [-iota](#-iota-count-optional-start-step) `(count &optional start step)`
-* [-zip-with](#-zip-with-fn-list1-list2) `(fn list1 list2)`
-* [-zip](#-zip-rest-lists) `(&rest lists)`
-* [-zip-lists](#-zip-lists-rest-lists) `(&rest lists)`
-* [-zip-fill](#-zip-fill-fill-value-rest-lists) `(fill-value &rest lists)`
-* [-unzip](#-unzip-lists) `(lists)`
-* [-cycle](#-cycle-list) `(list)`
-* [-pad](#-pad-fill-value-rest-lists) `(fill-value &rest lists)`
-* [-table](#-table-fn-rest-lists) `(fn &rest lists)`
-* [-table-flat](#-table-flat-fn-rest-lists) `(fn &rest lists)`
-* [-first](#-first-pred-list) `(pred list)`
-* [-some](#-some-pred-list) `(pred list)`
-* [-last](#-last-pred-list) `(pred list)`
-* [-first-item](#-first-item-list) `(list)`
-* [-second-item](#-second-item-list) `(list)`
-* [-third-item](#-third-item-list) `(list)`
-* [-fourth-item](#-fourth-item-list) `(list)`
-* [-fifth-item](#-fifth-item-list) `(list)`
-* [-last-item](#-last-item-list) `(list)`
-* [-butlast](#-butlast-list) `(list)`
-* [-sort](#-sort-comparator-list) `(comparator list)`
-* [-list](#-list-arg) `(arg)`
-* [-fix](#-fix-fn-list) `(fn list)`
+* [`-rotate`](#-rotate-n-list) `(n list)`
+* [`-repeat`](#-repeat-n-x) `(n x)`
+* [`-cons*`](#-cons-rest-args) `(&rest args)`
+* [`-snoc`](#-snoc-list-elem-rest-elements) `(list elem &rest elements)`
+* [`-interpose`](#-interpose-sep-list) `(sep list)`
+* [`-interleave`](#-interleave-rest-lists) `(&rest lists)`
+* [`-iota`](#-iota-count-optional-start-step) `(count &optional start step)`
+* [`-zip-with`](#-zip-with-fn-list1-list2) `(fn list1 list2)`
+* [`-zip`](#-zip-rest-lists) `(&rest lists)`
+* [`-zip-lists`](#-zip-lists-rest-lists) `(&rest lists)`
+* [`-zip-fill`](#-zip-fill-fill-value-rest-lists) `(fill-value &rest lists)`
+* [`-unzip`](#-unzip-lists) `(lists)`
+* [`-cycle`](#-cycle-list) `(list)`
+* [`-pad`](#-pad-fill-value-rest-lists) `(fill-value &rest lists)`
+* [`-table`](#-table-fn-rest-lists) `(fn &rest lists)`
+* [`-table-flat`](#-table-flat-fn-rest-lists) `(fn &rest lists)`
+* [`-first`](#-first-pred-list) `(pred list)`
+* [`-some`](#-some-pred-list) `(pred list)`
+* [`-last`](#-last-pred-list) `(pred list)`
+* [`-first-item`](#-first-item-list) `(list)`
+* [`-second-item`](#-second-item-list) `(list)`
+* [`-third-item`](#-third-item-list) `(list)`
+* [`-fourth-item`](#-fourth-item-list) `(list)`
+* [`-fifth-item`](#-fifth-item-list) `(list)`
+* [`-last-item`](#-last-item-list) `(list)`
+* [`-butlast`](#-butlast-list) `(list)`
+* [`-sort`](#-sort-comparator-list) `(comparator list)`
+* [`-list`](#-list-arg) `(arg)`
+* [`-fix`](#-fix-fn-list) `(fn list)`
 
 ### Tree operations
 
 
 Functions pretending lists are trees.
 
-* [-tree-seq](#-tree-seq-branch-children-tree) `(branch children tree)`
-* [-tree-map](#-tree-map-fn-tree) `(fn tree)`
-* [-tree-map-nodes](#-tree-map-nodes-pred-fun-tree) `(pred fun tree)`
-* [-tree-reduce](#-tree-reduce-fn-tree) `(fn tree)`
-* [-tree-reduce-from](#-tree-reduce-from-fn-init-value-tree) `(fn init-value tree)`
-* [-tree-mapreduce](#-tree-mapreduce-fn-folder-tree) `(fn folder tree)`
-* [-tree-mapreduce-from](#-tree-mapreduce-from-fn-folder-init-value-tree) `(fn folder init-value tree)`
-* [-clone](#-clone-list) `(list)`
+* [`-tree-seq`](#-tree-seq-branch-children-tree) `(branch children tree)`
+* [`-tree-map`](#-tree-map-fn-tree) `(fn tree)`
+* [`-tree-map-nodes`](#-tree-map-nodes-pred-fun-tree) `(pred fun tree)`
+* [`-tree-reduce`](#-tree-reduce-fn-tree) `(fn tree)`
+* [`-tree-reduce-from`](#-tree-reduce-from-fn-init-value-tree) `(fn init-value tree)`
+* [`-tree-mapreduce`](#-tree-mapreduce-fn-folder-tree) `(fn folder tree)`
+* [`-tree-mapreduce-from`](#-tree-mapreduce-from-fn-folder-init-value-tree) `(fn folder init-value tree)`
+* [`-clone`](#-clone-list) `(list)`
 
 ### Threading macros
 
-* [->](#--x-optional-form-rest-more) `(x &optional form &rest more)`
-* [->>](#--x-optional-form-rest-more) `(x &optional form &rest more)`
-* [-->](#---x-rest-forms) `(x &rest forms)`
-* [-as->](#-as--value-variable-rest-forms) `(value variable &rest forms)`
-* [-some->](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
-* [-some->>](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
-* [-some-->](#-some---expr-rest-forms) `(expr &rest forms)`
-* [-doto](#-doto-init-rest-forms) `(init &rest forms)`
+* [`->`](#--x-optional-form-rest-more) `(x &optional form &rest more)`
+* [`->>`](#--x-optional-form-rest-more) `(x &optional form &rest more)`
+* [`-->`](#---x-rest-forms) `(x &rest forms)`
+* [`-as->`](#-as--value-variable-rest-forms) `(value variable &rest forms)`
+* [`-some->`](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
+* [`-some->>`](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
+* [`-some-->`](#-some---expr-rest-forms) `(expr &rest forms)`
+* [`-doto`](#-doto-init-rest-forms) `(init &rest forms)`
 
 ### Binding
 
 
 Convenient versions of `let` and `let*` constructs combined with flow control.
 
-* [-when-let](#-when-let-var-val-rest-body) `((var val) &rest body)`
-* [-when-let*](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
-* [-if-let](#-if-let-var-val-then-rest-else) `((var val) then &rest else)`
-* [-if-let*](#-if-let-vars-vals-then-rest-else) `(vars-vals then &rest else)`
-* [-let](#-let-varlist-rest-body) `(varlist &rest body)`
-* [-let*](#-let-varlist-rest-body) `(varlist &rest body)`
-* [-lambda](#-lambda-match-form-rest-body) `(match-form &rest body)`
-* [-setq](#-setq-match-form-val) `([match-form val] ...)`
+* [`-when-let`](#-when-let-var-val-rest-body) `((var val) &rest body)`
+* [`-when-let*`](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
+* [`-if-let`](#-if-let-var-val-then-rest-else) `((var val) then &rest else)`
+* [`-if-let*`](#-if-let-vars-vals-then-rest-else) `(vars-vals then &rest else)`
+* [`-let`](#-let-varlist-rest-body) `(varlist &rest body)`
+* [`-let*`](#-let-varlist-rest-body) `(varlist &rest body)`
+* [`-lambda`](#-lambda-match-form-rest-body) `(match-form &rest body)`
+* [`-setq`](#-setq-match-form-val) `([match-form val] ...)`
 
 ### Side effects
 
 
 Functions iterating over lists for side effect only.
 
-* [-each](#-each-list-fn) `(list fn)`
-* [-each-while](#-each-while-list-pred-fn) `(list pred fn)`
-* [-each-indexed](#-each-indexed-list-fn) `(list fn)`
-* [-each-r](#-each-r-list-fn) `(list fn)`
-* [-each-r-while](#-each-r-while-list-pred-fn) `(list pred fn)`
-* [-dotimes](#-dotimes-num-fn) `(num fn)`
+* [`-each`](#-each-list-fn) `(list fn)`
+* [`-each-while`](#-each-while-list-pred-fn) `(list pred fn)`
+* [`-each-indexed`](#-each-indexed-list-fn) `(list fn)`
+* [`-each-r`](#-each-r-list-fn) `(list fn)`
+* [`-each-r-while`](#-each-r-while-list-pred-fn) `(list pred fn)`
+* [`-dotimes`](#-dotimes-num-fn) `(num fn)`
 
 ### Destructive operations
 
-* [!cons](#cons-car-cdr) `(car cdr)`
-* [!cdr](#cdr-list) `(list)`
+* [`!cons`](#cons-car-cdr) `(car cdr)`
+* [`!cdr`](#cdr-list) `(list)`
 
 ### Function combinators
 
 
 These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
 
-* [-partial](#-partial-fn-rest-args) `(fn &rest args)`
-* [-rpartial](#-rpartial-fn-rest-args) `(fn &rest args)`
-* [-juxt](#-juxt-rest-fns) `(&rest fns)`
-* [-compose](#-compose-rest-fns) `(&rest fns)`
-* [-applify](#-applify-fn) `(fn)`
-* [-on](#-on-operator-transformer) `(operator transformer)`
-* [-flip](#-flip-func) `(func)`
-* [-const](#-const-c) `(c)`
-* [-cut](#-cut-rest-params) `(&rest params)`
-* [-not](#-not-pred) `(pred)`
-* [-orfn](#-orfn-rest-preds) `(&rest preds)`
-* [-andfn](#-andfn-rest-preds) `(&rest preds)`
-* [-iteratefn](#-iteratefn-fn-n) `(fn n)`
-* [-fixfn](#-fixfn-fn-optional-equal-test-halt-test) `(fn &optional equal-test halt-test)`
-* [-prodfn](#-prodfn-rest-fns) `(&rest fns)`
+* [`-partial`](#-partial-fn-rest-args) `(fn &rest args)`
+* [`-rpartial`](#-rpartial-fn-rest-args) `(fn &rest args)`
+* [`-juxt`](#-juxt-rest-fns) `(&rest fns)`
+* [`-compose`](#-compose-rest-fns) `(&rest fns)`
+* [`-applify`](#-applify-fn) `(fn)`
+* [`-on`](#-on-operator-transformer) `(operator transformer)`
+* [`-flip`](#-flip-func) `(func)`
+* [`-const`](#-const-c) `(c)`
+* [`-cut`](#-cut-rest-params) `(&rest params)`
+* [`-not`](#-not-pred) `(pred)`
+* [`-orfn`](#-orfn-rest-preds) `(&rest preds)`
+* [`-andfn`](#-andfn-rest-preds) `(&rest preds)`
+* [`-iteratefn`](#-iteratefn-fn-n) `(fn n)`
+* [`-fixfn`](#-fixfn-fn-optional-equal-test-halt-test) `(fn &optional equal-test halt-test)`
+* [`-prodfn`](#-prodfn-rest-fns) `(&rest fns)`
 
 
 ## Maps

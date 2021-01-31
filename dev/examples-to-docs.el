@@ -26,6 +26,9 @@
 (require 'help-fns)
 (require 'lisp-mnt)
 
+(eval-when-compile
+  (require 'subr-x))
+
 (defvar functions ())
 
 (defun dash--print-lisp-as-md (obj)
@@ -81,12 +84,10 @@ Based on `describe-function-1'."
        (push ,desc functions))
      ,@examples))
 
-(defun format-link (string-name)
-  (-let* ((name (intern string-name))
-          ((_ signature _ _) (assoc name functions)))
-    (if signature
-        (format "[`%s`](#%s)" name (github-id name signature))
-      (format "`%s`" name))))
+(defun format-link (name)
+  (pcase (assq (intern name) functions)
+    (`(,_ ,signature . ,_) (dash--github-link name signature))
+    (_ (format "`%s`" name))))
 
 (defun dash--quote-argnames ()
   "Downcase and quote arg names in current buffer for Markdown."
@@ -145,35 +146,16 @@ Based on `describe-function-1'."
               (dash--format-docstring docstring)
               (mapconcat #'example-to-string (-take 3 examples) "\n")))))
 
-(defun docs--chop-prefix (prefix s)
-  "Remove PREFIX if it is at the start of S."
-  (let ((pos (length prefix)))
-    (if (and (>= (length s) (length prefix))
-             (string= prefix (substring s 0 pos)))
-        (substring s pos)
-      s)))
-
-(defun docs--chop-suffix (suffix s)
-  "Remove SUFFIX if it is at end of S."
-  (let ((pos (- (length suffix))))
-    (if (and (>= (length s) (length suffix))
-             (string= suffix (substring s pos)))
-        (substring s 0 pos)
-      s)))
-
-(defun github-id (command-name signature)
-  (docs--chop-suffix
-   "-"
-   (replace-regexp-in-string "[^a-zA-Z0-9-]+" "-" (docs--chop-prefix
-                                                   "!"
-                                                   (format "%S %S" command-name signature)))))
+(defun dash--github-link (fn signature)
+  (--> (string-remove-prefix "!" (format "%s%s" fn signature))
+    (replace-regexp-in-string (rx (+ (not (in alnum ?-)))) "-" it t t)
+    (format "[`%s`](#%s)" fn (string-remove-suffix "-" it))))
 
 (defun function-summary (function)
-  (if (stringp function)
-      (concat "\n" function "\n")
-    (let ((command-name (car function))
-          (signature (cadr function)))
-      (format "* [%s](#%s) `%s`" command-name (github-id command-name signature) signature))))
+  (pcase function
+    (`(,fn ,signature . ,_)
+     (format "* %s `%s`" (dash--github-link fn signature) signature))
+    (_ (concat "\n" function "\n"))))
 
 (defun dash--replace-all (old new)
   "Replace occurrences of OLD with NEW in current buffer."

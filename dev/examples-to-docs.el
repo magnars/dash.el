@@ -36,14 +36,16 @@
   (let ((print-quoted t)
         (print-escape-control-characters t))
     (save-excursion (prin1 obj)))
-  (while (re-search-forward
-          (rx (| (group ?\' symbol-start "nil" symbol-end) "\\?")) nil 'move)
-    ;; 'nil -> (), `-any\?' -> `-any?'.
-    (replace-match (if (match-beginning 1) "()" "?") t t)))
+  (while (re-search-forward (rx (| (group ?\' symbol-start "nil" symbol-end)
+                                   (group "\\00") "\\?"))
+                            nil 'move)
+    (replace-match (cond ((match-beginning 1) "()") ; 'nil -> ().
+                         ((match-beginning 2) "\\") ; \00N -> \N.
+                         ("?"))                     ; `-any\?' -> `-any?'.
+                   t t)))
 
 (defun example-to-string (example)
-  (pcase-let ((`(,actual ,sym ,expected) example)
-              (print-quoted t))
+  (pcase-let ((`(,actual ,sym ,expected) example))
     (cond ((eq sym '!!>)
            ;; Print actual error message.
            (setq expected (error-message-string (-list expected))))

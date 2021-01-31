@@ -34,11 +34,12 @@
         (print-escape-control-characters t))
     (save-excursion (prin1 obj)))
   (while (re-search-forward (rx (| (group ?\' symbol-start "nil" symbol-end)
-                                   (group "\\?") (in "{}")))
+                                   (group "\\?") (group "\\00") (in "{}")))
                             nil 'move)
-    (replace-match (cond ((match-beginning 1) "'()") ; 'nil -> '().
-                         ((match-beginning 2) "?")   ; `-any\?' -> `-any?'.
-                         ("@\\&"))                   ; { -> @{.
+    (replace-match (cond ((match-beginning 1) "'()")  ; 'nil -> '().
+                         ((match-beginning 2) "?")    ; `-any\?' -> `-any?'.
+                         ((match-beginning 3) "\\\\") ; \00N -> \N.
+                         ("@\\&"))                    ; { -> @{.
                    t)))
 
 (defun example-to-string (example)

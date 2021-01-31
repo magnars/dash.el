@@ -118,11 +118,9 @@ The normal version can of course also be written as follows:
 ```
 
 This demonstrates the utility of both versions.
-
 [[ function-list ]]
 
 [[ function-docs ]]
-
 ## Contribute
 
 Yes, please do.  Pure functions in the list manipulation realm only,

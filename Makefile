@@ -19,9 +19,10 @@
 
 EMACS ?= emacs
 BATCH := $(EMACS) -Q -batch -L .
-ELS := dash.el dash-functional.el
+ELS := dash.el dash-functional.el dev/dash-defs.el
 ELCS := $(addsuffix c,$(ELS))
 DOCS := README.md dash.texi
+TMPLS := readme-template.md dash-template.texi $(wildcard doc/*.texi)
 
 # Targets.
 
@@ -41,7 +42,7 @@ force-docs: maintainer-clean docs
 check: ERT_SELECTOR ?= t
 check: RUN := '(ert-run-tests-batch-and-exit (quote $(ERT_SELECTOR)))'
 check: lisp
-	$(BATCH) -l dev/examples-to-tests.el -l dev/examples.el -eval $(RUN)
+	$(BATCH) -l dev/examples.el -eval $(RUN)
 .PHONY: check
 
 all: lisp docs check
@@ -67,10 +68,7 @@ maintainer-clean: clean
 %.elc: %.el
 	$(BATCH) -eval $(WERROR) -f batch-byte-compile $<
 
-dash-functional.elc: dash.elc
+dash-functional.elc dev/dash-defs.elc: dash.elc
 
-README.md: $(ELS) dev/examples-to-docs.el dev/examples.el readme-template.md
-	$(BATCH) $(addprefix -l ,$(filter %.el,$^)) -f create-docs-file
-
-dash.texi: $(ELS) dev/examples-to-info.el dev/examples.el dash-template.texi
-	$(BATCH) $(addprefix -l ,$(filter %.el,$^)) -f create-info-file
+$(DOCS) &: dev/examples.el $(ELCS) $(TMPLS)
+	$(BATCH) -l $< -f dash-make-docs

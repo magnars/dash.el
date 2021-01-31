@@ -28,20 +28,29 @@
 
 (defvar functions ())
 
+(defun dash--print-lisp-as-md (obj)
+  "Print Lisp OBJ suitably for Markdown."
+  (let ((print-quoted t)
+        (print-escape-control-characters t))
+    (save-excursion (prin1 obj)))
+  (while (re-search-forward
+          (rx (| (group ?\' symbol-start "nil" symbol-end) "\\?")) nil 'move)
+    ;; 'nil -> '(), `-any\?' -> `-any?'.
+    (replace-match (if (match-beginning 1) "'()" "?") t t)))
+
 (defun example-to-string (example)
-  (-let (((actual sym expected) example)
-         (print-quoted t))
-    (--> (cond
-          ((eq sym '=>) (format "=> %S" expected))
-          ((eq sym '~>) (format "~> %S" expected))
-          ((eq sym '!!>) "Error")
-          ((error "Invalid test case: %S" example)))
-      (format "%S ;; %s" actual it)
-      (replace-regexp-in-string "\\\\\\?" "?" it t t)
-      (replace-regexp-in-string
-       "[^\n[:print:]]"
-       (lambda (s) (concat "\\" (text-char-description (string-to-char s))))
-       it t t))))
+  (pcase-let ((`(,actual ,sym ,expected) example)
+              (print-quoted t))
+    (with-output-to-string
+      (with-current-buffer standard-output
+        (dash--print-lisp-as-md actual)
+        (insert " ;; ")
+        (cond ((memq sym '(=> ~>))
+               (princ sym)
+               (insert ?\s)
+               (dash--print-lisp-as-md expected))
+              ((eq sym '!!>) (insert "Error"))
+              ((error "Invalid test case: %S" example)))))))
 
 (defun dash--describe (fn)
   "Return the (ARGLIST DOCSTRING) of FN symbol.
@@ -62,8 +71,7 @@ Based on `describe-function-1'."
 (defmacro defexamples (cmd &rest examples)
   `(push (cons ',cmd
                (nconc (dash--describe ',cmd)
-                      (list (mapcar #'example-to-string
-                                    (-partition 3 ',examples)))))
+                      (list (-partition 3 ',examples))))
          functions))
 
 (defmacro def-example-group (group desc &rest examples)
@@ -128,13 +136,14 @@ Based on `describe-function-1'."
 
 (defun function-to-md (function)
   (if (stringp function)
-      (concat "\n" (s-replace "### " "## " function) "\n")
+      (concat "\n" (replace-regexp-in-string (rx bos "### ") "## " function)
+              "\n")
     (-let [(command-name signature docstring examples) function]
       (format "#### %s `%s`\n\n%s\n\n```el\n%s\n```\n"
               command-name
               signature
               (dash--format-docstring docstring)
-              (mapconcat #'identity (-take 3 examples) "\n")))))
+              (mapconcat #'example-to-string (-take 3 examples) "\n")))))
 
 (defun docs--chop-prefix (prefix s)
   "Remove PREFIX if it is at the start of S."
@@ -159,10 +168,6 @@ Based on `describe-function-1'."
                                                    "!"
                                                    (format "%S %S" command-name signature)))))
 
-(defun s-replace (old new s)
-  "Replace OLD with NEW in S."
-  (replace-regexp-in-string (regexp-quote old) new s t t))
-
 (defun function-summary (function)
   (if (stringp function)
       (concat "\n" function "\n")
@@ -186,7 +191,6 @@ Based on `describe-function-1'."
       (dash--replace-all "[[ function-list ]]"
                          (mapconcat #'function-summary functions "\n"))
       (dash--replace-all "[[ function-docs ]]"
-                         (mapconcat #'function-to-md functions "\n"))
-      (dash--replace-all "'nil" "'()"))))
+                         (mapconcat #'function-to-md functions "\n")))))
 
 ;;; examples-to-docs.el ends here

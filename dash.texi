@@ -255,15 +255,15 @@ This function's anaphoric counterpart is @code{--map}.
 @example
 @group
 (-map (lambda (num) (* num num)) '(1 2 3 4))
-    @result{} '(1 4 9 16)
+    @result{} (1 4 9 16)
 @end group
 @group
 (-map #'1+ '(1 2 3 4))
-    @result{} '(2 3 4 5)
+    @result{} (2 3 4 5)
 @end group
 @group
 (--map (* it it) '(1 2 3 4))
-    @result{} '(1 4 9 16)
+    @result{} (1 4 9 16)
 @end group
 @end example
 @end defun
@@ -281,15 +281,15 @@ See also: @code{-update-at} (@pxref{-update-at})
 @example
 @group
 (-map-when 'even? 'square '(1 2 3 4))
-    @result{} '(1 4 3 16)
+    @result{} (1 4 3 16)
 @end group
 @group
 (--map-when (> it 2) (* it it) '(1 2 3 4))
-    @result{} '(1 2 9 16)
+    @result{} (1 2 9 16)
 @end group
 @group
 (--map-when (= it 2) 17 '(1 2 3 4))
-    @result{} '(1 17 3 4)
+    @result{} (1 17 3 4)
 @end group
 @end example
 @end defun
@@ -303,15 +303,15 @@ See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-first} (@pxref{-r
 @example
 @group
 (-map-first 'even? 'square '(1 2 3 4))
-    @result{} '(1 4 3 4)
+    @result{} (1 4 3 4)
 @end group
 @group
 (--map-first (> it 2) (* it it) '(1 2 3 4))
-    @result{} '(1 2 9 4)
+    @result{} (1 2 9 4)
 @end group
 @group
 (--map-first (= it 2) 17 '(1 2 3 2))
-    @result{} '(1 17 3 2)
+    @result{} (1 17 3 2)
 @end group
 @end example
 @end defun
@@ -325,15 +325,15 @@ See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-last} (@pxref{-re
 @example
 @group
 (-map-last 'even? 'square '(1 2 3 4))
-    @result{} '(1 2 3 16)
+    @result{} (1 2 3 16)
 @end group
 @group
 (--map-last (> it 2) (* it it) '(1 2 3 4))
-    @result{} '(1 2 3 16)
+    @result{} (1 2 3 16)
 @end group
 @group
 (--map-last (= it 2) 17 '(1 2 3 2))
-    @result{} '(1 2 3 17)
+    @result{} (1 2 3 17)
 @end group
 @end example
 @end defun
@@ -351,15 +351,15 @@ For a side-effecting variant, see also @code{-each-indexed} (@pxref{-each-indexe
 @example
 @group
 (-map-indexed (lambda (index item) (- item index)) '(1 2 3 4))
-    @result{} '(1 1 1 1)
+    @result{} (1 1 1 1)
 @end group
 @group
 (--map-indexed (- it it-index) '(1 2 3 4))
-    @result{} '(1 1 1 1)
+    @result{} (1 1 1 1)
 @end group
 @group
 (-map-indexed #'* '(1 2 3 4))
-    @result{} '(0 2 6 12)
+    @result{} (0 2 6 12)
 @end group
 @end example
 @end defun
@@ -372,15 +372,15 @@ element of @var{list} paired with the unmodified element of @var{list}.
 @example
 @group
 (-annotate '1+ '(1 2 3))
-    @result{} '((2 . 1) (3 . 2) (4 . 3))
+    @result{} ((2 . 1) (3 . 2) (4 . 3))
 @end group
 @group
 (-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world")))
-    @result{} '((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
+    @result{} ((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
 @end group
 @group
 (--annotate (< 1 it) '(0 1 2 3))
-    @result{} '((nil . 0) (nil . 1) (t . 2) (t . 3))
+    @result{} ((nil . 0) (nil . 1) (t . 2) (t . 3))
 @end group
 @end example
 @end defun
@@ -400,15 +400,15 @@ See also: @code{-splice-list} (@pxref{-splice-list}), @code{-insert-at} (@pxref{
 @example
 @group
 (-splice 'even? (lambda (x) (list x x)) '(1 2 3 4))
-    @result{} '(1 2 2 3 4 4)
+    @result{} (1 2 2 3 4 4)
 @end group
 @group
 (--splice 't (list it it) '(1 2 3 4))
-    @result{} '(1 1 2 2 3 3 4 4)
+    @result{} (1 1 2 2 3 3 4 4)
 @end group
 @group
 (--splice (equal it :magic) '((list of) (magical) (code)) '((foo) (bar) :magic (baz)))
-    @result{} '((foo) (bar) (list of) (magical) (code) (baz))
+    @result{} ((foo) (bar) (list of) (magical) (code) (baz))
 @end group
 @end example
 @end defun
@@ -422,15 +422,15 @@ See also: @code{-splice} (@pxref{-splice}), @code{-insert-at} (@pxref{-insert-at
 @example
 @group
 (-splice-list 'keywordp '(a b c) '(1 :foo 2))
-    @result{} '(1 a b c 2)
+    @result{} (1 a b c 2)
 @end group
 @group
 (-splice-list 'keywordp nil '(1 :foo 2))
-    @result{} '(1 2)
+    @result{} (1 2)
 @end group
 @group
 (--splice-list (keywordp it) '(a b c) '(1 :foo 2))
-    @result{} '(1 a b c 2)
+    @result{} (1 a b c 2)
 @end group
 @end example
 @end defun
@@ -443,15 +443,15 @@ Thus function @var{fn} should return a list.
 @example
 @group
 (-mapcat 'list '(1 2 3))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @group
 (-mapcat (lambda (item) (list 0 item)) '(1 2 3))
-    @result{} '(0 1 0 2 0 3)
+    @result{} (0 1 0 2 0 3)
 @end group
 @group
 (--mapcat (list 0 it) '(1 2 3))
-    @result{} '(0 1 0 2 0 3)
+    @result{} (0 1 0 2 0 3)
 @end group
 @end example
 @end defun
@@ -463,7 +463,7 @@ Create a shallow copy of @var{list}.
 @example
 @group
 (-copy '(1 2 3))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @group
 (let ((a '(1 2 3))) (eq a (-copy a)))
@@ -490,15 +490,15 @@ For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-remove}
 @example
 @group
 (-filter (lambda (num) (= 0 (% num 2))) '(1 2 3 4))
-    @result{} '(2 4)
+    @result{} (2 4)
 @end group
 @group
 (-filter #'natnump '(-2 -1 0 1 2))
-    @result{} '(0 1 2)
+    @result{} (0 1 2)
 @end group
 @group
 (--filter (= 0 (% it 2)) '(1 2 3 4))
-    @result{} '(2 4)
+    @result{} (2 4)
 @end group
 @end example
 @end defun
@@ -516,15 +516,15 @@ For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-filter}
 @example
 @group
 (-remove (lambda (num) (= 0 (% num 2))) '(1 2 3 4))
-    @result{} '(1 3)
+    @result{} (1 3)
 @end group
 @group
 (-remove #'natnump '(-2 -1 0 1 2))
-    @result{} '(-2 -1)
+    @result{} (-2 -1)
 @end group
 @group
 (--remove (= 0 (% it 2)) '(1 2 3 4))
-    @result{} '(1 3)
+    @result{} (1 3)
 @end group
 @end example
 @end defun
@@ -546,15 +546,15 @@ See also @code{-map-first} (@pxref{-map-first}), @code{-remove-item} (@pxref{-re
 @example
 @group
 (-remove-first #'natnump '(-2 -1 0 1 2))
-    @result{} '(-2 -1 1 2)
+    @result{} (-2 -1 1 2)
 @end group
 @group
 (-remove-first #'stringp '(1 2 "first" "second"))
-    @result{} '(1 2 "second")
+    @result{} (1 2 "second")
 @end group
 @group
 (--remove-first (> it 3) '(1 2 3 4 5 6))
-    @result{} '(1 2 3 5 6)
+    @result{} (1 2 3 5 6)
 @end group
 @end example
 @end defun
@@ -574,15 +574,15 @@ See also @code{-map-last} (@pxref{-map-last}), @code{-remove-item} (@pxref{-remo
 @example
 @group
 (-remove-last #'natnump '(1 3 5 4 7 8 10 -11))
-    @result{} '(1 3 5 4 7 8 -11)
+    @result{} (1 3 5 4 7 8 -11)
 @end group
 @group
 (-remove-last #'stringp '(1 2 "last" "second"))
-    @result{} '(1 2 "last")
+    @result{} (1 2 "last")
 @end group
 @group
 (--remove-last (> it 3) '(1 2 3 4 5 6 7 8 9 10))
-    @result{} '(1 2 3 4 5 6 7 8 9)
+    @result{} (1 2 3 4 5 6 7 8 9)
 @end group
 @end example
 @end defun
@@ -595,15 +595,15 @@ The comparison is done with @code{equal}.
 @example
 @group
 (-remove-item 3 '(1 2 3 2 3 4 5 3))
-    @result{} '(1 2 2 4 5)
+    @result{} (1 2 2 4 5)
 @end group
 @group
 (-remove-item 'foo '(foo bar baz foo))
-    @result{} '(bar baz)
+    @result{} (bar baz)
 @end group
 @group
 (-remove-item "bob" '("alice" "bob" "eve" "bob"))
-    @result{} '("alice" "eve")
+    @result{} ("alice" "eve")
 @end group
 @end example
 @end defun
@@ -615,15 +615,15 @@ Return a copy of @var{list} with all nil items removed.
 @example
 @group
 (-non-nil '(nil 1 nil 2 nil nil 3 4 nil 5 nil))
-    @result{} '(1 2 3 4 5)
+    @result{} (1 2 3 4 5)
 @end group
 @group
 (-non-nil '((nil)))
-    @result{} '((nil))
+    @result{} ((nil))
 @end group
 @group
-(-non-nil '())
-    @result{} '()
+(-non-nil ())
+    @result{} ()
 @end group
 @end example
 @end defun
@@ -641,15 +641,15 @@ section is returned.  Defaults to 1.
 @example
 @group
 (-slice '(1 2 3 4 5) 1)
-    @result{} '(2 3 4 5)
+    @result{} (2 3 4 5)
 @end group
 @group
 (-slice '(1 2 3 4 5) 0 3)
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @group
 (-slice '(1 2 3 4 5 6 7 8 9) 1 -1 2)
-    @result{} '(2 4 6 8)
+    @result{} (2 4 6 8)
 @end group
 @end example
 @end defun
@@ -665,15 +665,15 @@ See also: @code{-take-last} (@pxref{-take-last}).
 @example
 @group
 (-take 3 '(1 2 3 4 5))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @group
 (-take 17 '(1 2 3 4 5))
-    @result{} '(1 2 3 4 5)
+    @result{} (1 2 3 4 5)
 @end group
 @group
 (-take 0 '(1 2 3 4 5))
-    @result{} '()
+    @result{} ()
 @end group
 @end example
 @end defun
@@ -689,15 +689,15 @@ See also: @code{-take} (@pxref{-take}).
 @example
 @group
 (-take-last 3 '(1 2 3 4 5))
-    @result{} '(3 4 5)
+    @result{} (3 4 5)
 @end group
 @group
 (-take-last 17 '(1 2 3 4 5))
-    @result{} '(1 2 3 4 5)
+    @result{} (1 2 3 4 5)
 @end group
 @group
 (-take-last 1 '(1 2 3 4 5))
-    @result{} '(5)
+    @result{} (5)
 @end group
 @end example
 @end defun
@@ -713,15 +713,15 @@ For another variant, see also @code{-drop-last} (@pxref{-drop-last}).
 @example
 @group
 (-drop 3 '(1 2 3 4 5))
-    @result{} '(4 5)
+    @result{} (4 5)
 @end group
 @group
 (-drop 17 '(1 2 3 4 5))
-    @result{} '()
+    @result{} ()
 @end group
 @group
 (-drop 0 '(1 2 3 4 5))
-    @result{} '(1 2 3 4 5)
+    @result{} (1 2 3 4 5)
 @end group
 @end example
 @end defun
@@ -737,15 +737,15 @@ See also: @code{-drop} (@pxref{-drop}).
 @example
 @group
 (-drop-last 3 '(1 2 3 4 5))
-    @result{} '(1 2)
+    @result{} (1 2)
 @end group
 @group
 (-drop-last 17 '(1 2 3 4 5))
-    @result{} '()
+    @result{} ()
 @end group
 @group
 (-drop-last 0 '(1 2 3 4 5))
-    @result{} '(1 2 3 4 5)
+    @result{} (1 2 3 4 5)
 @end group
 @end example
 @end defun
@@ -764,15 +764,15 @@ For another variant, see also @code{-drop-while} (@pxref{-drop-while}).
 @example
 @group
 (-take-while #'even? '(1 2 3 4))
-    @result{} '()
+    @result{} ()
 @end group
 @group
 (-take-while #'even? '(2 4 5 6))
-    @result{} '(2 4)
+    @result{} (2 4)
 @end group
 @group
 (--take-while (< it 4) '(1 2 3 4 3 2 1))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @end example
 @end defun
@@ -791,15 +791,15 @@ For another variant, see also @code{-take-while} (@pxref{-take-while}).
 @example
 @group
 (-drop-while #'even? '(1 2 3 4))
-    @result{} '(1 2 3 4)
+    @result{} (1 2 3 4)
 @end group
 @group
 (-drop-while #'even? '(2 4 5 6))
-    @result{} '(5 6)
+    @result{} (5 6)
 @end group
 @group
 (--drop-while (< it 4) '(1 2 3 4 3 2 1))
-    @result{} '(4 3 2 1)
+    @result{} (4 3 2 1)
 @end group
 @end example
 @end defun
@@ -812,15 +812,15 @@ as `(nth i list)` for all i from @var{indices}.
 @example
 @group
 (-select-by-indices '(4 10 2 3 6) '("v" "e" "l" "o" "c" "i" "r" "a" "p" "t" "o" "r"))
-    @result{} '("c" "o" "l" "o" "r")
+    @result{} ("c" "o" "l" "o" "r")
 @end group
 @group
 (-select-by-indices '(2 1 0) '("a" "b" "c"))
-    @result{} '("c" "b" "a")
+    @result{} ("c" "b" "a")
 @end group
 @group
 (-select-by-indices '(0 1 2 0 1 3 3 1) '("f" "a" "r" "l"))
-    @result{} '("f" "a" "r" "f" "a" "l" "l" "a")
+    @result{} ("f" "a" "r" "f" "a" "l" "l" "a")
 @end group
 @end example
 @end defun
@@ -840,15 +840,15 @@ See also: @code{-select-column} (@pxref{-select-column}), @code{-select-by-indic
 @example
 @group
 (-select-columns '(0 2) '((1 2 3) (a b c) (:a :b :c)))
-    @result{} '((1 3) (a c) (:a :c))
+    @result{} ((1 3) (a c) (:a :c))
 @end group
 @group
 (-select-columns '(1) '((1 2 3) (a b c) (:a :b :c)))
-    @result{} '((2) (b) (:b))
+    @result{} ((2) (b) (:b))
 @end group
 @group
 (-select-columns nil '((1 2 3) (a b c) (:a :b :c)))
-    @result{} '(nil nil nil)
+    @result{} (nil nil nil)
 @end group
 @end example
 @end defun
@@ -867,7 +867,7 @@ See also: @code{-select-columns} (@pxref{-select-columns}), @code{-select-by-ind
 @example
 @group
 (-select-column 1 '((1 2 3) (a b c) (:a :b :c)))
-    @result{} '(2 b :b)
+    @result{} (2 b :b)
 @end group
 @end example
 @end defun
@@ -888,15 +888,15 @@ Its anaphoric counterpart is @code{--keep}.
 @example
 @group
 (-keep #'cdr '((1 2 3) (4 5) (6)))
-    @result{} '((2 3) (5))
+    @result{} ((2 3) (5))
 @end group
 @group
 (-keep (lambda (n) (and (> n 3) (* 10 n))) '(1 2 3 4 5 6))
-    @result{} '(40 50 60)
+    @result{} (40 50 60)
 @end group
 @group
 (--keep (and (> it 3) (* 10 it)) '(1 2 3 4 5 6))
-    @result{} '(40 50 60)
+    @result{} (40 50 60)
 @end group
 @end example
 @end defun
@@ -908,15 +908,15 @@ Return a new list with the concatenation of the elements in the supplied @var{li
 @example
 @group
 (-concat '(1))
-    @result{} '(1)
+    @result{} (1)
 @end group
 @group
 (-concat '(1) '(2))
-    @result{} '(1 2)
+    @result{} (1 2)
 @end group
 @group
 (-concat '(1) '(2 3) '(4))
-    @result{} '(1 2 3 4)
+    @result{} (1 2 3 4)
 @end group
 @end example
 @end defun
@@ -938,15 +938,15 @@ See also: @code{-flatten-n} (@pxref{-flatten-n})
 @example
 @group
 (-flatten '((1)))
-    @result{} '(1)
+    @result{} (1)
 @end group
 @group
 (-flatten '((1 (2 3) (((4 (5)))))))
-    @result{} '(1 2 3 4 5)
+    @result{} (1 2 3 4 5)
 @end group
 @group
 (-flatten '(1 2 (3 . 4)))
-    @result{} '(1 2 (3 . 4))
+    @result{} (1 2 (3 . 4))
 @end group
 @end example
 @end defun
@@ -960,15 +960,15 @@ See also: @code{-flatten} (@pxref{-flatten})
 @example
 @group
 (-flatten-n 1 '((1 2) ((3 4) ((5 6)))))
-    @result{} '(1 2 (3 4) ((5 6)))
+    @result{} (1 2 (3 4) ((5 6)))
 @end group
 @group
 (-flatten-n 2 '((1 2) ((3 4) ((5 6)))))
-    @result{} '(1 2 3 4 (5 6))
+    @result{} (1 2 3 4 (5 6))
 @end group
 @group
 (-flatten-n 3 '((1 2) ((3 4) ((5 6)))))
-    @result{} '(1 2 3 4 5 6)
+    @result{} (1 2 3 4 5 6)
 @end group
 @end example
 @end defun
@@ -984,11 +984,11 @@ See also: @code{-replace-at} (@pxref{-replace-at})
 @example
 @group
 (-replace 1 "1" '(1 2 3 4 3 2 1))
-    @result{} '("1" 2 3 4 3 2 "1")
+    @result{} ("1" 2 3 4 3 2 "1")
 @end group
 @group
 (-replace "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo"))
-    @result{} '("a" "nice" "bar" "sentence" "about" "bar")
+    @result{} ("a" "nice" "bar" "sentence" "about" "bar")
 @end group
 @group
 (-replace 1 2 nil)
@@ -1008,11 +1008,11 @@ See also: @code{-map-first} (@pxref{-map-first})
 @example
 @group
 (-replace-first 1 "1" '(1 2 3 4 3 2 1))
-    @result{} '("1" 2 3 4 3 2 1)
+    @result{} ("1" 2 3 4 3 2 1)
 @end group
 @group
 (-replace-first "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo"))
-    @result{} '("a" "nice" "bar" "sentence" "about" "foo")
+    @result{} ("a" "nice" "bar" "sentence" "about" "foo")
 @end group
 @group
 (-replace-first 1 2 nil)
@@ -1032,11 +1032,11 @@ See also: @code{-map-last} (@pxref{-map-last})
 @example
 @group
 (-replace-last 1 "1" '(1 2 3 4 3 2 1))
-    @result{} '(1 2 3 4 3 2 "1")
+    @result{} (1 2 3 4 3 2 "1")
 @end group
 @group
 (-replace-last "foo" "bar" '("a" "nice" "foo" "sentence" "about" "foo"))
-    @result{} '("a" "nice" "foo" "sentence" "about" "bar")
+    @result{} ("a" "nice" "foo" "sentence" "about" "bar")
 @end group
 @group
 (-replace-last 1 2 nil)
@@ -1054,11 +1054,11 @@ See also: @code{-splice} (@pxref{-splice}), @code{-splice-list} (@pxref{-splice-
 @example
 @group
 (-insert-at 1 'x '(a b c))
-    @result{} '(a x b c)
+    @result{} (a x b c)
 @end group
 @group
 (-insert-at 12 'x '(a b c))
-    @result{} '(a b c x)
+    @result{} (a b c x)
 @end group
 @end example
 @end defun
@@ -1072,15 +1072,15 @@ See also: @code{-replace} (@pxref{-replace})
 @example
 @group
 (-replace-at 0 9 '(0 1 2 3 4 5))
-    @result{} '(9 1 2 3 4 5)
+    @result{} (9 1 2 3 4 5)
 @end group
 @group
 (-replace-at 1 9 '(0 1 2 3 4 5))
-    @result{} '(0 9 2 3 4 5)
+    @result{} (0 9 2 3 4 5)
 @end group
 @group
 (-replace-at 4 9 '(0 1 2 3 4 5))
-    @result{} '(0 1 2 3 9 5)
+    @result{} (0 1 2 3 9 5)
 @end group
 @end example
 @end defun
@@ -1094,15 +1094,15 @@ See also: @code{-map-when} (@pxref{-map-when})
 @example
 @group
 (-update-at 0 (lambda (x) (+ x 9)) '(0 1 2 3 4 5))
-    @result{} '(9 1 2 3 4 5)
+    @result{} (9 1 2 3 4 5)
 @end group
 @group
 (-update-at 1 (lambda (x) (+ x 8)) '(0 1 2 3 4 5))
-    @result{} '(0 9 2 3 4 5)
+    @result{} (0 9 2 3 4 5)
 @end group
 @group
 (--update-at 2 (length it) '("foo" "bar" "baz" "quux"))
-    @result{} '("foo" "bar" 3 "quux")
+    @result{} ("foo" "bar" 3 "quux")
 @end group
 @end example
 @end defun
@@ -1116,15 +1116,15 @@ See also: @code{-remove-at-indices} (@pxref{-remove-at-indices}), @code{-remove}
 @example
 @group
 (-remove-at 0 '("0" "1" "2" "3" "4" "5"))
-    @result{} '("1" "2" "3" "4" "5")
+    @result{} ("1" "2" "3" "4" "5")
 @end group
 @group
 (-remove-at 1 '("0" "1" "2" "3" "4" "5"))
-    @result{} '("0" "2" "3" "4" "5")
+    @result{} ("0" "2" "3" "4" "5")
 @end group
 @group
 (-remove-at 2 '("0" "1" "2" "3" "4" "5"))
-    @result{} '("0" "1" "3" "4" "5")
+    @result{} ("0" "1" "3" "4" "5")
 @end group
 @end example
 @end defun
@@ -1140,15 +1140,15 @@ See also: @code{-remove-at} (@pxref{-remove-at}), @code{-remove} (@pxref{-remove
 @example
 @group
 (-remove-at-indices '(0) '("0" "1" "2" "3" "4" "5"))
-    @result{} '("1" "2" "3" "4" "5")
+    @result{} ("1" "2" "3" "4" "5")
 @end group
 @group
 (-remove-at-indices '(0 2 4) '("0" "1" "2" "3" "4" "5"))
-    @result{} '("1" "3" "5")
+    @result{} ("1" "3" "5")
 @end group
 @group
 (-remove-at-indices '(0 5) '("0" "1" "2" "3" "4" "5"))
-    @result{} '("1" "2" "3" "4")
+    @result{} ("1" "2" "3" "4")
 @end group
 @end example
 @end defun
@@ -1176,7 +1176,7 @@ For other folds, see also @code{-reduce} (@pxref{-reduce}) and @code{-reduce-r} 
 @end group
 @group
 (-reduce-from #'list 10 '(1 2 3))
-    @result{} '(((10 1) 2) 3)
+    @result{} (((10 1) 2) 3)
 @end group
 @group
 (--reduce-from (concat acc " " it) "START" '("a" "b" "c"))
@@ -1211,7 +1211,7 @@ For other folds, see also @code{-reduce-r} (@pxref{-reduce-r}) and @code{-reduce
 @end group
 @group
 (-reduce-r-from #'list 10 '(1 2 3))
-    @result{} '(1 (2 (3 10)))
+    @result{} (1 (2 (3 10)))
 @end group
 @group
 (--reduce-r-from (concat it " " acc) "END" '("a" "b" "c"))
@@ -1240,7 +1240,7 @@ For other folds, see also @code{-reduce-from} (@pxref{-reduce-from}) and @code{-
 @end group
 @group
 (-reduce #'list '(1 2 3 4))
-    @result{} '(((1 2) 3) 4)
+    @result{} (((1 2) 3) 4)
 @end group
 @group
 (--reduce (format "%s-%d" acc it) '(1 2 3))
@@ -1277,7 +1277,7 @@ For other folds, see also @code{-reduce-r-from} (@pxref{-reduce-r-from}) and @co
 @end group
 @group
 (-reduce-r #'list '(1 2 3 4))
-    @result{} '(1 (2 (3 4)))
+    @result{} (1 (2 (3 4)))
 @end group
 @group
 (--reduce-r (format "%s-%d" acc it) '(1 2 3))
@@ -1300,15 +1300,15 @@ For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-re
 @example
 @group
 (-reductions-from #'max 0 '(2 1 4 3))
-    @result{} '(0 2 2 4 4)
+    @result{} (0 2 2 4 4)
 @end group
 @group
 (-reductions-from #'* 1 '(1 2 3 4))
-    @result{} '(1 1 2 6 24)
+    @result{} (1 1 2 6 24)
 @end group
 @group
 (--reductions-from (format "(FN %s %d)" acc it) "INIT" '(1 2 3))
-    @result{} '("INIT" "(FN INIT 1)" "(FN (FN INIT 1) 2)" "(FN (FN (FN INIT 1) 2) 3)")
+    @result{} ("INIT" "(FN INIT 1)" "(FN (FN INIT 1) 2)" "(FN (FN (FN INIT 1) 2) 3)")
 @end group
 @end example
 @end defun
@@ -1327,15 +1327,15 @@ For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-re
 @example
 @group
 (-reductions-r-from #'max 0 '(2 1 4 3))
-    @result{} '(4 4 4 3 0)
+    @result{} (4 4 4 3 0)
 @end group
 @group
 (-reductions-r-from #'* 1 '(1 2 3 4))
-    @result{} '(24 24 12 4 1)
+    @result{} (24 24 12 4 1)
 @end group
 @group
 (--reductions-r-from (format "(FN %d %s)" it acc) "INIT" '(1 2 3))
-    @result{} '("(FN 1 (FN 2 (FN 3 INIT)))" "(FN 2 (FN 3 INIT))" "(FN 3 INIT)" "INIT")
+    @result{} ("(FN 1 (FN 2 (FN 3 INIT)))" "(FN 2 (FN 3 INIT))" "(FN 3 INIT)" "INIT")
 @end group
 @end example
 @end defun
@@ -1353,15 +1353,15 @@ For other folds, see also @code{-reductions} (@pxref{-reductions}) and @code{-re
 @example
 @group
 (-reductions #'+ '(1 2 3 4))
-    @result{} '(1 3 6 10)
+    @result{} (1 3 6 10)
 @end group
 @group
 (-reductions #'* '(1 2 3 4))
-    @result{} '(1 2 6 24)
+    @result{} (1 2 6 24)
 @end group
 @group
 (--reductions (format "(FN %s %d)" acc it) '(1 2 3))
-    @result{} '(1 "(FN 1 2)" "(FN (FN 1 2) 3)")
+    @result{} (1 "(FN 1 2)" "(FN (FN 1 2) 3)")
 @end group
 @end example
 @end defun
@@ -1380,15 +1380,15 @@ For other folds, see also @code{-reductions-r-from} (@pxref{-reductions-r-from})
 @example
 @group
 (-reductions-r #'+ '(1 2 3 4))
-    @result{} '(10 9 7 4)
+    @result{} (10 9 7 4)
 @end group
 @group
 (-reductions-r #'* '(1 2 3 4))
-    @result{} '(24 24 12 4)
+    @result{} (24 24 12 4)
 @end group
 @group
 (--reductions-r (format "(FN %d %s)" it acc) '(1 2 3))
-    @result{} '("(FN 1 (FN 2 3))" "(FN 2 3)" 3)
+    @result{} ("(FN 1 (FN 2 3))" "(FN 2 3)" 3)
 @end group
 @end example
 @end defun
@@ -1415,7 +1415,7 @@ Return the sum of @var{list}.
 
 @example
 @group
-(-sum '())
+(-sum ())
     @result{} 0
 @end group
 @group
@@ -1437,14 +1437,14 @@ Return a list with running sums of items in @var{list}.
 @example
 @group
 (-running-sum '(1 2 3 4))
-    @result{} '(1 3 6 10)
+    @result{} (1 3 6 10)
 @end group
 @group
 (-running-sum '(1))
-    @result{} '(1)
+    @result{} (1)
 @end group
 @group
-(-running-sum '())
+(-running-sum ())
     @error{} Wrong type argument: consp, nil
 @end group
 @end example
@@ -1456,7 +1456,7 @@ Return the product of @var{list}.
 
 @example
 @group
-(-product '())
+(-product ())
     @result{} 1
 @end group
 @group
@@ -1478,14 +1478,14 @@ Return a list with running products of items in @var{list}.
 @example
 @group
 (-running-product '(1 2 3 4))
-    @result{} '(1 2 6 24)
+    @result{} (1 2 6 24)
 @end group
 @group
 (-running-product '(1))
-    @result{} '(1)
+    @result{} (1)
 @end group
 @group
-(-running-product '())
+(-running-product ())
     @error{} Wrong type argument: consp, nil
 @end group
 @end example
@@ -1498,15 +1498,15 @@ Return all prefixes of @var{list}.
 @example
 @group
 (-inits '(1 2 3 4))
-    @result{} '(nil (1) (1 2) (1 2 3) (1 2 3 4))
+    @result{} (nil (1) (1 2) (1 2 3) (1 2 3 4))
 @end group
 @group
 (-inits nil)
-    @result{} '(nil)
+    @result{} (nil)
 @end group
 @group
 (-inits '(1))
-    @result{} '(nil (1))
+    @result{} (nil (1))
 @end group
 @end example
 @end defun
@@ -1518,15 +1518,15 @@ Return all suffixes of @var{list}
 @example
 @group
 (-tails '(1 2 3 4))
-    @result{} '((1 2 3 4) (2 3 4) (3 4) (4) nil)
+    @result{} ((1 2 3 4) (2 3 4) (3 4) (4) nil)
 @end group
 @group
 (-tails nil)
-    @result{} '(nil)
+    @result{} (nil)
 @end group
 @group
 (-tails '(1))
-    @result{} '((1) nil)
+    @result{} ((1) nil)
 @end group
 @end example
 @end defun
@@ -1538,15 +1538,15 @@ Return the longest common prefix of @var{lists}.
 @example
 @group
 (-common-prefix '(1))
-    @result{} '(1)
+    @result{} (1)
 @end group
 @group
 (-common-prefix '(1 2) '(3 4) '(1 2))
-    @result{} '()
+    @result{} ()
 @end group
 @group
 (-common-prefix '(1 2) '(1 2 3) '(1 2 3 4))
-    @result{} '(1 2)
+    @result{} (1 2)
 @end group
 @end example
 @end defun
@@ -1558,15 +1558,15 @@ Return the longest common suffix of @var{lists}.
 @example
 @group
 (-common-suffix '(1))
-    @result{} '(1)
+    @result{} (1)
 @end group
 @group
 (-common-suffix '(1 2) '(3 4) '(1 2))
-    @result{} '()
+    @result{} ()
 @end group
 @group
 (-common-suffix '(1 2 3 4) '(2 3 4) '(3 4))
-    @result{} '(3 4)
+    @result{} (3 4)
 @end group
 @end example
 @end defun
@@ -1606,11 +1606,11 @@ comparing them.
 @end group
 @group
 (--min-by (> (car it) (car other)) '((1 2 3) (2) (3 2)))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @group
 (--min-by (> (length it) (length other)) '((1 2 3) (2) (3 2)))
-    @result{} '(2)
+    @result{} (2)
 @end group
 @end example
 @end defun
@@ -1650,11 +1650,11 @@ comparing them.
 @end group
 @group
 (--max-by (> (car it) (car other)) '((1 2 3) (2) (3 2)))
-    @result{} '(3 2)
+    @result{} (3 2)
 @end group
 @group
 (--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2)))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @end example
 @end defun
@@ -1678,15 +1678,15 @@ This means a list of the form:
 @example
 @group
 (-iterate #'1+ 1 10)
-    @result{} '(1 2 3 4 5 6 7 8 9 10)
+    @result{} (1 2 3 4 5 6 7 8 9 10)
 @end group
 @group
 (-iterate (lambda (x) (+ x x)) 2 5)
-    @result{} '(2 4 8 16 32)
+    @result{} (2 4 8 16 32)
 @end group
 @group
 (--iterate (* it it) 2 5)
-    @result{} '(2 4 16 256 65536)
+    @result{} (2 4 16 256 65536)
 @end group
 @end example
 @end defun
@@ -1706,15 +1706,15 @@ the new seed.
 @example
 @group
 (-unfold (lambda (x) (unless (= x 0) (cons x (1- x)))) 10)
-    @result{} '(10 9 8 7 6 5 4 3 2 1)
+    @result{} (10 9 8 7 6 5 4 3 2 1)
 @end group
 @group
 (--unfold (when it (cons it (cdr it))) '(1 2 3 4))
-    @result{} '((1 2 3 4) (2 3 4) (3 4) (4))
+    @result{} ((1 2 3 4) (2 3 4) (3 4) (4))
 @end group
 @group
 (--unfold (when it (cons it (butlast it))) '(1 2 3 4))
-    @result{} '((1 2 3 4) (1 2 3) (1 2) (1))
+    @result{} ((1 2 3 4) (1 2 3) (1 2) (1))
 @end group
 @end example
 @end defun
@@ -1968,15 +1968,15 @@ is done in a single list traversal.
 @example
 @group
 (-split-at 3 '(1 2 3 4 5))
-    @result{} '((1 2 3) (4 5))
+    @result{} ((1 2 3) (4 5))
 @end group
 @group
 (-split-at 17 '(1 2 3 4 5))
-    @result{} '((1 2 3 4 5) nil)
+    @result{} ((1 2 3 4 5) nil)
 @end group
 @group
 (-split-at 0 '(1 2 3 4 5))
-    @result{} '(nil (1 2 3 4 5))
+    @result{} (nil (1 2 3 4 5))
 @end group
 @end example
 @end defun
@@ -1988,15 +1988,15 @@ Return a list of ((-take-while @var{pred} @var{list}) (-drop-while @var{pred} @v
 @example
 @group
 (-split-with 'even? '(1 2 3 4))
-    @result{} '(nil (1 2 3 4))
+    @result{} (nil (1 2 3 4))
 @end group
 @group
 (-split-with 'even? '(2 4 5 6))
-    @result{} '((2 4) (5 6))
+    @result{} ((2 4) (5 6))
 @end group
 @group
 (--split-with (< it 4) '(1 2 3 4 3 2 1))
-    @result{} '((1 2 3) (4 3 2 1))
+    @result{} ((1 2 3) (4 3 2 1))
 @end group
 @end example
 @end defun
@@ -2015,15 +2015,15 @@ See also @code{-split-when} (@pxref{-split-when})
 @example
 @group
 (-split-on '| '(Nil | Leaf a | Node [Tree a]))
-    @result{} '((Nil) (Leaf a) (Node [Tree a]))
+    @result{} ((Nil) (Leaf a) (Node [Tree a]))
 @end group
 @group
 (-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e"))
-    @result{} '(("a" "b") ("c") ("d" "e"))
+    @result{} (("a" "b") ("c") ("d" "e"))
 @end group
 @group
 (-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e"))
-    @result{} '(("a" "b") ("d" "e"))
+    @result{} (("a" "b") ("d" "e"))
 @end group
 @end example
 @end defmac
@@ -2041,15 +2041,15 @@ This function can be thought of as a generalization of
 @example
 @group
 (-split-when 'even? '(1 2 3 4 5 6))
-    @result{} '((1) (3) (5))
+    @result{} ((1) (3) (5))
 @end group
 @group
 (-split-when 'even? '(1 2 3 4 6 8 9))
-    @result{} '((1) (3) (9))
+    @result{} ((1) (3) (9))
 @end group
 @group
 (--split-when (memq it '(&optional &rest)) '(a b &optional c d &rest args))
-    @result{} '((a b) (c d) (args))
+    @result{} ((a b) (c d) (args))
 @end group
 @end example
 @end defun
@@ -2061,15 +2061,15 @@ Return a list of ((-filter @var{pred} @var{list}) (-remove @var{pred} @var{list}
 @example
 @group
 (-separate (lambda (num) (= 0 (% num 2))) '(1 2 3 4 5 6 7))
-    @result{} '((2 4 6) (1 3 5 7))
+    @result{} ((2 4 6) (1 3 5 7))
 @end group
 @group
 (--separate (< it 5) '(3 7 5 9 3 2 1 4 6))
-    @result{} '((3 3 2 1 4) (7 5 9 6))
+    @result{} ((3 3 2 1 4) (7 5 9 6))
 @end group
 @group
 (-separate 'cdr '((1 2) (1) (1 2 3) (4)))
-    @result{} '(((1 2) (1 2 3)) ((1) (4)))
+    @result{} (((1 2) (1 2 3)) ((1) (4)))
 @end group
 @end example
 @end defun
@@ -2083,15 +2083,15 @@ those items are discarded.
 @example
 @group
 (-partition 2 '(1 2 3 4 5 6))
-    @result{} '((1 2) (3 4) (5 6))
+    @result{} ((1 2) (3 4) (5 6))
 @end group
 @group
 (-partition 2 '(1 2 3 4 5 6 7))
-    @result{} '((1 2) (3 4) (5 6))
+    @result{} ((1 2) (3 4) (5 6))
 @end group
 @group
 (-partition 3 '(1 2 3 4 5 6 7))
-    @result{} '((1 2 3) (4 5 6))
+    @result{} ((1 2 3) (4 5 6))
 @end group
 @end example
 @end defun
@@ -2104,15 +2104,15 @@ The last group may contain less than @var{n} items.
 @example
 @group
 (-partition-all 2 '(1 2 3 4 5 6))
-    @result{} '((1 2) (3 4) (5 6))
+    @result{} ((1 2) (3 4) (5 6))
 @end group
 @group
 (-partition-all 2 '(1 2 3 4 5 6 7))
-    @result{} '((1 2) (3 4) (5 6) (7))
+    @result{} ((1 2) (3 4) (5 6) (7))
 @end group
 @group
 (-partition-all 3 '(1 2 3 4 5 6 7))
-    @result{} '((1 2 3) (4 5 6) (7))
+    @result{} ((1 2 3) (4 5 6) (7))
 @end group
 @end example
 @end defun
@@ -2126,15 +2126,15 @@ those items are discarded.
 @example
 @group
 (-partition-in-steps 2 1 '(1 2 3 4))
-    @result{} '((1 2) (2 3) (3 4))
+    @result{} ((1 2) (2 3) (3 4))
 @end group
 @group
 (-partition-in-steps 3 2 '(1 2 3 4))
-    @result{} '((1 2 3))
+    @result{} ((1 2 3))
 @end group
 @group
 (-partition-in-steps 3 2 '(1 2 3 4 5))
-    @result{} '((1 2 3) (3 4 5))
+    @result{} ((1 2 3) (3 4 5))
 @end group
 @end example
 @end defun
@@ -2147,15 +2147,15 @@ The last groups may contain less than @var{n} items.
 @example
 @group
 (-partition-all-in-steps 2 1 '(1 2 3 4))
-    @result{} '((1 2) (2 3) (3 4) (4))
+    @result{} ((1 2) (2 3) (3 4) (4))
 @end group
 @group
 (-partition-all-in-steps 3 2 '(1 2 3 4))
-    @result{} '((1 2 3) (3 4))
+    @result{} ((1 2 3) (3 4))
 @end group
 @group
 (-partition-all-in-steps 3 2 '(1 2 3 4 5))
-    @result{} '((1 2 3) (3 4 5) (5))
+    @result{} ((1 2 3) (3 4 5) (5))
 @end group
 @end example
 @end defun
@@ -2166,16 +2166,16 @@ Apply @var{fn} to each item in @var{list}, splitting it each time @var{fn} retur
 
 @example
 @group
-(-partition-by 'even? '())
-    @result{} '()
+(-partition-by 'even? ())
+    @result{} ()
 @end group
 @group
 (-partition-by 'even? '(1 1 2 2 2 3 4 6 8))
-    @result{} '((1 1) (2 2 2) (3) (4 6 8))
+    @result{} ((1 1) (2 2 2) (3) (4 6 8))
 @end group
 @group
 (--partition-by (< it 3) '(1 2 3 4 3 2 1))
-    @result{} '((1 2) (3 4 3) (2 1))
+    @result{} ((1 2) (3 4 3) (2 1))
 @end group
 @end example
 @end defun
@@ -2190,15 +2190,15 @@ other value (the body).
 @example
 @group
 (--partition-by-header (= it 1) '(1 2 3 1 2 1 2 3 4))
-    @result{} '((1 2 3) (1 2) (1 2 3 4))
+    @result{} ((1 2 3) (1 2) (1 2 3 4))
 @end group
 @group
 (--partition-by-header (> it 0) '(1 2 0 1 0 1 2 3 0))
-    @result{} '((1 2 0) (1 0) (1 2 3 0))
+    @result{} ((1 2 0) (1 0) (1 2 3 0))
 @end group
 @group
 (-partition-by-header 'even? '(2 1 1 1 4 1 3 5 6 6 1))
-    @result{} '((2 1 1 1) (4 1 3 5) (6 6 1))
+    @result{} ((2 1 1 1) (4 1 3 5) (6 6 1))
 @end group
 @end example
 @end defun
@@ -2209,16 +2209,16 @@ Partition directly after each time @var{pred} is true on an element of @var{list
 
 @example
 @group
-(-partition-after-pred #'booleanp '())
-    @result{} '()
+(-partition-after-pred #'booleanp ())
+    @result{} ()
 @end group
 @group
 (-partition-after-pred #'booleanp '(t t))
-    @result{} '((t) (t))
+    @result{} ((t) (t))
 @end group
 @group
 (-partition-after-pred #'booleanp '(0 0 t t 0 t))
-    @result{} '((0 0 t) (t) (0 t))
+    @result{} ((0 0 t) (t) (0 t))
 @end group
 @end example
 @end defun
@@ -2229,16 +2229,16 @@ Partition directly before each time @var{pred} is true on an element of @var{lis
 
 @example
 @group
-(-partition-before-pred #'booleanp '())
-    @result{} '()
+(-partition-before-pred #'booleanp ())
+    @result{} ()
 @end group
 @group
 (-partition-before-pred #'booleanp '(0 t))
-    @result{} '((0) (t))
+    @result{} ((0) (t))
 @end group
 @group
 (-partition-before-pred #'booleanp '(0 0 t 0 t t))
-    @result{} '((0 0) (t 0) (t) (t))
+    @result{} ((0 0) (t 0) (t) (t))
 @end group
 @end example
 @end defun
@@ -2249,16 +2249,16 @@ Partition directly before each time @var{item} appears in @var{list}.
 
 @example
 @group
-(-partition-before-item 3 '())
-    @result{} '()
+(-partition-before-item 3 ())
+    @result{} ()
 @end group
 @group
 (-partition-before-item 3 '(1))
-    @result{} '((1))
+    @result{} ((1))
 @end group
 @group
 (-partition-before-item 3 '(3))
-    @result{} '((3))
+    @result{} ((3))
 @end group
 @end example
 @end defun
@@ -2269,16 +2269,16 @@ Partition directly after each time @var{item} appears in @var{list}.
 
 @example
 @group
-(-partition-after-item 3 '())
-    @result{} '()
+(-partition-after-item 3 ())
+    @result{} ()
 @end group
 @group
 (-partition-after-item 3 '(1))
-    @result{} '((1))
+    @result{} ((1))
 @end group
 @group
 (-partition-after-item 3 '(3))
-    @result{} '((3))
+    @result{} ((3))
 @end group
 @end example
 @end defun
@@ -2290,16 +2290,16 @@ elements of @var{list}.  Keys are compared by @code{equal}.
 
 @example
 @group
-(-group-by 'even? '())
-    @result{} '()
+(-group-by 'even? ())
+    @result{} ()
 @end group
 @group
 (-group-by 'even? '(1 1 2 2 2 3 4 6 8))
-    @result{} '((nil 1 1 3) (t 2 2 2 4 6 8))
+    @result{} ((nil 1 1 3) (t 2 2 2 4 6 8))
 @end group
 @group
 (--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e"))
-    @result{} '(("a" "a/b" "a/e") ("c" "c/d"))
+    @result{} (("a" "a/b" "a/e") ("c" "c/d"))
 @end group
 @end example
 @end defun
@@ -2339,15 +2339,15 @@ element @var{elem}, in ascending order.
 @example
 @group
 (-elem-indices 2 '(6 7 8 2 3 4 2 1))
-    @result{} '(3 6)
+    @result{} (3 6)
 @end group
 @group
 (-elem-indices "bar" '("foo" "bar" "baz"))
-    @result{} '(1)
+    @result{} (1)
 @end group
 @group
 (-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil))
-    @result{} '(1 3)
+    @result{} (1 3)
 @end group
 @end example
 @end defun
@@ -2408,15 +2408,15 @@ predicate @var{pred}, in ascending order.
 @example
 @group
 (-find-indices 'even? '(2 4 1 6 3 3 5 8))
-    @result{} '(0 1 3 7)
+    @result{} (0 1 3 7)
 @end group
 @group
 (--find-indices (< 5 it) '(2 4 1 6 3 3 5 8))
-    @result{} '(3 7)
+    @result{} (3 7)
 @end group
 @group
 (-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz"))
-    @result{} '(1)
+    @result{} (1)
 @end group
 @end example
 @end defun
@@ -2430,11 +2430,11 @@ permutation to @var{list} sorts it in ascending order.
 @example
 @group
 (-grade-up #'< '(3 1 4 2 1 3 3))
-    @result{} '(1 4 3 0 5 6 2)
+    @result{} (1 4 3 0 5 6 2)
 @end group
 @group
 (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-up #'< l) l))
-    @result{} '(1 1 2 3 3 3 4)
+    @result{} (1 1 2 3 3 3 4)
 @end group
 @end example
 @end defun
@@ -2448,11 +2448,11 @@ permutation to @var{list} sorts it in descending order.
 @example
 @group
 (-grade-down #'< '(3 1 4 2 1 3 3))
-    @result{} '(2 0 5 6 3 1 4)
+    @result{} (2 0 5 6 3 1 4)
 @end group
 @group
 (let ((l '(3 1 4 2 1 3 3))) (-select-by-indices (-grade-down #'< l) l))
-    @result{} '(4 3 3 3 2 1 1)
+    @result{} (4 3 3 3 2 1 1)
 @end group
 @end example
 @end defun
@@ -2471,15 +2471,15 @@ or with @code{-compare-fn} if that's non-nil.
 @example
 @group
 (-union '(1 2 3) '(3 4 5))
-    @result{} '(1 2 3 4 5)
+    @result{} (1 2 3 4 5)
 @end group
 @group
-(-union '(1 2 3 4) '())
-    @result{} '(1 2 3 4)
+(-union '(1 2 3 4) ())
+    @result{} (1 2 3 4)
 @end group
 @group
 (-union '(1 1 2 2) '(3 2 1))
-    @result{} '(1 1 2 2 3)
+    @result{} (1 1 2 2 3)
 @end group
 @end example
 @end defun
@@ -2492,16 +2492,16 @@ or with @code{-compare-fn} if that's non-nil.
 
 @example
 @group
-(-difference '() '())
-    @result{} '()
+(-difference () ())
+    @result{} ()
 @end group
 @group
 (-difference '(1 2 3) '(4 5 6))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @group
 (-difference '(1 2 3 4) '(3 4 5 6))
-    @result{} '(1 2)
+    @result{} (1 2)
 @end group
 @end example
 @end defun
@@ -2514,16 +2514,16 @@ or with @code{-compare-fn} if that's non-nil.
 
 @example
 @group
-(-intersection '() '())
-    @result{} '()
+(-intersection () ())
+    @result{} ()
 @end group
 @group
 (-intersection '(1 2 3) '(4 5 6))
-    @result{} '()
+    @result{} ()
 @end group
 @group
 (-intersection '(1 2 3 4) '(3 4 5 6))
-    @result{} '(3 4)
+    @result{} (3 4)
 @end group
 @end example
 @end defun
@@ -2534,12 +2534,12 @@ Return the power set of @var{list}.
 
 @example
 @group
-(-powerset '())
-    @result{} '(nil)
+(-powerset ())
+    @result{} (nil)
 @end group
 @group
 (-powerset '(x y z))
-    @result{} '((x y z) (x y) (x z) (x) (y z) (y) (z) nil)
+    @result{} ((x y z) (x y) (x z) (x) (y z) (y) (z) nil)
 @end group
 @end example
 @end defun
@@ -2550,16 +2550,16 @@ Return the permutations of @var{list}.
 
 @example
 @group
-(-permutations '())
-    @result{} '(nil)
+(-permutations ())
+    @result{} (nil)
 @end group
 @group
 (-permutations '(1 2))
-    @result{} '((1 2) (2 1))
+    @result{} ((1 2) (2 1))
 @end group
 @group
 (-permutations '(a b c))
-    @result{} '((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
+    @result{} ((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
 @end group
 @end example
 @end defun
@@ -2574,16 +2574,16 @@ Alias: @code{-uniq}
 
 @example
 @group
-(-distinct '())
-    @result{} '()
+(-distinct ())
+    @result{} ()
 @end group
 @group
 (-distinct '(1 2 2 4))
-    @result{} '(1 2 4)
+    @result{} (1 2 4)
 @end group
 @group
 (-distinct '(t t t))
-    @result{} '(t)
+    @result{} (t)
 @end group
 @end example
 @end defun
@@ -2601,15 +2601,15 @@ The time complexity is @var{o}(n).
 @example
 @group
 (-rotate 3 '(1 2 3 4 5 6 7))
-    @result{} '(5 6 7 1 2 3 4)
+    @result{} (5 6 7 1 2 3 4)
 @end group
 @group
 (-rotate -3 '(1 2 3 4 5 6 7))
-    @result{} '(4 5 6 7 1 2 3)
+    @result{} (4 5 6 7 1 2 3)
 @end group
 @group
 (-rotate 16 '(1 2 3 4 5 6 7))
-    @result{} '(6 7 1 2 3 4 5)
+    @result{} (6 7 1 2 3 4 5)
 @end group
 @end example
 @end defun
@@ -2622,11 +2622,11 @@ Return nil if @var{n} is less than 1.
 @example
 @group
 (-repeat 3 :a)
-    @result{} '(:a :a :a)
+    @result{} (:a :a :a)
 @end group
 @group
 (-repeat 1 :a)
-    @result{} '(:a)
+    @result{} (:a)
 @end group
 @group
 (-repeat 0 :a)
@@ -2645,11 +2645,11 @@ is a dotted list.  With no @var{args}, return nil.
 @example
 @group
 (-cons* 1 2)
-    @result{} '(1 . 2)
+    @result{} (1 . 2)
 @end group
 @group
 (-cons* 1 2 3)
-    @result{} '(1 2 . 3)
+    @result{} (1 2 . 3)
 @end group
 @group
 (-cons* 1)
@@ -2669,15 +2669,15 @@ If @var{elements} is non nil, append these to the list as well.
 @example
 @group
 (-snoc '(1 2 3) 4)
-    @result{} '(1 2 3 4)
+    @result{} (1 2 3 4)
 @end group
 @group
 (-snoc '(1 2 3) 4 5 6)
-    @result{} '(1 2 3 4 5 6)
+    @result{} (1 2 3 4 5 6)
 @end group
 @group
 (-snoc '(1 2 3) '(4 5 6))
-    @result{} '(1 2 3 (4 5 6))
+    @result{} (1 2 3 (4 5 6))
 @end group
 @end example
 @end defun
@@ -2688,16 +2688,16 @@ Return a new list of all elements in @var{list} separated by @var{sep}.
 
 @example
 @group
-(-interpose "-" '())
-    @result{} '()
+(-interpose "-" ())
+    @result{} ()
 @end group
 @group
 (-interpose "-" '("a"))
-    @result{} '("a")
+    @result{} ("a")
 @end group
 @group
 (-interpose "-" '("a" "b" "c"))
-    @result{} '("a" "-" "b" "-" "c")
+    @result{} ("a" "-" "b" "-" "c")
 @end group
 @end example
 @end defun
@@ -2709,15 +2709,15 @@ Return a new list of the first item in each list, then the second etc.
 @example
 @group
 (-interleave '(1 2) '("a" "b"))
-    @result{} '(1 "a" 2 "b")
+    @result{} (1 "a" 2 "b")
 @end group
 @group
 (-interleave '(1 2) '("a" "b") '("A" "B"))
-    @result{} '(1 "a" "A" 2 "b" "B")
+    @result{} (1 "a" "A" 2 "b" "B")
 @end group
 @group
 (-interleave '(1 2 3) '("a" "b"))
-    @result{} '(1 "a" 2 "b")
+    @result{} (1 "a" 2 "b")
 @end group
 @end example
 @end defun
@@ -2733,11 +2733,11 @@ the @var{apl} language.
 @example
 @group
 (-iota 6)
-    @result{} '(0 1 2 3 4 5)
+    @result{} (0 1 2 3 4 5)
 @end group
 @group
 (-iota 4 2.5 -2)
-    @result{} '(2.5 0.5 -1.5 -3.5)
+    @result{} (2.5 0.5 -1.5 -3.5)
 @end group
 @group
 (-iota -1)
@@ -2759,15 +2759,15 @@ and the elements from @var{list2} as symbol @code{other}.
 @example
 @group
 (-zip-with '+ '(1 2 3) '(4 5 6))
-    @result{} '(5 7 9)
+    @result{} (5 7 9)
 @end group
 @group
 (-zip-with 'cons '(1 2 3) '(4 5 6))
-    @result{} '((1 . 4) (2 . 5) (3 . 6))
+    @result{} ((1 . 4) (2 . 5) (3 . 6))
 @end group
 @group
 (--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde"))
-    @result{} '("Batman and Robin" "Jekyll and Hyde")
+    @result{} ("Batman and Robin" "Jekyll and Hyde")
 @end group
 @end example
 @end defun
@@ -2791,15 +2791,15 @@ See also: @code{-zip-lists} (@pxref{-zip-lists})
 @example
 @group
 (-zip '(1 2 3) '(4 5 6))
-    @result{} '((1 . 4) (2 . 5) (3 . 6))
+    @result{} ((1 . 4) (2 . 5) (3 . 6))
 @end group
 @group
 (-zip '(1 2 3) '(4 5 6 7))
-    @result{} '((1 . 4) (2 . 5) (3 . 6))
+    @result{} ((1 . 4) (2 . 5) (3 . 6))
 @end group
 @group
 (-zip '(1 2) '(3 4 5) '(6))
-    @result{} '((1 3 6))
+    @result{} ((1 3 6))
 @end group
 @end example
 @end defun
@@ -2819,15 +2819,15 @@ See also: @code{-zip} (@pxref{-zip})
 @example
 @group
 (-zip-lists '(1 2 3) '(4 5 6))
-    @result{} '((1 4) (2 5) (3 6))
+    @result{} ((1 4) (2 5) (3 6))
 @end group
 @group
 (-zip-lists '(1 2 3) '(4 5 6 7))
-    @result{} '((1 4) (2 5) (3 6))
+    @result{} ((1 4) (2 5) (3 6))
 @end group
 @group
 (-zip-lists '(1 2) '(3 4 5) '(6))
-    @result{} '((1 3 6))
+    @result{} ((1 3 6))
 @end group
 @end example
 @end defun
@@ -2841,7 +2841,7 @@ longest input list.
 @example
 @group
 (-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9))
-    @result{} '((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
+    @result{} ((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
 @end group
 @end example
 @end defun
@@ -2865,15 +2865,15 @@ See also: @code{-zip} (@pxref{-zip})
 @example
 @group
 (-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g")))
-    @result{} '((1 2 3) (a b c) ("e" "f" "g"))
+    @result{} ((1 2 3) (a b c) ("e" "f" "g"))
 @end group
 @group
 (-unzip '((1 2) (3 4) (5 6) (7 8) (9 10)))
-    @result{} '((1 3 5 7 9) (2 4 6 8 10))
+    @result{} ((1 3 5 7 9) (2 4 6 8 10))
 @end group
 @group
 (-unzip '((1 2) (3 4)))
-    @result{} '((1 . 3) (2 . 4))
+    @result{} ((1 . 3) (2 . 4))
 @end group
 @end example
 @end defun
@@ -2887,15 +2887,15 @@ from the beginning.
 @example
 @group
 (-take 5 (-cycle '(1 2 3)))
-    @result{} '(1 2 3 1 2)
+    @result{} (1 2 3 1 2)
 @end group
 @group
 (-take 7 (-cycle '(1 "and" 3)))
-    @result{} '(1 "and" 3 1 "and" 3 1)
+    @result{} (1 "and" 3 1 "and" 3 1)
 @end group
 @group
 (-zip (-cycle '(1 2 3)) '(1 2))
-    @result{} '((1 . 1) (2 . 2))
+    @result{} ((1 . 1) (2 . 2))
 @end group
 @end example
 @end defun
@@ -2907,16 +2907,16 @@ will all have the same length.
 
 @example
 @group
-(-pad 0 '())
-    @result{} '(nil)
+(-pad 0 ())
+    @result{} (nil)
 @end group
 @group
 (-pad 0 '(1))
-    @result{} '((1))
+    @result{} ((1))
 @end group
 @group
 (-pad 0 '(1 2 3) '(4 5))
-    @result{} '((1 2 3) (4 5 0))
+    @result{} ((1 2 3) (4 5 0))
 @end group
 @end example
 @end defun
@@ -2937,15 +2937,15 @@ See also: @code{-table-flat} (@pxref{-table-flat})
 @example
 @group
 (-table '* '(1 2 3) '(1 2 3))
-    @result{} '((1 2 3) (2 4 6) (3 6 9))
+    @result{} ((1 2 3) (2 4 6) (3 6 9))
 @end group
 @group
 (-table (lambda (a b) (-sum (-zip-with '* a b))) '((1 2) (3 4)) '((1 3) (2 4)))
-    @result{} '((7 15) (10 22))
+    @result{} ((7 15) (10 22))
 @end group
 @group
 (apply '-table 'list (-repeat 3 '(1 2)))
-    @result{} '((((1 1 1) (2 1 1)) ((1 2 1) (2 2 1))) (((1 1 2) (2 1 2)) ((1 2 2) (2 2 2))))
+    @result{} ((((1 1 1) (2 1 1)) ((1 2 1) (2 2 1))) (((1 1 2) (2 1 2)) ((1 2 2) (2 2 2))))
 @end group
 @end example
 @end defun
@@ -2971,15 +2971,15 @@ See also: @code{-flatten-n} (@pxref{-flatten-n}), @code{-table} (@pxref{-table})
 @example
 @group
 (-table-flat 'list '(1 2 3) '(a b c))
-    @result{} '((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
+    @result{} ((1 a) (2 a) (3 a) (1 b) (2 b) (3 b) (1 c) (2 c) (3 c))
 @end group
 @group
 (-table-flat '* '(1 2 3) '(1 2 3))
-    @result{} '(1 2 3 2 4 6 3 6 9)
+    @result{} (1 2 3 2 4 6 3 6 9)
 @end group
 @group
 (apply '-table-flat 'list (-repeat 3 '(1 2)))
-    @result{} '((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2))
+    @result{} ((1 1 1) (2 1 1) (1 2 1) (2 2 1) (1 1 2) (2 1 2) (1 2 2) (2 2 2))
 @end group
 @end example
 @end defun
@@ -3029,7 +3029,7 @@ This function's anaphoric counterpart is @code{--some}.
 @end group
 @group
 (--some (member 'foo it) '((foo bar) (baz)))
-    @result{} '(foo bar)
+    @result{} (foo bar)
 @end group
 @end example
 @end defun
@@ -3071,7 +3071,7 @@ See also: @code{-second-item} (@pxref{-second-item}), @code{-last-item} (@pxref{
 @end group
 @group
 (let ((list (list 1 2 3))) (setf (-first-item list) 5) list)
-    @result{} '(5 2 3)
+    @result{} (5 2 3)
 @end group
 @end example
 @end defun
@@ -3163,7 +3163,7 @@ Return the last item of @var{list}, or nil on an empty list.
 @end group
 @group
 (let ((list (list 1 2 3))) (setf (-last-item list) 5) list)
-    @result{} '(1 2 5)
+    @result{} (1 2 5)
 @end group
 @end example
 @end defun
@@ -3175,11 +3175,11 @@ Return a list of all items in list except for the last.
 @example
 @group
 (-butlast '(1 2 3))
-    @result{} '(1 2)
+    @result{} (1 2)
 @end group
 @group
 (-butlast '(1 2))
-    @result{} '(1)
+    @result{} (1)
 @end group
 @group
 (-butlast '(1))
@@ -3198,15 +3198,15 @@ if the first element should sort before the second.
 @example
 @group
 (-sort '< '(3 1 2))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @group
 (-sort '> '(3 1 2))
-    @result{} '(3 2 1)
+    @result{} (3 2 1)
 @end group
 @group
 (--sort (< it other) '(3 1 2))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @end example
 @end defun
@@ -3225,15 +3225,15 @@ backward compatibility and is otherwise deprecated.
 @example
 @group
 (-list 1)
-    @result{} '(1)
+    @result{} (1)
 @end group
 @group
-(-list '())
-    @result{} '()
+(-list ())
+    @result{} ()
 @end group
 @group
 (-list '(1 2 3))
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @end example
 @end defun
@@ -3247,11 +3247,11 @@ Compute the (least) fixpoint of @var{fn} with initial input @var{list}.
 @example
 @group
 (-fix (lambda (l) (-non-nil (--mapcat (-split-at (/ (length it) 2) it) l))) '((1 2 3)))
-    @result{} '((1) (2) (3))
+    @result{} ((1) (2) (3))
 @end group
 @group
 (let ((l '((starwars scifi) (jedi starwars warrior)))) (--fix (-uniq (--mapcat (cons it (cdr (assq it l))) it)) '(jedi book)))
-    @result{} '(jedi starwars warrior scifi book)
+    @result{} (jedi starwars warrior scifi book)
 @end group
 @end example
 @end defun
@@ -3276,15 +3276,15 @@ Non-branch nodes are simply copied.
 @example
 @group
 (-tree-seq 'listp 'identity '(1 (2 3) 4 (5 (6 7))))
-    @result{} '((1 (2 3) 4 (5 (6 7))) 1 (2 3) 2 3 4 (5 (6 7)) 5 (6 7) 6 7)
+    @result{} ((1 (2 3) 4 (5 (6 7))) 1 (2 3) 2 3 4 (5 (6 7)) 5 (6 7) 6 7)
 @end group
 @group
 (-tree-seq 'listp 'reverse '(1 (2 3) 4 (5 (6 7))))
-    @result{} '((1 (2 3) 4 (5 (6 7))) (5 (6 7)) (6 7) 7 6 5 4 (2 3) 3 2 1)
+    @result{} ((1 (2 3) 4 (5 (6 7))) (5 (6 7)) (6 7) 7 6 5 4 (2 3) 3 2 1)
 @end group
 @group
 (--tree-seq (vectorp it) (append it nil) [1 [2 3] 4 [5 [6 7]]])
-    @result{} '([1 [2 3] 4 [5 [6 7]]] 1 [2 3] 2 3 4 [5 [6 7]] 5 [6 7] 6 7)
+    @result{} ([1 [2 3] 4 [5 [6 7]]] 1 [2 3] 2 3 4 [5 [6 7]] 5 [6 7] 6 7)
 @end group
 @end example
 @end defun
@@ -3296,15 +3296,15 @@ Apply @var{fn} to each element of @var{tree} while preserving the tree structure
 @example
 @group
 (-tree-map '1+ '(1 (2 3) (4 (5 6) 7)))
-    @result{} '(2 (3 4) (5 (6 7) 8))
+    @result{} (2 (3 4) (5 (6 7) 8))
 @end group
 @group
 (-tree-map '(lambda (x) (cons x (expt 2 x))) '(1 (2 3) 4))
-    @result{} '((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
+    @result{} ((1 . 2) ((2 . 4) (3 . 8)) (4 . 16))
 @end group
 @group
 (--tree-map (length it) '("<body>" ("<p>" "text" "</p>") "</body>"))
-    @result{} '(6 (3 4 4) 7)
+    @result{} (6 (3 4 4) 7)
 @end group
 @end example
 @end defun
@@ -3320,15 +3320,15 @@ further.
 @example
 @group
 (-tree-map-nodes 'vectorp (lambda (x) (-sum (append x nil))) '(1 [2 3] 4 (5 [6 7] 8)))
-    @result{} '(1 5 4 (5 13 8))
+    @result{} (1 5 4 (5 13 8))
 @end group
 @group
 (-tree-map-nodes 'keywordp (lambda (x) (symbol-name x)) '(1 :foo 4 ((5 6 :bar) :baz 8)))
-    @result{} '(1 ":foo" 4 ((5 6 ":bar") ":baz" 8))
+    @result{} (1 ":foo" 4 ((5 6 ":bar") ":baz" 8))
 @end group
 @group
 (--tree-map-nodes (eq (car-safe it) 'add-mode) (-concat it (list :mode 'emacs-lisp-mode)) '(with-mode emacs-lisp-mode (foo bar) (add-mode a b) (baz (add-mode c d))))
-    @result{} '(with-mode emacs-lisp-mode (foo bar) (add-mode a b :mode emacs-lisp-mode) (baz (add-mode c d :mode emacs-lisp-mode)))
+    @result{} (with-mode emacs-lisp-mode (foo bar) (add-mode a b :mode emacs-lisp-mode) (baz (add-mode c d :mode emacs-lisp-mode)))
 @end group
 @end example
 @end defun
@@ -3377,7 +3377,7 @@ two elements.
 @end group
 @group
 (--tree-reduce-from (-concat acc (list it)) nil '(1 (2 3 (4 5)) (6 7)))
-    @result{} '((7 6) ((5 4) 3 2) 1)
+    @result{} ((7 6) ((5 4) 3 2) 1)
 @end group
 @end example
 @end defun
@@ -3397,7 +3397,7 @@ but is twice as fast as it only traverse the structure once.
 @example
 @group
 (-tree-mapreduce 'list 'append '(1 (2 (3 4) (5 6)) (7 (8 9))))
-    @result{} '(1 2 3 4 5 6 7 8 9)
+    @result{} (1 2 3 4 5 6 7 8 9)
 @end group
 @group
 (--tree-mapreduce 1 (+ it acc) '(1 (2 (4 9) (2 1)) (7 (4 3))))
@@ -3429,7 +3429,7 @@ but is twice as fast as it only traverse the structure once.
 @end group
 @group
 (--tree-mapreduce-from (+ it it) (cons it acc) nil '(1 (2 (4 9) (2 1)) (7 (4 3))))
-    @result{} '(2 (4 (8 18) (4 2)) (14 (8 6)))
+    @result{} (2 (4 (8 18) (4 2)) (14 (8 6)))
 @end group
 @group
 (concat "@{" (--tree-mapreduce-from (cond ((-cons-pair? it) (concat (symbol-name (car it)) " -> " (symbol-name (cdr it)))) (t (concat (symbol-name it) " : @{"))) (concat it (unless (or (equal acc "@}") (equal (substring it (1- (length it))) "@{")) ", ") acc) "@}" '((elisp-mode (foo (bar . booze)) (baz . qux)) (c-mode (foo . bla) (bum . bam)))))
@@ -3448,7 +3448,7 @@ structure such as plist or alist.
 @example
 @group
 (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b)
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @end example
 @end defun
@@ -3466,15 +3466,15 @@ second item in second form, etc.
 @example
 @group
 (-> '(2 3 5))
-    @result{} '(2 3 5)
+    @result{} (2 3 5)
 @end group
 @group
 (-> '(2 3 5) (append '(8 13)))
-    @result{} '(2 3 5 8 13)
+    @result{} (2 3 5 8 13)
 @end group
 @group
 (-> '(2 3 5) (append '(8 13)) (-slice 1 -1))
-    @result{} '(3 5 8)
+    @result{} (3 5 8)
 @end group
 @end example
 @end defmac
@@ -3489,11 +3489,11 @@ last item in second form, etc.
 @example
 @group
 (->> '(1 2 3) (-map 'square))
-    @result{} '(1 4 9)
+    @result{} (1 4 9)
 @end group
 @group
 (->> '(1 2 3) (-map 'square) (-remove 'even?))
-    @result{} '(1 9)
+    @result{} (1 9)
 @end group
 @group
 (->> '(1 2 3) (-map 'square) (-reduce '+))
@@ -3536,7 +3536,7 @@ In the first form, bind @var{variable} to @var{value}.  In the second form, bind
 @example
 @group
 (-as-> 3 my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) my-var))
-    @result{} '(8)
+    @result{} (8)
 @end group
 @group
 (-as-> 3 my-var 1+)
@@ -3557,7 +3557,7 @@ and when that result is non-nil, through the next form, etc.
 @example
 @group
 (-some-> '(2 3 5))
-    @result{} '(2 3 5)
+    @result{} (2 3 5)
 @end group
 @group
 (-some-> 5 square)
@@ -3578,7 +3578,7 @@ and when that result is non-nil, through the next form, etc.
 @example
 @group
 (-some->> '(1 2 3) (-map 'square))
-    @result{} '(1 4 9)
+    @result{} (1 4 9)
 @end group
 @group
 (-some->> '(1 3 5) (-last 'even?) (+ 100))
@@ -3609,7 +3609,7 @@ through the next form, etc.
 @end group
 @group
 (-some--> '(0 1) (-remove #'natnump it) (append it it) (-map #'1+ it))
-    @result{} '()
+    @result{} ()
 @end group
 @end example
 @end defmac
@@ -3624,15 +3624,15 @@ which @var{forms} may have modified by side effect.
 @example
 @group
 (-doto (list 1 2 3) pop pop)
-    @result{} '(3)
+    @result{} (3)
 @end group
 @group
 (-doto (cons 1 2) (setcar 3) (setcdr 4))
-    @result{} '(3 . 4)
+    @result{} (3 . 4)
 @end group
 @group
 (gethash 'k (--doto (make-hash-table) (puthash 'k 'v it)))
-    @result{} 'v
+    @result{} v
 @end group
 @end example
 @end defmac
@@ -3897,15 +3897,15 @@ because we need to support improper list binding.
 @example
 @group
 (-let (([a (b c) d] [1 (2 3) 4])) (list a b c d))
-    @result{} '(1 2 3 4)
+    @result{} (1 2 3 4)
 @end group
 @group
 (-let [(a b c . d) (list 1 2 3 4 5 6)] (list a b c d))
-    @result{} '(1 2 3 (4 5 6))
+    @result{} (1 2 3 (4 5 6))
 @end group
 @group
 (-let [(&plist :foo foo :bar bar) (list :baz 3 :foo 1 :qux 4 :bar 2)] (list foo bar))
-    @result{} '(1 2)
+    @result{} (1 2)
 @end group
 @end example
 @end defmac
@@ -3927,15 +3927,15 @@ See @code{-let} (@pxref{-let}) for the list of all possible patterns.
 @example
 @group
 (-let* (((a . b) (cons 1 2)) ((c . d) (cons 3 4))) (list a b c d))
-    @result{} '(1 2 3 4)
+    @result{} (1 2 3 4)
 @end group
 @group
 (-let* (((a . b) (cons 1 (cons 2 3))) ((c . d) b)) (list a b c d))
-    @result{} '(1 (2 . 3) 2 3)
+    @result{} (1 (2 . 3) 2 3)
 @end group
 @group
 (-let* (((&alist "foo" foo "bar" bar) (list (cons "foo" 1) (cons "bar" (list 'a 'b 'c)))) ((a b c) bar)) (list foo a b c bar))
-    @result{} '(1 a b c (a b c))
+    @result{} (1 a b c (a b c))
 @end group
 @end example
 @end defmac
@@ -3959,15 +3959,15 @@ See @code{-let} (@pxref{-let}) for a description of the destructuring mechanism.
 @example
 @group
 (-map (-lambda ((x y)) (+ x y)) '((1 2) (3 4) (5 6)))
-    @result{} '(3 7 11)
+    @result{} (3 7 11)
 @end group
 @group
 (-map (-lambda ([x y]) (+ x y)) '([1 2] [3 4] [5 6]))
-    @result{} '(3 7 11)
+    @result{} (3 7 11)
 @end group
 @group
 (funcall (-lambda ((_ . a) (_ . b)) (-concat a b)) '(1 2 3) '(4 5 6))
-    @result{} '(2 3 5 6)
+    @result{} (2 3 5 6)
 @end group
 @end example
 @end defmac
@@ -4000,7 +4000,7 @@ multiple assignments it does not cause unexpected side effects.
 @end group
 @group
 (let (a b) (-setq (a b) (list 1 2)) (list a b))
-    @result{} '(1 2)
+    @result{} (1 2)
 @end group
 @group
 (let (c) (-setq (&plist :c c) (list :c "c")) c)
@@ -4027,11 +4027,11 @@ For access to the current element's index in @var{list}, see
 @example
 @group
 (let (l) (-each '(1 2 3) (lambda (x) (push x l))) l)
-    @result{} '(3 2 1)
+    @result{} (3 2 1)
 @end group
 @group
 (let (l) (--each '(1 2 3) (push it l)) l)
-    @result{} '(3 2 1)
+    @result{} (3 2 1)
 @end group
 @group
 (-each '(1 2 3) #'identity)
@@ -4052,11 +4052,11 @@ Its anaphoric counterpart is @code{--each-while}.
 @example
 @group
 (let (l) (-each-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l)
-    @result{} '(4 2)
+    @result{} (4 2)
 @end group
 @group
 (let (l) (--each-while '(1 2 3 4) (< it 3) (push it l)) l)
-    @result{} '(2 1)
+    @result{} (2 1)
 @end group
 @group
 (let ((s 0)) (--each-while '(1 3 4 5) (< it 5) (setq s (+ s it))) s)
@@ -4076,15 +4076,15 @@ See also: @code{-map-indexed} (@pxref{-map-indexed}).
 @example
 @group
 (let (l) (-each-indexed '(a b c) (lambda (i x) (push (list x i) l))) l)
-    @result{} '((c 2) (b 1) (a 0))
+    @result{} ((c 2) (b 1) (a 0))
 @end group
 @group
 (let (l) (--each-indexed '(a b c) (push (list it it-index) l)) l)
-    @result{} '((c 2) (b 1) (a 0))
+    @result{} ((c 2) (b 1) (a 0))
 @end group
 @group
-(let (l) (--each-indexed '() (push it l)) l)
-    @result{} '()
+(let (l) (--each-indexed () (push it l)) l)
+    @result{} ()
 @end group
 @end example
 @end defun
@@ -4099,11 +4099,11 @@ Its anaphoric counterpart is @code{--each-r}.
 @example
 @group
 (let (l) (-each-r '(1 2 3) (lambda (x) (push x l))) l)
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @group
 (let (l) (--each-r '(1 2 3) (push it l)) l)
-    @result{} '(1 2 3)
+    @result{} (1 2 3)
 @end group
 @group
 (-each-r '(1 2 3) #'identity)
@@ -4124,11 +4124,11 @@ Its anaphoric counterpart is @code{--each-r-while}.
 @example
 @group
 (let (l) (-each-r-while '(2 4 5 6) #'even? (lambda (x) (push x l))) l)
-    @result{} '(6)
+    @result{} (6)
 @end group
 @group
 (let (l) (--each-r-while '(1 2 3 4) (>= it 3) (push it l)) l)
-    @result{} '(3 4)
+    @result{} (3 4)
 @end group
 @group
 (let ((s 0)) (--each-r-while '(1 2 3 5) (> it 1) (setq s (+ s it))) s)
@@ -4149,15 +4149,15 @@ This function's anaphoric counterpart is @code{--dotimes}.
 @example
 @group
 (let (s) (-dotimes 3 (lambda (n) (push n s))) s)
-    @result{} '(2 1 0)
+    @result{} (2 1 0)
 @end group
 @group
 (let (s) (-dotimes 0 (lambda (n) (push n s))) s)
-    @result{} '()
+    @result{} ()
 @end group
 @group
 (let (s) (--dotimes 5 (push it s)) s)
-    @result{} '(4 3 2 1 0)
+    @result{} (4 3 2 1 0)
 @end group
 @end example
 @end defun
@@ -4172,11 +4172,11 @@ Destructive: Set @var{cdr} to the cons of @var{car} and @var{cdr}.
 @example
 @group
 (let (l) (!cons 5 l) l)
-    @result{} '(5)
+    @result{} (5)
 @end group
 @group
 (let ((l '(3))) (!cons 5 l) l)
-    @result{} '(5 3)
+    @result{} (5 3)
 @end group
 @end example
 @end defmac
@@ -4188,11 +4188,11 @@ Destructive: Set @var{list} to the cdr of @var{list}.
 @example
 @group
 (let ((l '(3))) (!cdr l) l)
-    @result{} '()
+    @result{} ()
 @end group
 @group
 (let ((l '(3 5))) (!cdr l) l)
-    @result{} '(5)
+    @result{} (5)
 @end group
 @end example
 @end defmac
@@ -4250,11 +4250,11 @@ applying each fn to the args (left-to-right).
 @example
 @group
 (funcall (-juxt '+ '-) 3 5)
-    @result{} '(8 -2)
+    @result{} (8 -2)
 @end group
 @group
 (-map (-juxt 'identity 'square) '(1 2 3))
-    @result{} '((1 1) (2 4) (3 9))
+    @result{} ((1 1) (2 4) (3 9))
 @end group
 @end example
 @end defun
@@ -4291,11 +4291,11 @@ expects a list with n items as arguments
 @example
 @group
 (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5)))
-    @result{} '(3 6 15)
+    @result{} (3 6 15)
 @end group
 @group
 (-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5)))
-    @result{} '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
+    @result{} ((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
 @end group
 @group
 (funcall (-applify '<) '(3 6))
@@ -4315,11 +4315,11 @@ In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
 @example
 @group
 (-sort (-on '< 'length) '((1 2 3) (1) (1 2)))
-    @result{} '((1) (1 2) (1 2 3))
+    @result{} ((1) (1 2) (1 2 3))
 @end group
 @group
 (-min-by (-on '> 'length) '((1 2 3) (4) (1 2)))
-    @result{} '(4)
+    @result{} (4)
 @end group
 @group
 (-min-by (-on 'string-lessp 'number-to-string) '(2 100 22))
@@ -4345,7 +4345,7 @@ In types: (a -> b -> c) -> b -> a -> c
 @end group
 @group
 (-sort (-flip '<) '(4 3 6 1))
-    @result{} '(6 4 3 1)
+    @result{} (6 4 3 1)
 @end group
 @end example
 @end defun
@@ -4363,7 +4363,7 @@ In types: a -> b -> a
 @end group
 @group
 (-map (-const 1) '("a" "b" "c" "d"))
-    @result{} '(1 1 1 1)
+    @result{} (1 1 1 1)
 @end group
 @group
 (-sum (-map (-const 1) '("a" "b" "c" "d")))
@@ -4382,15 +4382,15 @@ See @var{srfi-26} for detailed description.
 @example
 @group
 (funcall (-cut list 1 <> 3 <> 5) 2 4)
-    @result{} '(1 2 3 4 5)
+    @result{} (1 2 3 4 5)
 @end group
 @group
 (-map (-cut funcall <> 5) `(1+ 1- ,(lambda (x) (/ 1.0 x))))
-    @result{} '(6 4 0.2)
+    @result{} (6 4 0.2)
 @end group
 @group
 (-map (-cut <> 1 2 3) '(list vector string))
-    @result{} '((1 2 3) [1 2 3] "\1\2\3")
+    @result{} ((1 2 3) [1 2 3] "\1\2\3")
 @end group
 @end example
 @end defmac
@@ -4408,7 +4408,7 @@ non-nil.
 @end group
 @group
 (-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8))
-    @result{} '(1 2 3 4)
+    @result{} (1 2 3 4)
 @end group
 @end example
 @end defun
@@ -4424,7 +4424,7 @@ In types: [a -> Bool] -> a -> Bool
 @example
 @group
 (-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10))
-    @result{} '(1 2 3 4 6 8 10)
+    @result{} (1 2 3 4 6 8 10)
 @end group
 @group
 (funcall (-orfn 'stringp 'even?) "foo")
@@ -4452,7 +4452,7 @@ In types: [a -> Bool] -> a -> Bool
 @end group
 @group
 (-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10))
-    @result{} '(1 3 5)
+    @result{} (1 3 5)
 @end group
 @end example
 @end defun
@@ -4483,7 +4483,7 @@ This function satisfies the following law:
 @end group
 @group
 (funcall (-iteratefn 'cdr 3) '(1 2 3 4 5))
-    @result{} '(4 5)
+    @result{} (4 5)
 @end group
 @end example
 @end defun
@@ -4527,7 +4527,7 @@ In types: (a -> a) -> a -> a.
 @end group
 @group
 (funcall (-fixfn 'sin 'approx-equal) 0.1)
-    @result{} '(halted . t)
+    @result{} (halted . t)
 @end group
 @end example
 @end defun
@@ -4550,11 +4550,11 @@ This function satisfies the following laws:
 @example
 @group
 (funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3))
-    @result{} '(2 1 "3")
+    @result{} (2 1 "3")
 @end group
 @group
 (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8)))
-    @result{} '((2 1) (4 3) (6 5) (8 7))
+    @result{} ((2 1) (4 3) (6 5) (8 7))
 @end group
 @group
 (apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15")))

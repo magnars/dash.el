@@ -37,7 +37,7 @@
     (while (re-search-forward (rx (| (group ?\' symbol-start "nil" symbol-end)
                                      (group "\\?") (group "\\00") (in "{}")))
                               nil 'move)
-      (replace-match (cond ((match-beginning 1) "'()")  ; 'nil -> '().
+      (replace-match (cond ((match-beginning 1) "()")   ; 'nil -> ().
                            ((match-beginning 2) "?")    ; `-any\?' -> `-any?'.
                            ((match-beginning 3) "\\\\") ; \00N -> \N.
                            ("@\\&"))                    ; { -> @{.
@@ -46,8 +46,13 @@
 (defun example-to-string (example)
   (pcase-let* ((`(,actual ,err ,expected) example)
                (err (eq err '!!>)))
-    (when err
-      (setq expected (error-message-string (-list expected))))
+    (cond (err
+           ;; Print actual error message.
+           (setq expected (error-message-string (-list expected))))
+          ((and (eq (car-safe expected) 'quote)
+                (not (equal expected ''())))
+           ;; Unquote expected result.
+           (setq expected (cadr expected))))
     (with-output-to-string
       (with-current-buffer standard-output
         (insert "@group\n")

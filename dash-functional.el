@@ -87,8 +87,10 @@ Arguments denoted by <> will be left unspecialized.
 
 See SRFI-26 for detailed description."
   (let* ((i 0)
-         (args (mapcar (lambda (_) (setq i (1+ i)) (make-symbol (format "D%d" i)))
-                       (-filter (-partial 'eq '<>) params))))
+         (args (--keep (when (eq it '<>)
+                         (setq i (1+ i))
+                         (make-symbol (format "D%d" i)))
+                       params)))
     `(lambda ,args
        ,(let ((body (--map (if (eq it '<>) (pop args) it) params)))
           (if (eq (car params) '<>)

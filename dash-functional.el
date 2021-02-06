@@ -4,8 +4,8 @@
 
 ;; Author: Matus Goljer <matus.goljer@gmail.com>
 ;;         Magnar Sveen <magnars@gmail.com>
-;; Version: 1.2.0
-;; Package-Requires: ((emacs "24") (dash "2.0.0"))
+;; Version: 1.3.0
+;; Package-Requires: ((dash "2.18.0"))
 ;; Keywords: extensions, lisp
 ;; Homepage: https://github.com/magnars/dash.el
 

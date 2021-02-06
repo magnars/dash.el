@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2013-2021 Free Software Foundation, Inc.
 
-;; Authors: Matus Goljer <matus.goljer@gmail.com>
-;;          Magnar Sveen <magnars@gmail.com>
+;; Author: Matus Goljer <matus.goljer@gmail.com>
+;;         Magnar Sveen <magnars@gmail.com>
 ;; Version: 1.2.0
 ;; Package-Requires: ((emacs "24") (dash "2.0.0"))
 ;; Keywords: extensions, lisp

@@ -119,7 +119,6 @@ The normal version can of course also be written as follows:
 
 This demonstrates the utility of both versions.
 
-
 ### Maps
 
 Functions in this category take a transforming function, which
@@ -212,6 +211,8 @@ value rather than consuming a list to produce a single value.
 
 ### Predicates
 
+Reductions of one or more lists to a boolean value.
+
 * [`-any?`](#-any-pred-list) `(pred list)`
 * [`-all?`](#-all-pred-list) `(pred list)`
 * [`-none?`](#-none-pred-list) `(pred list)`
@@ -246,7 +247,8 @@ Functions partitioning the input list into a list of lists.
 
 ### Indexing
 
-Return indices of elements based on predicates, sort elements by indices etc.
+Functions retrieving or sorting based on list indices and
+related predicates.
 
 * [`-elem-index`](#-elem-index-elem-list) `(elem list)`
 * [`-elem-indices`](#-elem-indices-elem-list) `(elem list)`
@@ -316,6 +318,9 @@ Functions pretending lists are trees.
 
 ### Threading macros
 
+Macros that conditionally combine sequential forms for brevity
+or readability.
+
 * [`->`](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [`->>`](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [`-->`](#---x-rest-forms) `(x &rest forms)`
@@ -327,7 +332,7 @@ Functions pretending lists are trees.
 
 ### Binding
 
-Convenient versions of `let` and `let*` constructs combined with flow control.
+Macros that combine `let` and `let*` with destructuring and flow control.
 
 * [`-when-let`](#-when-let-var-val-rest-body) `((var val) &rest body)`
 * [`-when-let*`](#-when-let-vars-vals-rest-body) `(vars-vals &rest body)`
@@ -351,12 +356,16 @@ Functions iterating over lists for side effect only.
 
 ### Destructive operations
 
+Macros that modify variables holding lists.
+
 * [`!cons`](#cons-car-cdr) `(car cdr)`
 * [`!cdr`](#cdr-list) `(list)`
 
 ### Function combinators
 
-These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
+Functions that manipulate and compose other functions.  They
+are currently offered in the separate package `dash-functional`
+for historical reasons, and will soon be absorbed by `dash`.
 
 * [`-partial`](#-partial-fn-rest-args) `(fn &rest args)`
 * [`-rpartial`](#-rpartial-fn-rest-args) `(fn &rest args)`
@@ -1257,6 +1266,8 @@ the new seed.
 
 ## Predicates
 
+Reductions of one or more lists to a boolean value.
+
 #### -any? `(pred list)`
 
 Return t if (`pred` x) is non-nil for any x in `list`, else nil.
@@ -1580,7 +1591,8 @@ elements of `list`.  Keys are compared by `equal`.
 
 ## Indexing
 
-Return indices of elements based on predicates, sort elements by indices etc.
+Functions retrieving or sorting based on list indices and
+related predicates.
 
 #### -elem-index `(elem list)`
 
@@ -2264,6 +2276,9 @@ structure such as plist or alist.
 
 ## Threading macros
 
+Macros that conditionally combine sequential forms for brevity
+or readability.
+
 #### -> `(x &optional form &rest more)`
 
 Thread the expr through the forms. Insert `x` as the second item
@@ -2367,7 +2382,7 @@ which `forms` may have modified by side effect.
 
 ## Binding
 
-Convenient versions of `let` and `let*` constructs combined with flow control.
+Macros that combine `let` and `let*` with destructuring and flow control.
 
 #### -when-let `((var val) &rest body)`
 
@@ -2756,6 +2771,8 @@ This function's anaphoric counterpart is `--dotimes`.
 
 ## Destructive operations
 
+Macros that modify variables holding lists.
+
 #### !cons `(car cdr)`
 
 Destructive: Set `cdr` to the cons of `car` and `cdr`.
@@ -2776,7 +2793,9 @@ Destructive: Set `list` to the cdr of `list`.
 
 ## Function combinators
 
-These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
+Functions that manipulate and compose other functions.  They
+are currently offered in the separate package `dash-functional`
+for historical reasons, and will soon be absorbed by `dash`.
 
 #### -partial `(fn &rest args)`
 
@@ -3003,7 +3022,6 @@ This function satisfies the following laws:
 (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) ;; => ((2 1) (4 3) (6 5) (8 7))
 (apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15"))) ;; => 18
 ```
-
 
 ## Contribute
 

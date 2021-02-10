@@ -19,14 +19,15 @@
 
 ;; Only the first three examples per function are shown in the docs,
 ;; so make those good.
+;;
+;; Use the `~>' symbol instead of `=>' to test the expected and actual
+;; values with `approx-equal'.
 
 ;;; Code:
 
 (require 'dash)
 (require 'dash-functional)
-(eval-when-compile
-  (unless (fboundp 'def-example-group)
-    (require 'examples-to-tests "dev/examples-to-tests")))
+(require 'dash-defs "dev/dash-defs")
 
 ;; TODO: `setf' was introduced in Emacs 24.3, so remove this when
 ;; support for earlier versions is dropped.
@@ -43,17 +44,6 @@
   "Sample destructoring which works with plists and hash-tables."
   `(if (hash-table-p ,source) (gethash ,key ,source)
      (plist-get ,source ,key)))
-
-;; Allow approximate comparison of floating-point results, to work
-;; around differences in implementation between systems. Use the `~>'
-;; symbol instead of `=>' to test the expected and actual values with
-;; `approx-equal'
-(defvar dash--epsilon 1e-15)
-(defun approx-equal (u v)
-  (or (= u v)
-      (< (/ (abs (- u v))
-            (max (abs u) (abs v)))
-         dash--epsilon)))
 
 (def-example-group "Maps"
   "Functions in this category take a transforming function, which
@@ -624,7 +614,9 @@ value rather than consuming a list to produce a single value."
     (--unfold (when it (cons it (cdr it))) '(1 2 3 4)) => '((1 2 3 4) (2 3 4) (3 4) (4))
     (--unfold (when it (cons it (butlast it))) '(1 2 3 4)) => '((1 2 3 4) (1 2 3) (1 2) (1))))
 
-(def-example-group "Predicates" nil
+(def-example-group "Predicates"
+  "Reductions of one or more lists to a boolean value."
+
   (defexamples -any?
     (-any? 'even? '(1 2 3)) => t
     (-any? 'even? '(1 3 5)) => nil
@@ -839,7 +831,8 @@ value rather than consuming a list to produce a single value."
     (--group-by (car (split-string it "/")) '("a/b" "c/d" "a/e")) => '(("a" . ("a/b" "a/e")) ("c" . ("c/d")))))
 
 (def-example-group "Indexing"
-  "Return indices of elements based on predicates, sort elements by indices etc."
+  "Functions retrieving or sorting based on list indices and
+related predicates."
 
   (defexamples -elem-index
     (-elem-index 2 '(6 7 8 2 3 4)) => 3
@@ -1221,7 +1214,10 @@ value rather than consuming a list to produce a single value."
   (defexamples -clone
     (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) => '(1 2 3)))
 
-(def-example-group "Threading macros" nil
+(def-example-group "Threading macros"
+  "Macros that conditionally combine sequential forms for brevity
+or readability."
+
   (defexamples ->
     (-> '(2 3 5)) => '(2 3 5)
     (-> '(2 3 5) (append '(8 13))) => '(2 3 5 8 13)
@@ -1298,7 +1294,7 @@ value rather than consuming a list to produce a single value."
     (-doto (cons 1 2)) => '(1 . 2)))
 
 (def-example-group "Binding"
-  "Convenient versions of `let` and `let*` constructs combined with flow control."
+  "Macros that combine `let' and `let*' with destructuring and flow control."
 
   (defexamples -when-let
     (-when-let (match-index (string-match "d" "abcd")) (+ match-index 2)) => 5
@@ -1615,7 +1611,9 @@ value rather than consuming a list to produce a single value."
     (let (s) (--dotimes 3 (push it s) (setq it -1)) s) => '(2 1 0)
     (--dotimes 3 t) => nil))
 
-(def-example-group "Destructive operations" nil
+(def-example-group "Destructive operations"
+  "Macros that modify variables holding lists."
+
   (defexamples !cons
     (let (l) (!cons 5 l) l) => '(5)
     (let ((l '(3))) (!cons 5 l) l) => '(5 3))
@@ -1625,8 +1623,9 @@ value rather than consuming a list to produce a single value."
     (let ((l '(3 5))) (!cdr l) l) => '(5)))
 
 (def-example-group "Function combinators"
-  "These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`."
-
+  "Functions that manipulate and compose other functions.  They
+are currently offered in the separate package `dash-functional'
+for historical reasons, and will soon be absorbed by `dash'."
   (defexamples -partial
     (funcall (-partial '- 5) 3) => 2
     (funcall (-partial '+ 5 2) 3) => 10)

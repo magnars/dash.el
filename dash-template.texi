@@ -206,8 +206,8 @@ example, which demonstrates the utility of both versions.
 @menu
 @c [[ function-list ]]
 @end menu
-@c [[ function-docs ]]
 
+@c [[ function-docs ]]
 @node Development
 @chapter Development
 

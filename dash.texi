@@ -1721,6 +1721,8 @@ the new seed.
 @node Predicates
 @section Predicates
 
+Reductions of one or more lists to a boolean value.
+
 @anchor{-any?}
 @defun -any? (pred list)
 Return t if (@var{pred} x) is non-nil for any x in @var{list}, else nil.
@@ -2306,7 +2308,8 @@ elements of @var{list}.  Keys are compared by @code{equal}.
 @node Indexing
 @section Indexing
 
-Return indices of elements based on predicates, sort elements by indices etc.
+Functions retrieving or sorting based on list indices and
+related predicates.
 
 @anchor{-elem-index}
 @defun -elem-index (elem list)
@@ -3455,6 +3458,9 @@ structure such as plist or alist.
 @node Threading macros
 @section Threading macros
 
+Macros that conditionally combine sequential forms for brevity
+or readability.
+
 @anchor{->}
 @defmac -> (x &optional form &rest more)
 Thread the expr through the forms. Insert @var{x} as the second item
@@ -3639,7 +3645,7 @@ which @var{forms} may have modified by side effect.
 @node Binding
 @section Binding
 
-Convenient versions of `let` and `let*` constructs combined with flow control.
+Macros that combine @code{let} and @code{let*} with destructuring and flow control.
 
 @anchor{-when-let}
 @defmac -when-let ((var val) &rest body)
@@ -4164,6 +4170,8 @@ This function's anaphoric counterpart is @code{--dotimes}.
 @node Destructive operations
 @section Destructive operations
 
+Macros that modify variables holding lists.
+
 @anchor{!cons}
 @defmac !cons (car cdr)
 Destructive: Set @var{cdr} to the cons of @var{car} and @var{cdr}.
@@ -4199,7 +4207,9 @@ Destructive: Set @var{list} to the cdr of @var{list}.
 @node Function combinators
 @section Function combinators
 
-These combinators require Emacs 24 for its lexical scope. So they are offered in a separate package: `dash-functional`.
+Functions that manipulate and compose other functions.  They
+are currently offered in the separate package @code{dash-functional}
+for historical reasons, and will soon be absorbed by @code{dash}.
 
 @anchor{-partial}
 @defun -partial (fn &rest args)

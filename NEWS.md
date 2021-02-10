@@ -6,6 +6,54 @@ See the end of the file for license conditions.
 
 ## Change log
 
+### From 2.17 to 2.18
+
+- New function `-iota` for generating arithmetic sequences
+  (@holomorph, #215).
+
+- Calling `-list` with more than one argument is now deprecated.
+
+- `-lambda` now accepts an empty argument list.
+
+- New anaphoric macros `--reductions-from`, `--reductions`,
+  `--reductions-r-from`, and `--reductions-r` corresponding to the
+  analogous non-anaphoric functions.
+
+- `-doto` threading now works as with `->`.
+
+- New buffer-local minor mode `dash-fontify-mode` and globalized
+  counterpart `global-dash-fontify-mode` for fontifying special Dash
+  variables such as `it`, `it-index`, `acc`, etc.  The minor mode also
+  fontifies calls to Dash macros in older Emacs versions which did not
+  dynamically detect macro calls.
+
+  This obsoletes the user option `dash-enable-fontlock` and the
+  function `dash-enable-font-lock`, which is now an alias of
+  `global-dash-fontify-mode`.
+
+- New command `dash-register-info-lookup` for integration with `C-h S`
+  (`info-lookup-symbol`).  This command allows Dash symbols to be
+  looked up in the Dash manual just like Elisp symbols are looked up
+  in the Elisp manual.  The command can be called directly when
+  needed, or automatically from your `user-init-file`.  For example:
+
+  ```el
+  (with-eval-after-load 'info-look
+    (dash-register-info-lookup))
+  ```
+
+- Dash is now listed under the standard [Customization
+  groups](https://gnu.org/software/emacs/manual/html_node/emacs/Customization-Groups.html)
+  and [Finder
+  keywords](https://gnu.org/software/emacs/manual/html_node/emacs/Package-Keywords.html)
+  `extensions` and `lisp`.
+
+- The Dash manual is now licensed under the GNU Free Documentation
+  License version 1.3.
+
+- Various other bug fix, performance, byte-compilation, and
+  documentation improvements.
+
 ### From 2.16 to 2.17
 
 - Sped up `-uniq` by using hash-tables when possible (@cireu, #305).

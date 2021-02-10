@@ -2997,9 +2997,9 @@ cdr the final output from `halt-test`.
 In types: (a -> a) -> a -> a.
 
 ```el
-(funcall (-fixfn 'cos 'approx-equal) 0.7) ;; ~> 0.7390851332151607
+(funcall (-fixfn #'cos #'approx=) 0.7) ;; ~> 0.7390851332151607
 (funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0) ;; => 1.8555845286409378
-(funcall (-fixfn 'sin 'approx-equal) 0.1) ;; => (halted . t)
+(funcall (-fixfn #'sin #'approx=) 0.1) ;; => (halted . t)
 ```
 
 #### -prodfn `(&rest fns)`

@@ -21,7 +21,7 @@
 ;; so make those good.
 ;;
 ;; Use the `~>' symbol instead of `=>' to test the expected and actual
-;; values with `approx-equal'.
+;; values with `approx='.
 
 ;;; Code:
 
@@ -1710,12 +1710,14 @@ for historical reasons, and will soon be absorbed by `dash'."
                     (-last-item (-iterate fn init (1+ 5)))))) => t)
 
     (defexamples -fixfn
-      ;; Find solution to cos(x) = x (may not converge without fuzzy comparison)
-      (funcall (-fixfn 'cos 'approx-equal) 0.7) ~> 0.7390851332151607
-      ;; Find solution to x^4 - x - 10 = 0 (converges using 'equal comparison)
-      (funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0) => 1.8555845286409378
-      ;; The sin function has a fixpoint at zero, but it converges too slowly and is halted
-      (funcall (-fixfn 'sin 'approx-equal) 0.1) => '(halted . t))
+      ;; Solve cos(x) = x (may not converge without fuzzy comparison).
+      (funcall (-fixfn #'cos #'approx=) 0.7) ~> 0.7390851332151607
+      ;; Solve x^4 - x - 10 = 0 (converges using `equal' comparison).
+      (funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0)
+      => 1.8555845286409378
+      ;; The sin function has a fixpoint at zero, but it converges too
+      ;; slowly and is halted.
+      (funcall (-fixfn #'sin #'approx=) 0.1) => '(halted . t))
 
     (defexamples -prodfn
       (funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3)) => '(2 1 "3")

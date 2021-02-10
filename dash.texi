@@ -4527,7 +4527,7 @@ In types: (a -> a) -> a -> a.
 
 @example
 @group
-(funcall (-fixfn 'cos 'approx-equal) 0.7)
+(funcall (-fixfn #'cos #'approx=) 0.7)
     @result{} 0.7390851332151607
 @end group
 @group
@@ -4535,7 +4535,7 @@ In types: (a -> a) -> a -> a.
     @result{} 1.8555845286409378
 @end group
 @group
-(funcall (-fixfn 'sin 'approx-equal) 0.1)
+(funcall (-fixfn #'sin #'approx=) 0.1)
     @result{} (halted . t)
 @end group
 @end example

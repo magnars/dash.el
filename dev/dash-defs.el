@@ -35,14 +35,14 @@ EXPECTED should be the result of evaluating ACTUAL, and OP is one
 of the following comparison operators:
 
 -  `=>' ACTUAL should be `equal' to EXPECTED.
--  `~>' ACTUAL should be `approx-equal' to EXPECTED.
+-  `~>' ACTUAL should be `approx=' to EXPECTED.
 - `!!>' ACTUAL should signal the EXPECTED error,
         either an error symbol or an error object.")
 
 (defvar dash--epsilon 1e-15
-  "Epsilon used in `approx-equal'.")
+  "Epsilon used in `approx='.")
 
-(defun approx-equal (u v)
+(defun approx= (u v)
   "Like `=', but compares floats within `dash--epsilon'.
 This allows approximate comparison of floats to work around
 differences in implementation between systems.  Used in place of
@@ -56,7 +56,7 @@ differences in implementation between systems.  Used in place of
   "Return an ERT assertion form based on EXAMPLE."
   (pcase example
     (`(,actual => ,expected) `(should (equal ,actual ,expected)))
-    (`(,actual ~> ,expected) `(should (approx-equal ,actual ,expected)))
+    (`(,actual ~> ,expected) `(should (approx= ,actual ,expected)))
     (`(,actual !!> ,(and (pred symbolp) expected))
      ;; FIXME: Tests fail on Emacs 24-25 without `eval' for some reason.
      `(should-error (eval ',actual ,lexical-binding) :type ',expected))

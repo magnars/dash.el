@@ -8,6 +8,15 @@ See the end of the file for license conditions.
 
 ### From 2.17 to 2.18
 
+This release absorbs the now obsolete `dash-functional` version
+`1.3.0` into `dash`, and brings the very old version of `dash` on GNU
+ELPA up to date.
+
+Package maintainers should replace all uses of `dash-functional`,
+which will eventually be deleted, with `dash` version `2.18.0`.  For
+more information on this, see:
+https://github.com/magnars/dash.el/wiki/Obsoletion-of-dash-functional.el
+
 - New function `-iota` for generating arithmetic sequences
   (@holomorph, #215).
 

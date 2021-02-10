@@ -26,7 +26,6 @@
 ;;; Code:
 
 (require 'dash)
-(require 'dash-functional)
 (require 'dash-defs "dev/dash-defs")
 
 ;; TODO: `setf' was introduced in Emacs 24.3, so remove this when
@@ -1623,9 +1622,7 @@ or readability."
     (let ((l '(3 5))) (!cdr l) l) => '(5)))
 
 (def-example-group "Function combinators"
-  "Functions that manipulate and compose other functions.  They
-are currently offered in the separate package `dash-functional'
-for historical reasons, and will soon be absorbed by `dash'."
+  "Functions that manipulate and compose other functions."
 
   (defexamples -partial
     (funcall (-partial '- 5) 3) => 2

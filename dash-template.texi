@@ -2,7 +2,6 @@
 @c %**start of header
 @setfilename dash.info
 @set DASHVER @c [[ dash-version ]]
-@set DASHFNVER @c [[ dash-functional-version ]]
 @settitle Dash: A modern list library for GNU Emacs.
 @documentencoding UTF-8
 @documentlanguage en
@@ -88,13 +87,11 @@ Installation,,, emacs, The GNU Emacs Manual}).
 @table @kbd
 @item M-x package-install @key{RET} dash @key{RET}
 Install the Dash library.
-
-@item M-x package-install @key{RET} dash-functional @key{RET}
-Install an optional library of additional function combinators.
 @end table
 
-Alternatively, you can just dump @file{dash.el} or
-@file{dash-functional.el} in your load path somewhere.
+Alternatively, you can just dump @file{dash.el} in your
+@code{load-path} somewhere (@pxref{Lisp Libraries,,, emacs, The GNU
+Emacs Manual}).
 
 @menu
 * Using in a package::  Listing Dash as a package dependency.
@@ -111,13 +108,6 @@ Headers,,, elisp, The Emacs Lisp Reference Manual}).
 
 @lisp
 ;; Package-Requires: ((dash "@value{DASHVER}"))
-@end lisp
-
-The same goes for the @file{dash-functional.el} library of function
-combinators:
-
-@lisp
-;; Package-Requires: ((dash "@value{DASHVER}") (dash-functional "@value{DASHFNVER}"))
 @end lisp
 
 @node Fontification of special variables

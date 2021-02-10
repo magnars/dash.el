@@ -306,9 +306,7 @@ ERR non-nil means OBJ is either an error symbol or error object."
   "Generate Markdown README."
   (with-temp-file "README.md"
     (insert-file-contents "readme-template.md")
-    (dolist (pkg '(dash dash-functional))
-      (dash--replace-all (format "[[ %s-version ]]" pkg)
-                         (lm-version (format "%s.el" pkg))))
+    (dash--replace-all "[[ dash-version ]]" (lm-version "dash.el"))
     (dash--replace-all "[[ function-list ]]"
                        (mapconcat #'dash--summary-to-md dash--groups "\n"))
     (dash--replace-all "[[ function-docs ]]"
@@ -318,9 +316,7 @@ ERR non-nil means OBJ is either an error symbol or error object."
   "Generate Texinfo manual."
   (with-temp-file "dash.texi"
     (insert-file-contents "dash-template.texi")
-    (dolist (pkg '(dash dash-functional))
-      (dash--replace-all (format "@c [[ %s-version ]]" pkg)
-                         (lm-version (format "%s.el" pkg))))
+    (dash--replace-all "@c [[ dash-version ]]" (lm-version "dash.el"))
     (dash--replace-all
      "@c [[ function-list ]]"
      (mapconcat (lambda (group) (concat "* " (car group) "::"))

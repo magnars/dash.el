@@ -19,7 +19,7 @@
 
 EMACS ?= emacs
 BATCH := $(EMACS) -Q -batch -L .
-ELS := dash.el dash-functional.el dev/dash-defs.el
+ELS := dash.el dev/dash-defs.el
 ELCS := $(addsuffix c,$(ELS))
 DOCS := README.md dash.texi
 TMPLS := readme-template.md dash-template.texi $(wildcard doc/*.texi)
@@ -67,8 +67,6 @@ maintainer-clean: clean
 %.elc: WERROR := '(setq byte-compile-error-on-warn t)'
 %.elc: %.el
 	$(BATCH) -eval $(WERROR) -f batch-byte-compile $<
-
-dash-functional.elc dev/dash-defs.elc: dash.elc
 
 $(DOCS) &: dev/examples.el $(ELCS) $(TMPLS)
 	$(BATCH) -l $< -f dash-make-docs

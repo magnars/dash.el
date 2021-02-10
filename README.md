@@ -37,27 +37,27 @@ See the [`NEWS.md`](NEWS.md) file.
 
 ## Installation
 
-It's available on [GNU ELPA](https://elpa.gnu.org/) and
-[MELPA](https://melpa.org/):
+Dash is available on [GNU ELPA](https://elpa.gnu.org/) and
+[MELPA](https://melpa.org/), and can be installed with the standard
+command `package-install`:
 
-    M-x package-install dash
+    M-x package-install RET dash RET
 
-Or you can just dump `dash.el` in your `load-path` somewhere.
+See [`(info "(emacs) Package
+Installation")`](https://gnu.org/software/emacs/manual/html_node/emacs/Package-Installation.html).
 
-If you want the function combinators, then also:
-
-    M-x package-install dash-functional
+Alternatively, you can just dump `dash.el` in your `load-path`
+somewhere.  See [`(info "(emacs) Lisp
+Libraries")`](https://gnu.org/software/emacs/manual/html_node/emacs/Lisp-Libraries.html).
 
 ### Using in a package
 
-Add something like this to the [library's
-headers](https://gnu.org/software/emacs/manual/html_node/elisp/Library-Headers.html):
+Add something like this to the library's headers:
 
     ;; Package-Requires: ((dash "2.17.0"))
 
-To get function combinators:
-
-    ;; Package-Requires: ((dash "2.17.0") (dash-functional "1.2.0"))
+See [`(info "(elisp) Library
+Headers")`](https://gnu.org/software/emacs/manual/html_node/elisp/Library-Headers.html).
 
 ### Fontification of special variables
 
@@ -363,9 +363,7 @@ Macros that modify variables holding lists.
 
 ### Function combinators
 
-Functions that manipulate and compose other functions.  They
-are currently offered in the separate package `dash-functional`
-for historical reasons, and will soon be absorbed by `dash`.
+Functions that manipulate and compose other functions.
 
 * [`-partial`](#-partial-fn-rest-args) `(fn &rest args)`
 * [`-rpartial`](#-rpartial-fn-rest-args) `(fn &rest args)`
@@ -2793,9 +2791,7 @@ Destructive: Set `list` to the cdr of `list`.
 
 ## Function combinators
 
-Functions that manipulate and compose other functions.  They
-are currently offered in the separate package `dash-functional`
-for historical reasons, and will soon be absorbed by `dash`.
+Functions that manipulate and compose other functions.
 
 #### -partial `(fn &rest args)`
 

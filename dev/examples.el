@@ -1626,6 +1626,7 @@ or readability."
   "Functions that manipulate and compose other functions.  They
 are currently offered in the separate package `dash-functional'
 for historical reasons, and will soon be absorbed by `dash'."
+
   (defexamples -partial
     (funcall (-partial '- 5) 3) => 2
     (funcall (-partial '+ 5 2) 3) => 10)

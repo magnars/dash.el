@@ -285,8 +285,8 @@ variadic version of @code{-zip}.
 @code{-if-let} family use @code{-let} destructuring and improved the
 script for generating documentation.
 @item
-@url{https://github.com/holomorph, Mark Oteiza} contributed the
-script to create an Info manual.
+@url{https://github.com/holomorph, Mark Oteiza} contributed
+@code{-iota} and the script to create an Info manual.
 @item
 @url{https://github.com/wasamasa, Vasilij Schneidermann} contributed
 @code{-some}.
@@ -297,8 +297,9 @@ more robust at handling floats.
 @url{https://github.com/camsaul, Cam Saul} contributed @code{-some->},
 @code{-some->>}, and @code{-some-->}.
 @item
-@url{https://github.com/basil-conto, Basil L. Contovounesios} contributed
-@code{-common-prefix}.
+@url{https://github.com/basil-conto, Basil L. Contovounesios}
+contributed @code{-common-prefix}, @code{-common-suffix}, and various
+other improvements.
 @item
 @url{https://github.com/doublep, Paul Pogonyshev} contributed
 @code{-each-r} and @code{-each-r-while}.

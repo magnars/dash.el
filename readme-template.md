@@ -172,15 +172,15 @@ Assignment")`](https://gnu.org/software/emacs/manual/html_node/emacs/Copyright-A
   `-annotate`, `-zip-fill`, and a variadic version of `-zip`.
 - [Fredrik Bergroth](https://github.com/fbergroth) made the `-if-let` family use
   `-let` destructuring and improved the script for generating documentation.
-- [Mark Oteiza](https://github.com/holomorph) contributed the script to create
-  an Info manual.
+- [Mark Oteiza](https://github.com/holomorph) contributed `-iota` and
+  the script to create an Info manual.
 - [Vasilij Schneidermann](https://github.com/wasamasa) contributed `-some`.
 - [William West](https://github.com/occidens) made `-fixfn` more robust at
   handling floats.
 - [Cam Saul](https://github.com/camsaul) contributed `-some->`, `-some->>`, and
   `-some-->`.
 - [Basil L. Contovounesios](https://github.com/basil-conto) contributed
-  `-common-prefix`.
+  `-common-prefix`, `-common-suffix`, and various other improvements.
 - [Paul Pogonyshev](https://github.com/doublep) contributed `-each-r` and
   `-each-r-while`.
 

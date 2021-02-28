@@ -37,9 +37,9 @@ See the [`NEWS.md`](NEWS.md) file.
 
 ## Installation
 
-Dash is available on [GNU ELPA](https://elpa.gnu.org/) and
-[MELPA](https://melpa.org/), and can be installed with the standard
-command `package-install`:
+Dash is available on [GNU ELPA](https://elpa.gnu.org/), [GNU-devel
+ELPA](https://elpa.gnu.org/devel/), and [MELPA](https://melpa.org/),
+and can be installed with the standard command `package-install`:
 
     M-x package-install RET dash RET
 

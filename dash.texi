@@ -94,7 +94,8 @@ Development
 @node Installation
 @chapter Installation
 
-Dash is available on @url{https://elpa.gnu.org/, GNU ELPA} and
+Dash is available on @url{https://elpa.gnu.org/, GNU ELPA},
+@url{https://elpa.gnu.org/devel/, GNU-devel ELPA}, and
 @url{https://melpa.org/, MELPA}, and can be installed with the
 standard command @code{package-install} (@pxref{Package
 Installation,,, emacs, The GNU Emacs Manual}).

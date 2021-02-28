@@ -6,6 +6,13 @@ See the end of the file for license conditions.
 
 ## Change log
 
+### From 2.18.0 to 2.18.1
+
+- Fixed a regression from `2.17` as well as a long-standing bug in
+  `--iterate`, which evaluated its arguments one too many times.  This
+  in turn could lead to errors in `-flatten-n` when it tried
+  flattening certain structures too far (#373).
+
 ### From 2.17 to 2.18
 
 This release absorbs the now obsolete `dash-functional` version

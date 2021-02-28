@@ -1,7 +1,7 @@
 \input texinfo    @c -*- texinfo -*-
 @c %**start of header
 @setfilename dash.info
-@set DASHVER 2.18.0
+@set DASHVER 2.18.1
 @settitle Dash: A modern list library for GNU Emacs.
 @documentencoding UTF-8
 @documentlanguage en

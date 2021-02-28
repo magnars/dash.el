@@ -344,7 +344,10 @@ new list."
     (-flatten-n 0 '(3 4)) => '(3 4)
     (-flatten-n 0 '((1 2) (3 4))) => '((1 2) (3 4))
     (-flatten-n 0 '(((1 2) (3 4)))) => '(((1 2) (3 4)))
-    (-flatten-n 1 '(((1 . 2)) ((3 . 4)))) => '((1 . 2) (3 . 4)))
+    (-flatten-n 1 '(((1 . 2)) ((3 . 4)))) => '((1 . 2) (3 . 4))
+    (let ((l (list 1 (list 2) 3))) (-flatten-n 0 l) l) => '(1 (2) 3)
+    (let ((l (list 1 (list 2) 3))) (-flatten-n 1 l) l) => '(1 (2) 3)
+    (let ((l (list 1 (list 2) 3))) (-flatten-n 2 l) l) => '(1 (2) 3))
 
   (defexamples -replace
     (-replace 1 "1" '(1 2 3 4 3 2 1)) => '("1" 2 3 4 3 2 "1")

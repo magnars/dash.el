@@ -727,7 +727,9 @@ See also: `-flatten-n'"
 
 See also: `-flatten'"
   (declare (pure t) (side-effect-free t))
-  (-last-item (--iterate (--mapcat (-list it) it) list (1+ num))))
+  (dotimes (_ num)
+    (setq list (apply #'append (mapcar #'-list list))))
+  list)
 
 (defun -concat (&rest lists)
   "Return a new list with the concatenation of the elements in the supplied LISTS."

@@ -685,12 +685,15 @@ Thus function FN should return a list."
 (defmacro --iterate (form init n)
   "Anaphoric version of `-iterate'."
   (declare (debug (form form form)))
-  (let ((res (make-symbol "result")))
-    `(let ((it ,init) ,res)
-       (dotimes (_ ,n)
-         (push it ,res)
-         (setq it ,form))
-       (nreverse ,res))))
+  (let ((res (make-symbol "result"))
+        (len (make-symbol "n")))
+    `(let ((,len ,n))
+       (when (> ,len 0)
+         (let* ((it ,init)
+                (,res (list it)))
+           (dotimes (_ (1- ,len))
+             (push (setq it ,form) ,res))
+           (nreverse ,res))))))
 
 (defun -iterate (fun init n)
   "Return a list of iterated applications of FUN to INIT.

@@ -343,7 +343,8 @@ new list."
     (-flatten-n 3 '((1 2) ((3 4) ((5 6))))) => '(1 2 3 4 5 6)
     (-flatten-n 0 '(3 4)) => '(3 4)
     (-flatten-n 0 '((1 2) (3 4))) => '((1 2) (3 4))
-    (-flatten-n 0 '(((1 2) (3 4)))) => '(((1 2) (3 4))))
+    (-flatten-n 0 '(((1 2) (3 4)))) => '(((1 2) (3 4)))
+    (-flatten-n 1 '(((1 . 2)) ((3 . 4)))) => '((1 . 2) (3 . 4)))
 
   (defexamples -replace
     (-replace 1 "1" '(1 2 3 4 3 2 1)) => '("1" 2 3 4 3 2 "1")
@@ -606,7 +607,11 @@ value rather than consuming a list to produce a single value."
     (--iterate nil nil 0) => ()
     (--iterate nil nil 1) => '(nil)
     (--iterate nil nil 2) => '(nil nil)
-    (--iterate (setq it -1) 1 3) => '(1 -1 -1))
+    (--iterate (setq it -1) 1 3) => '(1 -1 -1)
+    (let (l) (--iterate (push 1 l) (push 0 l) -1) l) => ()
+    (let (l) (--iterate (push 1 l) (push 0 l) 0) l) => ()
+    (let (l) (--iterate (push 1 l) (push 0 l) 1) l) => '(0)
+    (let (l) (--iterate (push 1 l) (push 0 l) 2) l) => '(1 0))
 
   (defexamples -unfold
     (-unfold (lambda (x) (unless (= x 0) (cons x (1- x)))) 10) => '(10 9 8 7 6 5 4 3 2 1)

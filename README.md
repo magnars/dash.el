@@ -1,6 +1,8 @@
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/magnars/dash.el/CI)
-[![MELPA](https://melpa.org/packages/dash-badge.svg)](https://melpa.org/#/dash)
+[![CI](https://github.com/magnars/dash.el/actions/workflows/test.yml/badge.svg)](https://github.com/magnars/dash.el/actions/workflows/test.yml)
+[![GNU ELPA](https://img.shields.io/badge/gnu_elpa-stable-3e999f)](https://elpa.gnu.org/packages/dash.html)
+[![GNU-devel ELPA](https://img.shields.io/badge/gnu_elpa-devel-922793)](https://elpa.gnu.org/devel/dash.html)
 [![MELPA Stable](https://stable.melpa.org/packages/dash-badge.svg)](https://stable.melpa.org/#/dash)
+[![MELPA](https://melpa.org/packages/dash-badge.svg)](https://melpa.org/#/dash)
 
 # <img align="right" src="rainbow-dash.png"> dash.el
 

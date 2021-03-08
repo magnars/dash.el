@@ -1682,95 +1682,94 @@ or readability."
     (mapcar (-applify (lambda (a b) `(,a (,b)))) '((1 1) (1 2) (5 5)))
     => '((1 (1)) (1 (2)) (5 (5))))
 
-  (unless (version< emacs-version "24")
-    (defexamples -on
-      (-sort (-on '< 'length) '((1 2 3) (1) (1 2))) => '((1) (1 2) (1 2 3))
-      (-min-by (-on '> 'length) '((1 2 3) (4) (1 2))) => '(4)
-      (-min-by (-on 'string-lessp 'number-to-string) '(2 100 22)) => 22
-      (-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) => '(3)
-      (-sort (-on 'string-lessp 'number-to-string) '(10 12 1 2 22)) => '(1 10 12 2 22)
-      (funcall (-on '+ '1+) 1 2) => 5
-      (funcall (-on '+ 'identity) 1 2) => 3
-      (funcall (-on '* 'length) '(1 2 3) '(4 5)) => 6
-      (funcall (-on (-on '+ 'length) 'cdr) '(1 2 3) '(4 5)) => 3
-      (funcall (-on '+ (lambda (x) (length (cdr x)))) '(1 2 3) '(4 5)) => 3
-      (-sort (-on '< 'car) '((3 2 5) (2) (1 2))) => '((1 2) (2) (3 2 5))
-      (-sort (-on '< (lambda (x) (length x))) '((1 2 3) (1) (1 2))) => '((1) (1 2) (1 2 3))
-      (-sort (-on (-on '< 'car) 'cdr) '((0 3) (2 1) (4 2 8))) => '((2 1) (4 2 8) (0 3))
-      (-sort (-on '< 'cadr) '((0 3) (2 1) (4 2 8))) => '((2 1) (4 2 8) (0 3)))
+  (defexamples -on
+    (-sort (-on '< 'length) '((1 2 3) (1) (1 2))) => '((1) (1 2) (1 2 3))
+    (-min-by (-on '> 'length) '((1 2 3) (4) (1 2))) => '(4)
+    (-min-by (-on 'string-lessp 'number-to-string) '(2 100 22)) => 22
+    (-max-by (-on '> 'car) '((2 2 3) (3) (1 2))) => '(3)
+    (-sort (-on 'string-lessp 'number-to-string) '(10 12 1 2 22)) => '(1 10 12 2 22)
+    (funcall (-on '+ '1+) 1 2) => 5
+    (funcall (-on '+ 'identity) 1 2) => 3
+    (funcall (-on '* 'length) '(1 2 3) '(4 5)) => 6
+    (funcall (-on (-on '+ 'length) 'cdr) '(1 2 3) '(4 5)) => 3
+    (funcall (-on '+ (lambda (x) (length (cdr x)))) '(1 2 3) '(4 5)) => 3
+    (-sort (-on '< 'car) '((3 2 5) (2) (1 2))) => '((1 2) (2) (3 2 5))
+    (-sort (-on '< (lambda (x) (length x))) '((1 2 3) (1) (1 2))) => '((1) (1 2) (1 2 3))
+    (-sort (-on (-on '< 'car) 'cdr) '((0 3) (2 1) (4 2 8))) => '((2 1) (4 2 8) (0 3))
+    (-sort (-on '< 'cadr) '((0 3) (2 1) (4 2 8))) => '((2 1) (4 2 8) (0 3)))
 
-    (defexamples -flip
-      (funcall (-flip '<) 2 1) => t
-      (funcall (-flip '-) 3 8) => 5
-      (-sort (-flip '<) '(4 3 6 1)) => '(6 4 3 1))
+  (defexamples -flip
+    (funcall (-flip '<) 2 1) => t
+    (funcall (-flip '-) 3 8) => 5
+    (-sort (-flip '<) '(4 3 6 1)) => '(6 4 3 1))
 
-    (defexamples -const
-      (funcall (-const 2) 1 3 "foo") => 2
-      (-map (-const 1) '("a" "b" "c" "d")) => '(1 1 1 1)
-      (-sum (-map (-const 1) '("a" "b" "c" "d"))) => 4)
+  (defexamples -const
+    (funcall (-const 2) 1 3 "foo") => 2
+    (-map (-const 1) '("a" "b" "c" "d")) => '(1 1 1 1)
+    (-sum (-map (-const 1) '("a" "b" "c" "d"))) => 4)
 
-    (defexamples -cut
-      (funcall (-cut list 1 <> 3 <> 5) 2 4) => '(1 2 3 4 5)
-      (-map (-cut funcall <> 5) `(1+ 1- ,(lambda (x) (/ 1.0 x)))) => '(6 4 0.2)
-      (-map (-cut <> 1 2 3) '(list vector string)) => '((1 2 3) [1 2 3] "")
-      (-filter (-cut < <> 5) '(1 3 5 7 9)) => '(1 3))
+  (defexamples -cut
+    (funcall (-cut list 1 <> 3 <> 5) 2 4) => '(1 2 3 4 5)
+    (-map (-cut funcall <> 5) `(1+ 1- ,(lambda (x) (/ 1.0 x)))) => '(6 4 0.2)
+    (-map (-cut <> 1 2 3) '(list vector string)) => '((1 2 3) [1 2 3] "")
+    (-filter (-cut < <> 5) '(1 3 5 7 9)) => '(1 3))
 
-    (defexamples -not
-      (funcall (-not 'even?) 5) => t
-      (-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8)) => '(1 2 3 4))
+  (defexamples -not
+    (funcall (-not 'even?) 5) => t
+    (-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8)) => '(1 2 3 4))
 
-    (defexamples -orfn
-      (-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) => '(1 2 3 4 6 8 10)
-      (funcall (-orfn 'stringp 'even?) "foo") => t)
+  (defexamples -orfn
+    (-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) => '(1 2 3 4 6 8 10)
+    (funcall (-orfn 'stringp 'even?) "foo") => t)
 
-    (defexamples -andfn
-      (funcall (-andfn (-cut < <> 10) 'even?) 6) => t
-      (funcall (-andfn (-cut < <> 10) 'even?) 12) => nil
-      (-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) => '(1 3 5))
+  (defexamples -andfn
+    (funcall (-andfn (-cut < <> 10) 'even?) 6) => t
+    (funcall (-andfn (-cut < <> 10) 'even?) 12) => nil
+    (-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) => '(1 3 5))
 
-    (defexamples -iteratefn
-      (funcall (-iteratefn (lambda (x) (* x x)) 3) 2) => 256
-      (funcall (-iteratefn '1+ 3) 1) => 4
-      (funcall (-iteratefn 'cdr 3) '(1 2 3 4 5)) => '(4 5)
-      (let ((init '(1 2 3 4 5))
-            (fn 'cdr))
-        (and (equal (funcall (-iteratefn fn 0) init)
-                    (-last-item (-iterate fn init (1+ 0))))
-             (equal (funcall (-iteratefn fn 3) init)
-                    (-last-item (-iterate fn init (1+ 3))))
-             (equal (funcall (-iteratefn fn 5) init)
-                    (-last-item (-iterate fn init (1+ 5)))))) => t)
+  (defexamples -iteratefn
+    (funcall (-iteratefn (lambda (x) (* x x)) 3) 2) => 256
+    (funcall (-iteratefn '1+ 3) 1) => 4
+    (funcall (-iteratefn 'cdr 3) '(1 2 3 4 5)) => '(4 5)
+    (let ((init '(1 2 3 4 5))
+          (fn 'cdr))
+      (and (equal (funcall (-iteratefn fn 0) init)
+                  (-last-item (-iterate fn init (1+ 0))))
+           (equal (funcall (-iteratefn fn 3) init)
+                  (-last-item (-iterate fn init (1+ 3))))
+           (equal (funcall (-iteratefn fn 5) init)
+                  (-last-item (-iterate fn init (1+ 5)))))) => t)
 
-    (defexamples -fixfn
-      ;; Solve cos(x) = x (may not converge without fuzzy comparison).
-      (funcall (-fixfn #'cos #'approx=) 0.7) ~> 0.7390851332151607
-      ;; Solve x^4 - x - 10 = 0 (converges using `equal' comparison).
-      (funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0)
-      => 1.8555845286409378
-      ;; The sin function has a fixpoint at zero, but it converges too
-      ;; slowly and is halted.
-      (funcall (-fixfn #'sin #'approx=) 0.1) => '(halted . t))
+  (defexamples -fixfn
+    ;; Solve cos(x) = x (may not converge without fuzzy comparison).
+    (funcall (-fixfn #'cos #'approx=) 0.7) ~> 0.7390851332151607
+    ;; Solve x^4 - x - 10 = 0 (converges using `equal' comparison).
+    (funcall (-fixfn (lambda (x) (expt (+ x 10) 0.25))) 2.0)
+    => 1.8555845286409378
+    ;; The sin function has a fixpoint at zero, but it converges too
+    ;; slowly and is halted.
+    (funcall (-fixfn #'sin #'approx=) 0.1) => '(halted . t))
 
-    (defexamples -prodfn
-      (funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3)) => '(2 1 "3")
-      (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) => '((2 1) (4 3) (6 5) (8 7))
-      (apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15"))) => 18
-      (let ((f '1+)
-            (g '1-)
-            (ff 'string-to-number)
-            (gg 'length)
-            (input '(1 2))
-            (input2 "foo")
-            (input3 '("10" '(1 2 3))))
-        (and (equal (funcall (-prodfn f g) input)
-                    (funcall (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1))) input))
-             (equal (funcall (-compose (-prodfn f g) (-juxt ff gg)) input2)
-                    (funcall (-juxt (-compose f ff) (-compose g gg)) input2))
-             (equal (funcall (-compose (-partial 'nth 0) (-prodfn f g)) input)
-                    (funcall (-compose f (-partial 'nth 0)) input))
-             (equal (funcall (-compose (-partial 'nth 1) (-prodfn f g)) input)
-                    (funcall (-compose g (-partial 'nth 1)) input))
-             (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
-                    (funcall (-prodfn (-compose f ff) (-compose g gg)) input3)))) => t)))
+  (defexamples -prodfn
+    (funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3)) => '(2 1 "3")
+    (-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) => '((2 1) (4 3) (6 5) (8 7))
+    (apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15"))) => 18
+    (let ((f '1+)
+          (g '1-)
+          (ff 'string-to-number)
+          (gg 'length)
+          (input '(1 2))
+          (input2 "foo")
+          (input3 '("10" '(1 2 3))))
+      (and (equal (funcall (-prodfn f g) input)
+                  (funcall (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1))) input))
+           (equal (funcall (-compose (-prodfn f g) (-juxt ff gg)) input2)
+                  (funcall (-juxt (-compose f ff) (-compose g gg)) input2))
+           (equal (funcall (-compose (-partial 'nth 0) (-prodfn f g)) input)
+                  (funcall (-compose f (-partial 'nth 0)) input))
+           (equal (funcall (-compose (-partial 'nth 1) (-prodfn f g)) input)
+                  (funcall (-compose g (-partial 'nth 1)) input))
+           (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
+                  (funcall (-prodfn (-compose f ff) (-compose g gg)) input3)))) => t))
 
 ;;; examples.el ends here

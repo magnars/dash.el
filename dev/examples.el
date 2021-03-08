@@ -1640,20 +1640,37 @@ or readability."
     (funcall (-partial #'+) 5) => 5
     (apply (-partial #'+ 5) 10 '(1 2)) => 18)
 
-  (unless (version< emacs-version "24")
-    (defexamples -rpartial
-      (funcall (-rpartial '- 5) 8) => 3
-      (funcall (-rpartial '- 5 2) 10) => 3)
+  (defexamples -rpartial
+    (funcall (-rpartial #'- 5)) => -5
+    (funcall (-rpartial #'- 5) 8) => 3
+    (funcall (-rpartial #'- 5 2) 10) => 3
+    (funcall (-rpartial #'-)) => 0
+    (apply (-rpartial #'- 1) 2 '(20 3)) => -22)
 
-    (defexamples -juxt
-      (funcall (-juxt '+ '-) 3 5) => '(8 -2)
-      (-map (-juxt 'identity 'square) '(1 2 3)) => '((1 1) (2 4) (3 9)))
+  (defexamples -juxt
+    (funcall (-juxt) 1 2) => '()
+    (funcall (-juxt #'+ #'- #'* #'/) 7 5) => '(12 2 35 1)
+    (mapcar (-juxt #'number-to-string #'1+) '(1 2)) => '(("1" 2) ("2" 3))
+    (funcall (-juxt #'+ #'-)) => '(0 0)
+    (funcall (-juxt)) => '())
 
-    (defexamples -compose
-      (funcall (-compose 'square '+) 2 3) => (square (+ 2 3))
-      (funcall (-compose 'identity 'square) 3) => (square 3)
-      (funcall (-compose 'square 'identity) 3) => (square 3)
-      (funcall (-compose (-compose 'not 'even?) 'square) 3) => (funcall (-compose 'not (-compose 'even? 'square)) 3)))
+  (defexamples -compose
+    (funcall (-compose #'- #'1+ #'+) 1 2 3) => -7
+    (funcall (-compose #'identity #'1+) 3) => 4
+    (mapcar (-compose #'not #'stringp) '(nil "")) => '(t nil)
+    (funcall (-compose #'1+ #'identity) 3) => 4
+    (mapcar (lambda (fn)
+              (list (funcall fn 0) (funcall fn 1)))
+            (list (-compose (-compose #'natnump #'1+) #'lognot)
+                  (-compose #'natnump (-compose #'1+ #'lognot))
+                  (-compose #'natnump #'1+ #'lognot)))
+    => '((t nil) (t nil) (t nil))
+    (funcall (-compose)) => nil
+    (funcall (-compose) nil) => nil
+    (funcall (-compose) nil 1) => nil
+    (funcall (-compose) 1) => 1
+    (funcall (-compose) 1 2) => 1
+    (-compose #'+) => #'+)
 
   (defexamples -applify
     (funcall (-applify #'+) ()) => 0

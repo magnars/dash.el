@@ -4226,18 +4226,24 @@ was called.
 
 @anchor{-rpartial}
 @defun -rpartial (fn &rest args)
-Takes a function @var{fn} and fewer than the normal arguments to @var{fn},
-and returns a fn that takes a variable number of additional @var{args}.
-When called, the returned function calls @var{fn} with the additional
-args first and then @var{args}.
+Return a function that is a partial application of @var{fn} to @var{args}.
+@var{args} is a list of the last @var{n} arguments to pass to @var{fn}.  The result
+is a new function which does the same as @var{fn}, except that the last
+@var{n} arguments are fixed at the values with which this function was
+called.  This is like @code{-partial} (@pxref{-partial}), except the arguments are fixed
+starting from the right rather than the left.
 
 @example
 @group
-(funcall (-rpartial '- 5) 8)
+(funcall (-rpartial #'- 5))
+    @result{} -5
+@end group
+@group
+(funcall (-rpartial #'- 5) 8)
     @result{} 3
 @end group
 @group
-(funcall (-rpartial '- 5 2) 10)
+(funcall (-rpartial #'- 5 2) 10)
     @result{} 3
 @end group
 @end example
@@ -4245,43 +4251,47 @@ args first and then @var{args}.
 
 @anchor{-juxt}
 @defun -juxt (&rest fns)
-Takes a list of functions and returns a fn that is the
-juxtaposition of those fns. The returned fn takes a variable
-number of args, and returns a list containing the result of
-applying each fn to the args (left-to-right).
+Return a function that is the juxtaposition of @var{fns}.
+The returned function takes a variable number of @var{args}, applies
+each of @var{fns} in turn to @var{args}, and returns the list of results.
 
 @example
 @group
-(funcall (-juxt '+ '-) 3 5)
-    @result{} (8 -2)
+(funcall (-juxt) 1 2)
+    @result{} ()
 @end group
 @group
-(-map (-juxt 'identity 'square) '(1 2 3))
-    @result{} ((1 1) (2 4) (3 9))
+(funcall (-juxt #'+ #'- #'* #'/) 7 5)
+    @result{} (12 2 35 1)
+@end group
+@group
+(mapcar (-juxt #'number-to-string #'1+) '(1 2))
+    @result{} (("1" 2) ("2" 3))
 @end group
 @end example
 @end defun
 
 @anchor{-compose}
 @defun -compose (&rest fns)
-Takes a list of functions and returns a fn that is the
-composition of those fns. The returned fn takes a variable
-number of arguments, and returns the result of applying
-each fn to the result of applying the previous fn to
-the arguments (right-to-left).
+Compose @var{fns} into a single composite function.
+Return a function that takes a variable number of @var{args}, applies
+the last function in @var{fns} to @var{args}, and returns the result of
+calling each remaining function on the result of the previous
+function, right-to-left.  If no @var{fns} are given, return a variadic
+@code{identity} function.
 
 @example
 @group
-(funcall (-compose 'square '+) 2 3)
-    @result{} (square (+ 2 3))
+(funcall (-compose #'- #'1+ #'+) 1 2 3)
+    @result{} -7
 @end group
 @group
-(funcall (-compose 'identity 'square) 3)
-    @result{} (square 3)
+(funcall (-compose #'identity #'1+) 3)
+    @result{} 4
 @end group
 @group
-(funcall (-compose 'square 'identity) 3)
-    @result{} (square 3)
+(mapcar (-compose #'not #'stringp) '(nil ""))
+    @result{} (t nil)
 @end group
 @end example
 @end defun

@@ -2811,40 +2811,44 @@ was called.
 
 #### -rpartial `(fn &rest args)`
 
-Takes a function `fn` and fewer than the normal arguments to `fn`,
-and returns a fn that takes a variable number of additional `args`.
-When called, the returned function calls `fn` with the additional
-args first and then `args`.
+Return a function that is a partial application of `fn` to `args`.
+`args` is a list of the last `n` arguments to pass to `fn`.  The result
+is a new function which does the same as `fn`, except that the last
+`n` arguments are fixed at the values with which this function was
+called.  This is like [`-partial`](#-partial-fun-rest-args), except the arguments are fixed
+starting from the right rather than the left.
 
 ```el
-(funcall (-rpartial '- 5) 8) ;; => 3
-(funcall (-rpartial '- 5 2) 10) ;; => 3
+(funcall (-rpartial #'- 5)) ;; => -5
+(funcall (-rpartial #'- 5) 8) ;; => 3
+(funcall (-rpartial #'- 5 2) 10) ;; => 3
 ```
 
 #### -juxt `(&rest fns)`
 
-Takes a list of functions and returns a fn that is the
-juxtaposition of those fns. The returned fn takes a variable
-number of args, and returns a list containing the result of
-applying each fn to the args (left-to-right).
+Return a function that is the juxtaposition of `fns`.
+The returned function takes a variable number of `args`, applies
+each of `fns` in turn to `args`, and returns the list of results.
 
 ```el
-(funcall (-juxt '+ '-) 3 5) ;; => (8 -2)
-(-map (-juxt 'identity 'square) '(1 2 3)) ;; => ((1 1) (2 4) (3 9))
+(funcall (-juxt) 1 2) ;; => ()
+(funcall (-juxt #'+ #'- #'* #'/) 7 5) ;; => (12 2 35 1)
+(mapcar (-juxt #'number-to-string #'1+) '(1 2)) ;; => (("1" 2) ("2" 3))
 ```
 
 #### -compose `(&rest fns)`
 
-Takes a list of functions and returns a fn that is the
-composition of those fns. The returned fn takes a variable
-number of arguments, and returns the result of applying
-each fn to the result of applying the previous fn to
-the arguments (right-to-left).
+Compose `fns` into a single composite function.
+Return a function that takes a variable number of `args`, applies
+the last function in `fns` to `args`, and returns the result of
+calling each remaining function on the result of the previous
+function, right-to-left.  If no `fns` are given, return a variadic
+`identity` function.
 
 ```el
-(funcall (-compose 'square '+) 2 3) ;; => (square (+ 2 3))
-(funcall (-compose 'identity 'square) 3) ;; => (square 3)
-(funcall (-compose 'square 'identity) 3) ;; => (square 3)
+(funcall (-compose #'- #'1+ #'+) 1 2 3) ;; => -7
+(funcall (-compose #'identity #'1+) 3) ;; => 4
+(mapcar (-compose #'not #'stringp) '(nil "")) ;; => (t nil)
 ```
 
 #### -applify `(fn)`

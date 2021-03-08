@@ -367,7 +367,7 @@ Macros that modify variables holding lists.
 
 Functions that manipulate and compose other functions.
 
-* [`-partial`](#-partial-fn-rest-args) `(fn &rest args)`
+* [`-partial`](#-partial-fun-rest-args) `(fun &rest args)`
 * [`-rpartial`](#-rpartial-fn-rest-args) `(fn &rest args)`
 * [`-juxt`](#-juxt-rest-fns) `(&rest fns)`
 * [`-compose`](#-compose-rest-fns) `(&rest fns)`
@@ -2795,16 +2795,18 @@ Destructive: Set `list` to the cdr of `list`.
 
 Functions that manipulate and compose other functions.
 
-#### -partial `(fn &rest args)`
+#### -partial `(fun &rest args)`
 
-Take a function `fn` and fewer than the normal arguments to `fn`,
-and return a fn that takes a variable number of additional `args`.
-When called, the returned function calls `fn` with `args` first and
-then additional args.
+Return a function that is a partial application of `fun` to `args`.
+`args` is a list of the first `n` arguments to pass to `fun`.
+The result is a new function which does the same as `fun`, except that
+the first `n` arguments are fixed at the values with which this function
+was called.
 
 ```el
-(funcall (-partial '- 5) 3) ;; => 2
-(funcall (-partial '+ 5 2) 3) ;; => 10
+(funcall (-partial #'+ 5)) ;; => 5
+(funcall (-partial #'- 5) 3) ;; => 2
+(funcall (-partial #'+ 5 2) 3) ;; => 10
 ```
 
 #### -rpartial `(fn &rest args)`
@@ -2847,13 +2849,14 @@ the arguments (right-to-left).
 
 #### -applify `(fn)`
 
-Changes an n-arity function `fn` to a 1-arity function that
-expects a list with n items as arguments
+Return a function that applies `fn` to a single list of args.
+This changes the arity of `fn` from taking `n` distinct arguments to
+taking 1 argument which is a list of `n` arguments.
 
 ```el
-(-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) ;; => (3 6 15)
-(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) ;; => ((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
-(funcall (-applify '<) '(3 6)) ;; => t
+(funcall (-applify #'+) nil) ;; => 0
+(mapcar (-applify #'+) '((1 1 1) (1 2 3) (5 5 5))) ;; => (3 6 15)
+(funcall (-applify #'<) '(3 6)) ;; => t
 ```
 
 #### -on `(operator transformer)`

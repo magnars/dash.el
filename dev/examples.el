@@ -1633,8 +1633,12 @@ or readability."
   "Functions that manipulate and compose other functions."
 
   (defexamples -partial
-    (funcall (-partial '- 5) 3) => 2
-    (funcall (-partial '+ 5 2) 3) => 10)
+    (funcall (-partial #'+ 5)) => 5
+    (funcall (-partial #'- 5) 3) => 2
+    (funcall (-partial #'+ 5 2) 3) => 10
+    (funcall (-partial #'+)) => 0
+    (funcall (-partial #'+) 5) => 5
+    (apply (-partial #'+ 5) 10 '(1 2)) => 18)
 
   (unless (version< emacs-version "24")
     (defexamples -rpartial
@@ -1652,9 +1656,14 @@ or readability."
       (funcall (-compose (-compose 'not 'even?) 'square) 3) => (funcall (-compose 'not (-compose 'even? 'square)) 3)))
 
   (defexamples -applify
-    (-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5))) => '(3 6 15)
-    (-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5))) => '((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
-    (funcall (-applify '<) '(3 6)) => t)
+    (funcall (-applify #'+) ()) => 0
+    (mapcar (-applify #'+) '((1 1 1) (1 2 3) (5 5 5))) => '(3 6 15)
+    (funcall (-applify #'<) '(3 6)) => t
+    (apply (-applify #'+) '(())) => 0
+    (apply (-applify #'+) '((1 2))) => 3
+    (funcall (-applify #'+)) !!> wrong-number-of-arguments
+    (mapcar (-applify (lambda (a b) `(,a (,b)))) '((1 1) (1 2) (5 5)))
+    => '((1 (1)) (1 (2)) (5 (5))))
 
   (unless (version< emacs-version "24")
     (defexamples -on

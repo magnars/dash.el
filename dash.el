@@ -2999,12 +2999,7 @@ structure such as plist or alist."
 
 ;;; Combinators
 
-(defun -partial (fn &rest args)
-  "Take a function FN and fewer than the normal arguments to FN,
-and return a fn that takes a variable number of additional ARGS.
-When called, the returned function calls FN with ARGS first and
-then additional args."
-  (apply 'apply-partially fn args))
+(defalias '-partial #'apply-partially)
 
 (defun -rpartial (fn &rest args)
   "Takes a function FN and fewer than the normal arguments to FN,
@@ -3031,9 +3026,11 @@ the arguments (right-to-left)."
                          args fns))))
 
 (defun -applify (fn)
-  "Changes an n-arity function FN to a 1-arity function that
-expects a list with n items as arguments"
-  (apply-partially 'apply fn))
+  "Return a function that applies FN to a single list of args.
+This changes the arity of FN from taking N distinct arguments to
+taking 1 argument which is a list of N arguments."
+  (declare (pure t) (side-effect-free t))
+  (lambda (args) (apply fn args)))
 
 (defun -on (operator transformer)
   "Return a function of two arguments that first applies

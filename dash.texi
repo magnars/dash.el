@@ -4201,19 +4201,24 @@ Destructive: Set @var{list} to the cdr of @var{list}.
 Functions that manipulate and compose other functions.
 
 @anchor{-partial}
-@defun -partial (fn &rest args)
-Take a function @var{fn} and fewer than the normal arguments to @var{fn},
-and return a fn that takes a variable number of additional @var{args}.
-When called, the returned function calls @var{fn} with @var{args} first and
-then additional args.
+@defun -partial (fun &rest args)
+Return a function that is a partial application of @var{fun} to @var{args}.
+@var{args} is a list of the first @var{n} arguments to pass to @var{fun}.
+The result is a new function which does the same as @var{fun}, except that
+the first @var{n} arguments are fixed at the values with which this function
+was called.
 
 @example
 @group
-(funcall (-partial '- 5) 3)
+(funcall (-partial #'+ 5))
+    @result{} 5
+@end group
+@group
+(funcall (-partial #'- 5) 3)
     @result{} 2
 @end group
 @group
-(funcall (-partial '+ 5 2) 3)
+(funcall (-partial #'+ 5 2) 3)
     @result{} 10
 @end group
 @end example
@@ -4283,20 +4288,21 @@ the arguments (right-to-left).
 
 @anchor{-applify}
 @defun -applify (fn)
-Changes an n-arity function @var{fn} to a 1-arity function that
-expects a list with n items as arguments
+Return a function that applies @var{fn} to a single list of args.
+This changes the arity of @var{fn} from taking @var{n} distinct arguments to
+taking 1 argument which is a list of @var{n} arguments.
 
 @example
 @group
-(-map (-applify '+) '((1 1 1) (1 2 3) (5 5 5)))
+(funcall (-applify #'+) nil)
+    @result{} 0
+@end group
+@group
+(mapcar (-applify #'+) '((1 1 1) (1 2 3) (5 5 5)))
     @result{} (3 6 15)
 @end group
 @group
-(-map (-applify (lambda (a b c) `(,a (,b (,c))))) '((1 1 1) (1 2 3) (5 5 5)))
-    @result{} ((1 (1 (1))) (1 (2 (3))) (5 (5 (5))))
-@end group
-@group
-(funcall (-applify '<) '(3 6))
+(funcall (-applify #'<) '(3 6))
     @result{} t
 @end group
 @end example

@@ -1725,7 +1725,8 @@ See also: `-select-columns', `-select-by-indices'"
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
 second item in second form, etc."
-  (declare (debug (form &rest [&or symbolp (sexp &rest form)])))
+  (declare (debug (form &rest [&or symbolp (sexp &rest form)]))
+           (indent 1))
   (cond
    ((null form) x)
    ((null more) (if (listp form)
@@ -1738,7 +1739,8 @@ second item in second form, etc."
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
 last item in second form, etc."
-  (declare (debug ->))
+  (declare (debug ->)
+           (indent 1))
   (cond
    ((null form) x)
    ((null more) (if (listp form)

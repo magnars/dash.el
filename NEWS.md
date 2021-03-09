@@ -18,6 +18,10 @@ See the end of the file for license conditions.
 
 #### New features
 
+- The combinators `-on`, `-flip`, `-not`, `-andfn`, and `-orfn` now
+  return variadic functions that take any number of arguments (#308).
+- New combinator `-rotate-args` similar to `-flip`, but for arbitrary
+  arglist rotations (suggested by @vapniks, #72).
 - New function `-every` and its anaphoric macro counterpart `--every`.
   They are like the existing `-every-p` and `--every-p`, respectively,
   but return the last non-`nil` result instead of just `t`.

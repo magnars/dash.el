@@ -373,8 +373,9 @@ Functions that manipulate and compose other functions.
 * [`-juxt`](#-juxt-rest-fns) `(&rest fns)`
 * [`-compose`](#-compose-rest-fns) `(&rest fns)`
 * [`-applify`](#-applify-fn) `(fn)`
-* [`-on`](#-on-operator-transformer) `(operator transformer)`
-* [`-flip`](#-flip-func) `(func)`
+* [`-on`](#-on-op-trans) `(op trans)`
+* [`-flip`](#-flip-fn) `(fn)`
+* [`-rotate-args`](#-rotate-args-n-fn) `(n fn)`
 * [`-const`](#-const-c) `(c)`
 * [`-cut`](#-cut-rest-params) `(&rest params)`
 * [`-not`](#-not-pred) `(pred)`
@@ -1193,7 +1194,7 @@ Return the smallest value from `list` of numbers or markers.
 Take a comparison function `comparator` and a `list` and return
 the least element of the list by the comparison function.
 
-See also combinator [`-on`](#-on-operator-transformer) which can transform the values before
+See also combinator [`-on`](#-on-op-trans) which can transform the values before
 comparing them.
 
 ```el
@@ -1217,7 +1218,7 @@ Return the largest value from `list` of numbers or markers.
 Take a comparison function `comparator` and a `list` and return
 the greatest element of the list by the comparison function.
 
-See also combinator [`-on`](#-on-operator-transformer) which can transform the values before
+See also combinator [`-on`](#-on-op-trans) which can transform the values before
 comparing them.
 
 ```el
@@ -2892,30 +2893,56 @@ taking 1 argument which is a list of `n` arguments.
 (funcall (-applify #'<) '(3 6)) ;; => t
 ```
 
-#### -on `(operator transformer)`
+#### -on `(op trans)`
 
-Return a function of two arguments that first applies
-`transformer` to each of them and then applies `operator` on the
-results (in the same order).
+Return a function that calls `trans` on each arg and `op` on the results.
+The returned function takes a variable number of arguments, calls
+the function `trans` on each one in turn, and then passes those
+results as the list of arguments to `op`, in the same order.
 
-In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
+For example, the following pairs of expressions are morally
+equivalent:
+
+    (funcall (-on #'+ #'1+) 1 2 3) = (+ (1+ 1) (1+ 2) (1+ 3))
+    (funcall (-on #'+ #'1+))       = (+)
 
 ```el
-(-sort (-on '< 'length) '((1 2 3) (1) (1 2))) ;; => ((1) (1 2) (1 2 3))
-(-min-by (-on '> 'length) '((1 2 3) (4) (1 2))) ;; => (4)
-(-min-by (-on 'string-lessp 'number-to-string) '(2 100 22)) ;; => 22
+(-sort (-on #'< #'length) '((1 2 3) (1) (1 2))) ;; => ((1) (1 2) (1 2 3))
+(funcall (-on #'min #'string-to-number) "22" "2" "1" "12") ;; => 1
+(-min-by (-on #'> #'length) '((1 2 3) (4) (1 2))) ;; => (4)
 ```
 
-#### -flip `(func)`
+#### -flip `(fn)`
 
-Swap the order of arguments for binary function `func`.
+Return a function that calls `fn` with its arguments reversed.
+The returned function takes the same number of arguments as `fn`.
 
-In types: (a -> b -> c) -> b -> a -> c
+For example, the following two expressions are morally
+equivalent:
+
+    (funcall (-flip #'-) 1 2) = (- 2 1)
+
+See also: [`-rotate-args`](#-rotate-args-n-fn).
 
 ```el
-(funcall (-flip '<) 2 1) ;; => t
-(funcall (-flip '-) 3 8) ;; => 5
-(-sort (-flip '<) '(4 3 6 1)) ;; => (6 4 3 1)
+(-sort (-flip #'<) '(4 3 6 1)) ;; => (6 4 3 1)
+(funcall (-flip #'-) 3 2 1 10) ;; => 4
+(funcall (-flip #'1+) 1) ;; => 2
+```
+
+#### -rotate-args `(n fn)`
+
+Return a function that calls `fn` with args rotated `n` places to the right.
+The returned function takes the same number of arguments as `fn`,
+rotates the list of arguments `n` places to the right (left if `n` is
+negative) just like [`-rotate`](#-rotate-n-list), and applies `fn` to the result.
+
+See also: [`-flip`](#-flip-fn).
+
+```el
+(funcall (-rotate-args -1 #'list) 1 2 3 4) ;; => (2 3 4 1)
+(funcall (-rotate-args 1 #'-) 1 10 100) ;; => 89
+(funcall (-rotate-args 2 #'list) 3 4 5 1 2) ;; => (1 2 3 4 5)
 ```
 
 #### -const `(c)`
@@ -2926,8 +2953,8 @@ In types: a -> b -> a
 
 ```el
 (funcall (-const 2) 1 3 "foo") ;; => 2
-(-map (-const 1) '("a" "b" "c" "d")) ;; => (1 1 1 1)
-(-sum (-map (-const 1) '("a" "b" "c" "d"))) ;; => 4
+(mapcar (-const 1) '("a" "b" "c" "d")) ;; => (1 1 1 1)
+(-sum (mapcar (-const 1) '("a" "b" "c" "d"))) ;; => 4
 ```
 
 #### -cut `(&rest params)`
@@ -2945,40 +2972,50 @@ See `srfi-26` for detailed description.
 
 #### -not `(pred)`
 
-Take a unary predicate `pred` and return a unary predicate
-that returns t if `pred` returns nil and nil if `pred` returns
-non-nil.
+Return a predicate that negates the result of `pred`.
+The returned predicate passes its arguments to `pred`.  If `pred`
+returns nil, the result is non-nil; otherwise the result is nil.
+
+See also: [`-andfn`](#-andfn-rest-preds) and [`-orfn`](#-orfn-rest-preds).
 
 ```el
-(funcall (-not 'even?) 5) ;; => t
-(-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8)) ;; => (1 2 3 4)
+(funcall (-not #'numberp) "5") ;; => t
+(-sort (-not #'<) '(5 2 1 0 6)) ;; => (6 5 2 1 0)
+(-filter (-not (-partial #'< 4)) '(1 2 3 4 5 6 7 8)) ;; => (1 2 3 4)
 ```
 
 #### -orfn `(&rest preds)`
 
-Take list of unary predicates `preds` and return a unary
-predicate with argument x that returns non-nil if at least one of
-the `preds` returns non-nil on x.
+Return a predicate that returns the first non-nil result of `preds`.
+The returned predicate takes a variable number of arguments,
+passes them to each predicate in `preds` in turn until one of them
+returns non-nil, and returns that non-nil result without calling
+the remaining `preds`.  If all `preds` return nil, or if no `preds` are
+given, the returned predicate returns nil.
 
-In types: [a -> Bool] -> a -> Bool
+See also: [`-andfn`](#-andfn-rest-preds) and [`-not`](#-not-pred).
 
 ```el
-(-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10)) ;; => (1 2 3 4 6 8 10)
-(funcall (-orfn 'stringp 'even?) "foo") ;; => t
+(-filter (-orfn #'natnump #'booleanp) '(1 nil "a" -4 b c t)) ;; => (1 nil t)
+(funcall (-orfn #'symbolp (-cut string-match-p "x" <>)) "axe") ;; => 1
+(funcall (-orfn #'= #'+) 1 1) ;; => t
 ```
 
 #### -andfn `(&rest preds)`
 
-Take list of unary predicates `preds` and return a unary
-predicate with argument x that returns non-nil if all of the
-`preds` returns non-nil on x.
+Return a predicate that returns non-nil if all `preds` do so.
+The returned predicate `p` takes a variable number of arguments and
+passes them to each predicate in `preds` in turn.  If any one of
+`preds` returns nil, `p` also returns nil without calling the
+remaining `preds`.  If all `preds` return non-nil, `p` returns the last
+such value.  If no `preds` are given, `p` always returns non-nil.
 
-In types: [a -> Bool] -> a -> Bool
+See also: [`-orfn`](#-orfn-rest-preds) and [`-not`](#-not-pred).
 
 ```el
-(funcall (-andfn (-cut < <> 10) 'even?) 6) ;; => t
-(funcall (-andfn (-cut < <> 10) 'even?) 12) ;; => nil
-(-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10)) ;; => (1 3 5)
+(-filter (-andfn #'numberp (-cut < <> 5)) '(a 1 b 6 c 2)) ;; => (1 2)
+(mapcar (-andfn #'numberp #'1+) '(a 1 b 6)) ;; => (nil 2 nil 7)
+(funcall (-andfn #'= #'+) 1 1) ;; => 2
 ```
 
 #### -iteratefn `(fn n)`

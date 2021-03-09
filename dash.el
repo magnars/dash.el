@@ -3113,24 +3113,73 @@ taking 1 argument which is a list of N arguments."
   (declare (pure t) (side-effect-free t))
   (lambda (args) (apply fn args)))
 
-(defun -on (operator transformer)
-  "Return a function of two arguments that first applies
-TRANSFORMER to each of them and then applies OPERATOR on the
-results (in the same order).
+(defun -on (op trans)
+  "Return a function that calls TRANS on each arg and OP on the results.
+The returned function takes a variable number of arguments, calls
+the function TRANS on each one in turn, and then passes those
+results as the list of arguments to OP, in the same order.
 
-In types: (b -> b -> c) -> (a -> b) -> a -> a -> c"
-  (lambda (x y) (funcall operator (funcall transformer x) (funcall transformer y))))
+For example, the following pairs of expressions are morally
+equivalent:
 
-(defun -flip (func)
-  "Swap the order of arguments for binary function FUNC.
+  (funcall (-on #\\='+ #\\='1+) 1 2 3) = (+ (1+ 1) (1+ 2) (1+ 3))
+  (funcall (-on #\\='+ #\\='1+))       = (+)"
+  (declare (pure t) (side-effect-free t))
+  (lambda (&rest args)
+    ;; This unrolling seems to be a relatively cheap way to keep the
+    ;; overhead of `mapcar' + `apply' in check.
+    (cond ((cddr args)
+           (apply op (mapcar trans args)))
+          ((cdr args)
+           (funcall op (funcall trans (car args)) (funcall trans (cadr args))))
+          (args
+           (funcall op (funcall trans (car args))))
+          ((funcall op)))))
 
-In types: (a -> b -> c) -> b -> a -> c"
-  (lambda (x y) (funcall func y x)))
+(defun -flip (fn)
+  "Return a function that calls FN with its arguments reversed.
+The returned function takes the same number of arguments as FN.
+
+For example, the following two expressions are morally
+equivalent:
+
+  (funcall (-flip #\\='-) 1 2) = (- 2 1)
+
+See also: `-rotate-args'."
+  (declare (pure t) (side-effect-free t))
+  (lambda (&rest args) ;; Open-code for speed.
+    (cond ((cddr args) (apply fn (nreverse args)))
+          ((cdr args) (funcall fn (cadr args) (car args)))
+          (args (funcall fn (car args)))
+          ((funcall fn)))))
+
+(defun -rotate-args (n fn)
+  "Return a function that calls FN with args rotated N places to the right.
+The returned function takes the same number of arguments as FN,
+rotates the list of arguments N places to the right (left if N is
+negative) just like `-rotate', and applies FN to the result.
+
+See also: `-flip'."
+  (declare (pure t) (side-effect-free t))
+  (if (zerop n)
+      fn
+    (let ((even (= (% n 2) 0)))
+      (lambda (&rest args)
+        (cond ((cddr args) ;; Open-code for speed.
+               (apply fn (-rotate n args)))
+              ((cdr args)
+               (let ((fst (car args))
+                     (snd (cadr args)))
+                 (funcall fn (if even fst snd) (if even snd fst))))
+              (args
+               (funcall fn (car args)))
+              ((funcall fn)))))))
 
 (defun -const (c)
   "Return a function that returns C ignoring any additional arguments.
 
 In types: a -> b -> a"
+  (declare (pure t) (side-effect-free t))
   (lambda (&rest _) c))
 
 (defmacro -cut (&rest params)
@@ -3147,30 +3196,51 @@ See SRFI-26 for detailed description."
     `(lambda ,args
        ,(let ((body (--map (if (eq it '<>) (pop args) it) params)))
           (if (eq (car params) '<>)
-              (cons 'funcall body)
+              (cons #'funcall body)
             body)))))
 
 (defun -not (pred)
-  "Take a unary predicate PRED and return a unary predicate
-that returns t if PRED returns nil and nil if PRED returns
-non-nil."
-  (lambda (x) (not (funcall pred x))))
+  "Return a predicate that negates the result of PRED.
+The returned predicate passes its arguments to PRED.  If PRED
+returns nil, the result is non-nil; otherwise the result is nil.
+
+See also: `-andfn' and `-orfn'."
+  (declare (pure t) (side-effect-free t))
+  (lambda (&rest args) (not (apply pred args))))
 
 (defun -orfn (&rest preds)
-  "Take list of unary predicates PREDS and return a unary
-predicate with argument x that returns non-nil if at least one of
-the PREDS returns non-nil on x.
+  "Return a predicate that returns the first non-nil result of PREDS.
+The returned predicate takes a variable number of arguments,
+passes them to each predicate in PREDS in turn until one of them
+returns non-nil, and returns that non-nil result without calling
+the remaining PREDS.  If all PREDS return nil, or if no PREDS are
+given, the returned predicate returns nil.
 
-In types: [a -> Bool] -> a -> Bool"
-  (lambda (x) (-any? (-cut funcall <> x) preds)))
+See also: `-andfn' and `-not'."
+  (declare (pure t) (side-effect-free t))
+  ;; Open-code for speed.
+  (cond ((cdr preds) (lambda (&rest args) (--some (apply it args) preds)))
+        (preds (car preds))
+        (#'ignore)))
 
 (defun -andfn (&rest preds)
-  "Take list of unary predicates PREDS and return a unary
-predicate with argument x that returns non-nil if all of the
-PREDS returns non-nil on x.
+  "Return a predicate that returns non-nil if all PREDS do so.
+The returned predicate P takes a variable number of arguments and
+passes them to each predicate in PREDS in turn.  If any one of
+PREDS returns nil, P also returns nil without calling the
+remaining PREDS.  If all PREDS return non-nil, P returns the last
+such value.  If no PREDS are given, P always returns non-nil.
 
-In types: [a -> Bool] -> a -> Bool"
-  (lambda (x) (-all? (-cut funcall <> x) preds)))
+See also: `-orfn' and `-not'."
+  (declare (pure t) (side-effect-free t))
+  ;; Open-code for speed.
+  (cond ((cdr preds) (lambda (&rest args) (--every (apply it args) preds)))
+        (preds (car preds))
+        ;; As a `pure' function, this runtime check may generate
+        ;; backward-incompatible bytecode for `(-andfn)' at compile-time,
+        ;; but I doubt that's a problem in practice (famous last words).
+        ((fboundp 'always) #'always)
+        ((lambda (&rest _) t))))
 
 (defun -iteratefn (fn n)
   "Return a function FN composed N times with itself.

@@ -2116,6 +2116,17 @@ Valid values are &plist, &alist and &hash."
 This works just like `let', there is no destructuring."
   (list (list match-form source)))
 
+(defun dash--as-matcher? (matcher)
+  "Check if MATCHER is an `&as' binding with a variable."
+  (cond ((vectorp matcher) (and (> (length matcher) 2)
+                                (symbolp (aref matcher 0))
+                                (eq '&as (aref matcher 1))
+                                (cons (aref matcher 0) (dash--vector-tail matcher 2))))
+        ((listp matcher) (and (symbolp (car matcher))
+                              (listp (cdr matcher))
+                              (eq '&as (cadr matcher))
+                              (cons (car matcher) (cddr matcher))))))
+
 (defun dash--match (match-form source)
   "Match MATCH-FORM against SOURCE.
 
@@ -2124,31 +2135,21 @@ matchers based on the type of the expression.
 
 Key-value stores are disambiguated by placing a token &plist,
 &alist or &hash as a first item in the MATCH-FORM."
-  (cond
-   ((symbolp match-form)
-    (dash--match-symbol match-form source))
-   ((consp match-form)
+  (let ((as-matcher? (dash--as-matcher? match-form)))
     (cond
-     ;; Handle the "x &as" bindings first.
-     ((and (consp (cdr match-form))
-           (symbolp (car match-form))
-           (eq '&as (cadr match-form)))
-      (let ((s (car match-form)))
-        (cons (list s source)
-              (dash--match (cddr match-form) s))))
-     ((functionp (dash--get-expand-function (car match-form)))
-      (dash--match-kv (dash--match-kv-normalize-match-form match-form) source))
-     (t (dash--match-cons match-form source))))
-   ((vectorp match-form)
-    ;; We support the &as binding in vectors too
-    (cond
-     ((and (> (length match-form) 2)
-           (symbolp (aref match-form 0))
-           (eq '&as (aref match-form 1)))
-      (let ((s (aref match-form 0)))
-        (cons (list s source)
-              (dash--match (substring match-form 2) s))))
-     (t (dash--match-vector match-form source))))))
+     (as-matcher?
+      (let ((as (car as-matcher?))
+            (matcher (cdr as-matcher?)))
+        (cons (list as source) (dash--match matcher as))))
+     ((symbolp match-form)
+      (dash--match-symbol match-form source))
+     ((consp match-form)
+      (cond
+       ((functionp (dash--get-expand-function (car match-form)))
+        (dash--match-kv (dash--match-kv-normalize-match-form match-form) source))
+       (t (dash--match-cons match-form source))))
+     ((vectorp match-form)
+      (dash--match-vector match-form source)))))
 
 (defun dash--normalize-let-varlist (varlist)
   "Normalize VARLIST so that every binding is a list.
@@ -2357,6 +2358,134 @@ because we need to support improper list binding."
       `(let ,inputs
          (-let* ,new-varlist ,@body)))))
 
+(defun dash--parse-arglist (args)
+  "Parse ARGS, a normalized `-defun', ... arglist.
+The result is an alist with pairs of the form (SYMBOL . MATCHER),
+where SYMBOL is a (potentially uninterned) symbol that needs to
+be destructured using MATCHER (i.e. (-let ((,MATCHER ,SYMBOL)))).
+
+As an optimization, symbols in ARGS are ignored, since they need
+not be destructured.
+
+See also `dash--destructure-arglist' and
+`dash--destructure-body'. These functions must be passed the same
+parsed arglist, since it may contain uninterned symbols."
+  (let (result (i 0))
+    (dolist (arg args)
+      (unless (symbolp arg)
+        (push
+         (or (dash--as-matcher? arg)
+             (prog1 (cons (make-symbol (format "input%d" i)) arg)
+               (setq i (1+ i))))
+         result)))
+    (nreverse result)))
+
+(defun dash--destructure-arglist (args parsed-arglist)
+  "Make ARGS a function arglist for `dash--destructure-body'.
+PARSED-ARGLIST shall be the result of a call to
+`dash--parse-arglist', which see."
+  (--map (if (symbolp it) it (car (pop parsed-arglist))) args))
+
+(defun dash--decompose-defun-body (body)
+  "Destructure a `defun' or `lambda' BODY.
+Return a list (DOCSTRING? DECLS REALBODY)."
+  (let* ((decls-body
+          (--split-with (or (stringp it) (memq (car-safe it) '(declare interactive)))
+                        body))
+         (decls (nth 0 decls-body))
+         (body (nth 1 decls-body))
+         (docstring? (and (stringp (car decls)) (pop decls))))
+    (list docstring? decls body)))
+
+(defun dash--destructure-body (parsed-arglist body-forms &optional arglist)
+  "Destructure function ARGLIST using `-let'.
+The result is a list of body forms (including optional docstring
+and declarations) that does the destructuring and executes
+BODY-FORMS.
+
+If DOC is nil, don't generate a signature docstring if no
+docstring is provided. Note that a signature is still added if a
+docstring is provided and one is needed (due to unusual
+arguments).
+
+PARSED-ARGLIST shall be the result of a call to
+`dash--parse-arglist', which see."
+  (let* ((body-structure (dash--decompose-defun-body body-forms))
+         (docstring? (nth 0 body-structure))
+         (decls (nth 1 body-structure))
+         (body (nth 2 body-structure))
+         (let-bindings (--map `(,(cdr it) ,(car it)) parsed-arglist)))
+    (nconc
+     (if let-bindings
+         ;; If there is a docstring, add signature hints in any case; otherwise,
+         ;; only generate an empty signature docstring if DOC allows it.
+         (when (or docstring? arglist)
+           (list (help-add-fundoc-usage docstring? arglist)))
+       ;; If the arglist doesn't make use of dash's features, just reuse the
+       ;; docstring directly, because signature hints aren't necessary.
+       (and docstring? (list docstring?)))
+     decls
+     (if let-bindings
+         ;; TODO: `-let*' generates less bytecode, especially with dynamic
+         ;; binding
+         `((-let* ,let-bindings ,@body))
+       body))))
+
+(defun dash--normalize-arglist (arglist)
+  "Make ARGLIST have the form (MATCHERS...).
+If it is a vector, convert it to a single-matcher arglist."
+  (cond
+   ((vectorp arglist) (append arglist nil))
+   ((listp arglist) arglist)
+   (:else (signal 'wrong-type-argument "match-form must be a vector or list"))))
+
+(defun dash--defun (wrapper name match-form body &optional doc?)
+  "Generate a `defun', ... form for `-defun', etc..
+WRAPPER is the definition form, e.g. `defun'. NAME is the name of
+the definition, or -1 if it should be omitted. MATCH-FORM is the
+original argument list and BODY the body. If DOC? is specified, a
+signature docstring is generated even if BODY itself has none."
+  (let* ((match-form (dash--normalize-arglist match-form))
+         (parsed-args (dash--parse-arglist match-form)))
+    `(,wrapper ,@(and (symbolp name) (list name))
+               ,(dash--destructure-arglist match-form parsed-args)
+               ,@(dash--destructure-body parsed-args body (and doc? match-form)))))
+
+(def-edebug-spec dash-lambda-list sexp)
+
+(defmacro -defun (name match-form &rest body)
+  "Like `-lambda', but as a `defun'.
+Define a function called NAME with destructuring.
+
+MATCH-FORM is like in `-lambda'. Except for the (optional)
+additional destructuring, this function behaves exactly like
+`defun' (in terms of `declare', ...).
+
+\(fn NAME MATCH-FORM &optional DOCSTRING DECL &rest BODY)"
+  (declare (doc-string 3) (indent 2)
+           (debug (&define name dash-lambda-list lambda-doc
+                           [&optional ("declare" &rest sexp)]
+                           [&optional ("interactive" interactive)]
+                           def-body)))
+  (dash--defun 'defun name match-form body t))
+
+(defmacro -defmacro (name match-form &rest body)
+  "Like `-defun', but define macro called NAME instead.
+MATCH-FORM and BODY are the same.
+
+\(fn NAME MATCH-FORM &optional DOCSTRING DECL &rest BODY)"
+  (declare (doc-string 3) (indent 2)
+           (debug (&define name dash-lambda-list lambda-doc
+                           [&optional ("declare" &rest sexp)]
+                           ;; (interactive) will simply be treated as a normal
+                           ;; BODY form by the debugger, even though it kind of
+                           ;; isn't:
+                           ;;
+                           ;; (defmacro q (x) (interactive (list "X")) (message x))
+                           ;; (command-execute (cdr (symbol-function 'q)))
+                           def-body)))
+  (dash--defun 'defmacro name match-form body t))
+
 (defmacro -lambda (match-form &rest body)
   "Return a lambda which destructures its input as MATCH-FORM and executes BODY.
 
@@ -2366,30 +2495,21 @@ such that:
   (-lambda (x) body)
   (-lambda (x y ...) body)
 
-has the usual semantics of `lambda'.  Furthermore, these get
-translated into normal `lambda', so there is no performance
-penalty.
+has the usual semantics of `lambda'. Furthermore, these get
+translated into a normal `lambda', so there is no performance
+penalty. MATCH-FORM may also be a vector, in which case the
+entire vector destructures a single argument:
 
-See `-let' for a description of the destructuring mechanism."
+  (-lambda [a b]) = (-lambda ((a b)))
+
+See `-let' for the description of destructuring mechanism.
+
+\(fn MATCH-FORM [DOCSTRING] [INTERACTIVE] BODY)"
   (declare (doc-string 2) (indent defun)
-           (debug (&define sexp
-                           [&optional stringp]
+           (debug (&define dash-lambda-list lambda-doc
                            [&optional ("interactive" interactive)]
                            def-body)))
-  (cond
-   ((nlistp match-form)
-    (signal 'wrong-type-argument (list #'listp match-form)))
-   ;; No destructuring, so just return regular `lambda' for speed.
-   ((-all? #'symbolp match-form)
-    `(lambda ,match-form ,@body))
-   ((let ((inputs (--map-indexed
-                   (list it (make-symbol (format "input%d" it-index)))
-                   match-form)))
-      ;; TODO: because inputs to the `lambda' are evaluated only once,
-      ;; `-let*' need not create the extra bindings to ensure that.
-      ;; We should find a way to optimize that.  Not critical however.
-      `(lambda ,(mapcar #'cadr inputs)
-         (-let* ,inputs ,@body))))))
+  (dash--defun 'lambda -1 match-form body))
 
 (defmacro -setq (&rest forms)
   "Bind each MATCH-FORM to the value of its VAL.

@@ -1260,27 +1260,28 @@ new list."
     (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6)
 
   (defexamples -defun
-    (progn (-defun example/cdr ((_ . tail)) tail)
-           (example/cdr '(a . b))) => 'b
-    (progn (-defun example/car ((cur)) cur)
-           (example/car '(a . b))) => 'a
-    (progn (-defun example/add-cons ((a . b))
+    (progn (-defun example/interactive ((a . b))
              "Add the `car' and `cdr' of INPUT0."
              (interactive (list (cons 1 2)))
              (+ a b))
-           (command-execute #'example/add-cons)) => 3
-    (progn (-defun example/add-conses-rec (&rest (cur . other))
-             (if other
-                 (+ (example/add-cons cur)
-                    (apply #'example/add-conses-rec other))
-               (example/add-cons cur)))
-           (example/add-conses-rec '(1 . 5) '(5 . 10))) => 21
+           (command-execute #'example/interactive)) => 3
     (progn (-defun example/docstring-result ((&plist :x))
              "Docstring and result.")
            (example/docstring-result '(:x t))) => t
     (progn (-defun example/square-args [&plist :x]
              x)
-           (example/square-args '(:x t))) => t)
+           (example/square-args '(:x t))) => t
+
+    (progn (-defun example/cdr ((_ . tail)) tail)
+           (example/cdr '(a . b))) => 'b
+    (progn (-defun example/car ((cur)) cur)
+           (example/car '(a . b))) => 'a
+    (progn (-defun example/add-conses-rec (&rest (cur . other))
+             (if other
+                 (+ (example/add-cons cur)
+                    (apply #'example/add-conses-rec other))
+               (example/add-cons cur)))
+           (example/add-conses-rec '(1 . 5) '(5 . 10))) => 21)
 
   (defexamples -defmacro
     (progn (-defmacro example/ht-query ((_query &as &plist :key) table)

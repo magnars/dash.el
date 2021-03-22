@@ -2168,12 +2168,15 @@ PARSED-ARGLIST shall be the result of a call to
 (defun dash--decompose-defun-body (body)
   "Destructure a `defun' or `lambda' BODY.
 Return a list (DOCSTRING? DECLS REALBODY)."
-  (let* ((decls-body
-          (--split-with (or (stringp it) (memq (car-safe it) '(declare interactive)))
+  (let* ((docstring? (and (stringp (car body))
+                          ;; Behave like `defun': a single string is both
+                          ;; docstring and result.
+                          (if (cdr body) (pop body) (car body))))
+         (decls-body
+          (--split-with (memq (car-safe it) '(declare interactive))
                         body))
          (decls (nth 0 decls-body))
-         (body (nth 1 decls-body))
-         (docstring? (and (stringp (car decls)) (pop decls))))
+         (body (nth 1 decls-body)))
     (list docstring? decls body)))
 
 (defun dash--destructure-body (parsed-arglist body-forms &optional arglist)

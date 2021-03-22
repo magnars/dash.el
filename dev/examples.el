@@ -1277,7 +1277,10 @@ new list."
            (example/add-conses-rec '(1 . 5) '(5 . 10))) => 21
     (progn (-defun example/docstring-result ((&plist :x))
              "Docstring and result.")
-           (example/docstring-result '(:x t))) => t)
+           (example/docstring-result '(:x t))) => t
+    (progn (-defun example/square-args [&plist :x]
+             x)
+           (example/square-args '(:x t))) => t)
 
   (defexamples -defmacro
     (progn (-defmacro example/ht-query ((_query &as &plist :key) table)

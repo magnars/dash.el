@@ -2217,7 +2217,7 @@ PARSED-ARGLIST shall be the result of a call to
   "Make ARGLIST have the form (MATCHERS...).
 If it is a vector, convert it to a single-matcher arglist."
   (cond
-   ((vectorp arglist) (append arglist nil))
+   ((vectorp arglist) (list (append arglist nil)))
    ((listp arglist) arglist)
    (:else (signal 'wrong-type-argument "match-form must be a vector or list"))))
 

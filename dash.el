@@ -257,7 +257,9 @@ This is the anaphoric counterpart to `-reduce'."
     `(let ((,lv ,list))
        (if ,lv
            (--reduce-from ,form (car ,lv) (cdr ,lv))
-         (let (acc it)
+         ;; Explicit nil binding pacifies lexical "variable left uninitialized"
+         ;; warning.  See issue #377 and upstream https://bugs.gnu.org/47080.
+         (let ((acc nil) (it nil))
            (ignore acc it)
            ,form)))))
 
@@ -419,7 +421,9 @@ This is the anaphoric counterpart to `-reductions-r'."
            (--reduce-from (cons (let ((acc (car acc))) (ignore acc) ,form) acc)
                           (list (car ,lv))
                           (cdr ,lv))
-         (let (acc it)
+         ;; Explicit nil binding pacifies lexical "variable left uninitialized"
+         ;; warning.  See issue #377 and upstream https://bugs.gnu.org/47080.
+         (let ((acc nil) (it nil))
            (ignore acc it)
            (list ,form))))))
 

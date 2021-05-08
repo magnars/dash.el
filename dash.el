@@ -1378,18 +1378,12 @@ other value (the body)."
 
 (defun -partition-after-pred (pred list)
   "Partition directly after each time PRED is true on an element of LIST."
-  (when list
-    (let ((rest (-partition-after-pred pred
-                                       (cdr list))))
-      (if (funcall pred (car list))
-          ;;split after (car list)
-          (cons (list (car list))
-                rest)
-
-        ;;don't split after (car list)
-        (cons (cons (car list)
-                    (car rest))
-              (cdr rest))))))
+  (-reduce-r-from (lambda (x result)
+                    (if (funcall pred x)
+                        (cons (list x) result)
+                      (cons (cons x (car result)) (cdr result))))
+                  nil
+                  list))
 
 (defun -partition-before-pred (pred list)
   "Partition directly before each time PRED is true on an element of LIST."

@@ -43,10 +43,12 @@
 
 (defmacro !cons (car cdr)
   "Destructive: Set CDR to the cons of CAR and CDR."
+  (declare (debug (form symbolp)))
   `(setq ,cdr (cons ,car ,cdr)))
 
 (defmacro !cdr (list)
   "Destructive: Set LIST to the cdr of LIST."
+  (declare (debug (symbolp)))
   `(setq ,list (cdr ,list)))
 
 (defmacro --each (list &rest body)
@@ -637,6 +639,7 @@ See also: `-map-when', `-replace-first'"
 
 (defmacro --map-first (pred rep list)
   "Anaphoric form of `-map-first'."
+  (declare (debug (def-form def-form form)))
   `(-map-first (lambda (it) ,pred) (lambda (it) (ignore it) ,rep) ,list))
 
 (defun -map-last (pred rep list)
@@ -647,6 +650,7 @@ See also: `-map-when', `-replace-last'"
 
 (defmacro --map-last (pred rep list)
   "Anaphoric form of `-map-last'."
+  (declare (debug (def-form def-form form)))
   `(-map-last (lambda (it) ,pred) (lambda (it) (ignore it) ,rep) ,list))
 
 (defun -replace (old new list)
@@ -765,6 +769,7 @@ See also: `-splice-list', `-insert-at'"
 
 (defmacro --splice (pred form list)
   "Anaphoric form of `-splice'."
+  (declare (debug (def-form def-form form)))
   `(-splice (lambda (it) ,pred) (lambda (it) ,form) ,list))
 
 (defun -splice-list (pred new-list list)
@@ -775,6 +780,7 @@ See also: `-splice', `-insert-at'"
 
 (defmacro --splice-list (pred new-list list)
   "Anaphoric form of `-splice-list'."
+  (declare (debug (def-form form form)))
   `(-splice-list (lambda (it) ,pred) ,new-list ,list))
 
 (defun -cons* (&rest args)
@@ -1171,7 +1177,7 @@ See also: `-map-when'"
 
 (defmacro --update-at (n form list)
   "Anaphoric version of `-update-at'."
-  (declare (debug (form form form)))
+  (declare (debug (form def-form form)))
   `(-update-at ,n (lambda (it) ,form) ,list))
 
 (defun -remove-at (n list)
@@ -1228,12 +1234,12 @@ Empty lists are also removed from the result.
 Comparison is done by `equal'.
 
 See also `-split-when'"
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-split-when (lambda (it) (equal it ,item)) ,list))
 
 (defmacro --split-when (form list)
   "Anaphoric version of `-split-when'."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-split-when (lambda (it) ,form) ,list))
 
 (defun -split-when (fn list)
@@ -1577,7 +1583,7 @@ element of LIST paired with the unmodified element of LIST."
 
 (defmacro --annotate (form list)
   "Anaphoric version of `-annotate'."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-annotate (lambda (it) ,form) ,list))
 
 (defun dash--table-carry (lists restore-lists &optional re)
@@ -1662,7 +1668,7 @@ predicate PRED, in ascending order."
 
 (defmacro --find-indices (form list)
   "Anaphoric version of `-find-indices'."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-find-indices (lambda (it) ,form) ,list))
 
 (defun -find-index (pred list)
@@ -1675,7 +1681,7 @@ See also `-first'."
 
 (defmacro --find-index (form list)
   "Anaphoric version of `-find-index'."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-find-index (lambda (it) ,form) ,list))
 
 (defun -find-last-index (pred list)
@@ -1688,6 +1694,7 @@ See also `-last'."
 
 (defmacro --find-last-index (form list)
   "Anaphoric version of `-find-last-index'."
+  (declare (debug (def-form form)))
   `(-find-last-index (lambda (it) ,form) ,list))
 
 (defun -select-by-indices (indices list)
@@ -2695,7 +2702,7 @@ if the first element should sort before the second."
 
 (defmacro --sort (form list)
   "Anaphoric form of `-sort'."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-sort (lambda (it other) ,form) ,list))
 
 (defun -list (&optional arg &rest args)
@@ -2771,14 +2778,14 @@ comparing them."
   "Anaphoric version of `-max-by'.
 
 The items for the comparator form are exposed as \"it\" and \"other\"."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-max-by (lambda (it other) ,form) ,list))
 
 (defmacro --min-by (form list)
   "Anaphoric version of `-min-by'.
 
 The items for the comparator form are exposed as \"it\" and \"other\"."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-min-by (lambda (it other) ,form) ,list))
 
 (defun -iota (count &optional start step)
@@ -2808,6 +2815,7 @@ FN is called at least once, results are compared with `equal'."
 
 (defmacro --fix (form list)
   "Anaphoric form of `-fix'."
+  (declare (debug (def-form form)))
   `(-fix (lambda (it) ,form) ,list))
 
 (defun -unfold (fun seed)
@@ -2828,7 +2836,7 @@ the new seed."
 
 (defmacro --unfold (form seed)
   "Anaphoric version of `-unfold'."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-unfold (lambda (it) ,form) ,seed))
 
 (defun -cons-pair? (obj)
@@ -2877,7 +2885,7 @@ but is twice as fast as it only traverse the structure once."
 
 (defmacro --tree-mapreduce-from (form folder init-value tree)
   "Anaphoric form of `-tree-mapreduce-from'."
-  (declare (debug (form form form form)))
+  (declare (debug (def-form def-form form form)))
   `(-tree-mapreduce-from (lambda (it) ,form) (lambda (it acc) ,folder) ,init-value ,tree))
 
 (defun -tree-mapreduce (fn folder tree)
@@ -2899,7 +2907,7 @@ but is twice as fast as it only traverse the structure once."
 
 (defmacro --tree-mapreduce (form folder tree)
   "Anaphoric form of `-tree-mapreduce'."
-  (declare (debug (form form form)))
+  (declare (debug (def-form def-form form)))
   `(-tree-mapreduce (lambda (it) ,form) (lambda (it acc) ,folder) ,tree))
 
 (defun -tree-map (fn tree)
@@ -2913,7 +2921,7 @@ but is twice as fast as it only traverse the structure once."
 
 (defmacro --tree-map (form tree)
   "Anaphoric form of `-tree-map'."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-tree-map (lambda (it) ,form) ,tree))
 
 (defun -tree-reduce-from (fn init-value tree)
@@ -2934,7 +2942,7 @@ two elements."
 
 (defmacro --tree-reduce-from (form init-value tree)
   "Anaphoric form of `-tree-reduce-from'."
-  (declare (debug (form form form)))
+  (declare (debug (def-form form form)))
   `(-tree-reduce-from (lambda (it acc) ,form) ,init-value ,tree))
 
 (defun -tree-reduce (fn tree)
@@ -2954,7 +2962,7 @@ See `-reduce-r' for how exactly are lists of zero or one element handled."
 
 (defmacro --tree-reduce (form tree)
   "Anaphoric form of `-tree-reduce'."
-  (declare (debug (form form)))
+  (declare (debug (def-form form)))
   `(-tree-reduce (lambda (it acc) ,form) ,tree))
 
 (defun -tree-map-nodes (pred fun tree)
@@ -2972,6 +2980,7 @@ further."
 
 (defmacro --tree-map-nodes (pred form tree)
   "Anaphoric form of `-tree-map-nodes'."
+  (declare (debug (def-form def-form form)))
   `(-tree-map-nodes (lambda (it) ,pred) (lambda (it) ,form) ,tree))
 
 (defun -tree-seq (branch children tree)
@@ -2991,6 +3000,7 @@ Non-branch nodes are simply copied."
 
 (defmacro --tree-seq (branch children tree)
   "Anaphoric form of `-tree-seq'."
+  (declare (debug (def-form def-form form)))
   `(-tree-seq (lambda (it) ,branch) (lambda (it) ,children) ,tree))
 
 (defun -clone (list)
@@ -3071,6 +3081,7 @@ In types: a -> b -> a"
 Arguments denoted by <> will be left unspecialized.
 
 See SRFI-26 for detailed description."
+  (declare (debug (&rest &or "<>" form)))
   (let* ((i 0)
          (args (--keep (when (eq it '<>)
                          (setq i (1+ i))

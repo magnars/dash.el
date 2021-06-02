@@ -1382,20 +1382,31 @@ returns the header value, but only after seeing at least one
 other value (the body)."
   (--partition-by-header (funcall fn it) list))
 
-(defun -partition-after-pred (pred list)
-  "Partition directly after each time PRED is true on an element of LIST."
-  (when list
-    (let ((rest (-partition-after-pred pred
-                                       (cdr list))))
-      (if (funcall pred (car list))
-          ;;split after (car list)
-          (cons (list (car list))
-                rest)
+(defmacro --partition-after-pred (form list)
+  "Partition LIST after each element for which FORM evaluates to non-nil.
+Each element of LIST in turn is bound to `it' before evaluating
+FORM.
 
-        ;;don't split after (car list)
-        (cons (cons (car list)
-                    (car rest))
-              (cdr rest))))))
+This is the anaphoric counterpart to `-partition-after-pred'."
+  (let ((l (make-symbol "list"))
+        (r (make-symbol "result"))
+        (s (make-symbol "sublist")))
+    `(let ((,l ,list) ,r ,s)
+       (when ,l
+         (--each ,l
+           (push it ,s)
+           (when ,form
+             (push (nreverse ,s) ,r)
+             (setq ,s ())))
+         (when ,s
+           (push (nreverse ,s) ,r))
+         (nreverse ,r)))))
+
+(defun -partition-after-pred (pred list)
+  "Partition LIST after each element for which PRED returns non-nil.
+
+This function's anaphoric counterpart is `--partition-after-pred'."
+  (--partition-after-pred (funcall pred it) list))
 
 (defun -partition-before-pred (pred list)
   "Partition directly before each time PRED is true on an element of LIST."

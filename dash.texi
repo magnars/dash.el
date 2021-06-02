@@ -2197,7 +2197,9 @@ other value (the body).
 
 @anchor{-partition-after-pred}
 @defun -partition-after-pred (pred list)
-Partition directly after each time @var{pred} is true on an element of @var{list}.
+Partition @var{list} after each element for which @var{pred} returns non-nil.
+
+This function's anaphoric counterpart is @code{--partition-after-pred}.
 
 @example
 @group

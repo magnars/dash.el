@@ -1540,7 +1540,9 @@ other value (the body).
 
 #### -partition-after-pred `(pred list)`
 
-Partition directly after each time `pred` is true on an element of `list`.
+Partition `list` after each element for which `pred` returns non-nil.
+
+This function's anaphoric counterpart is `--partition-after-pred`.
 
 ```el
 (-partition-after-pred #'booleanp ()) ;; => ()

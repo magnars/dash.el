@@ -1383,27 +1383,29 @@ other value (the body)."
   (--partition-by-header (funcall fn it) list))
 
 (defmacro --partition-after-pred (form list)
-  "Anaphoric form of `-partition-after-pred'."
-  (let ((r (make-symbol "result"))
-        (s (make-symbol "sublist"))
-        (l (make-symbol "list")))
-    `(let ((,l ,list))
+  "Partition LIST after each element for which FORM evaluates to non-nil.
+Each element of LIST in turn is bound to `it' before evaluating
+FORM.
+
+This is the anaphoric counterpart to `-partition-after-pred'."
+  (let ((l (make-symbol "list"))
+        (r (make-symbol "result"))
+        (s (make-symbol "sublist")))
+    `(let ((,l ,list) ,r ,s)
        (when ,l
-         (let* ((,r nil)
-                (,s nil))
-           (while ,l
-             (let* ((it (car ,l)))
-               (!cdr ,l)
-               (!cons it ,s)
-               (when ,form
-                 (!cons (nreverse ,s) ,r)
-                 (setq ,s nil))))
-           (if ,s
-	       (!cons (nreverse ,s) ,r))
-           (nreverse ,r))))))
+         (--each ,l
+           (push it ,s)
+           (when ,form
+             (push (nreverse ,s) ,r)
+             (setq ,s ())))
+         (when ,s
+           (push (nreverse ,s) ,r))
+         (nreverse ,r)))))
 
 (defun -partition-after-pred (pred list)
-  "Partition directly after each time PRED is true on an element of LIST."
+  "Partition LIST after each element for which PRED returns non-nil.
+
+This function's anaphoric counterpart is `--partition-after-pred'."
   (--partition-after-pred (funcall pred it) list))
 
 (defun -partition-before-pred (pred list)

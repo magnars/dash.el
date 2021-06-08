@@ -3092,7 +3092,7 @@ In types: a -> b -> a"
 Arguments denoted by <> will be left unspecialized.
 
 See SRFI-26 for detailed description."
-  (declare (debug (&rest &or "<>" form)))
+  (declare (debug (&optional sexp &rest &or "<>" form)))
   (let* ((i 0)
          (args (--keep (when (eq it '<>)
                          (setq i (1+ i))

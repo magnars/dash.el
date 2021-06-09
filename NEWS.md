@@ -6,6 +6,13 @@ See the end of the file for license conditions.
 
 ## Change log
 
+### From 2.18.1 to 2.19.0
+
+- Added and fixed Edebug specifications for many Dash macros (Philipp
+  Stephani, #380, #381).
+- New macro `--partition-after-pred` which affords
+  `-partition-after-pred` better performance (Per Weijnitz, #362).
+
 ### From 2.18.0 to 2.18.1
 
 - Fixed a regression from `2.17` as well as a long-standing bug in

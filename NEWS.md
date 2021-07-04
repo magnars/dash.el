@@ -8,6 +8,9 @@ See the end of the file for license conditions.
 
 ### From 2.18.1 to 2.19.0
 
+- Reverted a breaking change introduced in `2.18.0` that caused the
+  threading macro `-->` to be indented differently from `->` and
+  `->>` (#375).
 - Added and fixed Edebug specifications for many Dash macros (Philipp
   Stephani, #380, #381).
 - New macro `--partition-after-pred` which affords

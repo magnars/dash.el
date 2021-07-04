@@ -1747,8 +1747,7 @@ See also: `-select-columns', `-select-by-indices'"
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
 second item in second form, etc."
-  (declare (debug (form &rest [&or symbolp (sexp &rest form)]))
-           (indent 1))
+  (declare (debug (form &rest [&or symbolp (sexp &rest form)])))
   (cond
    ((null form) x)
    ((null more) (if (listp form)
@@ -1761,8 +1760,7 @@ second item in second form, etc."
 in the first form, making a list of it if it is not a list
 already. If there are more forms, insert the first form as the
 last item in second form, etc."
-  (declare (debug ->)
-           (indent 1))
+  (declare (debug ->))
   (cond
    ((null form) x)
    ((null more) (if (listp form)
@@ -1776,7 +1774,7 @@ last item in second form, etc."
 Insert X at the position signified by the symbol `it' in the first
 form.  If there are more forms, insert the first form at the position
 signified by `it' in in second form, etc."
-  (declare (debug (form body)) (indent 1))
+  (declare (debug (form body)))
   `(-as-> ,x it ,@forms))
 
 (defmacro -as-> (value variable &rest forms)
@@ -1789,9 +1787,9 @@ VARIABLE to the result of the first form, and so forth."
       `,value
     `(let ((,variable ,value))
        (-as-> ,(if (symbolp (car forms))
-                 (list (car forms) variable)
-               (car forms))
-            ,variable
+                   (list (car forms) variable)
+                 (car forms))
+              ,variable
               ,@(cdr forms)))))
 
 (defmacro -some-> (x &optional form &rest more)
@@ -1803,7 +1801,7 @@ and when that result is non-nil, through the next form, etc."
     (let ((result (make-symbol "result")))
       `(-some-> (-when-let (,result ,x)
                   (-> ,result ,form))
-                ,@more))))
+         ,@more))))
 
 (defmacro -some->> (x &optional form &rest more)
   "When expr is non-nil, thread it through the first form (via `->>'),
@@ -1814,7 +1812,7 @@ and when that result is non-nil, through the next form, etc."
     (let ((result (make-symbol "result")))
       `(-some->> (-when-let (,result ,x)
                    (->> ,result ,form))
-                 ,@more))))
+         ,@more))))
 
 (defmacro -some--> (expr &rest forms)
   "Thread EXPR through FORMS via `-->', while the result is non-nil.
@@ -3188,18 +3186,18 @@ cdr the final output from HALT-TEST.
 
 In types: (a -> a) -> a -> a."
   (let ((eqfn   (or equal-test 'equal))
-    (haltfn (or halt-test
-            (-not
-              (-counter 0 -fixfn-max-iterations)))))
+        (haltfn (or halt-test
+                    (-not
+                     (-counter 0 -fixfn-max-iterations)))))
     (lambda (x)
       (let ((re (funcall fn x))
-        (halt? (funcall haltfn x)))
-    (while (and (not halt?) (not (funcall eqfn x re)))
-      (setq x     re
-        re    (funcall fn re)
-        halt? (funcall haltfn re)))
-    (if halt? (cons 'halted halt?)
-      re)))))
+            (halt? (funcall haltfn x)))
+        (while (and (not halt?) (not (funcall eqfn x re)))
+          (setq x     re
+                re    (funcall fn re)
+                halt? (funcall haltfn re)))
+        (if halt? (cons 'halted halt?)
+          re)))))
 
 (defun -prodfn (&rest fns)
   "Take a list of n functions and return a function that takes a

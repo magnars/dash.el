@@ -18,18 +18,18 @@
 # Variables.
 
 EMACS ?= emacs
-BATCH := $(EMACS) -Q -batch -L .
-ELS := dash.el dev/dash-defs.el
-ELCS := $(addsuffix c,$(ELS))
-DOCS := README.md dash.texi
-TMPLS := readme-template.md dash-template.texi $(wildcard doc/*.texi)
+batch := $(EMACS) -Q -batch -L .
+els := dash.el dev/dash-defs.el
+elcs := $(addsuffix c,$(els))
+docs := README.md dash.texi
+tmpls := readme-template.md dash-template.texi $(wildcard doc/*.texi)
 
 # Targets.
 
-lisp: $(ELCS)
+lisp: $(elcs)
 .PHONY: lisp
 
-docs: $(DOCS)
+docs: $(docs)
 .PHONY: docs
 
 force-docs: maintainer-clean docs
@@ -40,9 +40,9 @@ force-docs: maintainer-clean docs
 # defaults to selecting all tests.  Note that in batch mode, a nil
 # selector is the same as t.
 check: ERT_SELECTOR ?= t
-check: RUN := '(ert-run-tests-batch-and-exit (quote $(ERT_SELECTOR)))'
+check: run := '(ert-run-tests-batch-and-exit (quote $(ERT_SELECTOR)))'
 check: lisp
-	EMACS_TEST_VERBOSE= $(BATCH) -l dev/examples.el -eval $(RUN)
+	EMACS_TEST_VERBOSE= $(batch) -l dev/examples.el -eval $(run)
 .PHONY: check
 
 all: lisp docs check
@@ -52,21 +52,21 @@ force-all: maintainer-clean lisp docs check
 .PHONY: force-all
 
 clean:
-	$(RM) $(ELCS)
+	$(RM) $(elcs)
 .PHONY: clean
 
-maintainer-clean: VER := 26
-maintainer-clean: MSG := Doc regeneration requires $(VER)+
+maintainer-clean: ver := 26
+maintainer-clean: msg := Doc regeneration requires $(ver)+
 maintainer-clean: clean
-	$(BATCH) -eval '(if (< emacs-major-version $(VER)) (error "$(MSG)"))'
-	$(RM) $(DOCS)
+	$(batch) -eval '(if (< emacs-major-version $(ver)) (error "$(msg)"))'
+	$(RM) $(docs)
 .PHONY: maintainer-clean
 
 # Files.
 
 %.elc: WERROR := '(setq byte-compile-error-on-warn t)'
 %.elc: %.el
-	$(BATCH) -eval $(WERROR) -f batch-byte-compile $<
+	$(batch) -eval $(WERROR) -f batch-byte-compile $<
 
-$(DOCS) &: dev/examples.el $(ELCS) $(TMPLS)
-	$(BATCH) -l $< -f dash-make-docs
+$(docs) &: dev/examples.el $(elcs) $(tmpls)
+	$(batch) -l $< -f dash-make-docs

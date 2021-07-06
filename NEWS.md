@@ -8,11 +8,19 @@ See the end of the file for license conditions.
 
 ### From 2.18.1 to 2.19.0
 
+#### Fixes
+
 - Reverted a breaking change introduced in `2.18.0` that caused the
   threading macro `-->` to be indented differently from `->` and
   `->>` (#375).
 - Added and fixed Edebug specifications for many Dash macros (Philipp
   Stephani, #380, #381).
+
+#### New features
+
+- New function `-every` and its anaphoric macro counterpart `--every`.
+  They are like the existing `-every-p` and `--every-p`, respectively,
+  but return the last non-`nil` result instead of just `t`.
 - New macro `--partition-after-pred` which affords
   `-partition-after-pred` better performance (Per Weijnitz, #362).
 

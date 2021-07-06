@@ -854,6 +854,36 @@ This function's anaphoric counterpart is `--some'."
 (defalias '-any '-some)
 (defalias '--any '--some)
 
+(defmacro --every (form list)
+  "Return non-nil if FORM evals to non-nil for all items in LIST.
+If so, return the last such result of FORM.  Otherwise, once an
+item is reached for which FORM yields nil, return nil without
+evaluating FORM for any further LIST elements.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.
+
+This macro is like `--every-p', but on success returns the last
+non-nil result of FORM instead of just t.
+
+This is the anaphoric counterpart to `-every'."
+  (declare (debug (form form)))
+  (let ((a (make-symbol "all")))
+    `(let ((,a t))
+       (--each-while ,list (setq ,a ,form))
+       ,a)))
+
+(defun -every (pred list)
+  "Return non-nil if PRED returns non-nil for all items in LIST.
+If so, return the last such result of PRED.  Otherwise, once an
+item is reached for which PRED returns nil, return nil without
+calling PRED on any further LIST elements.
+
+This function is like `-every-p', but on success returns the last
+non-nil result of PRED instead of just t.
+
+This function's anaphoric counterpart is `--every'."
+  (--every (funcall pred it) list))
+
 (defmacro --last (form list)
   "Anaphoric form of `-last'."
   (declare (debug (form form)))
@@ -949,7 +979,7 @@ See also: `-last-item'."
 (defmacro --any? (form list)
   "Anaphoric form of `-any?'."
   (declare (debug (form form)))
-  `(---truthy? (--some ,form ,list)))
+  `(and (--some ,form ,list) t))
 
 (defun -any? (pred list)
   "Return t if (PRED x) is non-nil for any x in LIST, else nil.
@@ -965,17 +995,34 @@ Alias: `-any-p', `-some?', `-some-p'"
 (defalias '--some-p '--any?)
 
 (defmacro --all? (form list)
-  "Anaphoric form of `-all?'."
+  "Return t if FORM evals to non-nil for all items in LIST.
+Otherwise, once an item is reached for which FORM yields nil,
+return nil without evaluating FORM for any further LIST elements.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.
+
+The similar macro `--every' is more widely useful, since it
+returns the last non-nil result of FORM instead of just t on
+success.
+
+Alias: `--all-p', `--every-p', `--every?'.
+
+This is the anaphoric counterpart to `-all?'."
   (declare (debug (form form)))
-  (let ((a (make-symbol "all")))
-    `(let ((,a t))
-       (--each-while ,list ,a (setq ,a ,form))
-       (---truthy? ,a))))
+  `(and (--every ,form ,list) t))
 
 (defun -all? (pred list)
-  "Return t if (PRED x) is non-nil for all x in LIST, else nil.
+  "Return t if (PRED X) is non-nil for all X in LIST, else nil.
+In the latter case, stop after the first X for which (PRED X) is
+nil, without calling PRED on any subsequent elements of LIST.
 
-Alias: `-all-p', `-every?', `-every-p'"
+The similar function `-every' is more widely useful, since it
+returns the last non-nil result of PRED instead of just t on
+success.
+
+Alias: `-all-p', `-every-p', `-every?'.
+
+This function's anaphoric counterpart is `--all?'."
   (--all? (funcall pred it) list))
 
 (defalias '-every? '-all?)

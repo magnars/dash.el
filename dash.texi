@@ -1722,15 +1722,15 @@ Alias: @code{-any-p}, @code{-some?}, @code{-some-p}
 
 @example
 @group
-(-any? 'even? '(1 2 3))
+(-any? #'numberp '(nil 0 t))
     @result{} t
 @end group
 @group
-(-any? 'even? '(1 3 5))
+(-any? #'numberp '(nil t t))
     @result{} nil
 @end group
 @group
-(-any? 'null '(1 3 5))
+(-any? #'null '(1 3 5))
     @result{} nil
 @end group
 @end example
@@ -1738,18 +1738,26 @@ Alias: @code{-any-p}, @code{-some?}, @code{-some-p}
 
 @anchor{-all?}
 @defun -all? (pred list)
-Return t if (@var{pred} x) is non-nil for all x in @var{list}, else nil.
+Return t if (@var{pred} @var{x}) is non-nil for all @var{x} in @var{list}, else nil.
+In the latter case, stop after the first @var{x} for which (@var{pred} @var{x}) is
+nil, without calling @var{pred} on any subsequent elements of @var{list}.
 
-Alias: @code{-all-p}, @code{-every?}, @code{-every-p}
+The similar function @code{-every} (@pxref{-every}) is more widely useful, since it
+returns the last non-nil result of @var{pred} instead of just t on
+success.
+
+Alias: @code{-all-p}, @code{-every-p}, @code{-every?}.
+
+This function's anaphoric counterpart is @code{--all?}.
 
 @example
 @group
-(-all? 'even? '(1 2 3))
-    @result{} nil
+(-all? #'numberp '(1 2 3))
+    @result{} t
 @end group
 @group
-(-all? 'even? '(2 4 6))
-    @result{} t
+(-all? #'numberp '(2 t 6))
+    @result{} nil
 @end group
 @group
 (--all? (= 0 (% it 2)) '(2 4 6))
@@ -3015,16 +3023,44 @@ This function's anaphoric counterpart is @code{--some}.
 
 @example
 @group
-(-some (lambda (s) (string-match-p "x" s)) '("foo" "axe" "xor"))
+(-some #'stringp '(1 "2" 3))
+    @result{} t
+@end group
+@group
+(--some (string-match-p "x" it) '("foo" "axe" "xor"))
     @result{} 1
 @end group
 @group
-(-some (lambda (s) (string-match-p "x" s)) '("foo" "bar" "baz"))
+(--some (= it-index 3) '(0 1 2))
     @result{} nil
 @end group
+@end example
+@end defun
+
+@anchor{-every}
+@defun -every (pred list)
+Return non-nil if @var{pred} returns non-nil for all items in @var{list}.
+If so, return the last such result of @var{pred}.  Otherwise, once an
+item is reached for which @var{pred} returns nil, return nil without
+calling @var{pred} on any further @var{list} elements.
+
+This function is like @code{-every-p}, but on success returns the last
+non-nil result of @var{pred} instead of just t.
+
+This function's anaphoric counterpart is @code{--every}.
+
+@example
 @group
-(--some (member 'foo it) '((foo bar) (baz)))
-    @result{} (foo bar)
+(-every #'numberp '(1 2 3))
+    @result{} t
+@end group
+@group
+(--every (string-match-p "x" it) '("axe" "xor"))
+    @result{} 0
+@end group
+@group
+(--every (= it it-index) '(0 1 3))
+    @result{} nil
 @end group
 @end example
 @end defun

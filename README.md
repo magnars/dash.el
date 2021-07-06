@@ -1800,7 +1800,7 @@ Other list functions not fit to be classified elsewhere.
 
 #### -rotate `(n list)`
 
-Rotate `list` `n` places to the right.  With `n` negative, rotate to the left.
+Rotate `list` `n` places to the right (left if `n` is negative).
 The time complexity is O(n).
 
 ```el

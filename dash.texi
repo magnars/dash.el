@@ -2650,7 +2650,7 @@ Other list functions not fit to be classified elsewhere.
 
 @anchor{-rotate}
 @defun -rotate (n list)
-Rotate @var{list} @var{n} places to the right.  With @var{n} negative, rotate to the left.
+Rotate @var{list} @var{n} places to the right (left if @var{n} is negative).
 The time complexity is @var{o}(n).
 
 @example

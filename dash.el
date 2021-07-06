@@ -1190,14 +1190,15 @@ is done in a single list traversal."
     (list (nreverse result) list)))
 
 (defun -rotate (n list)
-  "Rotate LIST N places to the right.  With N negative, rotate to the left.
+  "Rotate LIST N places to the right (left if N is negative).
 The time complexity is O(n)."
   (declare (pure t) (side-effect-free t))
-  (when list
-    (let* ((len (length list))
-           (n-mod-len (mod n len))
-           (new-tail-len (- len n-mod-len)))
-      (append (nthcdr new-tail-len list) (-take new-tail-len list)))))
+  (cond ((null list) ())
+        ((zerop n) (copy-sequence list))
+        ((let* ((len (length list))
+                (n-mod-len (mod n len))
+                (new-tail-len (- len n-mod-len)))
+           (append (nthcdr new-tail-len list) (-take new-tail-len list))))))
 
 (defun -insert-at (n x list)
   "Return a list with X inserted into LIST at position N.

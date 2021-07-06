@@ -624,6 +624,52 @@ value rather than consuming a list to produce a single value."
 (def-example-group "Predicates"
   "Reductions of one or more lists to a boolean value."
 
+  (defexamples -some
+    (-some #'stringp '(1 "2" 3)) => t
+    (--some (string-match-p "x" it) '("foo" "axe" "xor")) => 1
+    (--some (= it-index 3) '(0 1 2)) => nil
+    (-some (lambda (s) (string-match-p "x" s)) '("foo" "bar" "baz")) => nil
+    (--some (member 'foo it) '((foo bar) (baz))) => '(foo bar)
+    (--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3))) => 2
+    (-some #'null '(1 2 3)) => nil
+    (-some #'null '(1)) => nil
+    (-some #'null '()) => nil
+    (--some (not it) '(1 2 3)) => nil
+    (--some (not it) '(1)) => nil
+    (--some (not it) '()) => nil
+    (-some #'identity '(1 2 3)) => 1
+    (-some #'identity '(1)) => 1
+    (-some #'identity '()) => nil
+    (--some it '(1 2 3)) => 1
+    (--some it '(1)) => 1
+    (--some it '()) => nil)
+
+  (defexamples -every
+    (-every #'numberp '(1 2 3)) => t
+    (--every (string-match-p "x" it) '("axe" "xor")) => 0
+    (--every (= it it-index) '(0 1 3)) => nil
+    (-every #'ignore '()) => t
+    (-every #'ignore '(0)) => nil
+    (-every #'ignore '(0 1)) => nil
+    (--every nil '()) => t
+    (--every nil '(0)) => nil
+    (--every nil '(0 1)) => nil
+    (-every #'identity '()) => t
+    (-every #'identity '(0)) => 0
+    (-every #'identity '(0 1)) => 1
+    (--every it '()) => t
+    (--every it '(1)) => 1
+    (--every it '(1 2)) => 2
+    (--every it-index '()) => t
+    (--every it-index '(1)) => 0
+    (--every it-index '(1 2)) => 1
+    (let ((r 'r)) (-every (lambda (x) (setq r x)) '()) r) => 'r
+    (let ((r 'r)) (-every (lambda (x) (setq r x)) '(nil 1)) r) => nil
+    (let (r) (-every (lambda (x) (setq r x)) '(0 1)) r) => 1
+    (let (i) (--every (ignore (setq i it-index)) '()) i) => nil
+    (let (i) (--every (ignore (setq i it-index)) '(a)) i) => 0
+    (let (i) (--every (ignore (setq i it-index)) '(a b)) i) => 0)
+
   (defexamples -any?
     (-any? #'numberp '(nil 0 t)) => t
     (-any? #'numberp '(nil t t)) => nil
@@ -1101,52 +1147,6 @@ related predicates."
     (-first #'identity '(1 2 3)) => 1
     (-first #'identity '(1)) => 1
     (-first #'identity '()) => nil)
-
-  (defexamples -some
-    (-some #'stringp '(1 "2" 3)) => t
-    (--some (string-match-p "x" it) '("foo" "axe" "xor")) => 1
-    (--some (= it-index 3) '(0 1 2)) => nil
-    (-some (lambda (s) (string-match-p "x" s)) '("foo" "bar" "baz")) => nil
-    (--some (member 'foo it) '((foo bar) (baz))) => '(foo bar)
-    (--some (plist-get it :bar) '((:foo 1 :bar 2) (:baz 3))) => 2
-    (-some #'null '(1 2 3)) => nil
-    (-some #'null '(1)) => nil
-    (-some #'null '()) => nil
-    (--some (not it) '(1 2 3)) => nil
-    (--some (not it) '(1)) => nil
-    (--some (not it) '()) => nil
-    (-some #'identity '(1 2 3)) => 1
-    (-some #'identity '(1)) => 1
-    (-some #'identity '()) => nil
-    (--some it '(1 2 3)) => 1
-    (--some it '(1)) => 1
-    (--some it '()) => nil)
-
-  (defexamples -every
-    (-every #'numberp '(1 2 3)) => t
-    (--every (string-match-p "x" it) '("axe" "xor")) => 0
-    (--every (= it it-index) '(0 1 3)) => nil
-    (-every #'ignore '()) => t
-    (-every #'ignore '(0)) => nil
-    (-every #'ignore '(0 1)) => nil
-    (--every nil '()) => t
-    (--every nil '(0)) => nil
-    (--every nil '(0 1)) => nil
-    (-every #'identity '()) => t
-    (-every #'identity '(0)) => 0
-    (-every #'identity '(0 1)) => 1
-    (--every it '()) => t
-    (--every it '(1)) => 1
-    (--every it '(1 2)) => 2
-    (--every it-index '()) => t
-    (--every it-index '(1)) => 0
-    (--every it-index '(1 2)) => 1
-    (let ((r 'r)) (-every (lambda (x) (setq r x)) '()) r) => 'r
-    (let ((r 'r)) (-every (lambda (x) (setq r x)) '(nil 1)) r) => nil
-    (let (r) (-every (lambda (x) (setq r x)) '(0 1)) r) => 1
-    (let (i) (--every (ignore (setq i it-index)) '()) i) => nil
-    (let (i) (--every (ignore (setq i it-index)) '(a)) i) => 0
-    (let (i) (--every (ignore (setq i it-index)) '(a b)) i) => 0)
 
   (defexamples -last
     (-last 'even? '(1 2 3 4 5 6 3 3 3)) => 6

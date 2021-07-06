@@ -806,11 +806,11 @@ value rather than consuming a list to produce a single value."
 
   (defexamples -split-on
     (-split-on '| '(Nil | Leaf a | Node [Tree a])) => '((Nil) (Leaf a) (Node [Tree a]))
-    (-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e")) => '(("a" "b") ("c") ("d" "e"))
-    (-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e")) => '(("a" "b") ("d" "e"))
-    (-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup)) => '(("a" "b") ("c"))
-    (-split-on ':endgroup '("a" "b" :endgroup :endgroup :endgroup "d" "e")) => '(("a" "b") ("d" "e"))
-    (-split-on ':endgroup '(:endgroup "c" :endgroup "d" "e")) => '(("c") ("d" "e"))
+    (-split-on :endgroup '("a" "b" :endgroup "c" :endgroup "d" "e")) => '(("a" "b") ("c") ("d" "e"))
+    (-split-on :endgroup '("a" "b" :endgroup :endgroup "d" "e")) => '(("a" "b") ("d" "e"))
+    (-split-on :endgroup '("a" "b" :endgroup "c" :endgroup)) => '(("a" "b") ("c"))
+    (-split-on :endgroup '("a" "b" :endgroup :endgroup :endgroup "d" "e")) => '(("a" "b") ("d" "e"))
+    (-split-on :endgroup '(:endgroup "c" :endgroup "d" "e")) => '(("c") ("d" "e"))
     (-split-on '| '(Nil | | Node [Tree a])) => '((Nil) (Node [Tree a])))
 
   (defexamples -split-when

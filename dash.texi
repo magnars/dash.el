@@ -2070,11 +2070,11 @@ See also @code{-split-when} (@pxref{-split-when})
     @result{} ((Nil) (Leaf a) (Node [Tree a]))
 @end group
 @group
-(-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e"))
+(-split-on :endgroup '("a" "b" :endgroup "c" :endgroup "d" "e"))
     @result{} (("a" "b") ("c") ("d" "e"))
 @end group
 @group
-(-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e"))
+(-split-on :endgroup '("a" "b" :endgroup :endgroup "d" "e"))
     @result{} (("a" "b") ("d" "e"))
 @end group
 @end example

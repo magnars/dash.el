@@ -1480,8 +1480,8 @@ See also [`-split-when`](#-split-when-fn-list)
 
 ```el
 (-split-on '| '(Nil | Leaf a | Node [Tree a])) ;; => ((Nil) (Leaf a) (Node [Tree a]))
-(-split-on ':endgroup '("a" "b" :endgroup "c" :endgroup "d" "e")) ;; => (("a" "b") ("c") ("d" "e"))
-(-split-on ':endgroup '("a" "b" :endgroup :endgroup "d" "e")) ;; => (("a" "b") ("d" "e"))
+(-split-on :endgroup '("a" "b" :endgroup "c" :endgroup "d" "e")) ;; => (("a" "b") ("c") ("d" "e"))
+(-split-on :endgroup '("a" "b" :endgroup :endgroup "d" "e")) ;; => (("a" "b") ("d" "e"))
 ```
 
 #### -split-when `(fn list)`

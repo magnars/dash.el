@@ -4357,47 +4357,83 @@ taking 1 argument which is a list of @var{n} arguments.
 @end defun
 
 @anchor{-on}
-@defun -on (operator transformer)
-Return a function of two arguments that first applies
-@var{transformer} to each of them and then applies @var{operator} on the
-results (in the same order).
+@defun -on (op trans)
+Return a function that calls @var{trans} on each arg and @var{op} on the results.
+The returned function takes a variable number of arguments, calls
+the function @var{trans} on each one in turn, and then passes those
+results as the list of arguments to @var{op}, in the same order.
 
-In types: (b -> b -> c) -> (a -> b) -> a -> a -> c
+For example, the following pairs of expressions are morally
+equivalent:
+
+  (funcall (-on #'+ #'1+) 1 2 3) = (+ (1+ 1) (1+ 2) (1+ 3))
+  (funcall (-on #'+ #'1+))       = (+)
 
 @example
 @group
-(-sort (-on '< 'length) '((1 2 3) (1) (1 2)))
+(-sort (-on #'< #'length) '((1 2 3) (1) (1 2)))
     @result{} ((1) (1 2) (1 2 3))
 @end group
 @group
-(-min-by (-on '> 'length) '((1 2 3) (4) (1 2)))
-    @result{} (4)
+(funcall (-on #'min #'string-to-number) "22" "2" "1" "12")
+    @result{} 1
 @end group
 @group
-(-min-by (-on 'string-lessp 'number-to-string) '(2 100 22))
-    @result{} 22
+(-min-by (-on #'> #'length) '((1 2 3) (4) (1 2)))
+    @result{} (4)
 @end group
 @end example
 @end defun
 
 @anchor{-flip}
-@defun -flip (func)
-Swap the order of arguments for binary function @var{func}.
+@defun -flip (fn)
+Return a function that calls @var{fn} with its arguments reversed.
+The returned function takes the same number of arguments as @var{fn}.
 
-In types: (a -> b -> c) -> b -> a -> c
+For example, the following two expressions are morally
+equivalent:
+
+  (funcall (-flip #'-) 1 2) = (- 2 1)
+
+See also: @code{-rotate-args} (@pxref{-rotate-args}).
 
 @example
 @group
-(funcall (-flip '<) 2 1)
-    @result{} t
-@end group
-@group
-(funcall (-flip '-) 3 8)
-    @result{} 5
-@end group
-@group
-(-sort (-flip '<) '(4 3 6 1))
+(-sort (-flip #'<) '(4 3 6 1))
     @result{} (6 4 3 1)
+@end group
+@group
+(funcall (-flip #'-) 3 2 1 10)
+    @result{} 4
+@end group
+@group
+(funcall (-flip #'1+) 1)
+    @result{} 2
+@end group
+@end example
+@end defun
+
+@anchor{-rotate-args}
+@defun -rotate-args (n fn)
+Return a function that calls @var{fn} with args rotated @var{n} places to the right.
+The returned function takes the same number of arguments as @var{fn},
+rotates the list of arguments @var{n} places to the right (left if @var{n} is
+negative) just like @code{-rotate} (@pxref{-rotate}), and applies @var{fn} to the result.
+
+See also: @code{-flip} (@pxref{-flip}).
+
+@example
+@group
+(funcall (-rotate-args -1 #'list) 1 2 3 4)
+    @result{} (2 3 4 1)
+@end group
+@group
+(funcall (-rotate-args 1 #'-) 1 10 100)
+    @result{} 89
+@end group
+@group
+(funcall (-rotate-args 2 #'list) 3 4 5 1 2)
+    @result{} (1 2 3 4 5)
 @end group
 @end example
 @end defun
@@ -4414,11 +4450,11 @@ In types: a -> b -> a
     @result{} 2
 @end group
 @group
-(-map (-const 1) '("a" "b" "c" "d"))
+(mapcar (-const 1) '("a" "b" "c" "d"))
     @result{} (1 1 1 1)
 @end group
 @group
-(-sum (-map (-const 1) '("a" "b" "c" "d")))
+(-sum (mapcar (-const 1) '("a" "b" "c" "d")))
     @result{} 4
 @end group
 @end example
@@ -4449,17 +4485,23 @@ See @var{srfi-26} for detailed description.
 
 @anchor{-not}
 @defun -not (pred)
-Take a unary predicate @var{pred} and return a unary predicate
-that returns t if @var{pred} returns nil and nil if @var{pred} returns
-non-nil.
+Return a predicate that negates the result of @var{pred}.
+The returned predicate passes its arguments to @var{pred}.  If @var{pred}
+returns nil, the result is non-nil; otherwise the result is nil.
+
+See also: @code{-andfn} (@pxref{-andfn}) and @code{-orfn} (@pxref{-orfn}).
 
 @example
 @group
-(funcall (-not 'even?) 5)
+(funcall (-not #'numberp) "5")
     @result{} t
 @end group
 @group
-(-filter (-not (-partial '< 4)) '(1 2 3 4 5 6 7 8))
+(-sort (-not #'<) '(5 2 1 0 6))
+    @result{} (6 5 2 1 0)
+@end group
+@group
+(-filter (-not (-partial #'< 4)) '(1 2 3 4 5 6 7 8))
     @result{} (1 2 3 4)
 @end group
 @end example
@@ -4467,19 +4509,26 @@ non-nil.
 
 @anchor{-orfn}
 @defun -orfn (&rest preds)
-Take list of unary predicates @var{preds} and return a unary
-predicate with argument x that returns non-nil if at least one of
-the @var{preds} returns non-nil on x.
+Return a predicate that returns the first non-nil result of @var{preds}.
+The returned predicate takes a variable number of arguments,
+passes them to each predicate in @var{preds} in turn until one of them
+returns non-nil, and returns that non-nil result without calling
+the remaining @var{preds}.  If all @var{preds} return nil, or if no @var{preds} are
+given, the returned predicate returns nil.
 
-In types: [a -> Bool] -> a -> Bool
+See also: @code{-andfn} (@pxref{-andfn}) and @code{-not} (@pxref{-not}).
 
 @example
 @group
-(-filter (-orfn 'even? (-partial (-flip '<) 5)) '(1 2 3 4 5 6 7 8 9 10))
-    @result{} (1 2 3 4 6 8 10)
+(-filter (-orfn #'natnump #'booleanp) '(1 nil "a" -4 b c t))
+    @result{} (1 nil t)
 @end group
 @group
-(funcall (-orfn 'stringp 'even?) "foo")
+(funcall (-orfn #'symbolp (-cut string-match-p "x" <>)) "axe")
+    @result{} 1
+@end group
+@group
+(funcall (-orfn #'= #'+) 1 1)
     @result{} t
 @end group
 @end example
@@ -4487,24 +4536,27 @@ In types: [a -> Bool] -> a -> Bool
 
 @anchor{-andfn}
 @defun -andfn (&rest preds)
-Take list of unary predicates @var{preds} and return a unary
-predicate with argument x that returns non-nil if all of the
-@var{preds} returns non-nil on x.
+Return a predicate that returns non-nil if all @var{preds} do so.
+The returned predicate @var{p} takes a variable number of arguments and
+passes them to each predicate in @var{preds} in turn.  If any one of
+@var{preds} returns nil, @var{p} also returns nil without calling the
+remaining @var{preds}.  If all @var{preds} return non-nil, @var{p} returns the last
+such value.  If no @var{preds} are given, @var{p} always returns non-nil.
 
-In types: [a -> Bool] -> a -> Bool
+See also: @code{-orfn} (@pxref{-orfn}) and @code{-not} (@pxref{-not}).
 
 @example
 @group
-(funcall (-andfn (-cut < <> 10) 'even?) 6)
-    @result{} t
+(-filter (-andfn #'numberp (-cut < <> 5)) '(a 1 b 6 c 2))
+    @result{} (1 2)
 @end group
 @group
-(funcall (-andfn (-cut < <> 10) 'even?) 12)
-    @result{} nil
+(mapcar (-andfn #'numberp #'1+) '(a 1 b 6))
+    @result{} (nil 2 nil 7)
 @end group
 @group
-(-filter (-andfn (-not 'even?) (-cut >= 5 <>)) '(1 2 3 4 5 6 7 8 9 10))
-    @result{} (1 3 5)
+(funcall (-andfn #'= #'+) 1 1)
+    @result{} 2
 @end group
 @end example
 @end defun

@@ -2729,9 +2729,7 @@ Alias: `-is-prefix-p'."
 
 Alias: `-is-suffix-p'."
   (declare (pure t) (side-effect-free t))
-  (cond ((null suffix))
-        ((setq list (member (car suffix) list))
-         (equal (cdr suffix) (cdr list)))))
+  (equal suffix (last list (length suffix))))
 
 (defun -is-infix? (infix list)
   "Return non-nil if INFIX is infix of LIST.

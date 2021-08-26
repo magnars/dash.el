@@ -6,13 +6,21 @@ See the end of the file for license conditions.
 
 ## Change log
 
+### From 2.19.0 to 2.19.1
+
+#### Fixes
+
+- Fixed a regression from `2.18` in `-is-suffix-p` which led to false
+  negatives when parts of the suffix appeared multiple times in the
+  list being searched (Bennett Rennier, #384).
+
 ### From 2.18.1 to 2.19.0
 
 #### Fixes
 
 - Reverted a breaking change introduced in `2.18.0` that caused the
-  threading macro `-->` to be indented differently from `->` and
-  `->>` (#375).
+  threading macro `-->` to be indented differently from `->` and `->>`
+  (#375).
 - Added and fixed Edebug specifications for many Dash macros (Philipp
   Stephani, #380, #381).
 

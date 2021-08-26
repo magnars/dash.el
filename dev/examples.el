@@ -758,6 +758,8 @@ value rather than consuming a list to produce a single value."
     (-is-suffix? '(nil) '(nil)) => t
     (-is-suffix? '(nil) '()) => nil
     (-is-suffix? '(1 2) '(1 2 3)) => nil
+    (-is-suffix? '(1 2) '(1 2 1 2)) => t
+    (-is-suffix? '(1 2) '(1 3 1 2)) => t
     (let* ((s (list 1 2)) (l s) (c (copy-sequence s)))
       (and (-is-suffix? s l) (equal s c) (equal l c)))
     => t)

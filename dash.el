@@ -613,9 +613,9 @@ For a side-effecting variant, see also `-each-indexed'."
        (nreverse ,r))))
 
 (defun -map-when (pred rep list)
-  "Return a new list where the elements in LIST that do not match the PRED function
-are unchanged, and where the elements in LIST that do match the PRED function are mapped
-through the REP function.
+  "Use PRED to conditionally apply REP to each item in LIST.
+Return a copy of LIST where the items for which PRED returns nil
+are unchanged, and the rest are mapped through the REP function.
 
 Alias: `-replace-where'
 
@@ -626,7 +626,9 @@ See also: `-update-at'"
 (defalias '--replace-where '--map-when)
 
 (defun -map-first (pred rep list)
-  "Replace first item in LIST satisfying PRED with result of REP called on this item.
+  "Use PRED to determine the first item in LIST to call REP on.
+Return a copy of LIST where the first item for which PRED returns
+non-nil is replaced with the result of calling REP on that item.
 
 See also: `-map-when', `-replace-first'"
   (let (front)
@@ -643,7 +645,9 @@ See also: `-map-when', `-replace-first'"
   `(-map-first (lambda (it) ,pred) (lambda (it) (ignore it) ,rep) ,list))
 
 (defun -map-last (pred rep list)
-  "Replace last item in LIST satisfying PRED with result of REP called on this item.
+  "Use PRED to determine the last item in LIST to call REP on.
+Return a copy of LIST where the last item for which PRED returns
+non-nil is replaced with the result of calling REP on that item.
 
 See also: `-map-when', `-replace-last'"
   (nreverse (-map-first pred rep (reverse list))))
@@ -739,10 +743,7 @@ See also: `-flatten'"
     (setq list (apply #'append (mapcar #'-list list))))
   list)
 
-(defun -concat (&rest lists)
-  "Return a new list with the concatenation of the elements in the supplied LISTS."
-  (declare (pure t) (side-effect-free t))
-  (apply 'append lists))
+(defalias '-concat #'append)
 
 (defalias '-copy 'copy-sequence
   "Create a shallow copy of LIST.
@@ -1057,8 +1058,10 @@ Alias: `-none-p'"
        (---truthy? (and ,y ,n)))))
 
 (defun -only-some? (pred list)
-  "Return `t` if at least one item of LIST matches PRED and at least one item of LIST does not match PRED.
-Return `nil` both if all items match the predicate or if none of the items match the predicate.
+  "Return t if different LIST items both satisfy and do not satisfy PRED.
+That is, if PRED returns both nil for at least one item, and
+non-nil for at least one other item in LIST.  Return nil if all
+items satisfy the predicate or none of them do.
 
 Alias: `-only-some-p'"
   (--only-some? (funcall pred it) list))
@@ -1217,11 +1220,15 @@ See also: `-replace'"
     (nconc (car split-list) (cons x (cdr (cadr split-list))))))
 
 (defun -update-at (n func list)
-  "Return a list with element at Nth position in LIST replaced with `(func (nth n list))`.
+  "Use FUNC to update the Nth element of LIST.
+Return a copy of LIST where the Nth element is replaced with the
+result of calling FUNC on it.
 
 See also: `-map-when'"
   (let ((split-list (-split-at n list)))
-    (nconc (car split-list) (cons (funcall func (car (cadr split-list))) (cdr (cadr split-list))))))
+    (nconc (car split-list)
+           (cons (funcall func (car (cadr split-list)))
+                 (cdr (cadr split-list))))))
 
 (defmacro --update-at (n form list)
   "Anaphoric version of `-update-at'."
@@ -1270,7 +1277,14 @@ See also: `-remove-at', `-remove'"
        (list (nreverse ,r) ,l))))
 
 (defun -split-with (pred list)
-  "Return a list of ((-take-while PRED LIST) (-drop-while PRED LIST)), in no more than one pass through the list."
+  "Split LIST into a prefix satisfying PRED, and the rest.
+The first sublist is the prefix of LIST with successive elements
+satisfying PRED, and the second sublist is the remaining elements
+that do not.  The result is like performing
+
+  ((-take-while PRED LIST) (-drop-while PRED LIST))
+
+but in no more than a single pass through LIST."
   (--split-with (funcall pred it) list))
 
 (defmacro -split-on (item list)
@@ -1318,11 +1332,16 @@ This function can be thought of as a generalization of
        (list (nreverse ,y) (nreverse ,n)))))
 
 (defun -separate (pred list)
-  "Return a list of ((-filter PRED LIST) (-remove PRED LIST)), in one pass through the list."
+  "Split LIST into two sublists based on whether items satisfy PRED.
+The result is like performing
+
+  ((-filter PRED LIST) (-remove PRED LIST))
+
+but in a single pass through LIST."
   (--separate (funcall pred it) list))
 
 (defun dash--partition-all-in-steps-reversed (n step list)
-  "Used by `-partition-all-in-steps' and `-partition-in-steps'."
+  "Like `-partition-all-in-steps', but the result is reversed."
   (when (< step 1)
     (signal 'wrong-type-argument
             `("Step size < 1 results in juicy infinite loops" ,step)))
@@ -1333,19 +1352,20 @@ This function can be thought of as a generalization of
     result))
 
 (defun -partition-all-in-steps (n step list)
-  "Return a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
-The last groups may contain less than N items."
+  "Partition LIST into sublists of length N that are STEP items apart.
+Adjacent groups may overlap if N exceeds the STEP stride.
+Trailing groups may contain less than N items."
   (declare (pure t) (side-effect-free t))
   (nreverse (dash--partition-all-in-steps-reversed n step list)))
 
 (defun -partition-in-steps (n step list)
-  "Return a new list with the items in LIST grouped into N-sized sublists at offsets STEP apart.
-If there are not enough items to make the last group N-sized,
-those items are discarded."
+  "Partition LIST into sublists of length N that are STEP items apart.
+Like `-partition-all-in-steps', but if there are not enough items
+to make the last group N-sized, those items are discarded."
   (declare (pure t) (side-effect-free t))
   (let ((result (dash--partition-all-in-steps-reversed n step list)))
     (while (and result (< (length (car result)) n))
-      (!cdr result))
+      (pop result))
     (nreverse result)))
 
 (defun -partition-all (n list)
@@ -1523,7 +1543,8 @@ elements of LIST.  Keys are compared by `equal'."
 (defmacro --zip-with (form list1 list2)
   "Anaphoric form of `-zip-with'.
 
-The elements in list1 are bound as symbol `it', the elements in list2 as symbol `other'."
+Each element in turn of LIST1 is bound to `it', and of LIST2 to
+`other', before evaluating FORM."
   (declare (debug (form form form)))
   (let ((r (make-symbol "result"))
         (l1 (make-symbol "list1"))
@@ -2611,9 +2632,9 @@ Alias: `-uniq'"
 (defalias '-uniq '-distinct)
 
 (defun -union (list list2)
-  "Return a new list containing the elements of LIST and elements of LIST2 that are not in LIST.
-The test for equality is done with `equal',
-or with `-compare-fn' if that's non-nil."
+  "Return a new list of all elements appearing in either LIST1 or LIST2.
+Equality is defined by the value of `-compare-fn' if non-nil;
+otherwise `equal'."
   ;; We fall back to iteration implementation if the comparison
   ;; function isn't one of `eq', `eql' or `equal'.
   (let* ((result (reverse list))
@@ -2630,9 +2651,9 @@ or with `-compare-fn' if that's non-nil."
     (nreverse result)))
 
 (defun -intersection (list list2)
-  "Return a new list containing only the elements that are members of both LIST and LIST2.
-The test for equality is done with `equal',
-or with `-compare-fn' if that's non-nil."
+  "Return a new list of the elements appearing in both LIST1 and LIST2.
+Equality is defined by the value of `-compare-fn' if non-nil;
+otherwise `equal'."
   (--filter (-contains? list2 it) list))
 
 (defun -difference (list list2)
@@ -3316,18 +3337,36 @@ In types: (a -> a) -> a -> a."
           re)))))
 
 (defun -prodfn (&rest fns)
-  "Take a list of n functions and return a function that takes a
-list of length n, applying i-th function to i-th element of the
-input list.  Returns a list of length n.
+  "Return a function that applies each of FNS to each of a list of arguments.
 
-In types (for n=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
+Takes a list of N functions and returns a function that takes a
+list of length N, applying Ith function to Ith element of the
+input list.  Returns a list of length N.
+
+In types (for N=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
 
 This function satisfies the following laws:
 
-  (-compose (-prodfn f g ...) (-prodfn f\\=' g\\=' ...)) = (-prodfn (-compose f f\\=') (-compose g g\\=') ...)
-  (-prodfn f g ...) = (-juxt (-compose f (-partial \\='nth 0)) (-compose g (-partial \\='nth 1)) ...)
-  (-compose (-prodfn f g ...) (-juxt f\\=' g\\=' ...)) = (-juxt (-compose f f\\=') (-compose g g\\=') ...)
-  (-compose (-partial \\='nth n) (-prod f1 f2 ...)) = (-compose fn (-partial \\='nth n))"
+    (-compose (-prodfn f g ...)
+              (-prodfn f\\=' g\\=' ...))
+  = (-prodfn (-compose f f\\=')
+             (-compose g g\\=')
+             ...)
+
+    (-prodfn f g ...)
+  = (-juxt (-compose f (-partial #\\='nth 0))
+           (-compose g (-partial #\\='nth 1))
+           ...)
+
+    (-compose (-prodfn f g ...)
+              (-juxt f\\=' g\\=' ...))
+  = (-juxt (-compose f f\\=')
+           (-compose g g\\=')
+           ...)
+
+    (-compose (-partial #\\='nth n)
+              (-prod f1 f2 ...))
+  = (-compose fn (-partial #\\='nth n))"
   (lambda (x) (-zip-with 'funcall fns x)))
 
 ;;; Font lock

@@ -260,9 +260,9 @@ This function's anaphoric counterpart is @code{--map}.
 
 @anchor{-map-when}
 @defun -map-when (pred rep list)
-Return a new list where the elements in @var{list} that do not match the @var{pred} function
-are unchanged, and where the elements in @var{list} that do match the @var{pred} function are mapped
-through the @var{rep} function.
+Use @var{pred} to conditionally apply @var{rep} to each item in @var{list}.
+Return a copy of @var{list} where the items for which @var{pred} returns nil
+are unchanged, and the rest are mapped through the @var{rep} function.
 
 Alias: @code{-replace-where}
 
@@ -286,7 +286,9 @@ See also: @code{-update-at} (@pxref{-update-at})
 
 @anchor{-map-first}
 @defun -map-first (pred rep list)
-Replace first item in @var{list} satisfying @var{pred} with result of @var{rep} called on this item.
+Use @var{pred} to determine the first item in @var{list} to call @var{rep} on.
+Return a copy of @var{list} where the first item for which @var{pred} returns
+non-nil is replaced with the result of calling @var{rep} on that item.
 
 See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-first} (@pxref{-replace-first})
 
@@ -308,7 +310,9 @@ See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-first} (@pxref{-r
 
 @anchor{-map-last}
 @defun -map-last (pred rep list)
-Replace last item in @var{list} satisfying @var{pred} with result of @var{rep} called on this item.
+Use @var{pred} to determine the last item in @var{list} to call @var{rep} on.
+Return a copy of @var{list} where the last item for which @var{pred} returns
+non-nil is replaced with the result of calling @var{rep} on that item.
 
 See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-last} (@pxref{-replace-last})
 
@@ -892,8 +896,11 @@ Its anaphoric counterpart is @code{--keep}.
 @end defun
 
 @anchor{-concat}
-@defun -concat (&rest lists)
-Return a new list with the concatenation of the elements in the supplied @var{lists}.
+@defun -concat (&rest sequences)
+Concatenate all the arguments and make the result a list.
+The result is a list whose elements are the elements of all the arguments.
+Each argument may be a list, vector or string.
+The last argument is not copied, just used as the tail of the new list.
 
 @example
 @group
@@ -1077,7 +1084,9 @@ See also: @code{-replace} (@pxref{-replace})
 
 @anchor{-update-at}
 @defun -update-at (n func list)
-Return a list with element at Nth position in @var{list} replaced with `(func (nth n list))`.
+Use @var{func} to update the Nth element of @var{list}.
+Return a copy of @var{list} where the Nth element is replaced with the
+result of calling @var{func} on it.
 
 See also: @code{-map-when} (@pxref{-map-when})
 
@@ -1842,8 +1851,10 @@ Alias: @code{-none-p}
 
 @anchor{-only-some?}
 @defun -only-some? (pred list)
-Return `t` if at least one item of @var{list} matches @var{pred} and at least one item of @var{list} does not match @var{pred}.
-Return `nil` both if all items match the predicate or if none of the items match the predicate.
+Return t if different @var{list} items both satisfy and do not satisfy @var{pred}.
+That is, if @var{pred} returns both nil for at least one item, and
+non-nil for at least one other item in @var{list}.  Return nil if all
+items satisfy the predicate or none of them do.
 
 Alias: @code{-only-some-p}
 
@@ -2035,7 +2046,14 @@ is done in a single list traversal.
 
 @anchor{-split-with}
 @defun -split-with (pred list)
-Return a list of ((-take-while @var{pred} @var{list}) (-drop-while @var{pred} @var{list})), in no more than one pass through the list.
+Split @var{list} into a prefix satisfying @var{pred}, and the rest.
+The first sublist is the prefix of @var{list} with successive elements
+satisfying @var{pred}, and the second sublist is the remaining elements
+that do not.  The result is like performing
+
+  ((-take-while @var{pred} @var{list}) (-drop-while @var{pred} @var{list}))
+
+but in no more than a single pass through @var{list}.
 
 @example
 @group
@@ -2108,7 +2126,12 @@ This function can be thought of as a generalization of
 
 @anchor{-separate}
 @defun -separate (pred list)
-Return a list of ((-filter @var{pred} @var{list}) (-remove @var{pred} @var{list})), in one pass through the list.
+Split @var{list} into two sublists based on whether items satisfy @var{pred}.
+The result is like performing
+
+  ((-filter @var{pred} @var{list}) (-remove @var{pred} @var{list}))
+
+but in a single pass through @var{list}.
 
 @example
 @group
@@ -2171,9 +2194,9 @@ The last group may contain less than @var{n} items.
 
 @anchor{-partition-in-steps}
 @defun -partition-in-steps (n step list)
-Return a new list with the items in @var{list} grouped into @var{n}-sized sublists at offsets @var{step} apart.
-If there are not enough items to make the last group @var{n}-sized,
-those items are discarded.
+Partition @var{list} into sublists of length @var{n} that are @var{step} items apart.
+Like @code{-partition-all-in-steps} (@pxref{-partition-all-in-steps}), but if there are not enough items
+to make the last group @var{n}-sized, those items are discarded.
 
 @example
 @group
@@ -2193,8 +2216,9 @@ those items are discarded.
 
 @anchor{-partition-all-in-steps}
 @defun -partition-all-in-steps (n step list)
-Return a new list with the items in @var{list} grouped into @var{n}-sized sublists at offsets @var{step} apart.
-The last groups may contain less than @var{n} items.
+Partition @var{list} into sublists of length @var{n} that are @var{step} items apart.
+Adjacent groups may overlap if @var{n} exceeds the @var{step} stride.
+Trailing groups may contain less than @var{n} items.
 
 @example
 @group
@@ -2519,9 +2543,9 @@ Operations pretending lists are sets.
 
 @anchor{-union}
 @defun -union (list list2)
-Return a new list containing the elements of @var{list} and elements of @var{list2} that are not in @var{list}.
-The test for equality is done with @code{equal},
-or with @code{-compare-fn} if that's non-nil.
+Return a new list of all elements appearing in either @var{list1} or @var{list2}.
+Equality is defined by the value of @code{-compare-fn} if non-nil;
+otherwise @code{equal}.
 
 @example
 @group
@@ -2563,9 +2587,9 @@ or with @code{-compare-fn} if that's non-nil.
 
 @anchor{-intersection}
 @defun -intersection (list list2)
-Return a new list containing only the elements that are members of both @var{list} and @var{list2}.
-The test for equality is done with @code{equal},
-or with @code{-compare-fn} if that's non-nil.
+Return a new list of the elements appearing in both @var{list1} and @var{list2}.
+Equality is defined by the value of @code{-compare-fn} if non-nil;
+otherwise @code{equal}.
 
 @example
 @group
@@ -4638,18 +4662,36 @@ In types: (a -> a) -> a -> a.
 
 @anchor{-prodfn}
 @defun -prodfn (&rest fns)
-Take a list of n functions and return a function that takes a
-list of length n, applying i-th function to i-th element of the
-input list.  Returns a list of length n.
+Return a function that applies each of @var{fns} to each of a list of arguments.
 
-In types (for n=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
+Takes a list of @var{n} functions and returns a function that takes a
+list of length @var{n}, applying Ith function to Ith element of the
+input list.  Returns a list of length @var{n}.
+
+In types (for @var{n}=2): ((a -> b), (c -> d)) -> (a, c) -> (b, d)
 
 This function satisfies the following laws:
 
-  (-compose (-prodfn f g @dots{}) (-prodfn f' g' @dots{})) = (-prodfn (-compose f f') (-compose g g') @dots{})
-  (-prodfn f g @dots{}) = (-juxt (-compose f (-partial 'nth 0)) (-compose g (-partial 'nth 1)) @dots{})
-  (-compose (-prodfn f g @dots{}) (-juxt f' g' @dots{})) = (-juxt (-compose f f') (-compose g g') @dots{})
-  (-compose (-partial 'nth n) (-prod f1 f2 @dots{})) = (-compose fn (-partial 'nth n))
+    (-compose (-prodfn f g @dots{})
+              (-prodfn f' g' @dots{}))
+  = (-prodfn (-compose f f')
+             (-compose g g')
+             @dots{})
+
+    (-prodfn f g @dots{})
+  = (-juxt (-compose f (-partial #'nth 0))
+           (-compose g (-partial #'nth 1))
+           @dots{})
+
+    (-compose (-prodfn f g @dots{})
+              (-juxt f' g' @dots{}))
+  = (-juxt (-compose f f')
+           (-compose g g')
+           @dots{})
+
+    (-compose (-partial #'nth n)
+              (-prod f1 f2 @dots{}))
+  = (-compose fn (-partial #'nth n))
 
 @example
 @group

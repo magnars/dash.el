@@ -852,6 +852,10 @@ value rather than consuming a list to produce a single value."
     (-partition-all-in-steps 2 1 '(1 2 3 4)) => '((1 2) (2 3) (3 4) (4))
     (-partition-all-in-steps 3 2 '(1 2 3 4)) => '((1 2 3) (3 4))
     (-partition-all-in-steps 3 2 '(1 2 3 4 5)) => '((1 2 3) (3 4 5) (5))
+    (-partition-all-in-steps 4 2 '(0 1 2 3 4 5 6)) => '((0 1 2 3)
+                                                        (2 3 4 5)
+                                                        (4 5 6)
+                                                        (6))
     (-partition-all-in-steps 2 1 '(1)) => '((1))
     (-partition-all-in-steps 2 0 '(1)) !!> wrong-type-argument
     (-partition-all-in-steps 2 -1 '(1)) !!> wrong-type-argument)

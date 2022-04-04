@@ -42,7 +42,7 @@ force-docs: maintainer-clean docs
 check: ERT_SELECTOR ?= t
 check: run := '(ert-run-tests-batch-and-exit (quote $(ERT_SELECTOR)))'
 check: lisp
-	EMACS_TEST_VERBOSE= $(batch) -l dev/examples.el -eval $(run)
+	EMACS_TEST_VERBOSE=1 $(batch) -l dev/examples.el -eval $(run)
 .PHONY: check
 
 all: lisp docs check

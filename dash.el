@@ -720,7 +720,7 @@ N is the length of the returned list."
 (defun -flatten (l)
   "Take a nested list L and return its contents as a single, flat list.
 
-Note that because `nil' represents a list of zero elements (an
+Note that because nil represents a list of zero elements (an
 empty list), any mention of nil in L will disappear after
 flattening.  If you need to preserve nils, consider `-flatten-n'
 or map them to some unique symbol and then map them back.
@@ -803,7 +803,7 @@ is a dotted list.  With no ARGS, return nil."
 
 This is like `cons', but operates on the end of list.
 
-If ELEMENTS is non nil, append these to the list as well."
+If any ELEMENTS are given, append them to the list as well."
   (-concat list (list elem) elements))
 
 (defmacro --first (form list)
@@ -983,7 +983,7 @@ See also: `-last-item'."
   `(and (--some ,form ,list) t))
 
 (defun -any? (pred list)
-  "Return t if (PRED x) is non-nil for any x in LIST, else nil.
+  "Return t if (PRED X) is non-nil for any X in LIST, else nil.
 
 Alias: `-any-p', `-some?', `-some-p'"
   (--any? (funcall pred it) list))
@@ -1039,7 +1039,7 @@ This function's anaphoric counterpart is `--all?'."
   `(--all? (not ,form) ,list))
 
 (defun -none? (pred list)
-  "Return t if (PRED x) is nil for all x in LIST, else nil.
+  "Return t if (PRED X) is nil for all X in LIST, else nil.
 
 Alias: `-none-p'"
   (--none? (funcall pred it) list))
@@ -2012,7 +2012,7 @@ MATCH-FORM is either a symbol, which gets bound to the respective
 value in source or another match form which gets destructured
 recursively.
 
-If the cdr of last cons cell in the list is `nil', matching stops
+If the cdr of last cons cell in the list is nil, matching stops
 there.
 
 SOURCE is a proper or improper list."
@@ -2618,7 +2618,7 @@ Alias: `-uniq'"
   (let* ((len (length list))
          (lut (and (> len 32)
                    ;; Check that `-compare-fn' is a valid hash-table
-                   ;; lookup function or `nil'.
+                   ;; lookup function or nil.
                    (memq -compare-fn '(nil equal eq eql))
                    (make-hash-table :test (or -compare-fn #'equal)
                                     :size len))))
@@ -2901,7 +2901,7 @@ This is \"dual\" operation to `-reduce-r': while -reduce-r
 consumes a list to produce a single value, `-unfold' takes a
 seed value and builds a (potentially infinite!) list.
 
-FUN should return `nil' to stop the generating process, or a
+FUN should return nil to stop the generating process, or a
 cons (A . B), where A will be prepended to the result and B is
 the new seed."
   (let ((last (funcall fun seed)) r)

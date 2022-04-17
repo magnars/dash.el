@@ -261,7 +261,7 @@ This function's anaphoric counterpart is @code{--map}.
 @anchor{-map-when}
 @defun -map-when (pred rep list)
 Use @var{pred} to conditionally apply @var{rep} to each item in @var{list}.
-Return a copy of @var{list} where the items for which @var{pred} returns nil
+Return a copy of @var{list} where the items for which @var{pred} returns @code{nil}
 are unchanged, and the rest are mapped through the @var{rep} function.
 
 Alias: @code{-replace-where}
@@ -288,7 +288,7 @@ See also: @code{-update-at} (@pxref{-update-at})
 @defun -map-first (pred rep list)
 Use @var{pred} to determine the first item in @var{list} to call @var{rep} on.
 Return a copy of @var{list} where the first item for which @var{pred} returns
-non-nil is replaced with the result of calling @var{rep} on that item.
+non-@code{nil} is replaced with the result of calling @var{rep} on that item.
 
 See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-first} (@pxref{-replace-first})
 
@@ -312,7 +312,7 @@ See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-first} (@pxref{-r
 @defun -map-last (pred rep list)
 Use @var{pred} to determine the last item in @var{list} to call @var{rep} on.
 Return a copy of @var{list} where the last item for which @var{pred} returns
-non-nil is replaced with the result of calling @var{rep} on that item.
+non-@code{nil} is replaced with the result of calling @var{rep} on that item.
 
 See also: @code{-map-when} (@pxref{-map-when}), @code{-replace-last} (@pxref{-replace-last})
 
@@ -473,7 +473,7 @@ Functions returning a sublist of the original list.
 
 @anchor{-filter}
 @defun -filter (pred list)
-Return a new list of the items in @var{list} for which @var{pred} returns non-nil.
+Return a new list of the items in @var{list} for which @var{pred} returns non-@code{nil}.
 
 Alias: @code{-select}.
 
@@ -499,7 +499,7 @@ For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-remove}
 
 @anchor{-remove}
 @defun -remove (pred list)
-Return a new list of the items in @var{list} for which @var{pred} returns nil.
+Return a new list of the items in @var{list} for which @var{pred} returns @code{nil}.
 
 Alias: @code{-reject}.
 
@@ -525,7 +525,7 @@ For similar operations, see also @code{-keep} (@pxref{-keep}) and @code{-filter}
 
 @anchor{-remove-first}
 @defun -remove-first (pred list)
-Remove the first item from @var{list} for which @var{pred} returns non-nil.
+Remove the first item from @var{list} for which @var{pred} returns non-@code{nil}.
 This is a non-destructive operation, but only the front of @var{list}
 leading up to the removed item is a copy; the rest is @var{list}'s
 original tail.  If no item is removed, then the result is a
@@ -555,7 +555,7 @@ See also @code{-map-first} (@pxref{-map-first}), @code{-remove-item} (@pxref{-re
 
 @anchor{-remove-last}
 @defun -remove-last (pred list)
-Remove the last item from @var{list} for which @var{pred} returns non-nil.
+Remove the last item from @var{list} for which @var{pred} returns non-@code{nil}.
 The result is a copy of @var{list} regardless of whether an element is
 removed.
 
@@ -604,7 +604,7 @@ The comparison is done with @code{equal}.
 
 @anchor{-non-nil}
 @defun -non-nil (list)
-Return a copy of @var{list} with all nil items removed.
+Return a copy of @var{list} with all @code{nil} items removed.
 
 @example
 @group
@@ -652,7 +652,7 @@ section is returned.  Defaults to 1.
 @defun -take (n list)
 Return a copy of the first @var{n} items in @var{list}.
 Return a copy of @var{list} if it contains @var{n} items or fewer.
-Return nil if @var{n} is zero or less.
+Return @code{nil} if @var{n} is zero or less.
 
 See also: @code{-take-last} (@pxref{-take-last}).
 
@@ -676,7 +676,7 @@ See also: @code{-take-last} (@pxref{-take-last}).
 @defun -take-last (n list)
 Return a copy of the last @var{n} items of @var{list} in order.
 Return a copy of @var{list} if it contains @var{n} items or fewer.
-Return nil if @var{n} is zero or less.
+Return @code{nil} if @var{n} is zero or less.
 
 See also: @code{-take} (@pxref{-take}).
 
@@ -699,7 +699,7 @@ See also: @code{-take} (@pxref{-take}).
 @anchor{-drop}
 @defun -drop (n list)
 Return the tail (not a copy) of @var{list} without the first @var{n} items.
-Return nil if @var{list} contains @var{n} items or fewer.
+Return @code{nil} if @var{list} contains @var{n} items or fewer.
 Return @var{list} if @var{n} is zero or less.
 
 For another variant, see also @code{-drop-last} (@pxref{-drop-last}).
@@ -724,7 +724,7 @@ For another variant, see also @code{-drop-last} (@pxref{-drop-last}).
 @defun -drop-last (n list)
 Return a copy of @var{list} without its last @var{n} items.
 Return a copy of @var{list} if @var{n} is zero or less.
-Return nil if @var{list} contains @var{n} items or fewer.
+Return @code{nil} if @var{list} contains @var{n} items or fewer.
 
 See also: @code{-drop} (@pxref{-drop}).
 
@@ -746,10 +746,10 @@ See also: @code{-drop} (@pxref{-drop}).
 
 @anchor{-take-while}
 @defun -take-while (pred list)
-Take successive items from @var{list} for which @var{pred} returns non-nil.
+Take successive items from @var{list} for which @var{pred} returns non-@code{nil}.
 @var{pred} is a function of one argument.  Return a new list of the
 successive elements from the start of @var{list} for which @var{pred} returns
-non-nil.
+non-@code{nil}.
 
 This function's anaphoric counterpart is @code{--take-while}.
 
@@ -773,10 +773,10 @@ For another variant, see also @code{-drop-while} (@pxref{-drop-while}).
 
 @anchor{-drop-while}
 @defun -drop-while (pred list)
-Drop successive items from @var{list} for which @var{pred} returns non-nil.
+Drop successive items from @var{list} for which @var{pred} returns non-@code{nil}.
 @var{pred} is a function of one argument.  Return the tail (not a copy)
 of @var{list} starting from its first element for which @var{pred} returns
-nil.
+@code{nil}.
 
 This function's anaphoric counterpart is @code{--drop-while}.
 
@@ -873,8 +873,8 @@ Functions returning a modified copy of the input list.
 
 @anchor{-keep}
 @defun -keep (fn list)
-Return a new list of the non-nil results of applying @var{fn} to each item in @var{list}.
-Like @code{-filter} (@pxref{-filter}), but returns the non-nil results of @var{fn} instead of
+Return a new list of the non-@code{nil} results of applying @var{fn} to each item in @var{list}.
+Like @code{-filter} (@pxref{-filter}), but returns the non-@code{nil} results of @var{fn} instead of
 the corresponding elements of @var{list}.
 
 Its anaphoric counterpart is @code{--keep}.
@@ -923,7 +923,7 @@ The last argument is not copied, just used as the tail of the new list.
 Take a nested list @var{l} and return its contents as a single, flat list.
 
 Note that because @code{nil} represents a list of zero elements (an
-empty list), any mention of nil in @var{l} will disappear after
+empty list), any mention of @code{nil} in @var{l} will disappear after
 flattening.  If you need to preserve nils, consider @code{-flatten-n} (@pxref{-flatten-n})
 or map them to some unique symbol and then map them back.
 
@@ -1394,7 +1394,7 @@ For other folds, see also @code{-reductions-r-from} (@pxref{-reductions-r-from})
 
 @anchor{-count}
 @defun -count (pred list)
-Counts the number of items in @var{list} where (@var{pred} item) is non-nil.
+Counts the number of items in @var{list} where (@var{pred} item) is non-@code{nil}.
 
 @example
 @group
@@ -1725,7 +1725,7 @@ Reductions of one or more lists to a boolean value.
 
 @anchor{-some}
 @defun -some (pred list)
-Return (@var{pred} x) for the first @var{list} item where (@var{pred} x) is non-nil, else nil.
+Return (@var{pred} x) for the first @var{list} item where (@var{pred} x) is non-@code{nil}, else @code{nil}.
 
 Alias: @code{-any}.
 
@@ -1749,13 +1749,13 @@ This function's anaphoric counterpart is @code{--some}.
 
 @anchor{-every}
 @defun -every (pred list)
-Return non-nil if @var{pred} returns non-nil for all items in @var{list}.
+Return non-@code{nil} if @var{pred} returns non-@code{nil} for all items in @var{list}.
 If so, return the last such result of @var{pred}.  Otherwise, once an
-item is reached for which @var{pred} returns nil, return nil without
+item is reached for which @var{pred} returns @code{nil}, return @code{nil} without
 calling @var{pred} on any further @var{list} elements.
 
 This function is like @code{-every-p}, but on success returns the last
-non-nil result of @var{pred} instead of just t.
+non-@code{nil} result of @var{pred} instead of just @code{t}.
 
 This function's anaphoric counterpart is @code{--every}.
 
@@ -1777,7 +1777,7 @@ This function's anaphoric counterpart is @code{--every}.
 
 @anchor{-any?}
 @defun -any? (pred list)
-Return t if (@var{pred} x) is non-nil for any x in @var{list}, else nil.
+Return @code{t} if (@var{pred} @var{x}) is non-@code{nil} for any @var{x} in @var{list}, else @code{nil}.
 
 Alias: @code{-any-p}, @code{-some?}, @code{-some-p}
 
@@ -1799,12 +1799,12 @@ Alias: @code{-any-p}, @code{-some?}, @code{-some-p}
 
 @anchor{-all?}
 @defun -all? (pred list)
-Return t if (@var{pred} @var{x}) is non-nil for all @var{x} in @var{list}, else nil.
+Return @code{t} if (@var{pred} @var{x}) is non-@code{nil} for all @var{x} in @var{list}, else @code{nil}.
 In the latter case, stop after the first @var{x} for which (@var{pred} @var{x}) is
-nil, without calling @var{pred} on any subsequent elements of @var{list}.
+@code{nil}, without calling @var{pred} on any subsequent elements of @var{list}.
 
 The similar function @code{-every} (@pxref{-every}) is more widely useful, since it
-returns the last non-nil result of @var{pred} instead of just t on
+returns the last non-@code{nil} result of @var{pred} instead of just @code{t} on
 success.
 
 Alias: @code{-all-p}, @code{-every-p}, @code{-every?}.
@@ -1829,7 +1829,7 @@ This function's anaphoric counterpart is @code{--all?}.
 
 @anchor{-none?}
 @defun -none? (pred list)
-Return t if (@var{pred} x) is nil for all x in @var{list}, else nil.
+Return @code{t} if (@var{pred} @var{x}) is @code{nil} for all @var{x} in @var{list}, else @code{nil}.
 
 Alias: @code{-none-p}
 
@@ -1851,9 +1851,9 @@ Alias: @code{-none-p}
 
 @anchor{-only-some?}
 @defun -only-some? (pred list)
-Return t if different @var{list} items both satisfy and do not satisfy @var{pred}.
-That is, if @var{pred} returns both nil for at least one item, and
-non-nil for at least one other item in @var{list}.  Return nil if all
+Return @code{t} if different @var{list} items both satisfy and do not satisfy @var{pred}.
+That is, if @var{pred} returns both @code{nil} for at least one item, and
+non-@code{nil} for at least one other item in @var{list}.  Return @code{nil} if all
 items satisfy the predicate or none of them do.
 
 Alias: @code{-only-some-p}
@@ -1876,10 +1876,10 @@ Alias: @code{-only-some-p}
 
 @anchor{-contains?}
 @defun -contains? (list element)
-Return non-nil if @var{list} contains @var{element}.
+Return non-@code{nil} if @var{list} contains @var{element}.
 
 The test for equality is done with @code{equal}, or with @code{-compare-fn}
-if that's non-nil.
+if that's non-@code{nil}.
 
 Alias: @code{-contains-p}
 
@@ -1925,7 +1925,7 @@ Alias: @code{-same-items-p}
 
 @anchor{-is-prefix?}
 @defun -is-prefix? (prefix list)
-Return non-nil if @var{prefix} is a prefix of @var{list}.
+Return non-@code{nil} if @var{prefix} is a prefix of @var{list}.
 
 Alias: @code{-is-prefix-p}.
 
@@ -1947,7 +1947,7 @@ Alias: @code{-is-prefix-p}.
 
 @anchor{-is-suffix?}
 @defun -is-suffix? (suffix list)
-Return non-nil if @var{suffix} is a suffix of @var{list}.
+Return non-@code{nil} if @var{suffix} is a suffix of @var{list}.
 
 Alias: @code{-is-suffix-p}.
 
@@ -1969,7 +1969,7 @@ Alias: @code{-is-suffix-p}.
 
 @anchor{-is-infix?}
 @defun -is-infix? (infix list)
-Return non-nil if @var{infix} is infix of @var{list}.
+Return non-@code{nil} if @var{infix} is infix of @var{list}.
 
 This operation runs in @var{o}(n^2) time
 
@@ -1993,7 +1993,7 @@ Alias: @code{-is-infix-p}
 
 @anchor{-cons-pair?}
 @defun -cons-pair? (obj)
-Return non-nil if @var{obj} is a true cons pair.
+Return non-@code{nil} if @var{obj} is a true cons pair.
 That is, a cons (@var{a} . @var{b}) where @var{b} is not a list.
 
 Alias: @code{-cons-pair-p}.
@@ -2100,7 +2100,7 @@ See also @code{-split-when} (@pxref{-split-when})
 
 @anchor{-split-when}
 @defun -split-when (fn list)
-Split the @var{list} on each element where @var{fn} returns non-nil.
+Split the @var{list} on each element where @var{fn} returns non-@code{nil}.
 
 Unlike @code{-partition-by} (@pxref{-partition-by}), the "matched" element is discarded from
 the results.  Empty lists are also removed from the result.
@@ -2281,7 +2281,7 @@ other value (the body).
 
 @anchor{-partition-after-pred}
 @defun -partition-after-pred (pred list)
-Partition @var{list} after each element for which @var{pred} returns non-nil.
+Partition @var{list} after each element for which @var{pred} returns non-@code{nil}.
 
 This function's anaphoric counterpart is @code{--partition-after-pred}.
 
@@ -2391,7 +2391,7 @@ related predicates.
 @anchor{-elem-index}
 @defun -elem-index (elem list)
 Return the index of the first element in the given @var{list} which
-is equal to the query element @var{elem}, or nil if there is no
+is equal to the query element @var{elem}, or @code{nil} if there is no
 such element.
 
 @example
@@ -2434,7 +2434,7 @@ element @var{elem}, in ascending order.
 @anchor{-find-index}
 @defun -find-index (pred list)
 Take a predicate @var{pred} and a @var{list} and return the index of the
-first element in the list satisfying the predicate, or nil if
+first element in the list satisfying the predicate, or @code{nil} if
 there is no such element.
 
 See also @code{-first} (@pxref{-first}).
@@ -2458,7 +2458,7 @@ See also @code{-first} (@pxref{-first}).
 @anchor{-find-last-index}
 @defun -find-last-index (pred list)
 Take a predicate @var{pred} and a @var{list} and return the index of the
-last element in the list satisfying the predicate, or nil if
+last element in the list satisfying the predicate, or @code{nil} if
 there is no such element.
 
 See also @code{-last} (@pxref{-last}).
@@ -2544,7 +2544,7 @@ Operations pretending lists are sets.
 @anchor{-union}
 @defun -union (list list2)
 Return a new list of all elements appearing in either @var{list1} or @var{list2}.
-Equality is defined by the value of @code{-compare-fn} if non-nil;
+Equality is defined by the value of @code{-compare-fn} if non-@code{nil};
 otherwise @code{equal}.
 
 @example
@@ -2567,7 +2567,7 @@ otherwise @code{equal}.
 @defun -difference (list list2)
 Return a new list with only the members of @var{list} that are not in @var{list2}.
 The test for equality is done with @code{equal},
-or with @code{-compare-fn} if that's non-nil.
+or with @code{-compare-fn} if that's non-@code{nil}.
 
 @example
 @group
@@ -2588,7 +2588,7 @@ or with @code{-compare-fn} if that's non-nil.
 @anchor{-intersection}
 @defun -intersection (list list2)
 Return a new list of the elements appearing in both @var{list1} and @var{list2}.
-Equality is defined by the value of @code{-compare-fn} if non-nil;
+Equality is defined by the value of @code{-compare-fn} if non-@code{nil};
 otherwise @code{equal}.
 
 @example
@@ -2647,7 +2647,7 @@ Return the permutations of @var{list}.
 @defun -distinct (list)
 Return a new list with all duplicates removed.
 The test for equality is done with @code{equal},
-or with @code{-compare-fn} if that's non-nil.
+or with @code{-compare-fn} if that's non-@code{nil}.
 
 Alias: @code{-uniq}
 
@@ -2696,7 +2696,7 @@ The time complexity is @var{o}(n).
 @anchor{-repeat}
 @defun -repeat (n x)
 Return a new list of length @var{n} with each element being @var{x}.
-Return nil if @var{n} is less than 1.
+Return @code{nil} if @var{n} is less than 1.
 
 @example
 @group
@@ -2719,7 +2719,7 @@ Return nil if @var{n} is less than 1.
 Make a new list from the elements of @var{args}.
 The last 2 elements of @var{args} are used as the final cons of the
 result, so if the final element of @var{args} is not a list, the result
-is a dotted list.  With no @var{args}, return nil.
+is a dotted list.  With no @var{args}, return @code{nil}.
 
 @example
 @group
@@ -2743,7 +2743,7 @@ Append @var{elem} to the end of the list.
 
 This is like @code{cons}, but operates on the end of list.
 
-If @var{elements} is non nil, append these to the list as well.
+If any @var{elements} are given, append them to the list as well.
 
 @example
 @group
@@ -3065,8 +3065,8 @@ See also: @code{-flatten-n} (@pxref{-flatten-n}), @code{-table} (@pxref{-table})
 
 @anchor{-first}
 @defun -first (pred list)
-Return the first item in @var{list} for which @var{pred} returns non-nil.
-Return nil if no such element is found.
+Return the first item in @var{list} for which @var{pred} returns non-@code{nil}.
+Return @code{nil} if no such element is found.
 To get the first item in the list no questions asked, use @code{car}.
 
 Alias: @code{-find}.
@@ -3091,7 +3091,7 @@ This function's anaphoric counterpart is @code{--first}.
 
 @anchor{-last}
 @defun -last (pred list)
-Return the last x in @var{list} where (@var{pred} x) is non-nil, else nil.
+Return the last x in @var{list} where (@var{pred} x) is non-@code{nil}, else @code{nil}.
 
 @example
 @group
@@ -3111,7 +3111,7 @@ Return the last x in @var{list} where (@var{pred} x) is non-nil, else nil.
 
 @anchor{-first-item}
 @defun -first-item (list)
-Return the first item of @var{list}, or nil on an empty list.
+Return the first item of @var{list}, or @code{nil} on an empty list.
 
 See also: @code{-second-item} (@pxref{-second-item}), @code{-last-item} (@pxref{-last-item}).
 
@@ -3133,7 +3133,7 @@ See also: @code{-second-item} (@pxref{-second-item}), @code{-last-item} (@pxref{
 
 @anchor{-second-item}
 @defun -second-item (list)
-Return the second item of @var{list}, or nil if @var{list} is too short.
+Return the second item of @var{list}, or @code{nil} if @var{list} is too short.
 
 See also: @code{-third-item} (@pxref{-third-item}).
 
@@ -3151,7 +3151,7 @@ See also: @code{-third-item} (@pxref{-third-item}).
 
 @anchor{-third-item}
 @defun -third-item (list)
-Return the third item of @var{list}, or nil if @var{list} is too short.
+Return the third item of @var{list}, or @code{nil} if @var{list} is too short.
 
 See also: @code{-fourth-item} (@pxref{-fourth-item}).
 
@@ -3169,7 +3169,7 @@ See also: @code{-fourth-item} (@pxref{-fourth-item}).
 
 @anchor{-fourth-item}
 @defun -fourth-item (list)
-Return the fourth item of @var{list}, or nil if @var{list} is too short.
+Return the fourth item of @var{list}, or @code{nil} if @var{list} is too short.
 
 See also: @code{-fifth-item} (@pxref{-fifth-item}).
 
@@ -3187,7 +3187,7 @@ See also: @code{-fifth-item} (@pxref{-fifth-item}).
 
 @anchor{-fifth-item}
 @defun -fifth-item (list)
-Return the fifth item of @var{list}, or nil if @var{list} is too short.
+Return the fifth item of @var{list}, or @code{nil} if @var{list} is too short.
 
 See also: @code{-last-item} (@pxref{-last-item}).
 
@@ -3205,7 +3205,7 @@ See also: @code{-last-item} (@pxref{-last-item}).
 
 @anchor{-last-item}
 @defun -last-item (list)
-Return the last item of @var{list}, or nil on an empty list.
+Return the last item of @var{list}, or @code{nil} on an empty list.
 
 @example
 @group
@@ -3247,7 +3247,7 @@ Return a list of all items in list except for the last.
 @defun -sort (comparator list)
 Sort @var{list}, stably, comparing elements using @var{comparator}.
 Return the sorted list.  @var{list} is @var{not} modified by side effects.
-@var{comparator} is called with two elements of @var{list}, and should return non-nil
+@var{comparator} is called with two elements of @var{list}, and should return non-@code{nil}
 if the first element should sort before the second.
 
 @example
@@ -3320,7 +3320,7 @@ Functions pretending lists are trees.
 @defun -tree-seq (branch children tree)
 Return a sequence of the nodes in @var{tree}, in depth-first search order.
 
-@var{branch} is a predicate of one argument that returns non-nil if the
+@var{branch} is a predicate of one argument that returns non-@code{nil} if the
 passed argument is a branch, that is, a node that can have children.
 
 @var{children} is a function of one argument that returns the children
@@ -3368,8 +3368,8 @@ Apply @var{fn} to each element of @var{tree} while preserving the tree structure
 @defun -tree-map-nodes (pred fun tree)
 Call @var{fun} on each node of @var{tree} that satisfies @var{pred}.
 
-If @var{pred} returns nil, continue descending down this node.  If @var{pred}
-returns non-nil, apply @var{fun} to this node and do not descend
+If @var{pred} returns @code{nil}, continue descending down this node.  If @var{pred}
+returns non-@code{nil}, apply @var{fun} to this node and do not descend
 further.
 
 @example
@@ -3609,8 +3609,8 @@ In the first form, bind @var{variable} to @var{value}.  In the second form, bind
 
 @anchor{-some->}
 @defmac -some-> (x &optional form &rest more)
-When expr is non-nil, thread it through the first form (via @code{->} (@pxref{->})),
-and when that result is non-nil, through the next form, etc.
+When expr is non-@code{nil}, thread it through the first form (via @code{->} (@pxref{->})),
+and when that result is non-@code{nil}, through the next form, etc.
 
 @example
 @group
@@ -3630,8 +3630,8 @@ and when that result is non-nil, through the next form, etc.
 
 @anchor{-some->>}
 @defmac -some->> (x &optional form &rest more)
-When expr is non-nil, thread it through the first form (via @code{->>} (@pxref{->>})),
-and when that result is non-nil, through the next form, etc.
+When expr is non-@code{nil}, thread it through the first form (via @code{->>} (@pxref{->>})),
+and when that result is non-@code{nil}, through the next form, etc.
 
 @example
 @group
@@ -3651,9 +3651,9 @@ and when that result is non-nil, through the next form, etc.
 
 @anchor{-some-->}
 @defmac -some--> (expr &rest forms)
-Thread @var{expr} through @var{forms} via @code{-->} (@pxref{-->}), while the result is non-nil.
-When @var{expr} evaluates to non-nil, thread the result through the
-first of @var{forms}, and when that result is non-nil, thread it
+Thread @var{expr} through @var{forms} via @code{-->} (@pxref{-->}), while the result is non-@code{nil}.
+When @var{expr} evaluates to non-@code{nil}, thread the result through the
+first of @var{forms}, and when that result is non-@code{nil}, thread it
 through the next form, etc.
 
 @example
@@ -3702,7 +3702,7 @@ Macros that combine @code{let} and @code{let*} with destructuring and flow contr
 
 @anchor{-when-let}
 @defmac -when-let ((var val) &rest body)
-If @var{val} evaluates to non-nil, bind it to @var{var} and execute body.
+If @var{val} evaluates to non-@code{nil}, bind it to @var{var} and execute body.
 
 Note: binding is done according to @code{-let} (@pxref{-let}).
 
@@ -3729,7 +3729,7 @@ If all @var{vals} evaluate to true, bind them to their corresponding
 pairs.
 
 Note: binding is done according to @code{-let*} (@pxref{-let*}).  @var{vals} are evaluated
-sequentially, and evaluation stops after the first nil @var{val} is
+sequentially, and evaluation stops after the first @code{nil} @var{val} is
 encountered.
 
 @example
@@ -3746,7 +3746,7 @@ encountered.
 
 @anchor{-if-let}
 @defmac -if-let ((var val) then &rest else)
-If @var{val} evaluates to non-nil, bind it to @var{var} and do @var{then},
+If @var{val} evaluates to non-@code{nil}, bind it to @var{var} and do @var{then},
 otherwise do @var{else}.
 
 Note: binding is done according to @code{-let} (@pxref{-let}).
@@ -3770,7 +3770,7 @@ If all @var{vals} evaluate to true, bind them to their corresponding
 of (@var{var} @var{val}) pairs.
 
 Note: binding is done according to @code{-let*} (@pxref{-let*}).  @var{vals} are evaluated
-sequentially, and evaluation stops after the first nil @var{val} is
+sequentially, and evaluation stops after the first @code{nil} @var{val} is
 encountered.
 
 @example
@@ -3860,17 +3860,17 @@ Key/value stores:
 
   (&plist key0 a0 @dots{} keyN aN) - bind value mapped by keyK in the
                                  @var{source} plist to aK.  If the
-                                 value is not found, aK is nil.
+                                 value is not found, aK is @code{nil}.
                                  Uses @code{plist-get} to fetch values.
 
   (&alist key0 a0 @dots{} keyN aN) - bind value mapped by keyK in the
                                  @var{source} alist to aK.  If the
-                                 value is not found, aK is nil.
+                                 value is not found, aK is @code{nil}.
                                  Uses @code{assoc} to fetch values.
 
   (&hash key0 a0 @dots{} keyN aN) - bind value mapped by keyK in the
                                 @var{source} hash table to aK.  If the
-                                value is not found, aK is nil.
+                                value is not found, aK is @code{nil}.
                                 Uses @code{gethash} to fetch values.
 
 Further, special keyword &keys supports "inline" matching of
@@ -4075,7 +4075,7 @@ Functions iterating over lists for side effect only.
 @anchor{-each}
 @defun -each (list fn)
 Call @var{fn} on each element of @var{list}.
-Return nil; this function is intended for side effects.
+Return @code{nil}; this function is intended for side effects.
 
 Its anaphoric counterpart is @code{--each}.
 
@@ -4100,9 +4100,9 @@ For access to the current element's index in @var{list}, see
 
 @anchor{-each-while}
 @defun -each-while (list pred fn)
-Call @var{fn} on each @var{item} in @var{list}, while (@var{pred} @var{item}) is non-nil.
-Once an @var{item} is reached for which @var{pred} returns nil, @var{fn} is no
-longer called.  Return nil; this function is intended for side
+Call @var{fn} on each @var{item} in @var{list}, while (@var{pred} @var{item}) is non-@code{nil}.
+Once an @var{item} is reached for which @var{pred} returns @code{nil}, @var{fn} is no
+longer called.  Return @code{nil}; this function is intended for side
 effects.
 
 Its anaphoric counterpart is @code{--each-while}.
@@ -4127,7 +4127,7 @@ Its anaphoric counterpart is @code{--each-while}.
 @defun -each-indexed (list fn)
 Call @var{fn} on each index and element of @var{list}.
 For each @var{item} at @var{index} in @var{list}, call (funcall @var{fn} @var{index} @var{item}).
-Return nil; this function is intended for side effects.
+Return @code{nil}; this function is intended for side effects.
 
 See also: @code{-map-indexed} (@pxref{-map-indexed}).
 
@@ -4150,7 +4150,7 @@ See also: @code{-map-indexed} (@pxref{-map-indexed}).
 @anchor{-each-r}
 @defun -each-r (list fn)
 Call @var{fn} on each element of @var{list} in reversed order.
-Return nil; this function is intended for side effects.
+Return @code{nil}; this function is intended for side effects.
 
 Its anaphoric counterpart is @code{--each-r}.
 
@@ -4172,9 +4172,9 @@ Its anaphoric counterpart is @code{--each-r}.
 
 @anchor{-each-r-while}
 @defun -each-r-while (list pred fn)
-Call @var{fn} on each @var{item} in reversed @var{list}, while (@var{pred} @var{item}) is non-nil.
-Once an @var{item} is reached for which @var{pred} returns nil, @var{fn} is no
-longer called.  Return nil; this function is intended for side
+Call @var{fn} on each @var{item} in reversed @var{list}, while (@var{pred} @var{item}) is non-@code{nil}.
+Once an @var{item} is reached for which @var{pred} returns @code{nil}, @var{fn} is no
+longer called.  Return @code{nil}; this function is intended for side
 effects.
 
 Its anaphoric counterpart is @code{--each-r-while}.
@@ -4511,7 +4511,7 @@ See @var{srfi-26} for detailed description.
 @defun -not (pred)
 Return a predicate that negates the result of @var{pred}.
 The returned predicate passes its arguments to @var{pred}.  If @var{pred}
-returns nil, the result is non-nil; otherwise the result is nil.
+returns @code{nil}, the result is non-@code{nil}; otherwise the result is @code{nil}.
 
 See also: @code{-andfn} (@pxref{-andfn}) and @code{-orfn} (@pxref{-orfn}).
 
@@ -4533,12 +4533,12 @@ See also: @code{-andfn} (@pxref{-andfn}) and @code{-orfn} (@pxref{-orfn}).
 
 @anchor{-orfn}
 @defun -orfn (&rest preds)
-Return a predicate that returns the first non-nil result of @var{preds}.
+Return a predicate that returns the first non-@code{nil} result of @var{preds}.
 The returned predicate takes a variable number of arguments,
 passes them to each predicate in @var{preds} in turn until one of them
-returns non-nil, and returns that non-nil result without calling
-the remaining @var{preds}.  If all @var{preds} return nil, or if no @var{preds} are
-given, the returned predicate returns nil.
+returns non-@code{nil}, and returns that non-@code{nil} result without calling
+the remaining @var{preds}.  If all @var{preds} return @code{nil}, or if no @var{preds} are
+given, the returned predicate returns @code{nil}.
 
 See also: @code{-andfn} (@pxref{-andfn}) and @code{-not} (@pxref{-not}).
 
@@ -4560,12 +4560,12 @@ See also: @code{-andfn} (@pxref{-andfn}) and @code{-not} (@pxref{-not}).
 
 @anchor{-andfn}
 @defun -andfn (&rest preds)
-Return a predicate that returns non-nil if all @var{preds} do so.
+Return a predicate that returns non-@code{nil} if all @var{preds} do so.
 The returned predicate @var{p} takes a variable number of arguments and
 passes them to each predicate in @var{preds} in turn.  If any one of
-@var{preds} returns nil, @var{p} also returns nil without calling the
-remaining @var{preds}.  If all @var{preds} return non-nil, @var{p} returns the last
-such value.  If no @var{preds} are given, @var{p} always returns non-nil.
+@var{preds} returns @code{nil}, @var{p} also returns @code{nil} without calling the
+remaining @var{preds}.  If all @var{preds} return non-@code{nil}, @var{p} returns the last
+such value.  If no @var{preds} are given, @var{p} always returns non-@code{nil}.
 
 See also: @code{-orfn} (@pxref{-orfn}) and @code{-not} (@pxref{-not}).
 
@@ -4630,11 +4630,11 @@ iteration halts when either of the following conditions is satisfied:
     numbers, it may be necessary to provide an appropriate
     approximate comparison test.
 
- 2. @var{halt-test} returns a non-nil value. @var{halt-test} defaults to a
-    simple counter that returns t after @code{-fixfn-max-iterations},
+ 2. @var{halt-test} returns a non-@code{nil} value. @var{halt-test} defaults to a
+    simple counter that returns @code{t} after @code{-fixfn-max-iterations},
     to guard against infinite iteration. Otherwise, @var{halt-test}
     must be a function that accepts a single argument, the
-    current value of @var{x}, and returns non-nil as long as iteration
+    current value of @var{x}, and returns non-@code{nil} as long as iteration
     should continue. In this way, a more sophisticated
     convergence test may be supplied by the caller.
 

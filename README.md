@@ -407,7 +407,7 @@ This function's anaphoric counterpart is `--map`.
 #### -map-when `(pred rep list)`
 
 Use `pred` to conditionally apply `rep` to each item in `list`.
-Return a copy of `list` where the items for which `pred` returns nil
+Return a copy of `list` where the items for which `pred` returns `nil`
 are unchanged, and the rest are mapped through the `rep` function.
 
 Alias: `-replace-where`
@@ -424,7 +424,7 @@ See also: [`-update-at`](#-update-at-n-func-list)
 
 Use `pred` to determine the first item in `list` to call `rep` on.
 Return a copy of `list` where the first item for which `pred` returns
-non-nil is replaced with the result of calling `rep` on that item.
+non-`nil` is replaced with the result of calling `rep` on that item.
 
 See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-first`](#-replace-first-old-new-list)
 
@@ -438,7 +438,7 @@ See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-first`](#-replace-
 
 Use `pred` to determine the last item in `list` to call `rep` on.
 Return a copy of `list` where the last item for which `pred` returns
-non-nil is replaced with the result of calling `rep` on that item.
+non-`nil` is replaced with the result of calling `rep` on that item.
 
 See also: [`-map-when`](#-map-when-pred-rep-list), [`-replace-last`](#-replace-last-old-new-list)
 
@@ -531,7 +531,7 @@ Functions returning a sublist of the original list.
 
 #### -filter `(pred list)`
 
-Return a new list of the items in `list` for which `pred` returns non-nil.
+Return a new list of the items in `list` for which `pred` returns non-`nil`.
 
 Alias: `-select`.
 
@@ -547,7 +547,7 @@ For similar operations, see also [`-keep`](#-keep-fn-list) and [`-remove`](#-rem
 
 #### -remove `(pred list)`
 
-Return a new list of the items in `list` for which `pred` returns nil.
+Return a new list of the items in `list` for which `pred` returns `nil`.
 
 Alias: `-reject`.
 
@@ -563,7 +563,7 @@ For similar operations, see also [`-keep`](#-keep-fn-list) and [`-filter`](#-fil
 
 #### -remove-first `(pred list)`
 
-Remove the first item from `list` for which `pred` returns non-nil.
+Remove the first item from `list` for which `pred` returns non-`nil`.
 This is a non-destructive operation, but only the front of `list`
 leading up to the removed item is a copy; the rest is `list`'s
 original tail.  If no item is removed, then the result is a
@@ -583,7 +583,7 @@ See also [`-map-first`](#-map-first-pred-rep-list), [`-remove-item`](#-remove-it
 
 #### -remove-last `(pred list)`
 
-Remove the last item from `list` for which `pred` returns non-nil.
+Remove the last item from `list` for which `pred` returns non-`nil`.
 The result is a copy of `list` regardless of whether an element is
 removed.
 
@@ -612,7 +612,7 @@ The comparison is done with `equal`.
 
 #### -non-nil `(list)`
 
-Return a copy of `list` with all nil items removed.
+Return a copy of `list` with all `nil` items removed.
 
 ```el
 (-non-nil '(nil 1 nil 2 nil nil 3 4 nil 5 nil)) ;; => (1 2 3 4 5)
@@ -640,7 +640,7 @@ section is returned.  Defaults to 1.
 
 Return a copy of the first `n` items in `list`.
 Return a copy of `list` if it contains `n` items or fewer.
-Return nil if `n` is zero or less.
+Return `nil` if `n` is zero or less.
 
 See also: [`-take-last`](#-take-last-n-list).
 
@@ -654,7 +654,7 @@ See also: [`-take-last`](#-take-last-n-list).
 
 Return a copy of the last `n` items of `list` in order.
 Return a copy of `list` if it contains `n` items or fewer.
-Return nil if `n` is zero or less.
+Return `nil` if `n` is zero or less.
 
 See also: [`-take`](#-take-n-list).
 
@@ -667,7 +667,7 @@ See also: [`-take`](#-take-n-list).
 #### -drop `(n list)`
 
 Return the tail (not a copy) of `list` without the first `n` items.
-Return nil if `list` contains `n` items or fewer.
+Return `nil` if `list` contains `n` items or fewer.
 Return `list` if `n` is zero or less.
 
 For another variant, see also [`-drop-last`](#-drop-last-n-list).
@@ -682,7 +682,7 @@ For another variant, see also [`-drop-last`](#-drop-last-n-list).
 
 Return a copy of `list` without its last `n` items.
 Return a copy of `list` if `n` is zero or less.
-Return nil if `list` contains `n` items or fewer.
+Return `nil` if `list` contains `n` items or fewer.
 
 See also: [`-drop`](#-drop-n-list).
 
@@ -694,10 +694,10 @@ See also: [`-drop`](#-drop-n-list).
 
 #### -take-while `(pred list)`
 
-Take successive items from `list` for which `pred` returns non-nil.
+Take successive items from `list` for which `pred` returns non-`nil`.
 `pred` is a function of one argument.  Return a new list of the
 successive elements from the start of `list` for which `pred` returns
-non-nil.
+non-`nil`.
 
 This function's anaphoric counterpart is `--take-while`.
 
@@ -711,10 +711,10 @@ For another variant, see also [`-drop-while`](#-drop-while-pred-list).
 
 #### -drop-while `(pred list)`
 
-Drop successive items from `list` for which `pred` returns non-nil.
+Drop successive items from `list` for which `pred` returns non-`nil`.
 `pred` is a function of one argument.  Return the tail (not a copy)
 of `list` starting from its first element for which `pred` returns
-nil.
+`nil`.
 
 This function's anaphoric counterpart is `--drop-while`.
 
@@ -776,8 +776,8 @@ Functions returning a modified copy of the input list.
 
 #### -keep `(fn list)`
 
-Return a new list of the non-nil results of applying `fn` to each item in `list`.
-Like [`-filter`](#-filter-pred-list), but returns the non-nil results of `fn` instead of
+Return a new list of the non-`nil` results of applying `fn` to each item in `list`.
+Like [`-filter`](#-filter-pred-list), but returns the non-`nil` results of `fn` instead of
 the corresponding elements of `list`.
 
 Its anaphoric counterpart is `--keep`.
@@ -806,7 +806,7 @@ The last argument is not copied, just used as the tail of the new list.
 Take a nested list `l` and return its contents as a single, flat list.
 
 Note that because `nil` represents a list of zero elements (an
-empty list), any mention of nil in `l` will disappear after
+empty list), any mention of `nil` in `l` will disappear after
 flattening.  If you need to preserve nils, consider [`-flatten-n`](#-flatten-n-num-list)
 or map them to some unique symbol and then map them back.
 
@@ -1099,7 +1099,7 @@ For other folds, see also [`-reductions-r-from`](#-reductions-r-from-fn-init-lis
 
 #### -count `(pred list)`
 
-Counts the number of items in `list` where (`pred` item) is non-nil.
+Counts the number of items in `list` where (`pred` item) is non-`nil`.
 
 ```el
 (-count 'even? '(1 2 3 4 5)) ;; => 2
@@ -1281,7 +1281,7 @@ Reductions of one or more lists to a boolean value.
 
 #### -some `(pred list)`
 
-Return (`pred` x) for the first `list` item where (`pred` x) is non-nil, else nil.
+Return (`pred` x) for the first `list` item where (`pred` x) is non-`nil`, else `nil`.
 
 Alias: `-any`.
 
@@ -1295,13 +1295,13 @@ This function's anaphoric counterpart is `--some`.
 
 #### -every `(pred list)`
 
-Return non-nil if `pred` returns non-nil for all items in `list`.
+Return non-`nil` if `pred` returns non-`nil` for all items in `list`.
 If so, return the last such result of `pred`.  Otherwise, once an
-item is reached for which `pred` returns nil, return nil without
+item is reached for which `pred` returns `nil`, return `nil` without
 calling `pred` on any further `list` elements.
 
 This function is like `-every-p`, but on success returns the last
-non-nil result of `pred` instead of just t.
+non-`nil` result of `pred` instead of just `t`.
 
 This function's anaphoric counterpart is `--every`.
 
@@ -1313,7 +1313,7 @@ This function's anaphoric counterpart is `--every`.
 
 #### -any? `(pred list)`
 
-Return t if (`pred` x) is non-nil for any x in `list`, else nil.
+Return `t` if (`pred` `x`) is non-`nil` for any `x` in `list`, else `nil`.
 
 Alias: `-any-p`, `-some?`, `-some-p`
 
@@ -1325,12 +1325,12 @@ Alias: `-any-p`, `-some?`, `-some-p`
 
 #### -all? `(pred list)`
 
-Return t if (`pred` `x`) is non-nil for all `x` in `list`, else nil.
+Return `t` if (`pred` `x`) is non-`nil` for all `x` in `list`, else `nil`.
 In the latter case, stop after the first `x` for which (`pred` `x`) is
-nil, without calling `pred` on any subsequent elements of `list`.
+`nil`, without calling `pred` on any subsequent elements of `list`.
 
 The similar function [`-every`](#-every-pred-list) is more widely useful, since it
-returns the last non-nil result of `pred` instead of just t on
+returns the last non-`nil` result of `pred` instead of just `t` on
 success.
 
 Alias: `-all-p`, `-every-p`, `-every?`.
@@ -1345,7 +1345,7 @@ This function's anaphoric counterpart is `--all?`.
 
 #### -none? `(pred list)`
 
-Return t if (`pred` x) is nil for all x in `list`, else nil.
+Return `t` if (`pred` `x`) is `nil` for all `x` in `list`, else `nil`.
 
 Alias: `-none-p`
 
@@ -1357,9 +1357,9 @@ Alias: `-none-p`
 
 #### -only-some? `(pred list)`
 
-Return t if different `list` items both satisfy and do not satisfy `pred`.
-That is, if `pred` returns both nil for at least one item, and
-non-nil for at least one other item in `list`.  Return nil if all
+Return `t` if different `list` items both satisfy and do not satisfy `pred`.
+That is, if `pred` returns both `nil` for at least one item, and
+non-`nil` for at least one other item in `list`.  Return `nil` if all
 items satisfy the predicate or none of them do.
 
 Alias: `-only-some-p`
@@ -1372,10 +1372,10 @@ Alias: `-only-some-p`
 
 #### -contains? `(list element)`
 
-Return non-nil if `list` contains `element`.
+Return non-`nil` if `list` contains `element`.
 
 The test for equality is done with `equal`, or with `-compare-fn`
-if that's non-nil.
+if that's non-`nil`.
 
 Alias: `-contains-p`
 
@@ -1401,7 +1401,7 @@ Alias: `-same-items-p`
 
 #### -is-prefix? `(prefix list)`
 
-Return non-nil if `prefix` is a prefix of `list`.
+Return non-`nil` if `prefix` is a prefix of `list`.
 
 Alias: `-is-prefix-p`.
 
@@ -1413,7 +1413,7 @@ Alias: `-is-prefix-p`.
 
 #### -is-suffix? `(suffix list)`
 
-Return non-nil if `suffix` is a suffix of `list`.
+Return non-`nil` if `suffix` is a suffix of `list`.
 
 Alias: `-is-suffix-p`.
 
@@ -1425,7 +1425,7 @@ Alias: `-is-suffix-p`.
 
 #### -is-infix? `(infix list)`
 
-Return non-nil if `infix` is infix of `list`.
+Return non-`nil` if `infix` is infix of `list`.
 
 This operation runs in O(n^2) time
 
@@ -1439,7 +1439,7 @@ Alias: `-is-infix-p`
 
 #### -cons-pair? `(obj)`
 
-Return non-nil if `obj` is a true cons pair.
+Return non-`nil` if `obj` is a true cons pair.
 That is, a cons (`a` . `b`) where `b` is not a list.
 
 Alias: `-cons-pair-p`.
@@ -1505,7 +1505,7 @@ See also [`-split-when`](#-split-when-fn-list)
 
 #### -split-when `(fn list)`
 
-Split the `list` on each element where `fn` returns non-nil.
+Split the `list` on each element where `fn` returns non-`nil`.
 
 Unlike [`-partition-by`](#-partition-by-fn-list), the "matched" element is discarded from
 the results.  Empty lists are also removed from the result.
@@ -1606,7 +1606,7 @@ other value (the body).
 
 #### -partition-after-pred `(pred list)`
 
-Partition `list` after each element for which `pred` returns non-nil.
+Partition `list` after each element for which `pred` returns non-`nil`.
 
 This function's anaphoric counterpart is `--partition-after-pred`.
 
@@ -1665,7 +1665,7 @@ related predicates.
 #### -elem-index `(elem list)`
 
 Return the index of the first element in the given `list` which
-is equal to the query element `elem`, or nil if there is no
+is equal to the query element `elem`, or `nil` if there is no
 such element.
 
 ```el
@@ -1688,7 +1688,7 @@ element `elem`, in ascending order.
 #### -find-index `(pred list)`
 
 Take a predicate `pred` and a `list` and return the index of the
-first element in the list satisfying the predicate, or nil if
+first element in the list satisfying the predicate, or `nil` if
 there is no such element.
 
 See also [`-first`](#-first-pred-list).
@@ -1702,7 +1702,7 @@ See also [`-first`](#-first-pred-list).
 #### -find-last-index `(pred list)`
 
 Take a predicate `pred` and a `list` and return the index of the
-last element in the list satisfying the predicate, or nil if
+last element in the list satisfying the predicate, or `nil` if
 there is no such element.
 
 See also [`-last`](#-last-pred-list).
@@ -1753,7 +1753,7 @@ Operations pretending lists are sets.
 #### -union `(list list2)`
 
 Return a new list of all elements appearing in either `list1` or `list2`.
-Equality is defined by the value of `-compare-fn` if non-nil;
+Equality is defined by the value of `-compare-fn` if non-`nil`;
 otherwise `equal`.
 
 ```el
@@ -1766,7 +1766,7 @@ otherwise `equal`.
 
 Return a new list with only the members of `list` that are not in `list2`.
 The test for equality is done with `equal`,
-or with `-compare-fn` if that's non-nil.
+or with `-compare-fn` if that's non-`nil`.
 
 ```el
 (-difference () ()) ;; => ()
@@ -1777,7 +1777,7 @@ or with `-compare-fn` if that's non-nil.
 #### -intersection `(list list2)`
 
 Return a new list of the elements appearing in both `list1` and `list2`.
-Equality is defined by the value of `-compare-fn` if non-nil;
+Equality is defined by the value of `-compare-fn` if non-`nil`;
 otherwise `equal`.
 
 ```el
@@ -1809,7 +1809,7 @@ Return the permutations of `list`.
 
 Return a new list with all duplicates removed.
 The test for equality is done with `equal`,
-or with `-compare-fn` if that's non-nil.
+or with `-compare-fn` if that's non-`nil`.
 
 Alias: `-uniq`
 
@@ -1837,7 +1837,7 @@ The time complexity is O(n).
 #### -repeat `(n x)`
 
 Return a new list of length `n` with each element being `x`.
-Return nil if `n` is less than 1.
+Return `nil` if `n` is less than 1.
 
 ```el
 (-repeat 3 :a) ;; => (:a :a :a)
@@ -1850,7 +1850,7 @@ Return nil if `n` is less than 1.
 Make a new list from the elements of `args`.
 The last 2 elements of `args` are used as the final cons of the
 result, so if the final element of `args` is not a list, the result
-is a dotted list.  With no `args`, return nil.
+is a dotted list.  With no `args`, return `nil`.
 
 ```el
 (-cons* 1 2) ;; => (1 . 2)
@@ -1864,7 +1864,7 @@ Append `elem` to the end of the list.
 
 This is like `cons`, but operates on the end of list.
 
-If `elements` is non nil, append these to the list as well.
+If any `elements` are given, append them to the list as well.
 
 ```el
 (-snoc '(1 2 3) 4) ;; => (1 2 3 4)
@@ -2062,8 +2062,8 @@ See also: [`-flatten-n`](#-flatten-n-num-list), [`-table`](#-table-fn-rest-lists
 
 #### -first `(pred list)`
 
-Return the first item in `list` for which `pred` returns non-nil.
-Return nil if no such element is found.
+Return the first item in `list` for which `pred` returns non-`nil`.
+Return `nil` if no such element is found.
 To get the first item in the list no questions asked, use `car`.
 
 Alias: `-find`.
@@ -2078,7 +2078,7 @@ This function's anaphoric counterpart is `--first`.
 
 #### -last `(pred list)`
 
-Return the last x in `list` where (`pred` x) is non-nil, else nil.
+Return the last x in `list` where (`pred` x) is non-`nil`, else `nil`.
 
 ```el
 (-last 'even? '(1 2 3 4 5 6 3 3 3)) ;; => 6
@@ -2088,7 +2088,7 @@ Return the last x in `list` where (`pred` x) is non-nil, else nil.
 
 #### -first-item `(list)`
 
-Return the first item of `list`, or nil on an empty list.
+Return the first item of `list`, or `nil` on an empty list.
 
 See also: [`-second-item`](#-second-item-list), [`-last-item`](#-last-item-list).
 
@@ -2100,7 +2100,7 @@ See also: [`-second-item`](#-second-item-list), [`-last-item`](#-last-item-list)
 
 #### -second-item `(list)`
 
-Return the second item of `list`, or nil if `list` is too short.
+Return the second item of `list`, or `nil` if `list` is too short.
 
 See also: [`-third-item`](#-third-item-list).
 
@@ -2111,7 +2111,7 @@ See also: [`-third-item`](#-third-item-list).
 
 #### -third-item `(list)`
 
-Return the third item of `list`, or nil if `list` is too short.
+Return the third item of `list`, or `nil` if `list` is too short.
 
 See also: [`-fourth-item`](#-fourth-item-list).
 
@@ -2122,7 +2122,7 @@ See also: [`-fourth-item`](#-fourth-item-list).
 
 #### -fourth-item `(list)`
 
-Return the fourth item of `list`, or nil if `list` is too short.
+Return the fourth item of `list`, or `nil` if `list` is too short.
 
 See also: [`-fifth-item`](#-fifth-item-list).
 
@@ -2133,7 +2133,7 @@ See also: [`-fifth-item`](#-fifth-item-list).
 
 #### -fifth-item `(list)`
 
-Return the fifth item of `list`, or nil if `list` is too short.
+Return the fifth item of `list`, or `nil` if `list` is too short.
 
 See also: [`-last-item`](#-last-item-list).
 
@@ -2144,7 +2144,7 @@ See also: [`-last-item`](#-last-item-list).
 
 #### -last-item `(list)`
 
-Return the last item of `list`, or nil on an empty list.
+Return the last item of `list`, or `nil` on an empty list.
 
 ```el
 (-last-item '(1 2 3)) ;; => 3
@@ -2166,7 +2166,7 @@ Return a list of all items in list except for the last.
 
 Sort `list`, stably, comparing elements using `comparator`.
 Return the sorted list.  `list` is `not` modified by side effects.
-`comparator` is called with two elements of `list`, and should return non-nil
+`comparator` is called with two elements of `list`, and should return non-`nil`
 if the first element should sort before the second.
 
 ```el
@@ -2211,7 +2211,7 @@ Functions pretending lists are trees.
 
 Return a sequence of the nodes in `tree`, in depth-first search order.
 
-`branch` is a predicate of one argument that returns non-nil if the
+`branch` is a predicate of one argument that returns non-`nil` if the
 passed argument is a branch, that is, a node that can have children.
 
 `children` is a function of one argument that returns the children
@@ -2239,8 +2239,8 @@ Apply `fn` to each element of `tree` while preserving the tree structure.
 
 Call `fun` on each node of `tree` that satisfies `pred`.
 
-If `pred` returns nil, continue descending down this node.  If `pred`
-returns non-nil, apply `fun` to this node and do not descend
+If `pred` returns `nil`, continue descending down this node.  If `pred`
+returns non-`nil`, apply `fun` to this node and do not descend
 further.
 
 ```el
@@ -2388,8 +2388,8 @@ In the first form, bind `variable` to `value`.  In the second form, bind
 
 #### -some-> `(x &optional form &rest more)`
 
-When expr is non-nil, thread it through the first form (via [`->`](#--x-optional-form-rest-more)),
-and when that result is non-nil, through the next form, etc.
+When expr is non-`nil`, thread it through the first form (via [`->`](#--x-optional-form-rest-more)),
+and when that result is non-`nil`, through the next form, etc.
 
 ```el
 (-some-> '(2 3 5)) ;; => (2 3 5)
@@ -2399,8 +2399,8 @@ and when that result is non-nil, through the next form, etc.
 
 #### -some->> `(x &optional form &rest more)`
 
-When expr is non-nil, thread it through the first form (via [`->>`](#--x-optional-form-rest-more)),
-and when that result is non-nil, through the next form, etc.
+When expr is non-`nil`, thread it through the first form (via [`->>`](#--x-optional-form-rest-more)),
+and when that result is non-`nil`, through the next form, etc.
 
 ```el
 (-some->> '(1 2 3) (-map 'square)) ;; => (1 4 9)
@@ -2410,9 +2410,9 @@ and when that result is non-nil, through the next form, etc.
 
 #### -some--> `(expr &rest forms)`
 
-Thread `expr` through `forms` via [`-->`](#---x-rest-forms), while the result is non-nil.
-When `expr` evaluates to non-nil, thread the result through the
-first of `forms`, and when that result is non-nil, thread it
+Thread `expr` through `forms` via [`-->`](#---x-rest-forms), while the result is non-`nil`.
+When `expr` evaluates to non-`nil`, thread the result through the
+first of `forms`, and when that result is non-`nil`, thread it
 through the next form, etc.
 
 ```el
@@ -2440,7 +2440,7 @@ Macros that combine `let` and `let*` with destructuring and flow control.
 
 #### -when-let `((var val) &rest body)`
 
-If `val` evaluates to non-nil, bind it to `var` and execute body.
+If `val` evaluates to non-`nil`, bind it to `var` and execute body.
 
 Note: binding is done according to [`-let`](#-let-varlist-rest-body).
 
@@ -2457,7 +2457,7 @@ If all `vals` evaluate to true, bind them to their corresponding
 pairs.
 
 Note: binding is done according to [`-let*`](#-let-varlist-rest-body).  `vals` are evaluated
-sequentially, and evaluation stops after the first nil `val` is
+sequentially, and evaluation stops after the first `nil` `val` is
 encountered.
 
 ```el
@@ -2467,7 +2467,7 @@ encountered.
 
 #### -if-let `((var val) then &rest else)`
 
-If `val` evaluates to non-nil, bind it to `var` and do `then`,
+If `val` evaluates to non-`nil`, bind it to `var` and do `then`,
 otherwise do `else`.
 
 Note: binding is done according to [`-let`](#-let-varlist-rest-body).
@@ -2484,7 +2484,7 @@ If all `vals` evaluate to true, bind them to their corresponding
 of (`var` `val`) pairs.
 
 Note: binding is done according to [`-let*`](#-let-varlist-rest-body).  `vals` are evaluated
-sequentially, and evaluation stops after the first nil `val` is
+sequentially, and evaluation stops after the first `nil` `val` is
 encountered.
 
 ```el
@@ -2564,17 +2564,17 @@ Key/value stores:
 
     (&plist key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                    `source` plist to aK.  If the
-                                   value is not found, aK is nil.
+                                   value is not found, aK is `nil`.
                                    Uses `plist-get` to fetch values.
 
     (&alist key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                    `source` alist to aK.  If the
-                                   value is not found, aK is nil.
+                                   value is not found, aK is `nil`.
                                    Uses `assoc` to fetch values.
 
     (&hash key0 a0 ... keyN aN) - bind value mapped by keyK in the
                                   `source` hash table to aK.  If the
-                                  value is not found, aK is nil.
+                                  value is not found, aK is `nil`.
                                   Uses `gethash` to fetch values.
 
 Further, special keyword &keys supports "inline" matching of
@@ -2738,7 +2738,7 @@ Functions iterating over lists for side effect only.
 #### -each `(list fn)`
 
 Call `fn` on each element of `list`.
-Return nil; this function is intended for side effects.
+Return `nil`; this function is intended for side effects.
 
 Its anaphoric counterpart is `--each`.
 
@@ -2753,9 +2753,9 @@ For access to the current element's index in `list`, see
 
 #### -each-while `(list pred fn)`
 
-Call `fn` on each `item` in `list`, while (`pred` `item`) is non-nil.
-Once an `item` is reached for which `pred` returns nil, `fn` is no
-longer called.  Return nil; this function is intended for side
+Call `fn` on each `item` in `list`, while (`pred` `item`) is non-`nil`.
+Once an `item` is reached for which `pred` returns `nil`, `fn` is no
+longer called.  Return `nil`; this function is intended for side
 effects.
 
 Its anaphoric counterpart is `--each-while`.
@@ -2770,7 +2770,7 @@ Its anaphoric counterpart is `--each-while`.
 
 Call `fn` on each index and element of `list`.
 For each `item` at `index` in `list`, call (funcall `fn` `index` `item`).
-Return nil; this function is intended for side effects.
+Return `nil`; this function is intended for side effects.
 
 See also: [`-map-indexed`](#-map-indexed-fn-list).
 
@@ -2783,7 +2783,7 @@ See also: [`-map-indexed`](#-map-indexed-fn-list).
 #### -each-r `(list fn)`
 
 Call `fn` on each element of `list` in reversed order.
-Return nil; this function is intended for side effects.
+Return `nil`; this function is intended for side effects.
 
 Its anaphoric counterpart is `--each-r`.
 
@@ -2795,9 +2795,9 @@ Its anaphoric counterpart is `--each-r`.
 
 #### -each-r-while `(list pred fn)`
 
-Call `fn` on each `item` in reversed `list`, while (`pred` `item`) is non-nil.
-Once an `item` is reached for which `pred` returns nil, `fn` is no
-longer called.  Return nil; this function is intended for side
+Call `fn` on each `item` in reversed `list`, while (`pred` `item`) is non-`nil`.
+Once an `item` is reached for which `pred` returns `nil`, `fn` is no
+longer called.  Return `nil`; this function is intended for side
 effects.
 
 Its anaphoric counterpart is `--each-r-while`.
@@ -2998,7 +2998,7 @@ See `srfi-26` for detailed description.
 
 Return a predicate that negates the result of `pred`.
 The returned predicate passes its arguments to `pred`.  If `pred`
-returns nil, the result is non-nil; otherwise the result is nil.
+returns `nil`, the result is non-`nil`; otherwise the result is `nil`.
 
 See also: [`-andfn`](#-andfn-rest-preds) and [`-orfn`](#-orfn-rest-preds).
 
@@ -3010,12 +3010,12 @@ See also: [`-andfn`](#-andfn-rest-preds) and [`-orfn`](#-orfn-rest-preds).
 
 #### -orfn `(&rest preds)`
 
-Return a predicate that returns the first non-nil result of `preds`.
+Return a predicate that returns the first non-`nil` result of `preds`.
 The returned predicate takes a variable number of arguments,
 passes them to each predicate in `preds` in turn until one of them
-returns non-nil, and returns that non-nil result without calling
-the remaining `preds`.  If all `preds` return nil, or if no `preds` are
-given, the returned predicate returns nil.
+returns non-`nil`, and returns that non-`nil` result without calling
+the remaining `preds`.  If all `preds` return `nil`, or if no `preds` are
+given, the returned predicate returns `nil`.
 
 See also: [`-andfn`](#-andfn-rest-preds) and [`-not`](#-not-pred).
 
@@ -3027,12 +3027,12 @@ See also: [`-andfn`](#-andfn-rest-preds) and [`-not`](#-not-pred).
 
 #### -andfn `(&rest preds)`
 
-Return a predicate that returns non-nil if all `preds` do so.
+Return a predicate that returns non-`nil` if all `preds` do so.
 The returned predicate `p` takes a variable number of arguments and
 passes them to each predicate in `preds` in turn.  If any one of
-`preds` returns nil, `p` also returns nil without calling the
-remaining `preds`.  If all `preds` return non-nil, `p` returns the last
-such value.  If no `preds` are given, `p` always returns non-nil.
+`preds` returns `nil`, `p` also returns `nil` without calling the
+remaining `preds`.  If all `preds` return non-`nil`, `p` returns the last
+such value.  If no `preds` are given, `p` always returns non-`nil`.
 
 See also: [`-orfn`](#-orfn-rest-preds) and [`-not`](#-not-pred).
 
@@ -3077,11 +3077,11 @@ iteration halts when either of the following conditions is satisfied:
       numbers, it may be necessary to provide an appropriate
       approximate comparison test.
 
- 2. `halt-test` returns a non-nil value. `halt-test` defaults to a
-      simple counter that returns t after `-fixfn-max-iterations`,
+ 2. `halt-test` returns a non-`nil` value. `halt-test` defaults to a
+      simple counter that returns `t` after `-fixfn-max-iterations`,
       to guard against infinite iteration. Otherwise, `halt-test`
       must be a function that accepts a single argument, the
-      current value of `x`, and returns non-nil as long as iteration
+      current value of `x`, and returns non-`nil` as long as iteration
       should continue. In this way, a more sophisticated
       convergence test may be supplied by the caller.
 

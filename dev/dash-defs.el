@@ -158,6 +158,13 @@ Based on `describe-function-1'."
                        (format "`%s`" fn))
                      t t))))
 
+(defun dash--booleans-to-md ()
+  "Mark up booleans (nil/t) in current buffer as Markdown."
+  (goto-char (point-min))
+  (while (re-search-forward (rx bow (| "nil" "t") eow) nil t)
+    (unless (memql (char-before (match-beginning 0)) '(?\' ?`))
+      (replace-match "`\\&`" t))))
+
 (defun dash--indent-md-blocks ()
   "Indent example blocks in current buffer for Markdown."
   (goto-char (point-min))
@@ -171,6 +178,7 @@ Based on `describe-function-1'."
     (dash--argnames-to-md)
     (dash--metavars-to-md)
     (dash--hyperlinks-to-md)
+    (dash--booleans-to-md)
     (dash--indent-md-blocks)
     (buffer-string)))
 
@@ -184,7 +192,8 @@ Based on `describe-function-1'."
     ;; TODO: Use `help-argument-name' like in `dash--argnames-to-md'?
     (while (re-search-forward
             (rx (| (group bow (in "A-Z") (* (in "A-Z" ?-)) (* num) eow)
-                   (: ?` (group (+ (not (in ?\s)))) ?\')
+                   (: ?` (group (+? (not (in ?\s)))) ?\')
+                   (group bow (| "nil" "t") eow)
                    (: "..." (? (group eol)))))
             nil t)
       (cond ((match-beginning 1)
@@ -197,8 +206,12 @@ Based on `describe-function-1'."
                                 "@code{\\2} (@pxref{\\2})"
                               "@code{\\2}")
                             t))
+            ;; nil/t.
+            ((match-beginning 3)
+             (unless (= (char-before (match-beginning 3)) ?\')
+               (replace-match "@code{\\3}" t)))
             ;; Ellipses.
-            ((match-beginning 3) (replace-match "@enddots{}" t t))
+            ((match-beginning 4) (replace-match "@enddots{}" t t))
             ((replace-match "@dots{}" t t))))
     (buffer-string)))
 

@@ -67,6 +67,7 @@ differences in implementation between systems.  Used in place of
 (defmacro def-example-group (name doc &rest examples)
   "Define a group with NAME and DOC of EXAMPLES of several functions.
 See `dash--groups'."
+  (declare (indent defun))
   `(progn
      (push (cons ,name ,doc) dash--groups)
      ,@examples))
@@ -74,6 +75,7 @@ See `dash--groups'."
 (defmacro defexamples (fn &rest examples)
   "Define a set of EXAMPLES and corresponding ERT tests for FN.
 See `dash--groups'."
+  (declare (indent defun))
   (setq examples (-partition 3 examples))
   `(progn
      (push (cons ',fn ',examples) dash--groups)

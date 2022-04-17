@@ -14,19 +14,23 @@ See the end of the file for license conditions.
   prematurely signal an error on improper lists (#393).
 - The functions `-union`, `-intersection`, and `-difference` now
   return proper sets, without duplicate elements (#397).
-- The function `-same-items?` now works on multisets (lists with
-  duplicate elements and/or different lengths) (#397).
+- The functions `-same-items?` and `-permutations` now work on
+  multisets (lists with duplicate elements) (#390, #397, #399).
 
-  For example, the following now returns non-`nil`:
+  For example:
 
   ```el
-  (-same-items? '(1 1 2 3) '(1 2 3))
+  (-same-items? '(1 1 2 3) '(3 1 2)) ; => t
+  (-permutations '(1 1 2)) ; => '((1 1 2) (1 2 1) (2 1 1))
   ```
 
 #### New features
 
 - The function `-contains?` now returns the matching tail of the list
   instead of just `t`, similarly to `member` (#397).
+- New function `-frequencies` that takes a list and counts how many
+  times each distinct element occurs in it (suggested by @ebpa, #209,
+  #214, #399).
 
 ### From 2.19.0 to 2.19.1
 

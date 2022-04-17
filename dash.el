@@ -2714,6 +2714,24 @@ example:
                (pop list))
              list)))))
 
+(defun dash--assoc-fn ()
+  "Return the flavor of `assoc' that goes best with `-compare-fn'."
+  (declare (side-effect-free error-free))
+  (let ((cmp -compare-fn))
+    (cond ((memq cmp '(nil equal)) #'assoc)
+          ((eq cmp #'eq) #'assq)
+          ;; Since Emacs 26, `assoc' accepts a custom `testfn'.
+          ;; Version testing would be simpler here, but feature
+          ;; testing gets more brownie points, I guess.
+          ((condition-case nil
+               (with-no-warnings (assoc nil () #'eql))
+             (wrong-number-of-arguments t))
+           (lambda (key alist)
+             (--first (and (consp it) (funcall cmp (car it) key)) alist)))
+          ((with-no-warnings
+             (lambda (key alist)
+               (assoc key alist cmp)))))))
+
 (defun dash--hash-test-fn ()
   "Return the hash table test function corresponding to `-compare-fn'.
 Return nil if `-compare-fn' is not a known test function."
@@ -2833,19 +2851,150 @@ if that is non-nil."
 
 (defun -powerset (list)
   "Return the power set of LIST."
-  (if (null list) '(())
+  (if (null list) (list ())
     (let ((last (-powerset (cdr list))))
-      (append (mapcar (lambda (x) (cons (car list) x)) last)
-              last))))
+      (nconc (mapcar (lambda (x) (cons (car list) x)) last)
+             last))))
+
+(defun -frequencies (list)
+  "Count the occurrences of each distinct element of LIST.
+
+Return an alist of (ELEMENT . N), where each ELEMENT occurs N
+times in LIST.
+
+The test for equality is done with `equal', or with `-compare-fn'
+if that is non-nil.
+
+See also `-count' and `-group-by'."
+  (let (test len freqs)
+    (cond ((null list))
+          ((and (setq test (dash--hash-test-fn))
+                (> (setq len (length list)) dash--short-list-length))
+           (let ((ht (make-hash-table :test test :size len)))
+             ;; Share structure between hash table and returned list.
+             ;; This affords a single pass that preserves the input
+             ;; order, conses less garbage, and is faster than a
+             ;; second traversal (e.g., with `maphash').
+             (--each list
+               (let ((freq (gethash it ht)))
+                 (if freq
+                     (setcdr freq (1+ (cdr freq)))
+                   (push (puthash it (cons it 1) ht) freqs))))))
+          ((let ((assoc (dash--assoc-fn)))
+             (--each list
+               (let ((freq (funcall assoc it freqs)))
+                 (if freq
+                     (setcdr freq (1+ (cdr freq)))
+                   (push (cons it 1) freqs)))))))
+    (nreverse freqs)))
+
+(defun dash--numbers<= (nums)
+  "Return non-nil if NUMS is a list of non-decreasing numbers."
+  (declare (pure t) (side-effect-free t))
+  (or (null nums)
+      (let ((prev (pop nums)))
+        (and (numberp prev)
+             (--every (and (numberp it) (<= prev (setq prev it))) nums)))))
+
+(defun dash--next-lex-perm (array n)
+  "Update ARRAY of N numbers with its next lexicographic permutation.
+Return nil if there is no such successor.  N should be nonzero.
+
+This implements the salient steps of Algorithm L (Lexicographic
+permutation generation) as described in DE Knuth's The Art of
+Computer Programming, Volume 4A / Combinatorial Algorithms,
+Part I, Addison-Wesley, 2011, § 7.2.1.2, p. 319."
+  (setq n (1- n))
+  (let* ((l n)
+         (j (1- n))
+         (al (aref array n))
+         (aj al))
+    ;; L2. [Find j].
+    ;; Decrement j until a[j] < a[j+1].
+    (while (and (<= 0 j)
+                (<= aj (setq aj (aref array j))))
+      (setq j (1- j)))
+    ;; Terminate algorithm if j not found.
+    (when (>= j 0)
+      ;; L3. [Increase a[j]].
+      ;; Decrement l until a[j] < a[l].
+      (while (>= aj al)
+        (setq l (1- l) al (aref array l)))
+      ;; Swap a[j] and a[l].
+      (aset array j al)
+      (aset array l aj)
+      ;; L4. [Reverse a[j+1]...a[n]].
+      (setq l n)
+      (while (< (setq j (1+ j)) l)
+        (setq aj (aref array j))
+        (aset array j (aref array l))
+        (aset array l aj)
+        (setq l (1- l)))
+      array)))
+
+(defun dash--lex-perms (vec &optional original)
+  "Return a list of permutations of VEC in lexicographic order.
+Specifically, return only the successors of VEC in lexicographic
+order.  Each returned permutation is a list.  VEC should comprise
+one or more numbers, and may be destructively modified.
+
+If ORIGINAL is a vector, then VEC is interpreted as a set of
+indices into ORIGINAL.  In this case, the indices are permuted,
+and the resulting index permutations are used to dereference
+elements of ORIGINAL."
+  (let ((len (length vec)) perms)
+    (while vec
+      (push (if original
+                (--map (aref original it) vec)
+              (append vec ()))
+            perms)
+      (setq vec (dash--next-lex-perm vec len)))
+    (nreverse perms)))
+
+(defun dash--uniq-perms (list)
+  "Return a list of permutations of LIST.
+LIST is treated as if all its elements are distinct."
+  (let* ((vec (vconcat list))
+         (idxs (copy-sequence vec)))
+    ;; Just construct a vector of the list's indices and permute that.
+    (dotimes (i (length idxs))
+      (aset idxs i i))
+    (dash--lex-perms idxs vec)))
+
+(defun dash--multi-perms (list freqs)
+  "Return a list of permutations of the multiset LIST.
+FREQS should be an alist describing the frequency of each element
+in LIST, as returned by `-frequencies'."
+  (let (;; Distinct items in `list', aka the cars of `freqs'.
+        (uniq (make-vector (length freqs) nil))
+        ;; Indices into `uniq'.
+        (idxs (make-vector (length list) nil))
+        ;; Current index into `idxs'.
+        (i 0))
+    (--each freqs
+      (aset uniq it-index (car it))
+      ;; Populate `idxs' with as many copies of each `it-index' as
+      ;; there are corresponding duplicates.
+      (dotimes (_ (cdr it))
+        (aset idxs i it-index)
+        (setq i (1+ i))))
+    (dash--lex-perms idxs uniq)))
 
 (defun -permutations (list)
-  "Return the permutations of LIST."
-  (if (null list) '(())
-    (apply #'append
-           (mapcar (lambda (x)
-                     (mapcar (lambda (perm) (cons x perm))
-                             (-permutations (remove x list))))
-                   list))))
+  "Return the distinct permutations of LIST.
+
+Duplicate elements of LIST are determined by `equal', or by
+`-compare-fn' if that is non-nil."
+  (cond ((null list) (list ()))
+        ;; Optimization: a traversal of `list' is faster than the
+        ;; round trip via `dash--uniq-perms' or `dash--multi-perms'.
+        ((dash--numbers<= list)
+         (dash--lex-perms (vconcat list)))
+        ((let ((freqs (-frequencies list)))
+           ;; Is each element distinct?
+           (unless (--every (= (cdr it) 1) freqs)
+             (dash--multi-perms list freqs))))
+        ((dash--uniq-perms list))))
 
 (defun -inits (list)
   "Return all prefixes of LIST."

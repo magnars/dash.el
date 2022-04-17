@@ -1663,6 +1663,34 @@ comparing them.
 @end example
 @end defun
 
+@anchor{-frequencies}
+@defun -frequencies (list)
+Count the occurrences of each distinct element of @var{list}.
+
+Return an alist of (@var{element} . @var{n}), where each @var{element} occurs @var{n}
+times in @var{list}.
+
+The test for equality is done with @code{equal}, or with @code{-compare-fn}
+if that is non-@code{nil}.
+
+See also @code{-count} (@pxref{-count}) and @code{-group-by} (@pxref{-group-by}).
+
+@example
+@group
+(-frequencies ())
+    @result{} ()
+@end group
+@group
+(-frequencies '(1 2 3 1 2 1))
+    @result{} ((1 . 3) (2 . 2) (3 . 1))
+@end group
+@group
+(let ((-compare-fn #'string=)) (-frequencies '(a "a")))
+    @result{} ((a . 2))
+@end group
+@end example
+@end defun
+
 @node Unfolding
 @section Unfolding
 
@@ -2621,6 +2649,10 @@ Return the power set of @var{list}.
     @result{} (nil)
 @end group
 @group
+(-powerset '(x y))
+    @result{} ((x y) (x) (y) nil)
+@end group
+@group
 (-powerset '(x y z))
     @result{} ((x y z) (x y) (x z) (x) (y z) (y) (z) nil)
 @end group
@@ -2629,7 +2661,10 @@ Return the power set of @var{list}.
 
 @anchor{-permutations}
 @defun -permutations (list)
-Return the permutations of @var{list}.
+Return the distinct permutations of @var{list}.
+
+Duplicate elements of @var{list} are determined by @code{equal}, or by
+@code{-compare-fn} if that is non-@code{nil}.
 
 @example
 @group
@@ -2637,8 +2672,8 @@ Return the permutations of @var{list}.
     @result{} (nil)
 @end group
 @group
-(-permutations '(1 2))
-    @result{} ((1 2) (2 1))
+(-permutations '(a a b))
+    @result{} ((a a b) (a b a) (b a a))
 @end group
 @group
 (-permutations '(a b c))

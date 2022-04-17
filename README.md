@@ -202,6 +202,7 @@ Functions reducing lists to a single value (which may also be a list).
 * [`-min-by`](#-min-by-comparator-list) `(comparator list)`
 * [`-max`](#-max-list) `(list)`
 * [`-max-by`](#-max-by-comparator-list) `(comparator list)`
+* [`-frequencies`](#-frequencies-list) `(list)`
 
 ### Unfolding
 
@@ -1241,6 +1242,24 @@ comparing them.
 (--max-by (> (length it) (length other)) '((1 2 3) (2) (3 2))) ;; => (1 2 3)
 ```
 
+#### -frequencies `(list)`
+
+Count the occurrences of each distinct element of `list`.
+
+Return an alist of (`element` . `n`), where each `element` occurs `n`
+times in `list`.
+
+The test for equality is done with `equal`, or with `-compare-fn`
+if that is non-`nil`.
+
+See also [`-count`](#-count-pred-list) and [`-group-by`](#-group-by-fn-list).
+
+```el
+(-frequencies ()) ;; => ()
+(-frequencies '(1 2 3 1 2 1)) ;; => ((1 . 3) (2 . 2) (3 . 1))
+(let ((-compare-fn #'string=)) (-frequencies '(a "a"))) ;; => ((a . 2))
+```
+
 ## Unfolding
 
 Operations dual to reductions, building lists from a seed
@@ -1806,16 +1825,20 @@ Return the power set of `list`.
 
 ```el
 (-powerset ()) ;; => (nil)
+(-powerset '(x y)) ;; => ((x y) (x) (y) nil)
 (-powerset '(x y z)) ;; => ((x y z) (x y) (x z) (x) (y z) (y) (z) nil)
 ```
 
 #### -permutations `(list)`
 
-Return the permutations of `list`.
+Return the distinct permutations of `list`.
+
+Duplicate elements of `list` are determined by `equal`, or by
+`-compare-fn` if that is non-`nil`.
 
 ```el
 (-permutations ()) ;; => (nil)
-(-permutations '(1 2)) ;; => ((1 2) (2 1))
+(-permutations '(a a b)) ;; => ((a a b) (a b a) (b a a))
 (-permutations '(a b c)) ;; => ((a b c) (a c b) (b a c) (b c a) (c a b) (c b a))
 ```
 

@@ -6,12 +6,27 @@ See the end of the file for license conditions.
 
 ## Change log
 
-### From 2.19.1 to 2.19.2
+### From 2.19.1 to 2.20.0
 
 #### Fixes
 
 - Fixed a regression from `2.18` in `-take` that caused it to
   prematurely signal an error on improper lists (#393).
+- The functions `-union`, `-intersection`, and `-difference` now
+  return proper sets, without duplicate elements (#397).
+- The function `-same-items?` now works on multisets (lists with
+  duplicate elements and/or different lengths) (#397).
+
+  For example, the following now returns non-`nil`:
+
+  ```el
+  (-same-items? '(1 1 2 3) '(1 2 3))
+  ```
+
+#### New features
+
+- The function `-contains?` now returns the matching tail of the list
+  instead of just `t`, similarly to `member` (#397).
 
 ### From 2.19.0 to 2.19.1
 

@@ -2690,67 +2690,146 @@ execute body."
            (indent 1))
   `(--if-let ,val (progn ,@body)))
 
+;; TODO: Get rid of this dynamic variable, passing it as an argument
+;; instead?
 (defvar -compare-fn nil
-  "Tests for equality use this function or `equal' if this is nil.
-It should only be set using dynamic scope with a let, like:
+  "Tests for equality use this function, or `equal' if this is nil.
 
-  (let ((-compare-fn #\\='=)) (-union numbers1 numbers2 numbers3)")
+As a dynamic variable, this should be temporarily bound around
+the relevant operation, rather than permanently modified.  For
+example:
+
+  (let ((-compare-fn #\\='=))
+    (-union \\='(1 2 3) \\='(2 3 4)))")
+
+(defun dash--member-fn ()
+  "Return the flavor of `member' that goes best with `-compare-fn'."
+  (declare (side-effect-free error-free))
+  (let ((cmp -compare-fn))
+    (cond ((memq cmp '(nil equal)) #'member)
+          ((eq cmp #'eq) #'memq)
+          ((eq cmp #'eql) #'memql)
+          ((lambda (elt list)
+             (while (and list (not (funcall cmp elt (car list))))
+               (pop list))
+             list)))))
+
+(defun dash--hash-test-fn ()
+  "Return the hash table test function corresponding to `-compare-fn'.
+Return nil if `-compare-fn' is not a known test function."
+  (declare (side-effect-free error-free))
+  ;; In theory this could also recognize values that are custom
+  ;; `hash-table-test's, but too often the :test name is different
+  ;; from the equality function, so it doesn't seem worthwile.
+  (car (memq (or -compare-fn #'equal) '(equal eq eql))))
+
+(defvar dash--short-list-length 32
+  "Maximum list length considered short, for optimizations.
+For example, the speedup afforded by hash table lookup may start
+to outweigh its runtime and memory overhead for problem sizes
+greater than this value.  See also the discussion in PR #305.")
 
 (defun -distinct (list)
-  "Return a new list with all duplicates removed.
-The test for equality is done with `equal',
-or with `-compare-fn' if that's non-nil.
+  "Return a copy of LIST with all duplicate elements removed.
 
-Alias: `-uniq'"
-  ;; Implementation note: The speedup gained from hash table lookup
-  ;; starts to outweigh its overhead for lists of length greater than
-  ;; 32.  See discussion in PR #305.
-  (let* ((len (length list))
-         (lut (and (> len 32)
-                   ;; Check that `-compare-fn' is a valid hash-table
-                   ;; lookup function or nil.
-                   (memq -compare-fn '(nil equal eq eql))
-                   (make-hash-table :test (or -compare-fn #'equal)
-                                    :size len))))
-    (if lut
-        (--filter (unless (gethash it lut)
-                    (puthash it t lut))
-                  list)
-      (--each list (unless (-contains? lut it) (!cons it lut)))
-      (nreverse lut))))
+The test for equality is done with `equal', or with `-compare-fn'
+if that is non-nil.
 
-(defalias '-uniq '-distinct)
+Alias: `-uniq'."
+  (let (test len)
+    (cond ((null list) ())
+          ;; Use a hash table if `-compare-fn' is a known hash table
+          ;; test function and the list is long enough.
+          ((and (setq test (dash--hash-test-fn))
+                (> (setq len (length list)) dash--short-list-length))
+           (let ((ht (make-hash-table :test test :size len)))
+             (--filter (unless (gethash it ht) (puthash it t ht)) list)))
+          ((let ((member (dash--member-fn)) uniq)
+             (--each list (unless (funcall member it uniq) (push it uniq)))
+             (nreverse uniq))))))
 
-(defun -union (list list2)
-  "Return a new list of all elements appearing in either LIST1 or LIST2.
-Equality is defined by the value of `-compare-fn' if non-nil;
-otherwise `equal'."
-  ;; We fall back to iteration implementation if the comparison
-  ;; function isn't one of `eq', `eql' or `equal'.
-  (let* ((result (reverse list))
-         ;; TODO: get rid of this dynamic variable, pass it as an
-         ;; argument instead.
-         (-compare-fn (if (bound-and-true-p -compare-fn)
-                          -compare-fn
-                        'equal)))
-    (if (memq -compare-fn '(eq eql equal))
-        (let ((ht (make-hash-table :test -compare-fn)))
-          (--each list (puthash it t ht))
-          (--each list2 (unless (gethash it ht) (!cons it result))))
-      (--each list2 (unless (-contains? result it) (!cons it result))))
-    (nreverse result)))
+(defalias '-uniq #'-distinct)
 
-(defun -intersection (list list2)
-  "Return a new list of the elements appearing in both LIST1 and LIST2.
-Equality is defined by the value of `-compare-fn' if non-nil;
-otherwise `equal'."
-  (--filter (-contains? list2 it) list))
+(defun dash--size+ (size1 size2)
+  "Return the sum of nonnegative fixnums SIZE1 and SIZE2.
+Return `most-positive-fixnum' on overflow.  This ensures the
+result is a valid size, particularly for allocating hash tables,
+even in the presence of bignum support."
+  (declare (side-effect-free t))
+  (if (< size1 (- most-positive-fixnum size2))
+      (+ size1 size2)
+    most-positive-fixnum))
 
-(defun -difference (list list2)
-  "Return a new list with only the members of LIST that are not in LIST2.
-The test for equality is done with `equal',
-or with `-compare-fn' if that's non-nil."
-  (--filter (not (-contains? list2 it)) list))
+(defun -union (list1 list2)
+  "Return a new list of distinct elements appearing in either LIST1 or LIST2.
+
+The test for equality is done with `equal', or with `-compare-fn'
+if that is non-nil."
+  (let ((lists (list list1 list2)) test len union)
+    (cond ((null (or list1 list2)))
+          ;; Use a hash table if `-compare-fn' is a known hash table
+          ;; test function and the lists are long enough.
+          ((and (setq test (dash--hash-test-fn))
+                (> (setq len (dash--size+ (length list1) (length list2)))
+                   dash--short-list-length))
+           (let ((ht (make-hash-table :test test :size len)))
+             (dolist (l lists)
+               (--each l (unless (gethash it ht)
+                           (puthash it t ht)
+                           (push it union))))))
+          ((let ((member (dash--member-fn)))
+             (dolist (l lists)
+               (--each l (unless (funcall member it union) (push it union)))))))
+    (nreverse union)))
+
+(defun -intersection (list1 list2)
+  "Return a new list of distinct elements appearing in both LIST1 and LIST2.
+
+The test for equality is done with `equal', or with `-compare-fn'
+if that is non-nil."
+  (let (test len)
+    (cond ((null (and list1 list2)) ())
+          ;; Use a hash table if `-compare-fn' is a known hash table
+          ;; test function and either list is long enough.
+          ((and (setq test (dash--hash-test-fn))
+                (> (setq len (length list2)) dash--short-list-length))
+           (let ((ht (make-hash-table :test test :size len)))
+             (--each list2 (puthash it t ht))
+             ;; Remove visited elements to avoid duplicates.
+             (--filter (when (gethash it ht) (remhash it ht) t) list1)))
+          ((let ((member (dash--member-fn)) intersection)
+             (--each list1 (and (funcall member it list2)
+                                (not (funcall member it intersection))
+                                (push it intersection)))
+             (nreverse intersection))))))
+
+(defun -difference (list1 list2)
+  "Return a new list with the distinct members of LIST1 that are not in LIST2.
+
+The test for equality is done with `equal', or with `-compare-fn'
+if that is non-nil."
+  (let (test len1 len2)
+    (cond ((null list1) ())
+          ((null list2) (-distinct list1))
+          ;; Use a hash table if `-compare-fn' is a known hash table
+          ;; test function and the subtrahend is long enough.
+          ((and (setq test (dash--hash-test-fn))
+                (setq len1 (length list1))
+                (setq len2 (length list2))
+                (> (max len1 len2) dash--short-list-length))
+           (let ((ht1 (make-hash-table :test test :size len1))
+                 (ht2 (make-hash-table :test test :size len2)))
+             (--each list2 (puthash it t ht2))
+             ;; Avoid duplicates by tracking visited items in `ht1'.
+             (--filter (unless (or (gethash it ht2) (gethash it ht1))
+                         (puthash it t ht1))
+                       list1)))
+          ((let ((member (dash--member-fn)) difference)
+             (--each list1
+               (unless (or (funcall member it list2)
+                           (funcall member it difference))
+                 (push it difference)))
+             (nreverse difference))))))
 
 (defun -powerset (list)
   "Return the power set of LIST."
@@ -2794,37 +2873,49 @@ or with `-compare-fn' if that's non-nil."
   "Return non-nil if LIST contains ELEMENT.
 
 The test for equality is done with `equal', or with `-compare-fn'
-if that's non-nil.
+if that is non-nil.  As with `member', the return value is
+actually the tail of LIST whose car is ELEMENT.
 
-Alias: `-contains-p'"
-  (not
-   (null
-    (cond
-     ((null -compare-fn)    (member element list))
-     ((eq -compare-fn 'eq)  (memq element list))
-     ((eq -compare-fn 'eql) (memql element list))
-     (t
-      (let ((lst list))
-        (while (and lst
-                    (not (funcall -compare-fn element (car lst))))
-          (setq lst (cdr lst)))
-        lst))))))
+Alias: `-contains-p'."
+  (funcall (dash--member-fn) element list))
 
-(defalias '-contains-p '-contains?)
+(defalias '-contains-p #'-contains?)
 
-(defun -same-items? (list list2)
-  "Return true if LIST and LIST2 has the same items.
+(defun -same-items? (list1 list2)
+  "Return non-nil if LIST1 and LIST2 have the same distinct elements.
 
-The order of the elements in the lists does not matter.
+The order of the elements in the lists does not matter.  The
+lists may be of different lengths, i.e., contain duplicate
+elements.  The test for equality is done with `equal', or with
+`-compare-fn' if that is non-nil.
 
-Alias: `-same-items-p'"
-  (let ((length-a (length list))
-        (length-b (length list2)))
-    (and
-     (= length-a length-b)
-     (= length-a (length (-intersection list list2))))))
+Alias: `-same-items-p'."
+  (let (test len1 len2)
+    (cond ((null (or list1 list2)))
+          ((null (and list1 list2)) nil)
+          ;; Use a hash table if `-compare-fn' is a known hash table
+          ;; test function and either list is long enough.
+          ((and (setq test (dash--hash-test-fn))
+                (setq len1 (length list1))
+                (setq len2 (length list2))
+                (> (max len1 len2) dash--short-list-length))
+           (let ((ht1 (make-hash-table :test test :size len1))
+                 (ht2 (make-hash-table :test test :size len2)))
+             (--each list1 (puthash it t ht1))
+             ;; Move visited elements from `ht1' to `ht2'.  This way,
+             ;; if visiting all of `list2' leaves `ht1' empty, then
+             ;; all elements from both lists have been accounted for.
+             (and (--every (cond ((gethash it ht1)
+                                  (remhash it ht1)
+                                  (puthash it t ht2))
+                                 ((gethash it ht2)))
+                           list2)
+                  (zerop (hash-table-count ht1)))))
+          ((let ((member (dash--member-fn)))
+             (and (--all? (funcall member it list2) list1)
+                  (--all? (funcall member it list1) list2)))))))
 
-(defalias '-same-items-p '-same-items?)
+(defalias '-same-items-p #'-same-items?)
 
 (defun -is-prefix? (prefix list)
   "Return non-nil if PREFIX is a prefix of LIST.

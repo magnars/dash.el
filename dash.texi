@@ -1884,46 +1884,23 @@ Alias: @code{-only-some-p}
 Return non-@code{nil} if @var{list} contains @var{element}.
 
 The test for equality is done with @code{equal}, or with @code{-compare-fn}
-if that's non-@code{nil}.
+if that is non-@code{nil}.  As with @code{member}, the return value is
+actually the tail of @var{list} whose car is @var{element}.
 
-Alias: @code{-contains-p}
+Alias: @code{-contains-p}.
 
 @example
 @group
 (-contains? '(1 2 3) 1)
-    @result{} t
+    @result{} (1 2 3)
 @end group
 @group
 (-contains? '(1 2 3) 2)
-    @result{} t
+    @result{} (2 3)
 @end group
 @group
 (-contains? '(1 2 3) 4)
-    @result{} nil
-@end group
-@end example
-@end defun
-
-@anchor{-same-items?}
-@defun -same-items? (list list2)
-Return true if @var{list} and @var{list2} has the same items.
-
-The order of the elements in the lists does not matter.
-
-Alias: @code{-same-items-p}
-
-@example
-@group
-(-same-items? '(1 2 3) '(1 2 3))
-    @result{} t
-@end group
-@group
-(-same-items? '(1 2 3) '(3 2 1))
-    @result{} t
-@end group
-@group
-(-same-items? '(1 2 3) '(1 2 3 4))
-    @result{} nil
+    @result{} ()
 @end group
 @end example
 @end defun
@@ -2566,10 +2543,11 @@ permutation to @var{list} sorts it in descending order.
 Operations pretending lists are sets.
 
 @anchor{-union}
-@defun -union (list list2)
-Return a new list of all elements appearing in either @var{list1} or @var{list2}.
-Equality is defined by the value of @code{-compare-fn} if non-@code{nil};
-otherwise @code{equal}.
+@defun -union (list1 list2)
+Return a new list of distinct elements appearing in either @var{list1} or @var{list2}.
+
+The test for equality is done with @code{equal}, or with @code{-compare-fn}
+if that is non-@code{nil}.
 
 @example
 @group
@@ -2577,21 +2555,22 @@ otherwise @code{equal}.
     @result{} (1 2 3 4 5)
 @end group
 @group
-(-union '(1 2 3 4) ())
-    @result{} (1 2 3 4)
+(-union '(1 2 2 4) ())
+    @result{} (1 2 4)
 @end group
 @group
-(-union '(1 1 2 2) '(3 2 1))
-    @result{} (1 1 2 2 3)
+(-union '(1 1 2 2) '(4 4 3 2 1))
+    @result{} (1 2 4 3)
 @end group
 @end example
 @end defun
 
 @anchor{-difference}
-@defun -difference (list list2)
-Return a new list with only the members of @var{list} that are not in @var{list2}.
-The test for equality is done with @code{equal},
-or with @code{-compare-fn} if that's non-@code{nil}.
+@defun -difference (list1 list2)
+Return a new list with the distinct members of @var{list1} that are not in @var{list2}.
+
+The test for equality is done with @code{equal}, or with @code{-compare-fn}
+if that is non-@code{nil}.
 
 @example
 @group
@@ -2610,10 +2589,11 @@ or with @code{-compare-fn} if that's non-@code{nil}.
 @end defun
 
 @anchor{-intersection}
-@defun -intersection (list list2)
-Return a new list of the elements appearing in both @var{list1} and @var{list2}.
-Equality is defined by the value of @code{-compare-fn} if non-@code{nil};
-otherwise @code{equal}.
+@defun -intersection (list1 list2)
+Return a new list of distinct elements appearing in both @var{list1} and @var{list2}.
+
+The test for equality is done with @code{equal}, or with @code{-compare-fn}
+if that is non-@code{nil}.
 
 @example
 @group
@@ -2625,8 +2605,8 @@ otherwise @code{equal}.
     @result{} ()
 @end group
 @group
-(-intersection '(1 2 3 4) '(3 4 5 6))
-    @result{} (3 4)
+(-intersection '(1 2 2 3) '(4 3 3 2))
+    @result{} (2 3)
 @end group
 @end example
 @end defun
@@ -2669,11 +2649,12 @@ Return the permutations of @var{list}.
 
 @anchor{-distinct}
 @defun -distinct (list)
-Return a new list with all duplicates removed.
-The test for equality is done with @code{equal},
-or with @code{-compare-fn} if that's non-@code{nil}.
+Return a copy of @var{list} with all duplicate elements removed.
 
-Alias: @code{-uniq}
+The test for equality is done with @code{equal}, or with @code{-compare-fn}
+if that is non-@code{nil}.
+
+Alias: @code{-uniq}.
 
 @example
 @group
@@ -2681,12 +2662,39 @@ Alias: @code{-uniq}
     @result{} ()
 @end group
 @group
-(-distinct '(1 2 2 4))
-    @result{} (1 2 4)
+(-distinct '(1 1 2 3 3))
+    @result{} (1 2 3)
 @end group
 @group
 (-distinct '(t t t))
     @result{} (t)
+@end group
+@end example
+@end defun
+
+@anchor{-same-items?}
+@defun -same-items? (list1 list2)
+Return non-@code{nil} if @var{list1} and @var{list2} have the same distinct elements.
+
+The order of the elements in the lists does not matter.  The
+lists may be of different lengths, i.e., contain duplicate
+elements.  The test for equality is done with @code{equal}, or with
+@code{-compare-fn} if that is non-@code{nil}.
+
+Alias: @code{-same-items-p}.
+
+@example
+@group
+(-same-items? '(1 2 3) '(1 2 3))
+    @result{} t
+@end group
+@group
+(-same-items? '(1 1 2 3) '(3 3 2 1))
+    @result{} t
+@end group
+@group
+(-same-items? '(1 2 3) '(1 2 3 4))
+    @result{} nil
 @end group
 @end example
 @end defun

@@ -27,6 +27,7 @@
 
 (require 'dash)
 (require 'dash-defs "dev/dash-defs")
+(require 'ert)
 
 (eval-when-compile
   ;; TODO: Emacs 24.3 first introduced `setf', so remove this when
@@ -771,18 +772,21 @@ value rather than consuming a list to produce a single value."
     (--only-some? (> it 2) '(1 2 3)) => t)
 
   (defexamples -contains?
-    (-contains? '(1 2 3) 1) => t
-    (-contains? '(1 2 3) 2) => t
-    (-contains? '(1 2 3) 4) => nil
-    (-contains? '() 1) => nil
-    (-contains? '() '()) => nil)
-
-  (defexamples -same-items?
-    (-same-items? '(1 2 3) '(1 2 3)) => t
-    (-same-items? '(1 2 3) '(3 2 1)) => t
-    (-same-items? '(1 2 3) '(1 2 3 4)) => nil
-    (-same-items? '((a . 1) (b . 2)) '((a . 1) (b . 2))) => t
-    (-same-items? '(1 2 3) '(2 3 1)) => t)
+    (-contains? '(1 2 3) 1) => '(1 2 3)
+    (-contains? '(1 2 3) 2) => '(2 3)
+    (-contains? '(1 2 3) 4) => '()
+    (-contains? '() 1) => '()
+    (-contains? '() '()) => '()
+    (-contains? `(,(string ?a)) "a") => '("a")
+    (-contains? '(a a) 'a) => '(a a)
+    (-contains? '(b b a a) 'a) => '(a a)
+    (-contains? '(a a b b) 'a) => '(a a b b)
+    (let ((-compare-fn #'eq)) (-contains? `(,(string ?a)) "a")) => '()
+    (let ((-compare-fn #'string=)) (-contains? '(a) 'b)) => '()
+    (let ((-compare-fn #'string=)) (-contains? '(a) "a")) => '(a)
+    (let ((-compare-fn #'string=)) (-contains? '("a") 'a)) => '("a")
+    (let ((-compare-fn #'string=)) (-contains? '(a "a") 'a)) => '(a "a")
+    (let ((-compare-fn #'string=)) (-contains? '("a" a) 'a)) => '("a" a))
 
   (defexamples -is-prefix?
     (-is-prefix? '(1 2 3) '(1 2 3 4 5)) => t
@@ -1112,18 +1116,77 @@ related predicates."
 
   (defexamples -union
     (-union '(1 2 3) '(3 4 5))  => '(1 2 3 4 5)
-    (-union '(1 2 3 4) '())  => '(1 2 3 4)
-    (-union '(1 1 2 2) '(3 2 1))  => '(1 1 2 2 3))
+    (-union '(1 2 2 4) '())  => '(1 2 4)
+    (-union '(1 1 2 2) '(4 4 3 2 1))  => '(1 2 4 3)
+    (-union '() '()) => '()
+    (-union '() '(a)) => '(a)
+    (-union '() '(a a)) => '(a)
+    (-union '() '(a a b)) => '(a b)
+    (-union '() '(a b a)) => '(a b)
+    (-union '() '(b a a)) => '(b a)
+    (-union '(a) '()) => '(a)
+    (-union '(a a) '()) => '(a)
+    (-union '(a a b) '()) => '(a b)
+    (-union '(a b a) '()) => '(a b)
+    (-union '(b a a) '()) => '(b a)
+    (let ((dash--short-list-length 0)) (-union '() '(a))) => '(a)
+    (let ((dash--short-list-length 0)) (-union '() '(a a))) => '(a)
+    (let ((dash--short-list-length 0)) (-union '() '(a a b))) => '(a b)
+    (let ((dash--short-list-length 0)) (-union '() '(a b a))) => '(a b)
+    (let ((dash--short-list-length 0)) (-union '() '(b a a))) => '(b a)
+    (let ((dash--short-list-length 0)) (-union '(a) '())) => '(a)
+    (let ((dash--short-list-length 0)) (-union '(a a) '())) => '(a)
+    (let ((dash--short-list-length 0)) (-union '(a a b) '())) => '(a b)
+    (let ((dash--short-list-length 0)) (-union '(a b a) '())) => '(a b)
+    (let ((dash--short-list-length 0)) (-union '(b a a) '())) => '(b a)
+    (let ((dash--short-list-length 0)) (-union '(a a b c c) '(e e d c b)))
+    => '(a b c e d)
+    (let ((-compare-fn #'string=)) (-union '(a "b") '("a" b))) => '(a "b")
+    (let ((-compare-fn #'string=)) (-union '("a" b) '(a "b"))) => '("a" b))
 
   (defexamples -difference
     (-difference '() '()) => '()
     (-difference '(1 2 3) '(4 5 6)) => '(1 2 3)
-    (-difference '(1 2 3 4) '(3 4 5 6)) => '(1 2))
+    (-difference '(1 2 3 4) '(3 4 5 6)) => '(1 2)
+    (-difference '() '(a)) => '()
+    (-difference '(a) '()) => '(a)
+    (-difference '(a) '(a)) => '()
+    (-difference '(a a) '()) => '(a)
+    (-difference '(a a) '(a)) => '()
+    (-difference '(a a) '(a a)) => '()
+    (-difference '(a a) '(b)) => '(a)
+    (-difference '(a b c c d a) '(c c b)) => '(a d)
+    (let ((dash--short-list-length 0)) (-difference '(a) '(a))) => '()
+    (let ((dash--short-list-length 0)) (-difference '(a a) '(a))) => '()
+    (let ((dash--short-list-length 0)) (-difference '(a a) '(a a))) => '()
+    (let ((dash--short-list-length 0)) (-difference '(a a) '(b))) => '(a)
+    (let ((dash--short-list-length 0)) (-difference '(a b c c d a) '(c c b)))
+    => '(a d)
+    (let ((-compare-fn #'string=)) (-difference '(a) '("a"))) => '()
+    (let ((-compare-fn #'string=)) (-difference '("a") '(a))) => '()
+    (let ((-compare-fn #'string=)) (-difference '(a "a") '(a))) => '()
+    (let ((-compare-fn #'string=)) (-difference '(a "a") '(b))) => '(a)
+    (let ((-compare-fn #'string=)) (-difference '("a") '(a a))) => '())
 
   (defexamples -intersection
     (-intersection '() '()) => '()
     (-intersection '(1 2 3) '(4 5 6)) => '()
-    (-intersection '(1 2 3 4) '(3 4 5 6)) => '(3 4))
+    (-intersection '(1 2 2 3) '(4 3 3 2)) => '(2 3)
+    (-intersection '() '(a)) => '()
+    (-intersection '(a) '()) => '()
+    (-intersection '(a) '(a)) => '(a)
+    (-intersection '(a a b) '(b a)) => '(a b)
+    (-intersection '(a b) '(b a a)) => '(a b)
+    (let ((dash--short-list-length 0)) (-intersection '(a) '(b))) => '()
+    (let ((dash--short-list-length 0)) (-intersection '(a) '(a))) => '(a)
+    (let ((dash--short-list-length 0)) (-intersection '(a a b) '(b b a)))
+    => '(a b)
+    (let ((dash--short-list-length 0)) (-intersection '(a a b) '(b a)))
+    => '(a b)
+    (let ((dash--short-list-length 0)) (-intersection '(a b) '(b a a)))
+    => '(a b)
+    (let ((-compare-fn #'string=)) (-intersection '(a) '("a")) => '(a))
+    (let ((-compare-fn #'string=)) (-intersection '("a") '(a)) => '("a")))
 
   (defexamples -powerset
     (-powerset '()) => '(nil)
@@ -1136,19 +1199,73 @@ related predicates."
 
   (defexamples -distinct
     (-distinct '()) => '()
-    (-distinct '(1 2 2 4)) => '(1 2 4)
+    (-distinct '(1 1 2 3 3)) => '(1 2 3)
     (-distinct '(t t t)) => '(t)
     (-distinct '(nil nil nil)) => '(nil)
-    (let ((-compare-fn nil))
-      (-distinct '((1) (2) (1) (1)))) => '((1) (2))
-    (let ((-compare-fn #'eq))
-      (-distinct '((1) (2) (1) (1)))) => '((1) (2) (1) (1))
-    (let ((-compare-fn #'eq))
-      (-distinct '(:a :b :a :a))) => '(:a :b)
-    (let ((-compare-fn #'eql))
-      (-distinct '(2.1 3.1 2.1 2.1))) => '(2.1 3.1)
+    (-uniq '((1) (2) (1) (1))) => '((1) (2))
+    (let ((-compare-fn #'eq)) (-uniq '((1) (2) (1) (1)))) => '((1) (2) (1) (1))
+    (let ((-compare-fn #'eq)) (-uniq '(:a :b :a :a))) => '(:a :b)
+    (let ((-compare-fn #'eql)) (-uniq '(2.1 3.1 2.1 2.1))) => '(2.1 3.1)
     (let ((-compare-fn #'string=))
-      (-distinct '(dash "dash" "ash" "cash" "bash"))) => '(dash "ash" "cash" "bash")))
+      (-uniq '(dash "dash" "ash" "cash" "bash")))
+    => '(dash "ash" "cash" "bash")
+    (let ((-compare-fn #'string=)) (-uniq '(a))) => '(a)
+    (let ((-compare-fn #'string=)) (-uniq '(a a))) => '(a)
+    (let ((-compare-fn #'string=)) (-uniq '(a b))) => '(a b)
+    (let ((-compare-fn #'string=)) (-uniq '(b a))) => '(b a)
+    (let ((-compare-fn #'string=)) (-uniq '(a "a"))) => '(a)
+    (let ((-compare-fn #'string=)) (-uniq '("a" a))) => '("a")
+    (let ((dash--short-list-length 0)) (-uniq '(a))) => '(a)
+    (let ((dash--short-list-length 0)) (-uniq '(a b))) => '(a b)
+    (let ((dash--short-list-length 0)) (-uniq '(b a))) => '(b a)
+    (let ((dash--short-list-length 0)) (-uniq '(a a))) => '(a)
+    (let ((dash--short-list-length 0)) (-uniq '(a a b))) => '(a b)
+    (let ((dash--short-list-length 0)) (-uniq '(a b a))) => '(a b)
+    (let ((dash--short-list-length 0)) (-uniq '(b a a))) => '(b a)
+    (let ((dash--short-list-length 0)
+          (-compare-fn #'eq))
+      (-uniq (list (string ?a) (string ?a))))
+    => '("a" "a")
+    (let ((dash--short-list-length 0)
+          (-compare-fn #'eq)
+          (a (string ?a)))
+      (-uniq (list a a)))
+    => '("a"))
+
+  (defexamples -same-items?
+    (-same-items? '(1 2 3) '(1 2 3)) => t
+    (-same-items? '(1 1 2 3) '(3 3 2 1)) => t
+    (-same-items? '(1 2 3) '(1 2 3 4)) => nil
+    (-same-items? '((a . 1) (b . 2)) '((a . 1) (b . 2))) => t
+    (-same-items? '() '()) => t
+    (-same-items? '() '(a)) => nil
+    (-same-items? '(a) '()) => nil
+    (-same-items? '(a) '(a)) => t
+    (-same-items? '(a) '(b)) => nil
+    (-same-items? '(a) '(a a)) => t
+    (-same-items? '(b) '(a a)) => nil
+    (-same-items? '(a) '(a b)) => nil
+    (-same-items? '(a a) '(a)) => t
+    (-same-items? '(a a) '(b)) => nil
+    (-same-items? '(a a) '(a b)) => nil
+    (-same-items? '(a b) '(a)) => nil
+    (-same-items? '(a b) '(a a)) => nil
+    (-same-items? '(a a) '(a a)) => t
+    (-same-items? '(a a b) '(b b a a)) => t
+    (-same-items? '(b b a a) '(a a b)) => t
+    (let ((dash--short-list-length 0)) (-same-items? '(a) '(a))) => t
+    (let ((dash--short-list-length 0)) (-same-items? '(a) '(b))) => nil
+    (let ((dash--short-list-length 0)) (-same-items? '(a) '(a a))) => t
+    (let ((dash--short-list-length 0)) (-same-items? '(b) '(a a))) => nil
+    (let ((dash--short-list-length 0)) (-same-items? '(a) '(a b))) => nil
+    (let ((dash--short-list-length 0)) (-same-items? '(a a) '(a))) => t
+    (let ((dash--short-list-length 0)) (-same-items? '(a a) '(b))) => nil
+    (let ((dash--short-list-length 0)) (-same-items? '(a a) '(a b))) => nil
+    (let ((dash--short-list-length 0)) (-same-items? '(a b) '(a))) => nil
+    (let ((dash--short-list-length 0)) (-same-items? '(a b) '(a a))) => nil
+    (let ((dash--short-list-length 0)) (-same-items? '(a a) '(a a))) => t
+    (let ((dash--short-list-length 0)) (-same-items? '(a a b) '(b b a a))) => t
+    (let ((dash--short-list-length 0)) (-same-items? '(b b a a) '(a a b))) => t))
 
 (def-example-group "Other list operations"
   "Other list functions not fit to be classified elsewhere."
@@ -2136,5 +2253,48 @@ or readability."
                   (funcall (-compose g (-partial 'nth 1)) input))
            (equal (funcall (-compose (-prodfn f g) (-prodfn ff gg)) input3)
                   (funcall (-prodfn (-compose f ff) (-compose g gg)) input3)))) => t))
+
+(ert-deftest dash--member-fn ()
+  "Test `dash--member-fn'."
+  (dolist (cmp '(nil equal))
+    (let ((-compare-fn cmp))
+      (should (eq (dash--member-fn) #'member))))
+  (let ((-compare-fn #'eq))
+    (should (eq (dash--member-fn) #'memq)))
+  (let ((-compare-fn #'eql))
+    (should (eq (dash--member-fn) #'memql)))
+  (let* ((-compare-fn #'string=)
+         (member (dash--member-fn)))
+    (should-not (memq member '(member memq memql)))
+    (should-not (funcall member "foo" ()))
+    (should-not (funcall member "foo" '(bar)))
+    (should (equal (funcall member "foo" '(foo bar)) '(foo bar)))
+    (should (equal (funcall member "foo" '(bar foo)) '(foo)))))
+
+(ert-deftest dash--hash-test-fn ()
+  "Test `dash--hash-test-fn'."
+  (let ((-compare-fn nil))
+    (should (eq (dash--hash-test-fn) #'equal)))
+  (dolist (cmp '(equal eq eql))
+    (let ((-compare-fn cmp))
+      (should (eq (dash--hash-test-fn) cmp))))
+  (let ((-compare-fn #'string=))
+    (should-not (dash--hash-test-fn))))
+
+(ert-deftest dash--size+ ()
+  "Test `dash--size+'."
+  (dotimes (a 3)
+    (dotimes (b 3)
+      (should (= (dash--size+ a b) (+ a b)))))
+  (should (= (dash--size+ (- most-positive-fixnum 10) 5)
+             (- most-positive-fixnum 5)))
+  (should (= (dash--size+ (1- most-positive-fixnum) 0)
+             (1- most-positive-fixnum)))
+  (dotimes (i 2)
+    (should (= (dash--size+ (1- most-positive-fixnum) (1+ i))
+               most-positive-fixnum)))
+  (dotimes (i 3)
+    (should (= (dash--size+ most-positive-fixnum i)
+               most-positive-fixnum))))
 
 ;;; examples.el ends here

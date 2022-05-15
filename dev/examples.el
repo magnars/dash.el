@@ -28,21 +28,29 @@
 (require 'dash)
 (require 'dash-defs "dev/dash-defs")
 
-;; TODO: `setf' was introduced in Emacs 24.3, so remove this when
-;; support for earlier versions is dropped.
 (eval-when-compile
+  ;; TODO: Emacs 24.3 first introduced `setf', so remove this when
+  ;; support for earlier versions is dropped.
   (unless (fboundp 'setf)
-    (require 'cl)))
+    (require 'cl))
+
+  ;; TODO: Emacs < 24.4 emitted a bogus warning when byte-compiling
+  ;; ERT tests, so remove this when support for those versions is
+  ;; dropped.  See  https://bugs.gnu.org/14883.
+  (and (< emacs-major-version 25)
+       (< emacs-minor-version 4)
+       (setq byte-compile-delete-errors t))
+
+  ;; Expander used in destructuring examples below.
+  (defun dash-expand:&hash-or-plist (key source)
+    "Sample destructuring which works with plists and hash tables."
+    `(if (hash-table-p ,source) (gethash ,key ,source)
+       (plist-get ,source ,key))))
 
 ;; FIXME: These definitions ought to be exported along with the
 ;; examples, if they are going to be used there.
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))
-
-(defun dash-expand:&hash-or-plist (key source)
-  "Sample destructoring which works with plists and hash-tables."
-  `(if (hash-table-p ,source) (gethash ,key ,source)
-     (plist-get ,source ,key)))
 
 (def-example-group "Maps"
   "Functions in this category take a transforming function, which
@@ -61,7 +69,7 @@ new list."
     (-map-when 'even? 'square '(1 2 3 4)) => '(1 4 3 16)
     (--map-when (> it 2) (* it it) '(1 2 3 4)) => '(1 2 9 16)
     (--map-when (= it 2) 17 '(1 2 3 4)) => '(1 17 3 4)
-    (-map-when (lambda (n) (= n 3)) (lambda (n) 0) '(1 2 3 4)) => '(1 2 0 4))
+    (-map-when (lambda (n) (= n 3)) (-const 0) '(1 2 3 4)) => '(1 2 0 4))
 
   (defexamples -map-first
     (-map-first 'even? 'square '(1 2 3 4)) => '(1 4 3 4)
@@ -97,9 +105,44 @@ new list."
     (--annotate (< 1 it) '(0 1 2 3)) => '((nil . 0) (nil . 1) (t . 2) (t . 3)))
 
   (defexamples -splice
-    (-splice 'even? (lambda (x) (list x x)) '(1 2 3 4)) => '(1 2 2 3 4 4)
-    (--splice 't (list it it) '(1 2 3 4)) => '(1 1 2 2 3 3 4 4)
-    (--splice (equal it :magic) '((list of) (magical) (code)) '((foo) (bar) :magic (baz))) => '((foo) (bar) (list of) (magical) (code) (baz)))
+    (-splice #'numberp (lambda (n) (list n n)) '(a 1 b 2)) => '(a 1 1 b 2 2)
+    (--splice t (list it it) '(1 2 3 4)) => '(1 1 2 2 3 3 4 4)
+    (--splice (eq it :magic) '((magical) (code)) '((foo) :magic (bar)))
+    => '((foo) (magical) (code) (bar))
+    (--splice nil (list (1+ it)) '()) => '()
+    (--splice nil (list (1+ it)) '(1)) => '(1)
+    (--splice t (list (1+ it)) '()) => '()
+    (--splice t (list (1+ it)) '(1)) => '(2)
+    (--splice nil '() '()) => '()
+    (--splice nil '() '(1)) => '(1)
+    (--splice t '() '()) => '()
+    (--splice t '() '(1)) => '()
+    (--splice t '() '(1 2)) => '()
+    (--splice (= it 1) '() '(1 2)) => '(2)
+    (--splice (= it 2) '() '(1 2)) => '(1)
+    (--splice (= it 1) '() '(1 2 3)) => '(2 3)
+    (--splice (= it 2) '() '(1 2 3)) => '(1 3)
+    (--splice (= it 3) '() '(1 2 3)) => '(1 2)
+    (-splice #'ignore (lambda (n) (list (1+ n))) '()) => '()
+    (-splice #'ignore (lambda (n) (list (1+ n))) '(1)) => '(1)
+    (-splice #'identity (lambda (n) (list (1+ n))) '()) => '()
+    (-splice #'identity (lambda (n) (list (1+ n))) '(1)) => '(2)
+    (-splice #'ignore #'ignore '()) => '()
+    (-splice #'ignore #'ignore '(1)) => '(1)
+    (-splice #'identity #'ignore '()) => '()
+    (-splice #'identity #'ignore '(1)) => '()
+    (-splice #'identity #'ignore '(1 2)) => '()
+    (-splice (-cut = 1 <>) #'ignore '(1 2)) => '(2)
+    (-splice (-cut = 2 <>) #'ignore '(1 2)) => '(1)
+    (-splice (-cut = 1 <>) #'ignore '(1 2 3)) => '(2 3)
+    (-splice (-cut = 2 <>) #'ignore '(1 2 3)) => '(1 3)
+    (-splice (-cut = 3 <>) #'ignore '(1 2 3)) => '(1 2)
+    ;; Test for destructive modification.
+    (let ((l1 (list 1 2 3))
+          (l2 (list 4 5 6)))
+      (--splice (= it 2) l2 l1)
+      (list l1 l2))
+    => '((1 2 3) (4 5 6)))
 
   (defexamples -splice-list
     (-splice-list 'keywordp '(a b c) '(1 :foo 2)) => '(1 a b c 2)
@@ -345,9 +388,10 @@ new list."
     (-flatten-n 0 '((1 2) (3 4))) => '((1 2) (3 4))
     (-flatten-n 0 '(((1 2) (3 4)))) => '(((1 2) (3 4)))
     (-flatten-n 1 '(((1 . 2)) ((3 . 4)))) => '((1 . 2) (3 . 4))
-    (let ((l (list 1 (list 2) 3))) (-flatten-n 0 l) l) => '(1 (2) 3)
-    (let ((l (list 1 (list 2) 3))) (-flatten-n 1 l) l) => '(1 (2) 3)
-    (let ((l (list 1 (list 2) 3))) (-flatten-n 2 l) l) => '(1 (2) 3))
+    ;; Test for destructive modification.
+    (let ((l (list 1 (list 2) 3))) (ignore (-flatten-n 0 l)) l) => '(1 (2) 3)
+    (let ((l (list 1 (list 2) 3))) (ignore (-flatten-n 1 l)) l) => '(1 (2) 3)
+    (let ((l (list 1 (list 2) 3))) (ignore (-flatten-n 2 l)) l) => '(1 (2) 3))
 
   (defexamples -replace
     (-replace 1 "1" '(1 2 3 4 3 2 1)) => '("1" 2 3 4 3 2 "1")
@@ -1226,15 +1270,16 @@ related predicates."
     (-list 1) => '(1)
     (-list '()) => '()
     (-list '(1 2 3)) => '(1 2 3)
-    (-list 1 2 3) => '(1 2 3)
+    (with-no-warnings (-list 1 2 3)) => '(1 2 3)
     (let ((l (list 1 2))) (setcar (-list l) 3) l) => '(3 2)
-    (let ((l (list 1 2))) (setcar (apply #'-list l) 3) l) => '(1 2)
+    (let ((l (list 1 2))) (setcar (apply #'-list l) 3) l)
+    => '(1 2)
     (-list '((1) (2))) => '((1) (2))
-    (-list) => ()
-    (-list () 1) => ()
-    (-list () ()) => ()
-    (-list 1 ()) => '(1 ())
-    (-list 1 '(2)) => '(1 (2))
+    (with-no-warnings (-list)) => ()
+    (with-no-warnings (-list () 1)) => ()
+    (with-no-warnings (-list () ())) => ()
+    (with-no-warnings (-list 1 ())) => '(1 ())
+    (with-no-warnings (-list 1 '(2))) => '(1 (2))
     (-list '(())) => '(())
     (-list '(() 1)) => '(() 1))
 
@@ -1384,7 +1429,8 @@ or readability."
     => '()
     (-some--> '(0 1) (-filter #'natnump it) (append it it) (-map #'1+ it))
     => '(1 2 1 2)
-    (-some--> 1 nil) !!> (void-function nil)
+    ;; FIXME: Is there a better way to have this compile without warnings?
+    (eval '(-some--> 1 nil) t) !!> (void-function nil)
     (-some--> nil) => nil
     (-some--> t) => t)
 
@@ -1402,7 +1448,9 @@ or readability."
     (-when-let ((&plist :foo foo) (list :foo "foo")) foo) => "foo"
     (-when-let ((&plist :foo foo) (list :bar "bar")) foo) => nil
     (--when-let (member :b '(:a :b :c)) (cons :d it)) => '(:d :b :c)
-    (--when-let (even? 3) (cat it :a)) => nil)
+    ;; Check negative condition irrespective of compiler optimizations.
+    (--when-let (stringp ()) (cons it :a)) => nil
+    (--when-let (stringp (list ())) (cons it :a)) => nil)
 
   (defexamples -when-let*
     (-when-let* ((x 5) (y 3) (z (+ y 4))) (+ x y z)) => 15
@@ -1462,7 +1510,7 @@ or readability."
     (-let [[a b &rest [c d]] [1 2 3 4 5 6]] (list a b c d)) => '(1 2 3 4)
     ;; here we error, because "vectors" are rigid, immutable structures,
     ;; so we should know how many elements there are
-    (-let [[a b c d] [1 2 3]] t) !!> args-out-of-range
+    (-let [[a b c d] [1 2 3]] (+ a b c d)) !!> args-out-of-range
     (-let [(a . (b . c)) (cons 1 (cons 2 3))] (list a b c)) => '(1 2 3)
     (-let [(_ _ . [a b]) (cons 1 (cons 2 (vector 3 4)))] (list a b)) => '(3 4)
     (-let [(_ _ . (a b)) (cons 1 (cons 2 (list 3 4)))] (list a b)) => '(3 4)
@@ -1555,7 +1603,7 @@ or readability."
       (puthash :foo 1 hash)
       (puthash :bar 2 hash)
       (-let (((&hash :foo :bar) hash)) (list foo bar))) => '(1 2)
-    (-let (((&hash :foo (&hash? :bar)) (make-hash-table)))) => nil
+    (-let (((&hash :foo (&hash? :bar)) (make-hash-table))) bar) => nil
     ;; Ensure `hash?' expander evaluates its arg only once
     (let* ((ht (make-hash-table :test #'equal))
            (fn (lambda (ht) (push 3 (gethash 'a ht)) ht)))
@@ -1581,8 +1629,9 @@ or readability."
     (-let (((&alist "c" 'b :a) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
     (-let (((&alist "c" :a 'b) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
     (-let (((&alist :a "c" 'b) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
-    (-let (((&plist 'foo 1) (list 'foo 'bar))) (list foo)) !!> error
-    (-let (((&plist foo :bar) (list :foo :bar))) (list foo)) !!> error
+    ;; FIXME: Byte-compiler chokes on these in Emacs < 26.
+    (eval '(-let (((&plist 'foo 1) (list 'foo 'bar))) (list foo)) t) !!> error
+    (eval '(-let (((&plist foo :bar) (list :foo :bar))) (list foo)) t) !!> error
     ;; test the &as form
     (-let (((items &as first . rest) (list 1 2 3))) (list first rest items)) => '(1 (2 3) (1 2 3))
     (-let [(all &as [vect &as a b] bar) (list [1 2] 3)] (list a b bar vect all)) => '(1 2 3 [1 2] ([1 2] 3))
@@ -1601,12 +1650,16 @@ or readability."
     (-let [(list &as _ _ _ a _ _ _ b _ _ _ c) (list 1 2 3 4 5 6 7 8 9 10 11 12)] (list a b c list)) => '(4 8 12 (1 2 3 4 5 6 7 8 9 10 11 12))
     (-let (((x &as a b) (list 1 2))
            ((y &as c d) (list 3 4)))
-      (list a b c d x y)) => '(1 2 3 4 (1 2) (3 4))
-    (-let (((&hash-or-plist :key) (--doto (make-hash-table)
-                                    (puthash :key "value" it))))
-      key) => "value"
+      (list a b c d x y))
+    => '(1 2 3 4 (1 2) (3 4))
+    (-let (((&hash-or-plist :key)
+            (--doto (make-hash-table)
+              (puthash :key "value" it))))
+      key)
+    => "value"
     (-let (((&hash-or-plist :key) '(:key "value")))
-      key) => "value")
+      key)
+    => "value")
 
   (defexamples -let*
     (-let* (((a . b) (cons 1 2))
@@ -1620,9 +1673,11 @@ or readability."
       (list foo a b c bar)) => '(1 a b c (a b c))
     (let ((a (list 1 2 3))
           (b (list 'a 'b 'c)))
+      (ignore b)
       (-let* (((a . b) a)
               ((c . d) b)) ;; b here comes from above binding
-        (list a b c d))) => '(1 (2 3) 2 (3))
+        (list a b c d)))
+    => '(1 (2 3) 2 (3))
     (-let* ((a "foo") (b a)) (list a b)) => '("foo" "foo")
     ;; test bindings with no explicit val
     (-let* (a) a) => nil
@@ -1637,7 +1692,8 @@ or readability."
     (-map (-lambda ((&plist :a a :b b)) (+ a b)) '((:a 1 :b 2) (:a 3 :b 4) (:a 5 :b 6))) => '(3 7 11)
     (-map (-lambda (x) (let ((k (car x)) (v (cadr x))) (+ k v))) '((1 2) (3 4) (5 6))) => '(3 7 11)
     (funcall (-lambda ((a) (b)) (+ a b)) '(1 2 3) '(4 5 6)) => 5
-    (-lambda a t) !!> wrong-type-argument
+    ;; FIXME: Byte-compiler chokes on this in Emacs < 26.
+    (eval '(-lambda a t) t) !!> wrong-type-argument
     (funcall (-lambda (a b) (+ a b)) 1 2) => 3
     (funcall (-lambda (a (b c)) (+ a b c)) 1 (list 2 3)) => 6
     (funcall (-lambda () 1)) => 1
@@ -1649,9 +1705,14 @@ or readability."
     (let (a b) (-setq (a b) (list 1 2)) (list a b)) => '(1 2)
     (let (c) (-setq (&plist :c c) (list :c "c")) c) => "c"
     (let (a b) (-setq a 1 b 2) (list a b)) => '(1 2)
-    (let (a b) (-setq (&plist :a a) '(:a (:b 1)) (&plist :b b) a) b) => 1
-    (let (a b) (-setq (a b (&plist 'x x 'y y)) '(1 2 (x 3 y 4)) z x)) => 3
-    (let (a) (-setq a)) !!> wrong-number-of-arguments))
+    (let (a b) (-setq (&plist :a a) '(:a (:b 1)) (&plist :b b) a) (cons b a))
+    => '(1 :b 1)
+    (let (a b x y z)
+      (ignore a b x y z)
+      (-setq (a b (&plist 'x x 'y y)) '(1 2 (x 3 y 4)) z x))
+    => 3
+    ;; FIXME: Byte-compiler chokes on this in Emacs < 26.
+    (eval '(let (a) (-setq a)) t) !!> wrong-number-of-arguments))
 
 (def-example-group "Side effects"
   "Functions iterating over lists for side effect only."

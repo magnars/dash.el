@@ -19,7 +19,7 @@
 
 EMACS ?= emacs
 batch := $(EMACS) -Q -batch -L .
-els := dash.el dev/dash-defs.el
+els := dash.el dev/dash-defs.el dev/examples.el
 elcs := $(addsuffix c,$(els))
 docs := README.md dash.texi
 tmpls := readme-template.md dash-template.texi $(wildcard doc/*.texi)
@@ -42,7 +42,7 @@ force-docs: maintainer-clean docs
 check: ERT_SELECTOR ?= t
 check: run := '(ert-run-tests-batch-and-exit (quote $(ERT_SELECTOR)))'
 check: lisp
-	EMACS_TEST_VERBOSE=1 $(batch) -l dev/examples.el -eval $(run)
+	EMACS_TEST_VERBOSE=1 $(batch) -l dev/examples -eval $(run)
 .PHONY: check
 
 all: lisp docs check
@@ -68,5 +68,8 @@ maintainer-clean: clean
 %.elc: %.el
 	$(batch) -eval $(WERROR) -f batch-byte-compile $<
 
-$(docs) &: dev/examples.el $(elcs) $(tmpls)
-	$(batch) -l $< -f dash-make-docs
+$(docs) &: $(elcs) $(tmpls)
+	$(batch) -l dev/examples -f dash-make-docs
+
+dev/dash-defs.elc: dash.elc
+dev/examples.elc: dash.elc dev/dash-defs.elc

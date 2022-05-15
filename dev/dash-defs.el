@@ -18,7 +18,7 @@
 ;;; Code:
 
 (require 'dash)
-
+(require 'ert)
 ;; Added in Emacs 24.4; wrap in `eval-when-compile' when support is dropped.
 (require 'subr-x nil t)
 (declare-function string-remove-prefix "subr-x" (prefix string))
@@ -58,8 +58,7 @@ differences in implementation between systems.  Used in place of
     (`(,actual => ,expected) `(should (equal ,actual ,expected)))
     (`(,actual ~> ,expected) `(should (approx= ,actual ,expected)))
     (`(,actual !!> ,(and (pred symbolp) expected))
-     ;; FIXME: Tests fail on Emacs 24-25 without `eval' for some reason.
-     `(should-error (eval ',actual ,lexical-binding) :type ',expected))
+     `(should-error ,actual :type ',expected))
     (`(,actual !!> ,expected)
      `(should (equal (should-error ,actual) ',expected)))
     (_ (error "Invalid test case: %S" example))))
@@ -79,15 +78,19 @@ See `dash--groups'."
   (setq examples (-partition 3 examples))
   `(progn
      (push (cons ',fn ',examples) dash--groups)
-     (ert-deftest ,fn () ,@(mapcar #'dash--example-to-test examples))))
+     (ert-deftest ,fn ()
+       ;; Emacs 28.1 complains about an empty `let' body if the test
+       ;; body is empty.
+       ,@(or (mapcar #'dash--example-to-test examples) '(nil)))))
+
+;; Added in Emacs 25.1.
+(defvar text-quoting-style)
 
 (autoload 'help-fns--analyze-function "help-fns")
 
 (defun dash--describe (fn)
   "Return the (ARGLIST . DOCSTRING) of FN symbol.
 Based on `describe-function-1'."
-  ;; Added in Emacs 25.1.
-  (defvar text-quoting-style)
   ;; Gained last arg in Emacs 25.1.
   (declare-function help-fns--signature "help-fns"
                     (function doc real-def real-function buffer))
@@ -215,10 +218,11 @@ Based on `describe-function-1'."
             ((replace-match "@dots{}" t t))))
     (buffer-string)))
 
+;; Added in Emacs 26.1.
+(defvar print-escape-control-characters)
+
 (defun dash--lisp-to-md (obj)
   "Print Lisp OBJ suitably for Markdown."
-  ;; Added in Emacs 26.1.
-  (defvar print-escape-control-characters)
   (let ((print-quoted t)
         (print-escape-control-characters t))
     (save-excursion (prin1 obj)))

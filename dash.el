@@ -2214,7 +2214,9 @@ matchers based on the type of the expression.
 Key-value stores are disambiguated by placing a token &plist,
 &alist or &hash as a first item in the MATCH-FORM."
   (cond
-   ((symbolp match-form)
+   ((and (symbolp match-form)
+         ;; Don't bind things like &keys as if they were vars (#395).
+         (not (functionp (dash--get-expand-function match-form))))
     (dash--match-symbol match-form source))
    ((consp match-form)
     (cond

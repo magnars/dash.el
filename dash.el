@@ -2402,7 +2402,7 @@ patterns be optionally left out and derived from the key name in
 the following fashion:
 
 - a key :foo is converted into `foo' pattern,
-- a key 'bar is converted into `bar' pattern,
+- a key \\='bar is converted into `bar' pattern,
 - a key \"baz\" is converted into `baz' pattern.
 
 That is, the entire value under the key is bound to the derived
@@ -2416,10 +2416,10 @@ invalid spec fails with an error.
 Thus the patterns are normalized as follows:
 
    ;; derive all the missing patterns
-   (&plist :foo 'bar \"baz\") => (&plist :foo foo 'bar bar \"baz\" baz)
+   (&plist :foo \\='bar \"baz\") => (&plist :foo foo \\='bar bar \"baz\" baz)
 
    ;; we can specify some but not others
-   (&plist :foo 'bar explicit-bar) => (&plist :foo foo 'bar explicit-bar)
+   (&plist :foo \\='bar explicit-bar) => (&plist :foo foo \\='bar explicit-bar)
 
    ;; nothing happens, we store :foo in x
    (&plist :foo x) => (&plist :foo x)

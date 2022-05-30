@@ -1229,30 +1229,42 @@ related predicates."
     (--last (> (length it) 3) '("a" "looong" "word" "and" "short" "one")) => "short")
 
   (defexamples -first-item
-    (-first-item '(1 2 3)) => 1
-    (-first-item nil) => nil
-    (let ((list (list 1 2 3))) (setf (-first-item list) 5) list) => '(5 2 3))
+    (-first-item '()) => '()
+    (-first-item '(1 2 3 4 5)) => 1
+    (let ((list (list 1 2 3))) (setf (-first-item list) 5) list) => '(5 2 3)
+    (-first-item 1) !!> wrong-type-argument)
 
   (defexamples -second-item
-    (-second-item '(1 2 3)) => 2
-    (-second-item nil) => nil)
+    (-second-item '()) => '()
+    (-second-item '(1 2 3 4 5)) => 2
+    (let ((list (list 1 2))) (setf (-second-item list) 5) list) => '(1 5)
+    (-second-item '(1)) => '()
+    (-second-item 1) !!> wrong-type-argument)
 
   (defexamples -third-item
-    (-third-item '(1 2 3)) => 3
-    (-third-item nil) => nil)
+    (-third-item '()) => '()
+    (-third-item '(1 2)) => '()
+    (-third-item '(1 2 3 4 5)) => 3
+    (-third-item 1) !!> wrong-type-argument)
 
   (defexamples -fourth-item
-    (-fourth-item '(1 2 3 4)) => 4
-    (-fourth-item nil) => nil)
+    (-fourth-item '()) => '()
+    (-fourth-item '(1 2 3)) => '()
+    (-fourth-item '(1 2 3 4 5)) => 4
+    (-fourth-item 1) !!> wrong-type-argument)
 
   (defexamples -fifth-item
+    (-fifth-item '()) => '()
+    (-fifth-item '(1 2 3 4)) => '()
     (-fifth-item '(1 2 3 4 5)) => 5
-    (-fifth-item nil) => nil)
+    (-fifth-item 1) !!> wrong-type-argument)
 
   (defexamples -last-item
-    (-last-item '(1 2 3)) => 3
-    (-last-item nil) => nil
-    (let ((list (list 1 2 3))) (setf (-last-item list) 5) list) => '(1 2 5))
+    (-last-item '()) => '()
+    (-last-item '(1 2 3 4 5)) => 5
+    (let ((list (list 1 2 3))) (setf (-last-item list) 5) list) => '(1 2 5)
+    (-last-item '(1)) => 1
+    (-last-item 1) !!> wrong-type-argument)
 
   (defexamples -butlast
     (-butlast '(1 2 3)) => '(1 2)

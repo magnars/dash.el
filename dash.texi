@@ -3118,16 +3118,16 @@ Return the last x in @var{list} where (@var{pred} x) is non-@code{nil}, else @co
 @defun -first-item (list)
 Return the first item of @var{list}, or @code{nil} on an empty list.
 
-See also: @code{-second-item} (@pxref{-second-item}), @code{-last-item} (@pxref{-last-item}).
+See also: @code{-second-item} (@pxref{-second-item}), @code{-last-item} (@pxref{-last-item}), etc.
 
 @example
 @group
-(-first-item '(1 2 3))
-    @result{} 1
+(-first-item ())
+    @result{} ()
 @end group
 @group
-(-first-item nil)
-    @result{} nil
+(-first-item '(1 2 3 4 5))
+    @result{} 1
 @end group
 @group
 (let ((list (list 1 2 3))) (setf (-first-item list) 5) list)
@@ -3140,16 +3140,20 @@ See also: @code{-second-item} (@pxref{-second-item}), @code{-last-item} (@pxref{
 @defun -second-item (list)
 Return the second item of @var{list}, or @code{nil} if @var{list} is too short.
 
-See also: @code{-third-item} (@pxref{-third-item}).
+See also: @code{-first-item} (@pxref{-first-item}), @code{-third-item} (@pxref{-third-item}), etc.
 
 @example
 @group
-(-second-item '(1 2 3))
+(-second-item ())
+    @result{} ()
+@end group
+@group
+(-second-item '(1 2 3 4 5))
     @result{} 2
 @end group
 @group
-(-second-item nil)
-    @result{} nil
+(let ((list (list 1 2))) (setf (-second-item list) 5) list)
+    @result{} (1 5)
 @end group
 @end example
 @end defun
@@ -3158,16 +3162,20 @@ See also: @code{-third-item} (@pxref{-third-item}).
 @defun -third-item (list)
 Return the third item of @var{list}, or @code{nil} if @var{list} is too short.
 
-See also: @code{-fourth-item} (@pxref{-fourth-item}).
+See also: @code{-second-item} (@pxref{-second-item}), @code{-fourth-item} (@pxref{-fourth-item}), etc.
 
 @example
 @group
-(-third-item '(1 2 3))
-    @result{} 3
+(-third-item ())
+    @result{} ()
 @end group
 @group
-(-third-item nil)
-    @result{} nil
+(-third-item '(1 2))
+    @result{} ()
+@end group
+@group
+(-third-item '(1 2 3 4 5))
+    @result{} 3
 @end group
 @end example
 @end defun
@@ -3176,16 +3184,20 @@ See also: @code{-fourth-item} (@pxref{-fourth-item}).
 @defun -fourth-item (list)
 Return the fourth item of @var{list}, or @code{nil} if @var{list} is too short.
 
-See also: @code{-fifth-item} (@pxref{-fifth-item}).
+See also: @code{-third-item} (@pxref{-third-item}), @code{-fifth-item} (@pxref{-fifth-item}), etc.
 
 @example
 @group
-(-fourth-item '(1 2 3 4))
-    @result{} 4
+(-fourth-item ())
+    @result{} ()
 @end group
 @group
-(-fourth-item nil)
-    @result{} nil
+(-fourth-item '(1 2 3))
+    @result{} ()
+@end group
+@group
+(-fourth-item '(1 2 3 4 5))
+    @result{} 4
 @end group
 @end example
 @end defun
@@ -3194,16 +3206,20 @@ See also: @code{-fifth-item} (@pxref{-fifth-item}).
 @defun -fifth-item (list)
 Return the fifth item of @var{list}, or @code{nil} if @var{list} is too short.
 
-See also: @code{-last-item} (@pxref{-last-item}).
+See also: @code{-fourth-item} (@pxref{-fourth-item}), @code{-last-item} (@pxref{-last-item}), etc.
 
 @example
 @group
-(-fifth-item '(1 2 3 4 5))
-    @result{} 5
+(-fifth-item ())
+    @result{} ()
 @end group
 @group
-(-fifth-item nil)
-    @result{} nil
+(-fifth-item '(1 2 3 4))
+    @result{} ()
+@end group
+@group
+(-fifth-item '(1 2 3 4 5))
+    @result{} 5
 @end group
 @end example
 @end defun
@@ -3212,14 +3228,16 @@ See also: @code{-last-item} (@pxref{-last-item}).
 @defun -last-item (list)
 Return the last item of @var{list}, or @code{nil} on an empty list.
 
+See also: @code{-first-item} (@pxref{-first-item}), etc.
+
 @example
 @group
-(-last-item '(1 2 3))
-    @result{} 3
+(-last-item ())
+    @result{} ()
 @end group
 @group
-(-last-item nil)
-    @result{} nil
+(-last-item '(1 2 3 4 5))
+    @result{} 5
 @end group
 @group
 (let ((list (list 1 2 3))) (setf (-last-item list) 5) list)

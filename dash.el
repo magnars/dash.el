@@ -929,10 +929,10 @@ This function's anaphoric counterpart is `--every'."
   "Return the last x in LIST where (PRED x) is non-nil, else nil."
   (--last (funcall pred it) list))
 
-(defalias '-first-item 'car
+(defalias '-first-item #'car
   "Return the first item of LIST, or nil on an empty list.
 
-See also: `-second-item', `-last-item'.
+See also: `-second-item', `-last-item', etc.
 
 \(fn LIST)")
 
@@ -940,13 +940,18 @@ See also: `-second-item', `-last-item'.
 ;; just like `car'.
 (put '-first-item 'byte-opcode 'byte-car)
 (put '-first-item 'byte-compile 'byte-compile-one-arg)
+(put '-first-item 'pure t)
+(put '-first-item 'side-effect-free t)
 
-(defalias '-second-item 'cadr
+(defalias '-second-item #'cadr
   "Return the second item of LIST, or nil if LIST is too short.
 
-See also: `-third-item'.
+See also: `-first-item', `-third-item', etc.
 
 \(fn LIST)")
+
+(put '-second-item 'pure t)
+(put '-second-item 'side-effect-free t)
 
 (defalias '-third-item
   (if (fboundp 'caddr)
@@ -954,26 +959,37 @@ See also: `-third-item'.
     (lambda (list) (car (cddr list))))
   "Return the third item of LIST, or nil if LIST is too short.
 
-See also: `-fourth-item'.
+See also: `-second-item', `-fourth-item', etc.
 
 \(fn LIST)")
 
-(defun -fourth-item (list)
+(put '-third-item 'pure t)
+(put '-third-item 'side-effect-free t)
+
+(defalias '-fourth-item
+  (if (fboundp 'cadddr)
+      #'cadddr
+    (lambda (list) (cadr (cddr list))))
   "Return the fourth item of LIST, or nil if LIST is too short.
 
-See also: `-fifth-item'."
-  (declare (pure t) (side-effect-free t))
-  (car (cdr (cdr (cdr list)))))
+See also: `-third-item', `-fifth-item', etc.
+
+\(fn LIST)")
+
+(put '-fourth-item 'pure t)
+(put '-fourth-item 'side-effect-free t)
 
 (defun -fifth-item (list)
   "Return the fifth item of LIST, or nil if LIST is too short.
 
-See also: `-last-item'."
+See also: `-fourth-item', `-last-item', etc."
   (declare (pure t) (side-effect-free t))
-  (car (cdr (cdr (cdr (cdr list))))))
+  (car (cddr (cddr list))))
 
 (defun -last-item (list)
-  "Return the last item of LIST, or nil on an empty list."
+  "Return the last item of LIST, or nil on an empty list.
+
+See also: `-first-item', etc."
   (declare (pure t) (side-effect-free t))
   (car (last list)))
 

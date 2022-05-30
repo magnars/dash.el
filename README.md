@@ -2095,11 +2095,11 @@ Return the last x in `list` where (`pred` x) is non-`nil`, else `nil`.
 
 Return the first item of `list`, or `nil` on an empty list.
 
-See also: [`-second-item`](#-second-item-list), [`-last-item`](#-last-item-list).
+See also: [`-second-item`](#-second-item-list), [`-last-item`](#-last-item-list), etc.
 
 ```el
-(-first-item '(1 2 3)) ;; => 1
-(-first-item nil) ;; => nil
+(-first-item ()) ;; => ()
+(-first-item '(1 2 3 4 5)) ;; => 1
 (let ((list (list 1 2 3))) (setf (-first-item list) 5) list) ;; => (5 2 3)
 ```
 
@@ -2107,53 +2107,59 @@ See also: [`-second-item`](#-second-item-list), [`-last-item`](#-last-item-list)
 
 Return the second item of `list`, or `nil` if `list` is too short.
 
-See also: [`-third-item`](#-third-item-list).
+See also: [`-first-item`](#-first-item-list), [`-third-item`](#-third-item-list), etc.
 
 ```el
-(-second-item '(1 2 3)) ;; => 2
-(-second-item nil) ;; => nil
+(-second-item ()) ;; => ()
+(-second-item '(1 2 3 4 5)) ;; => 2
+(let ((list (list 1 2))) (setf (-second-item list) 5) list) ;; => (1 5)
 ```
 
 #### -third-item `(list)`
 
 Return the third item of `list`, or `nil` if `list` is too short.
 
-See also: [`-fourth-item`](#-fourth-item-list).
+See also: [`-second-item`](#-second-item-list), [`-fourth-item`](#-fourth-item-list), etc.
 
 ```el
-(-third-item '(1 2 3)) ;; => 3
-(-third-item nil) ;; => nil
+(-third-item ()) ;; => ()
+(-third-item '(1 2)) ;; => ()
+(-third-item '(1 2 3 4 5)) ;; => 3
 ```
 
 #### -fourth-item `(list)`
 
 Return the fourth item of `list`, or `nil` if `list` is too short.
 
-See also: [`-fifth-item`](#-fifth-item-list).
+See also: [`-third-item`](#-third-item-list), [`-fifth-item`](#-fifth-item-list), etc.
 
 ```el
-(-fourth-item '(1 2 3 4)) ;; => 4
-(-fourth-item nil) ;; => nil
+(-fourth-item ()) ;; => ()
+(-fourth-item '(1 2 3)) ;; => ()
+(-fourth-item '(1 2 3 4 5)) ;; => 4
 ```
 
 #### -fifth-item `(list)`
 
 Return the fifth item of `list`, or `nil` if `list` is too short.
 
-See also: [`-last-item`](#-last-item-list).
+See also: [`-fourth-item`](#-fourth-item-list), [`-last-item`](#-last-item-list), etc.
 
 ```el
+(-fifth-item ()) ;; => ()
+(-fifth-item '(1 2 3 4)) ;; => ()
 (-fifth-item '(1 2 3 4 5)) ;; => 5
-(-fifth-item nil) ;; => nil
 ```
 
 #### -last-item `(list)`
 
 Return the last item of `list`, or `nil` on an empty list.
 
+See also: [`-first-item`](#-first-item-list), etc.
+
 ```el
-(-last-item '(1 2 3)) ;; => 3
-(-last-item nil) ;; => nil
+(-last-item ()) ;; => ()
+(-last-item '(1 2 3 4 5)) ;; => 5
 (let ((list (list 1 2 3))) (setf (-last-item list) 5) list) ;; => (1 2 5)
 ```
 

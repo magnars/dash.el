@@ -6,6 +6,13 @@ See the end of the file for license conditions.
 
 ## Change log
 
+### From 2.19.1 to 2.19.2
+
+#### Fixes
+
+- Fixed a regression from `2.18` in `-take` that caused it to
+  prematurely signal an error on improper lists (#393).
+
 ### From 2.19.0 to 2.19.1
 
 #### Fixes

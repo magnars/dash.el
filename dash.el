@@ -112,8 +112,8 @@ This is the anaphoric counterpart to `-each-while'."
            (,i 0)
            ,elt it it-index)
        (ignore it it-index)
-       (while (and ,l (setq ,elt (pop ,l) it ,elt it-index ,i) ,pred)
-         (setq it ,elt it-index ,i ,i (1+ ,i))
+       (while (and ,l (setq ,elt (car-safe ,l) it ,elt it-index ,i) ,pred)
+         (setq it ,elt it-index ,i ,i (1+ ,i) ,l (cdr ,l))
          ,@body))))
 
 (defun -each-while (list pred fn)

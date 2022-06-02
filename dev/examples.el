@@ -277,10 +277,15 @@ new list."
     (-take 3 '(1 2 3 4 5)) => '(1 2 3)
     (-take 17 '(1 2 3 4 5)) => '(1 2 3 4 5)
     (-take 0 '(1 2 3 4 5)) => '()
-    (-take 0 ()) => ()
     (-take -1 ()) => ()
-    (-take -1 '(1)) => ()
+    (-take 0 ()) => ()
     (-take 1 ()) => ()
+    (-take -1 '(1)) => ()
+    (-take 0 '(1)) => ()
+    (-take 1 '(1)) => '(1)
+    (-take -1 '(1 . 2)) => ()
+    (-take 0 '(1 . 2)) => ()
+    (-take 1 '(1 . 2)) => '(1)
     (let ((l (list 1 2))) (eq (-take 3 l) l)) => nil)
 
   (defexamples -take-last
@@ -298,10 +303,15 @@ new list."
     (-drop 3 '(1 2 3 4 5)) => '(4 5)
     (-drop 17 '(1 2 3 4 5)) => '()
     (-drop 0 '(1 2 3 4 5)) => '(1 2 3 4 5)
-    (-drop 0 ()) => ()
     (-drop -1 ()) => ()
-    (-drop -1 '(1)) => '(1)
+    (-drop 0 ()) => ()
     (-drop 1 ()) => ()
+    (-drop -1 '(1)) => '(1)
+    (-drop 0 '(1)) => '(1)
+    (-drop 1 '(1)) => ()
+    (-drop -1 '(1 . 2)) => '(1 . 2)
+    (-drop 0 '(1 . 2)) => '(1 . 2)
+    (-drop 1 '(1 . 2)) => 2
     (let ((l (list 1 2))) (setcar (-drop 1 l) 0) l) => '(1 0)
     (let ((l (list 1 2))) (eq (-drop 0 l) l)) => t)
 
@@ -323,8 +333,11 @@ new list."
     (--take-while t ()) => ()
     (--take-while nil ()) => ()
     (--take-while nil '(1)) => ()
+    (--take-while nil '(1 . 2)) => ()
     (--take-while t '(1)) => '(1)
     (--take-while t '(1 2)) => '(1 2)
+    (--take-while (< it-index 0) '(1 . 2)) => ()
+    (--take-while (< it-index 1) '(1 . 2)) => '(1)
     (let ((l (list 1 2))) (eq (--take-while t l) l)) => nil)
 
   (defexamples -drop-while
@@ -335,8 +348,11 @@ new list."
     (--drop-while nil ()) => ()
     (--drop-while nil '(1)) => '(1)
     (--drop-while nil '(1 2)) => '(1 2)
+    (--drop-while nil '(1 . 2)) => '(1 . 2)
     (--drop-while t '(1)) => ()
     (--drop-while t '(1 2)) => ()
+    (--drop-while (< it-index 0) '(1 . 2)) => '(1 . 2)
+    (--drop-while (< it-index 1) '(1 . 2)) => 2
     (let ((l (list t 2))) (setcar (-drop-while #'booleanp l) 0) l) => '(t 0)
     (let ((l (list 1 2))) (eq (--drop-while nil l) l)) => t)
 
@@ -1748,6 +1764,9 @@ or readability."
     (let (s) (--each-while '(1) t (setq s it)) s) => 1
     (let (s) (--each-while '(1) nil (setq s it)) s) => nil
     (let (s) (--each-while '(1) (setq it t) (setq s it)) s) => 1
+    (let (s) (--each-while '(1 . 2) nil (setq s it)) s) => nil
+    (let (s) (--each-while '(1 . 2) (< it-index 0) (setq s it)) s) => nil
+    (let (s) (--each-while '(1 . 2) (< it-index 1) (setq s it)) s) => 1
     (--each-while '(1) t t) => nil)
 
   (defexamples -each-indexed

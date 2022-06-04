@@ -68,12 +68,12 @@ This is the anaphoric counterpart to `-each'."
   (let ((l (make-symbol "list"))
         (i (make-symbol "i")))
     `(let ((,l ,list)
-           (,i 0)
-           it it-index)
-       (ignore it it-index)
+           (,i 0))
        (while ,l
-         (setq it (pop ,l) it-index ,i ,i (1+ ,i))
-         ,@body))))
+         (let ((it (pop ,l)) (it-index ,i))
+           (ignore it it-index)
+           ,@body)
+         (setq ,i (1+ ,i))))))
 
 (defun -each (list fn)
   "Call FN on each element of LIST.
@@ -110,11 +110,16 @@ This is the anaphoric counterpart to `-each-while'."
         (elt (make-symbol "elt")))
     `(let ((,l ,list)
            (,i 0)
-           ,elt it it-index)
-       (ignore it it-index)
-       (while (and ,l (setq ,elt (car-safe ,l) it ,elt it-index ,i) ,pred)
-         (setq it ,elt it-index ,i ,i (1+ ,i) ,l (cdr ,l))
-         ,@body))))
+           ,elt)
+       (while (when ,l
+                (setq ,elt (car-safe ,l))
+                (let ((it ,elt) (it-index ,i))
+                  (ignore it it-index)
+                  ,pred))
+         (let ((it ,elt) (it-index ,i))
+           (ignore it it-index)
+           ,@body)
+         (setq ,i (1+ ,i) ,l (cdr ,l))))))
 
 (defun -each-while (list pred fn)
   "Call FN on each ITEM in LIST, while (PRED ITEM) is non-nil.

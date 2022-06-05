@@ -783,7 +783,7 @@ This can be useful as an alternative to the `,@' construct in a
 marked positions (for example with keywords).
 
 This is the anaphoric counterpart to `-splice'."
-  (declare (debug (def-form def-form form)))
+  (declare (debug (form form form)))
   (let ((r (make-symbol "result")))
     `(let (,r)
        (--each ,list
@@ -1026,7 +1026,7 @@ See also: `-first-item', etc."
 
 (defun ---truthy? (obj)
   "Return OBJ as a boolean value (t or nil)."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (and obj t))
 
 (defmacro --any? (form list)
@@ -2845,7 +2845,7 @@ In this case, if ARG is not a list, a new list with all of
 ARGS as elements is returned.  This use is supported for
 backward compatibility and is otherwise deprecated."
   (declare (advertised-calling-convention (arg) "2.18.0")
-           (pure t) (side-effect-free t))
+           (pure t) (side-effect-free error-free))
   (if (listp arg) arg (cons arg args)))
 
 (defun -repeat (n x)
@@ -2974,7 +2974,7 @@ the new seed."
 That is, a cons (A . B) where B is not a list.
 
 Alias: `-cons-pair-p'."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (nlistp (cdr-safe obj)))
 
 (defalias '-cons-pair-p '-cons-pair?)
@@ -3162,14 +3162,14 @@ is a new function which does the same as FN, except that the last
 N arguments are fixed at the values with which this function was
 called.  This is like `-partial', except the arguments are fixed
 starting from the right rather than the left."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (lambda (&rest args-before) (apply fn (append args-before args))))
 
 (defun -juxt (&rest fns)
   "Return a function that is the juxtaposition of FNS.
 The returned function takes a variable number of ARGS, applies
 each of FNS in turn to ARGS, and returns the list of results."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (lambda (&rest args) (mapcar (lambda (x) (apply x args)) fns)))
 
 (defun -compose (&rest fns)
@@ -3179,7 +3179,7 @@ the last function in FNS to ARGS, and returns the result of
 calling each remaining function on the result of the previous
 function, right-to-left.  If no FNS are given, return a variadic
 `identity' function."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (let* ((fns (nreverse fns))
          (head (car fns))
          (tail (cdr fns)))
@@ -3193,7 +3193,7 @@ function, right-to-left.  If no FNS are given, return a variadic
   "Return a function that applies FN to a single list of args.
 This changes the arity of FN from taking N distinct arguments to
 taking 1 argument which is a list of N arguments."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (lambda (args) (apply fn args)))
 
 (defun -on (op trans)
@@ -3207,7 +3207,7 @@ equivalent:
 
   (funcall (-on #\\='+ #\\='1+) 1 2 3) = (+ (1+ 1) (1+ 2) (1+ 3))
   (funcall (-on #\\='+ #\\='1+))       = (+)"
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (lambda (&rest args)
     ;; This unrolling seems to be a relatively cheap way to keep the
     ;; overhead of `mapcar' + `apply' in check.
@@ -3229,7 +3229,7 @@ equivalent:
   (funcall (-flip #\\='-) 1 2) = (- 2 1)
 
 See also: `-rotate-args'."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (lambda (&rest args) ;; Open-code for speed.
     (cond ((cddr args) (apply fn (nreverse args)))
           ((cdr args) (funcall fn (cadr args) (car args)))
@@ -3262,7 +3262,7 @@ See also: `-flip'."
   "Return a function that returns C ignoring any additional arguments.
 
 In types: a -> b -> a"
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (lambda (&rest _) c))
 
 (defmacro -cut (&rest params)
@@ -3288,7 +3288,7 @@ The returned predicate passes its arguments to PRED.  If PRED
 returns nil, the result is non-nil; otherwise the result is nil.
 
 See also: `-andfn' and `-orfn'."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   (lambda (&rest args) (not (apply pred args))))
 
 (defun -orfn (&rest preds)
@@ -3300,7 +3300,7 @@ the remaining PREDS.  If all PREDS return nil, or if no PREDS are
 given, the returned predicate returns nil.
 
 See also: `-andfn' and `-not'."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   ;; Open-code for speed.
   (cond ((cdr preds) (lambda (&rest args) (--some (apply it args) preds)))
         (preds (car preds))
@@ -3315,7 +3315,7 @@ remaining PREDS.  If all PREDS return non-nil, P returns the last
 such value.  If no PREDS are given, P always returns non-nil.
 
 See also: `-orfn' and `-not'."
-  (declare (pure t) (side-effect-free t))
+  (declare (pure t) (side-effect-free error-free))
   ;; Open-code for speed.
   (cond ((cdr preds) (lambda (&rest args) (--every (apply it args) preds)))
         (preds (car preds))

@@ -2395,14 +2395,16 @@ related predicates.
 
 @anchor{-elem-index}
 @defun -elem-index (elem list)
-Return the index of the first element in the given @var{list} which
-is equal to the query element @var{elem}, or @code{nil} if there is no
-such element.
+Return the first index of @var{elem} in @var{list}.
+That is, the index within @var{list} of the first element that is
+@code{equal} to @var{elem}.  Return @code{nil} if there is no such element.
+
+See also: @code{-find-index} (@pxref{-find-index}).
 
 @example
 @group
-(-elem-index 2 '(6 7 8 2 3 4))
-    @result{} 3
+(-elem-index 2 '(6 7 8 3 4))
+    @result{} nil
 @end group
 @group
 (-elem-index "bar" '("foo" "bar" "baz"))
@@ -2417,13 +2419,14 @@ such element.
 
 @anchor{-elem-indices}
 @defun -elem-indices (elem list)
-Return the indices of all elements in @var{list} equal to the query
-element @var{elem}, in ascending order.
+Return the list of indices at which @var{elem} appears in @var{list}.
+That is, the indices of all elements of @var{list} @code{equal} to @var{elem}, in
+the same ascending order as they appear in @var{list}.
 
 @example
 @group
-(-elem-indices 2 '(6 7 8 2 3 4 2 1))
-    @result{} (3 6)
+(-elem-indices 2 '(6 7 8 3 4 1))
+    @result{} ()
 @end group
 @group
 (-elem-indices "bar" '("foo" "bar" "baz"))
@@ -2438,47 +2441,55 @@ element @var{elem}, in ascending order.
 
 @anchor{-find-index}
 @defun -find-index (pred list)
-Take a predicate @var{pred} and a @var{list} and return the index of the
-first element in the list satisfying the predicate, or @code{nil} if
-there is no such element.
+Return the index of the first item satisfying @var{pred} in @var{list}.
+Return @code{nil} if no such item is found.
 
-See also @code{-first} (@pxref{-first}).
+@var{pred} is called with one argument, the current list element, until
+it returns non-@code{nil}, at which point the search terminates.
+
+This function's anaphoric counterpart is @code{--find-index}.
+
+See also: @code{-first} (@pxref{-first}), @code{-find-last-index} (@pxref{-find-last-index}).
 
 @example
 @group
-(-find-index 'even? '(2 4 1 6 3 3 5 8))
+(-find-index #'numberp '(a b c))
+    @result{} nil
+@end group
+@group
+(-find-index #'natnump '(1 0 -1))
     @result{} 0
 @end group
 @group
-(--find-index (< 5 it) '(2 4 1 6 3 3 5 8))
+(--find-index (> it 5) '(2 4 1 6 3 3 5 8))
     @result{} 3
-@end group
-@group
-(-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz"))
-    @result{} 1
 @end group
 @end example
 @end defun
 
 @anchor{-find-last-index}
 @defun -find-last-index (pred list)
-Take a predicate @var{pred} and a @var{list} and return the index of the
-last element in the list satisfying the predicate, or @code{nil} if
-there is no such element.
+Return the index of the last item satisfying @var{pred} in @var{list}.
+Return @code{nil} if no such item is found.
 
-See also @code{-last} (@pxref{-last}).
+Predicate @var{pred} is called with one argument each time, namely the
+current list element.
+
+This function's anaphoric counterpart is @code{--find-last-index}.
+
+See also: @code{-last} (@pxref{-last}), @code{-find-index} (@pxref{-find-index}).
 
 @example
 @group
-(-find-last-index 'even? '(2 4 1 6 3 3 5 8))
-    @result{} 7
+(-find-last-index #'numberp '(a b c))
+    @result{} nil
 @end group
 @group
-(--find-last-index (< 5 it) '(2 7 1 6 3 8 5 2))
+(--find-last-index (> it 5) '(2 7 1 6 3 8 5 2))
     @result{} 5
 @end group
 @group
-(-find-last-index (-partial 'string-lessp "baz") '("q" "foo" "baz"))
+(-find-last-index (-partial #'string< 'a) '(c b a))
     @result{} 1
 @end group
 @end example
@@ -2486,21 +2497,29 @@ See also @code{-last} (@pxref{-last}).
 
 @anchor{-find-indices}
 @defun -find-indices (pred list)
-Return the indices of all elements in @var{list} satisfying the
-predicate @var{pred}, in ascending order.
+Return the list of indices in @var{list} satisfying @var{pred}.
+
+Each element of @var{list} in turn is passed to @var{pred}.  If the result is
+non-@code{nil}, the index of that element in @var{list} is included in the
+result.  The returned indices are in ascending order, i.e., in
+the same order as they appear in @var{list}.
+
+This function's anaphoric counterpart is @code{--find-indices}.
+
+See also: @code{-find-index} (@pxref{-find-index}), @code{-elem-indices} (@pxref{-elem-indices}).
 
 @example
 @group
-(-find-indices 'even? '(2 4 1 6 3 3 5 8))
+(-find-indices #'numberp '(a b c))
+    @result{} ()
+@end group
+@group
+(-find-indices #'numberp '(8 1 d 2 b c a 3))
     @result{} (0 1 3 7)
 @end group
 @group
-(--find-indices (< 5 it) '(2 4 1 6 3 3 5 8))
+(--find-indices (> it 5) '(2 4 1 6 3 3 5 8))
     @result{} (3 7)
-@end group
-@group
-(-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz"))
-    @result{} (1)
 @end group
 @end example
 @end defun
@@ -3072,7 +3091,9 @@ See also: @code{-flatten-n} (@pxref{-flatten-n}), @code{-table} (@pxref{-table})
 @defun -first (pred list)
 Return the first item in @var{list} for which @var{pred} returns non-@code{nil}.
 Return @code{nil} if no such element is found.
-To get the first item in the list no questions asked, use @code{car}.
+
+To get the first item in the list no questions asked,
+use @code{-first-item} (@pxref{-first-item}).
 
 Alias: @code{-find}.
 

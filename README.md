@@ -1669,64 +1669,83 @@ related predicates.
 
 #### -elem-index `(elem list)`
 
-Return the index of the first element in the given `list` which
-is equal to the query element `elem`, or `nil` if there is no
-such element.
+Return the first index of `elem` in `list`.
+That is, the index within `list` of the first element that is
+`equal` to `elem`.  Return `nil` if there is no such element.
+
+See also: [`-find-index`](#-find-index-pred-list).
 
 ```el
-(-elem-index 2 '(6 7 8 2 3 4)) ;; => 3
+(-elem-index 2 '(6 7 8 3 4)) ;; => nil
 (-elem-index "bar" '("foo" "bar" "baz")) ;; => 1
 (-elem-index '(1 2) '((3) (5 6) (1 2) nil)) ;; => 2
 ```
 
 #### -elem-indices `(elem list)`
 
-Return the indices of all elements in `list` equal to the query
-element `elem`, in ascending order.
+Return the list of indices at which `elem` appears in `list`.
+That is, the indices of all elements of `list` `equal` to `elem`, in
+the same ascending order as they appear in `list`.
 
 ```el
-(-elem-indices 2 '(6 7 8 2 3 4 2 1)) ;; => (3 6)
+(-elem-indices 2 '(6 7 8 3 4 1)) ;; => ()
 (-elem-indices "bar" '("foo" "bar" "baz")) ;; => (1)
 (-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil)) ;; => (1 3)
 ```
 
 #### -find-index `(pred list)`
 
-Take a predicate `pred` and a `list` and return the index of the
-first element in the list satisfying the predicate, or `nil` if
-there is no such element.
+Return the index of the first item satisfying `pred` in `list`.
+Return `nil` if no such item is found.
 
-See also [`-first`](#-first-pred-list).
+`pred` is called with one argument, the current list element, until
+it returns non-`nil`, at which point the search terminates.
+
+This function's anaphoric counterpart is `--find-index`.
+
+See also: [`-first`](#-first-pred-list), [`-find-last-index`](#-find-last-index-pred-list).
 
 ```el
-(-find-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 0
-(--find-index (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => 3
-(-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz")) ;; => 1
+(-find-index #'numberp '(a b c)) ;; => nil
+(-find-index #'natnump '(1 0 -1)) ;; => 0
+(--find-index (> it 5) '(2 4 1 6 3 3 5 8)) ;; => 3
 ```
 
 #### -find-last-index `(pred list)`
 
-Take a predicate `pred` and a `list` and return the index of the
-last element in the list satisfying the predicate, or `nil` if
-there is no such element.
+Return the index of the last item satisfying `pred` in `list`.
+Return `nil` if no such item is found.
 
-See also [`-last`](#-last-pred-list).
+Predicate `pred` is called with one argument each time, namely the
+current list element.
+
+This function's anaphoric counterpart is `--find-last-index`.
+
+See also: [`-last`](#-last-pred-list), [`-find-index`](#-find-index-pred-list).
 
 ```el
-(-find-last-index 'even? '(2 4 1 6 3 3 5 8)) ;; => 7
-(--find-last-index (< 5 it) '(2 7 1 6 3 8 5 2)) ;; => 5
-(-find-last-index (-partial 'string-lessp "baz") '("q" "foo" "baz")) ;; => 1
+(-find-last-index #'numberp '(a b c)) ;; => nil
+(--find-last-index (> it 5) '(2 7 1 6 3 8 5 2)) ;; => 5
+(-find-last-index (-partial #'string< 'a) '(c b a)) ;; => 1
 ```
 
 #### -find-indices `(pred list)`
 
-Return the indices of all elements in `list` satisfying the
-predicate `pred`, in ascending order.
+Return the list of indices in `list` satisfying `pred`.
+
+Each element of `list` in turn is passed to `pred`.  If the result is
+non-`nil`, the index of that element in `list` is included in the
+result.  The returned indices are in ascending order, i.e., in
+the same order as they appear in `list`.
+
+This function's anaphoric counterpart is `--find-indices`.
+
+See also: [`-find-index`](#-find-index-pred-list), [`-elem-indices`](#-elem-indices-elem-list).
 
 ```el
-(-find-indices 'even? '(2 4 1 6 3 3 5 8)) ;; => (0 1 3 7)
-(--find-indices (< 5 it) '(2 4 1 6 3 3 5 8)) ;; => (3 7)
-(-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz")) ;; => (1)
+(-find-indices #'numberp '(a b c)) ;; => ()
+(-find-indices #'numberp '(8 1 d 2 b c a 3)) ;; => (0 1 3 7)
+(--find-indices (> it 5) '(2 4 1 6 3 3 5 8)) ;; => (3 7)
 ```
 
 #### -grade-up `(comparator list)`
@@ -2069,7 +2088,9 @@ See also: [`-flatten-n`](#-flatten-n-num-list), [`-table`](#-table-fn-rest-lists
 
 Return the first item in `list` for which `pred` returns non-`nil`.
 Return `nil` if no such element is found.
-To get the first item in the list no questions asked, use `car`.
+
+To get the first item in the list no questions asked,
+use [`-first-item`](#-first-item-list).
 
 Alias: `-find`.
 

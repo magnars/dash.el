@@ -858,14 +858,16 @@ This is the anaphoric counterpart to `-first'."
 (defun -first (pred list)
   "Return the first item in LIST for which PRED returns non-nil.
 Return nil if no such element is found.
-To get the first item in the list no questions asked, use `car'.
+
+To get the first item in the list no questions asked,
+use `-first-item'.
 
 Alias: `-find'.
 
 This function's anaphoric counterpart is `--first'."
   (--first (funcall pred it) list))
 
-(defalias '-find '-first)
+(defalias '-find #'-first)
 (defalias '--find '--first)
 
 (defmacro --some (form list)
@@ -1780,54 +1782,88 @@ See also: `-flatten-n', `-table'"
         (dash--table-carry lists restore-lists)))
     (nreverse re)))
 
-(defun -elem-index (elem list)
-  "Return the index of the first element in the given LIST which
-is equal to the query element ELEM, or nil if there is no
-such element."
-  (declare (pure t) (side-effect-free t))
-  (car (-elem-indices elem list)))
-
-(defun -elem-indices (elem list)
-  "Return the indices of all elements in LIST equal to the query
-element ELEM, in ascending order."
-  (declare (pure t) (side-effect-free t))
-  (-find-indices (-partial 'equal elem) list))
-
-(defun -find-indices (pred list)
-  "Return the indices of all elements in LIST satisfying the
-predicate PRED, in ascending order."
-  (apply 'append (--map-indexed (when (funcall pred it) (list it-index)) list)))
-
-(defmacro --find-indices (form list)
-  "Anaphoric version of `-find-indices'."
-  (declare (debug (def-form form)))
-  `(-find-indices (lambda (it) (ignore it) ,form) ,list))
+(defmacro --find-index (form list)
+  "Return the first index in LIST for which FORM evals to non-nil.
+Return nil if no such index is found.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.
+This is the anaphoric counterpart to `-find-index'."
+  (declare (debug (form form)))
+  `(--some (and ,form it-index) ,list))
 
 (defun -find-index (pred list)
-  "Take a predicate PRED and a LIST and return the index of the
-first element in the list satisfying the predicate, or nil if
-there is no such element.
+  "Return the index of the first item satisfying PRED in LIST.
+Return nil if no such item is found.
 
-See also `-first'."
-  (car (-find-indices pred list)))
+PRED is called with one argument, the current list element, until
+it returns non-nil, at which point the search terminates.
 
-(defmacro --find-index (form list)
-  "Anaphoric version of `-find-index'."
-  (declare (debug (def-form form)))
-  `(-find-index (lambda (it) (ignore it) ,form) ,list))
+This function's anaphoric counterpart is `--find-index'.
 
-(defun -find-last-index (pred list)
-  "Take a predicate PRED and a LIST and return the index of the
-last element in the list satisfying the predicate, or nil if
-there is no such element.
+See also: `-first', `-find-last-index'."
+  (--find-index (funcall pred it) list))
 
-See also `-last'."
-  (-last-item (-find-indices pred list)))
+(defun -elem-index (elem list)
+  "Return the first index of ELEM in LIST.
+That is, the index within LIST of the first element that is
+`equal' to ELEM.  Return nil if there is no such element.
+
+See also: `-find-index'."
+  (declare (pure t) (side-effect-free t))
+  (--find-index (equal elem it) list))
+
+(defmacro --find-indices (form list)
+  "Return the list of indices in LIST for which FORM evals to non-nil.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.
+This is the anaphoric counterpart to `-find-indices'."
+  (declare (debug (form form)))
+  `(--keep (and ,form it-index) ,list))
+
+(defun -find-indices (pred list)
+  "Return the list of indices in LIST satisfying PRED.
+
+Each element of LIST in turn is passed to PRED.  If the result is
+non-nil, the index of that element in LIST is included in the
+result.  The returned indices are in ascending order, i.e., in
+the same order as they appear in LIST.
+
+This function's anaphoric counterpart is `--find-indices'.
+
+See also: `-find-index', `-elem-indices'."
+  (--find-indices (funcall pred it) list))
+
+(defun -elem-indices (elem list)
+  "Return the list of indices at which ELEM appears in LIST.
+That is, the indices of all elements of LIST `equal' to ELEM, in
+the same ascending order as they appear in LIST."
+  (declare (pure t) (side-effect-free t))
+  (--find-indices (equal elem it) list))
 
 (defmacro --find-last-index (form list)
-  "Anaphoric version of `-find-last-index'."
-  (declare (debug (def-form form)))
-  `(-find-last-index (lambda (it) (ignore it) ,form) ,list))
+  "Return the last index in LIST for which FORM evals to non-nil.
+Return nil if no such index is found.
+Each element of LIST in turn is bound to `it' and its index
+within LIST to `it-index' before evaluating FORM.
+This is the anaphoric counterpart to `-find-last-index'."
+  (declare (debug (form form)))
+  (let ((i (make-symbol "index")))
+    `(let (,i)
+       (--each ,list
+         (when ,form (setq ,i it-index)))
+       ,i)))
+
+(defun -find-last-index (pred list)
+  "Return the index of the last item satisfying PRED in LIST.
+Return nil if no such item is found.
+
+Predicate PRED is called with one argument each time, namely the
+current list element.
+
+This function's anaphoric counterpart is `--find-last-index'.
+
+See also: `-last', `-find-index'."
+  (--find-last-index (funcall pred it) list))
 
 (defun -select-by-indices (indices list)
   "Return a list whose elements are elements from LIST selected

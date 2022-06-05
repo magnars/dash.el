@@ -989,29 +989,115 @@ value rather than consuming a list to produce a single value."
 related predicates."
 
   (defexamples -elem-index
-    (-elem-index 2 '(6 7 8 2 3 4)) => 3
+    (-elem-index 2 '(6 7 8 3 4)) => nil
     (-elem-index "bar" '("foo" "bar" "baz")) => 1
-    (-elem-index '(1 2) '((3) (5 6) (1 2) nil)) => 2)
+    (-elem-index '(1 2) '((3) (5 6) (1 2) nil)) => 2
+    (-elem-index nil ()) => nil
+    (-elem-index nil '(t)) => nil
+    (-elem-index nil '(nil)) => 0
+    (-elem-index nil '(nil t)) => 0
+    (-elem-index nil '(t nil)) => 1
+    (-elem-index t ()) => nil
+    (-elem-index t '(nil)) => nil
+    (-elem-index t '(t)) => 0
+    (-elem-index t '(t nil)) => 0
+    (-elem-index t '(nil t)) => 1)
 
   (defexamples -elem-indices
-    (-elem-indices 2 '(6 7 8 2 3 4 2 1)) => '(3 6)
+    (-elem-indices 2 '(6 7 8 3 4 1)) => '()
     (-elem-indices "bar" '("foo" "bar" "baz")) => '(1)
-    (-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil)) => '(1 3))
+    (-elem-indices '(1 2) '((3) (1 2) (5 6) (1 2) nil)) => '(1 3)
+    (-elem-indices nil ()) => ()
+    (-elem-indices nil '(t)) => ()
+    (-elem-indices nil '(nil)) => '(0)
+    (-elem-indices nil '(nil t)) => '(0)
+    (-elem-indices nil '(t nil)) => '(1)
+    (-elem-indices nil '(t t)) => ()
+    (-elem-indices nil '(nil nil)) => '(0 1)
+    (-elem-indices t ()) => ()
+    (-elem-indices t '(t)) => '(0)
+    (-elem-indices t '(nil)) => ()
+    (-elem-indices t '(nil t)) => '(1)
+    (-elem-indices t '(t nil)) => '(0)
+    (-elem-indices t '(t t)) => '(0 1)
+    (-elem-indices t '(nil nil)) => ())
 
   (defexamples -find-index
-    (-find-index 'even? '(2 4 1 6 3 3 5 8)) => 0
-    (--find-index (< 5 it) '(2 4 1 6 3 3 5 8)) => 3
-    (-find-index (-partial 'string-lessp "baz") '("bar" "foo" "baz")) => 1)
+    (-find-index #'numberp '(a b c)) => nil
+    (-find-index #'natnump '(1 0 -1)) => 0
+    (--find-index (> it 5) '(2 4 1 6 3 3 5 8)) => 3
+    (-find-index (-cut string< "baz" <>) '("bar" "foo" "baz")) => 1
+    (--find-index nil ()) => nil
+    (--find-index nil '(5)) => nil
+    (--find-index nil '(5 6 7)) => nil
+    (--find-index t ()) => nil
+    (--find-index t '(5)) => 0
+    (--find-index t '(5 . 6)) => 0
+    (--find-index t '(5 6 7)) => 0
+    (let (x) (--find-index (setq x it) ()) x) => nil
+    (let (x) (--find-index (setq x it) '(5)) x) => 5
+    (let (x) (--find-index (setq x it) '(5 6 7)) x) => 5
+    (let (x) (--find-index (ignore (setq x it)) ()) x) => nil
+    (let (x) (--find-index (ignore (setq x it)) '(5)) x) => 5
+    (let (x) (--find-index (ignore (setq x it)) '(5 6 7)) x) => 7)
 
   (defexamples -find-last-index
-    (-find-last-index 'even? '(2 4 1 6 3 3 5 8)) => 7
-    (--find-last-index (< 5 it) '(2 7 1 6 3 8 5 2)) => 5
-    (-find-last-index (-partial 'string-lessp "baz") '("q" "foo" "baz")) => 1)
+    (-find-last-index #'numberp '(a b c)) => nil
+    (--find-last-index (> it 5) '(2 7 1 6 3 8 5 2)) => 5
+    (-find-last-index (-partial #'string< 'a) '(c b a)) => 1
+    (--find-last-index nil ()) => nil
+    (--find-last-index nil '(t)) => nil
+    (--find-last-index nil '(nil)) => nil
+    (--find-last-index nil '(nil nil)) => nil
+    (--find-last-index nil '(nil t)) => nil
+    (--find-last-index nil '(t nil)) => nil
+    (--find-last-index nil '(t t)) => nil
+    (--find-last-index t ()) => nil
+    (--find-last-index t '(t)) => 0
+    (--find-last-index t '(nil)) => 0
+    (--find-last-index t '(nil nil)) => 1
+    (--find-last-index t '(nil t)) => 1
+    (--find-last-index t '(t nil)) => 1
+    (--find-last-index t '(t t)) => 1
+    (--find-last-index it ()) => nil
+    (--find-last-index it '(t)) => 0
+    (--find-last-index it '(nil)) => nil
+    (--find-last-index it '(nil nil)) => nil
+    (--find-last-index it '(nil t)) => 1
+    (--find-last-index it '(t nil)) => 0
+    (--find-last-index it '(t t)) => 1)
 
   (defexamples -find-indices
-    (-find-indices 'even? '(2 4 1 6 3 3 5 8)) => '(0 1 3 7)
-    (--find-indices (< 5 it) '(2 4 1 6 3 3 5 8)) => '(3 7)
-    (-find-indices (-partial 'string-lessp "baz") '("bar" "foo" "baz")) => '(1))
+    (-find-indices #'numberp '(a b c)) => '()
+    (-find-indices #'numberp '(8 1 d 2 b c a 3)) => '(0 1 3 7)
+    (--find-indices (> it 5) '(2 4 1 6 3 3 5 8)) => '(3 7)
+    (--find-indices (string< "baz" it) '("bar" "foo" "baz")) => '(1)
+    (--find-indices nil ()) => ()
+    (--find-indices nil '(1)) => ()
+    (--find-indices nil '(nil)) => ()
+    (--find-indices t ()) => ()
+    (--find-indices t '(1)) => '(0)
+    (--find-indices t '(nil)) => '(0)
+    (--find-indices t '(1 2)) => '(0 1)
+    (--find-indices t '(nil nil)) => '(0 1)
+    (--find-indices it ()) => ()
+    (--find-indices it '(1)) => '(0)
+    (--find-indices it '(nil)) => ()
+    (--find-indices it '(1 2)) => '(0 1)
+    (--find-indices it '(nil nil)) => ()
+    (-find-indices #'ignore ()) => ()
+    (-find-indices #'ignore '(1)) => ()
+    (-find-indices #'ignore '(nil)) => ()
+    (-find-indices (-andfn) ()) => ()
+    (-find-indices (-andfn) '(1)) => '(0)
+    (-find-indices (-andfn) '(nil)) => '(0)
+    (-find-indices (-andfn) '(1 2)) => '(0 1)
+    (-find-indices (-andfn) '(nil nil)) => '(0 1)
+    (-find-indices #'identity ()) => ()
+    (-find-indices #'identity '(1)) => '(0)
+    (-find-indices #'identity '(nil)) => ()
+    (-find-indices #'identity '(1 2)) => '(0 1)
+    (-find-indices #'identity '(nil nil)) => ())
 
   (defexamples -grade-up
     (-grade-up #'< '(3 1 4 2 1 3 3)) => '(1 4 3 0 5 6 2)

@@ -1594,6 +1594,20 @@ elements of LIST.  Keys are compared by `equal'."
         (setq lists (-map 'cdr lists)))
       (nreverse result))))
 
+(defun -interleave-any (&rest lists)
+  "Return a new list of the first item in each of `lists', then the
+second etc. Continue interleaving all elements of all lists by
+skipping the non-existing elements of short lists."
+  (declare (pure t) (side-effect-free t))
+  (when lists
+    (let (result)
+      (while (--any? (consp it) lists)
+        (while (-none? 'null lists)
+          (--each lists (!cons (car it) result))
+          (setq lists (-map 'cdr lists)))
+        (setq lists (-filter #'consp lists)))
+      (nreverse result))))
+
 (defmacro --zip-with (form list1 list2)
   "Anaphoric form of `-zip-with'.
 

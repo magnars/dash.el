@@ -1594,7 +1594,7 @@ elements of LIST.  Keys are compared by `equal'."
         (setq lists (-map 'cdr lists)))
       (nreverse result))))
 
-(defun -interleave-any (&rest lists)
+(defun -interleave-all (&rest lists)
   "Return a new list of the first item in each of `lists', then the
 second etc. Continue interleaving all elements of all lists by
 skipping the non-existing elements of short lists."

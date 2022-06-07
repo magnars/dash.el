@@ -14,7 +14,6 @@ See the end of the file for license conditions.
 ## Contents
 
 * [Change log](#change-log)
-  * [Upcoming breaking change!](#upcoming-breaking-change)
 * [Installation](#installation)
 * [Functions](#functions)
 * [Contribute](#contribute)
@@ -24,18 +23,6 @@ See the end of the file for license conditions.
 ## Change log
 
 See the [`NEWS.md`](NEWS.md) file.
-
-### Upcoming breaking change!
-
-- For backward compatibility reasons, `-zip` when called with two
-  lists returns a list of cons cells, rather than a list of proper
-  lists.  This is a clunky API, and may be changed in a future release
-  to always return a list of proper lists, as `-zip-lists` currently
-  does.
-
-  **N.B.:** Do not rely on the current behavior of `-zip` for two
-  lists.  Instead, use `-zip-pair` for a list of cons cells, and
-  `-zip-lists` for a list of proper lists.
 
 ## Installation
 
@@ -943,6 +930,10 @@ Return `list` with its elements at `indices` removed.
 That is, for each index `i` in `indices`, remove the element selected
 as `(nth i list)` from `list`.
 
+This is a non-destructive operation: parts of `list` (but not
+necessarily all of it) are copied as needed to avoid
+destructively modifying it.
+
 See also: [`-remove-at`](#-remove-at-n-list), [`-remove`](#-remove-pred-list).
 
 ```el
@@ -1326,7 +1317,7 @@ from the beginning.
 ```el
 (-take 5 (-cycle '(1 2 3))) ;; => (1 2 3 1 2)
 (-take 7 (-cycle '(1 "and" 3))) ;; => (1 "and" 3 1 "and" 3 1)
-(-zip (-cycle '(1 2 3)) '(1 2)) ;; => ((1 . 1) (2 . 2))
+(-zip-lists (-cycle '(1 2 3)) '(1 2)) ;; => ((1 1) (2 2))
 ```
 
 ## Predicates
@@ -1987,8 +1978,8 @@ function is applied pairwise taking as first argument element of
 `list1` and as second argument element of `list2` at corresponding
 position.
 
-The anaphoric form `--zip-with` binds the elements from `list1` as symbol `it`,
-and the elements from `list2` as symbol `other`.
+The anaphoric form `--zip-with` binds the elements from `list1` as
+symbol `it`, and the elements from `list2` as symbol `other`.
 
 ```el
 (-zip-with '+ '(1 2 3) '(4 5 6)) ;; => (5 7 9)
@@ -1998,19 +1989,22 @@ and the elements from `list2` as symbol `other`.
 
 #### -zip `(&rest lists)`
 
-Zip `lists` together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+Zip `lists` together.
 
-If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists.
+Group the heads of `lists`, followed by the second elements of
+`lists`, and so on.  The lengths of the returned groupings are
+equal to the length of the shortest input list.
 
-Use [`-zip-lists`](#-zip-lists-rest-lists) if you need the return value to always be a list
-of lists.
+If only two lists are provided as arguments, return the groupings
+as a list of cons cells.  Otherwise, return the groupings as a
+list of lists.
 
-Alias: `-zip-pair`
+It is recommended to use [`-zip-lists`](#-zip-lists-rest-lists) instead, if you need the
+return value to always be a list of lists.
 
-See also: [`-zip-lists`](#-zip-lists-rest-lists)
+Alias: `-zip-pair`.
+
+See also: [`-zip-lists`](#-zip-lists-rest-lists), [`-unzip`](#-unzip-lists).
 
 ```el
 (-zip '(1 2 3) '(4 5 6)) ;; => ((1 . 4) (2 . 5) (3 . 6))
@@ -2020,15 +2014,17 @@ See also: [`-zip-lists`](#-zip-lists-rest-lists)
 
 #### -zip-lists `(&rest lists)`
 
-Zip `lists` together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+Zip `lists` together.
 
-The return value is always list of lists, which is a difference
-from `-zip-pair` which returns a cons-cell in case two input
-lists are provided.
+Group the heads of `lists`, followed by the second elements of
+`lists`, and so on.  The lengths of the returned groupings are
+equal to the length of the shortest input list.
 
-See also: [`-zip`](#-zip-rest-lists)
+The return value is always a list of lists, in contrast with
+`-zip-pair` which returns a list of cons cells when only two
+input lists are provided.
+
+See also: [`-zip`](#-zip-rest-lists).
 
 ```el
 (-zip-lists '(1 2 3) '(4 5 6)) ;; => ((1 4) (2 5) (3 6))
@@ -2050,17 +2046,20 @@ longest input list.
 
 Unzip `lists`.
 
-This works just like [`-zip`](#-zip-rest-lists) but takes a list of lists instead of
+This works just like [`-zip`](#-zip-rest-lists), but takes a list of lists instead of
 a variable number of arguments, such that
 
     (-unzip (-zip `l1` `l2` `l3` ...))
 
-is identity (given that the lists are the same length).
+is identity (given that the lists are of the same length, and
+that [`-zip`](#-zip-rest-lists) is not called with two arguments, because of the
+caveat described in its docstring).
 
-Note in particular that calling this on a list of two lists will
-return a list of cons-cells such that the above identity works.
+Note in particular that calling [`-unzip`](#-unzip-lists) on a list of two lists
+will return a list of cons cells such that the above identity
+works.
 
-See also: [`-zip`](#-zip-rest-lists)
+See also: [`-zip`](#-zip-rest-lists).
 
 ```el
 (-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g"))) ;; => ((1 2 3) (a b c) ("e" "f" "g"))

@@ -1309,17 +1309,22 @@ See also: `-remove-at-indices', `-remove'"
 That is, for each index I in INDICES, remove the element selected
 as `(nth I LIST)' from LIST.
 
+This is a non-destructive operation: parts of LIST (but not
+necessarily all of it) are copied as needed to avoid
+destructively modifying it.
+
 See also: `-remove-at', `-remove'."
   (declare (pure t) (side-effect-free t))
-  (let* ((indices (-sort '< indices))
-         (diffs (cons (car indices) (-map '1- (-zip-with '- (cdr indices) indices))))
-         r)
-    (--each diffs
-      (let ((split (-split-at it list)))
-        (!cons (car split) r)
-        (setq list (cdr (cadr split)))))
-    (!cons list r)
-    (apply '-concat (nreverse r))))
+  (setq indices (-sort #'< indices))
+  (let ((i (pop indices)) res)
+    (--each-while list i
+      (pop list)
+      (if (/= it-index i)
+          (push it res)
+        (while (and indices (= (car indices) i))
+          (pop indices))
+        (setq i (pop indices))))
+    (nconc (nreverse res) list)))
 
 (defmacro --split-with (pred list)
   "Anaphoric form of `-split-with'."
@@ -1602,6 +1607,7 @@ elements of LIST.  Keys are compared by `equal'."
         (setq lists (-map 'cdr lists)))
       (nreverse result))))
 
+;; FIXME
 (defmacro --zip-with (form list1 list2)
   "Anaphoric form of `-zip-with'.
 
@@ -1609,76 +1615,75 @@ Each element in turn of LIST1 is bound to `it', and of LIST2 to
 `other', before evaluating FORM."
   (declare (debug (form form form)))
   (let ((r (make-symbol "result"))
-        (l1 (make-symbol "list1"))
         (l2 (make-symbol "list2")))
-    `(let ((,r nil)
-           (,l1 ,list1)
-           (,l2 ,list2))
-       (while (and ,l1 ,l2)
-         (let ((it (car ,l1))
-               (other (car ,l2)))
-           (!cons ,form ,r)
-           (!cdr ,l1)
-           (!cdr ,l2)))
+    `(let ((,l2 ,list2) ,r)
+       (--each-while ,list1 ,l2
+         (let ((other (pop ,l2)))
+           (ignore other)
+           (push ,form ,r)))
        (nreverse ,r))))
 
+;; FIXME
 (defun -zip-with (fn list1 list2)
   "Zip the two lists LIST1 and LIST2 using a function FN.  This
 function is applied pairwise taking as first argument element of
 LIST1 and as second argument element of LIST2 at corresponding
 position.
 
-The anaphoric form `--zip-with' binds the elements from LIST1 as symbol `it',
-and the elements from LIST2 as symbol `other'."
+The anaphoric form `--zip-with' binds the elements from LIST1 as
+symbol `it', and the elements from LIST2 as symbol `other'."
   (--zip-with (funcall fn it other) list1 list2))
 
 (defun -zip-lists (&rest lists)
-  "Zip LISTS together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+  "Zip LISTS together.
 
-The return value is always list of lists, which is a difference
-from `-zip-pair' which returns a cons-cell in case two input
-lists are provided.
+Group the heads of LISTS, followed by the second elements of
+LISTS, and so on.  The lengths of the returned groupings are
+equal to the length of the shortest input list.
 
-See also: `-zip'"
+The return value is always a list of lists, in contrast with
+`-zip-pair' which returns a list of cons cells when only two
+input lists are provided.
+
+See also: `-zip'."
   (declare (pure t) (side-effect-free t))
   (when lists
     (let (results)
-      (while (-none? 'null lists)
-        (setq results (cons (mapcar 'car lists) results))
-        (setq lists (mapcar 'cdr lists)))
+      (while (--every it lists)
+        (push (mapcar #'car lists) results)
+        (setq lists (mapcar #'cdr lists)))
       (nreverse results))))
 
+;; FIXME
 (defun -zip (&rest lists)
-  "Zip LISTS together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+  "Zip LISTS together.
 
-If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists.
+Group the heads of LISTS, followed by the second elements of
+LISTS, and so on.  The lengths of the returned groupings are
+equal to the length of the shortest input list.
 
-Use `-zip-lists' if you need the return value to always be a list
-of lists.
+If only two lists are provided as arguments, return the groupings
+as a list of cons cells.  Otherwise, return the groupings as a
+list of lists.
 
-Alias: `-zip-pair'
+It is recommended to use `-zip-lists' instead, if you need the
+return value to always be a list of lists.
 
-See also: `-zip-lists'"
+Alias: `-zip-pair'.
+
+See also: `-zip-lists', `-unzip'."
   (declare (pure t) (side-effect-free t))
-  (when lists
-    (let (results)
-      (while (-none? 'null lists)
-        (setq results (cons (mapcar 'car lists) results))
-        (setq lists (mapcar 'cdr lists)))
-      (setq results (nreverse results))
-      (if (= (length lists) 2)
-          ;; to support backward compatibility, return
-          ;; a cons cell if two lists were provided
-          (--map (cons (car it) (cadr it)) results)
-        results))))
+  (if (and (cdr lists) (null (cddr lists)))
+      ;; For backward compatibility, return a list of cons cells for
+      ;; two input lists.
+      (--zip-with (cons it other) (car lists) (cadr lists))
+    (apply #'-zip-lists lists)))
 
-(defalias '-zip-pair '-zip)
+(defalias '-zip-pair #'-zip)
+(put '-zip-pair 'pure t)
+(put '-zip-pair 'side-effect-free t)
 
+;; FIXME
 (defun -zip-fill (fill-value &rest lists)
   "Zip LISTS, with FILL-VALUE padded onto the shorter lists. The
 lengths of the returned groupings are equal to the length of the
@@ -1686,21 +1691,26 @@ longest input list."
   (declare (pure t) (side-effect-free t))
   (apply '-zip (apply '-pad (cons fill-value lists))))
 
+;; FIXME
 (defun -unzip (lists)
   "Unzip LISTS.
 
-This works just like `-zip' but takes a list of lists instead of
+This works just like `-zip', but takes a list of lists instead of
 a variable number of arguments, such that
 
   (-unzip (-zip L1 L2 L3 ...))
 
-is identity (given that the lists are the same length).
+is identity (given that the lists are of the same length, and
+that `-zip' is not called with two arguments, because of the
+caveat described in its docstring).
 
-Note in particular that calling this on a list of two lists will
-return a list of cons-cells such that the above identity works.
+Note in particular that calling `-unzip' on a list of two lists
+will return a list of cons cells such that the above identity
+works.
 
-See also: `-zip'"
-  (apply '-zip lists))
+See also: `-zip'."
+  (declare (pure t) (side-effect-free t))
+  (apply #'-zip lists))
 
 (defun -cycle (list)
   "Return an infinite circular copy of LIST.
@@ -3730,7 +3740,8 @@ This function satisfies the following laws:
     (-compose (-partial #\\='nth n)
               (-prod f1 f2 ...))
   = (-compose fn (-partial #\\='nth n))"
-  (lambda (x) (-zip-with 'funcall fns x)))
+  (declare (pure t) (side-effect-free t))
+  (lambda (x) (--zip-with (funcall it other) fns x)))
 
 ;;; Font lock
 

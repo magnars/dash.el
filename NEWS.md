@@ -132,8 +132,8 @@ https://github.com/magnars/dash.el/wiki/Obsoletion-of-dash-functional.el
 - Sped up `-uniq` by using hash-tables when possible (@cireu, #305).
 - Fixed `-inits` to be non-destructive (@SwiftLawnGnome, #313).
 - Fixed indent rules for `-some->` and family (@wbolster, #321).
-- Added `-zip-lists` which always returns a list of proper lists, even for two
-  input lists (see issue #135).
+- Added `-zip-lists` which always returns a list of proper lists, even
+  for two input lists, in contrast with `-zip` (issue #135).
 
 ### From 2.15 to 2.16
 

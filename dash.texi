@@ -3048,8 +3048,11 @@ from the beginning.
 
 @anchor{-pad}
 @defun -pad (fill-value &rest lists)
-Appends @var{fill-value} to the end of each list in @var{lists} such that they
-will all have the same length.
+Pad each of @var{lists} with @var{fill-value} until they all have equal lengths.
+
+Ensure all @var{lists} are as long as the longest one by repeatedly
+appending @var{fill-value} to the shorter lists, and return the
+resulting @var{lists}.
 
 @example
 @group
@@ -3057,12 +3060,12 @@ will all have the same length.
     @result{} (nil)
 @end group
 @group
-(-pad 0 '(1))
-    @result{} ((1))
+(-pad 0 '(1 2) '(3 4))
+    @result{} ((1 2) (3 4))
 @end group
 @group
-(-pad 0 '(1 2 3) '(4 5))
-    @result{} ((1 2 3) (4 5 0))
+(-pad 0 '(1 2) '(3 4 5 6) '(7 8 9))
+    @result{} ((1 2 0 0) (3 4 5 6) (7 8 9 0))
 @end group
 @end example
 @end defun

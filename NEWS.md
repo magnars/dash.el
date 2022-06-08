@@ -12,6 +12,7 @@ See the end of the file for license conditions.
 
 - Fixed a regression from `2.18` in `-take` that caused it to
   prematurely signal an error on improper lists (#393).
+- The function `-pad` can now be called with zero lists as arguments.
 - The functions `-union`, `-intersection`, and `-difference` now
   return proper sets, without duplicate elements (#397).
 - The functions `-same-items?` and `-permutations` now work on

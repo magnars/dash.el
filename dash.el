@@ -1704,11 +1704,15 @@ from the beginning."
     (nconc newlist newlist)))
 
 (defun -pad (fill-value &rest lists)
-  "Appends FILL-VALUE to the end of each list in LISTS such that they
-will all have the same length."
-  (let* ((annotations (-annotate 'length lists))
-         (n (-max (-map 'car annotations))))
-    (--map (append (cdr it) (-repeat (- n (car it)) fill-value)) annotations)))
+  "Pad each of LISTS with FILL-VALUE until they all have equal lengths.
+
+Ensure all LISTS are as long as the longest one by repeatedly
+appending FILL-VALUE to the shorter lists, and return the
+resulting LISTS."
+  (declare (pure t) (side-effect-free t))
+  (let* ((lens (mapcar #'length lists))
+         (maxlen (apply #'max 0 lens)))
+    (--map (append it (make-list (- maxlen (pop lens)) fill-value)) lists)))
 
 (defun -annotate (fn list)
   "Return a list of cons cells where each cell is FN applied to each

@@ -2063,13 +2063,16 @@ from the beginning.
 
 #### -pad `(fill-value &rest lists)`
 
-Appends `fill-value` to the end of each list in `lists` such that they
-will all have the same length.
+Pad each of `lists` with `fill-value` until they all have equal lengths.
+
+Ensure all `lists` are as long as the longest one by repeatedly
+appending `fill-value` to the shorter lists, and return the
+resulting `lists`.
 
 ```el
 (-pad 0 ()) ;; => (nil)
-(-pad 0 '(1)) ;; => ((1))
-(-pad 0 '(1 2 3) '(4 5)) ;; => ((1 2 3) (4 5 0))
+(-pad 0 '(1 2) '(3 4)) ;; => ((1 2) (3 4))
+(-pad 0 '(1 2) '(3 4 5 6) '(7 8 9)) ;; => ((1 2 0 0) (3 4 5 6) (7 8 9 0))
 ```
 
 #### -table `(fn &rest lists)`

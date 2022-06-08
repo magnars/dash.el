@@ -360,20 +360,25 @@ For a side-effecting variant, see also @code{-each-indexed} (@pxref{-each-indexe
 
 @anchor{-annotate}
 @defun -annotate (fn list)
-Return a list of cons cells where each cell is @var{fn} applied to each
-element of @var{list} paired with the unmodified element of @var{list}.
+Pair each item in @var{list} with the result of passing it to @var{fn}.
+
+Return an alist of (@var{result} . @var{item}), where each @var{item} is the
+corresponding element of @var{list}, and @var{result} is the value obtained
+by calling @var{fn} on @var{item}.
+
+This function's anaphoric counterpart is @code{--annotate}.
 
 @example
 @group
-(-annotate '1+ '(1 2 3))
+(-annotate #'1+ '(1 2 3))
     @result{} ((2 . 1) (3 . 2) (4 . 3))
 @end group
 @group
-(-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world")))
-    @result{} ((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
+(-annotate #'length '((f o o) (bar baz)))
+    @result{} ((3 f o o) (2 bar baz))
 @end group
 @group
-(--annotate (< 1 it) '(0 1 2 3))
+(--annotate (> it 1) '(0 1 2 3))
     @result{} ((nil . 0) (nil . 1) (t . 2) (t . 3))
 @end group
 @end example

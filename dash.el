@@ -1714,15 +1714,26 @@ resulting LISTS."
          (maxlen (apply #'max 0 lens)))
     (--map (append it (make-list (- maxlen (pop lens)) fill-value)) lists)))
 
-(defun -annotate (fn list)
-  "Return a list of cons cells where each cell is FN applied to each
-element of LIST paired with the unmodified element of LIST."
-  (-zip (-map fn list) list))
-
 (defmacro --annotate (form list)
-  "Anaphoric version of `-annotate'."
-  (declare (debug (def-form form)))
-  `(-annotate (lambda (it) (ignore it) ,form) ,list))
+  "Pair each item in LIST with the result of evaluating FORM.
+
+Return an alist of (RESULT . ITEM), where each ITEM is the
+corresponding element of LIST, and RESULT is the value obtained
+by evaluating FORM with ITEM bound to `it'.
+
+This is the anaphoric counterpart to `-annotate'."
+  (declare (debug (form form)))
+  `(--map (cons ,form it) ,list))
+
+(defun -annotate (fn list)
+  "Pair each item in LIST with the result of passing it to FN.
+
+Return an alist of (RESULT . ITEM), where each ITEM is the
+corresponding element of LIST, and RESULT is the value obtained
+by calling FN on ITEM.
+
+This function's anaphoric counterpart is `--annotate'."
+  (--annotate (funcall fn it) list))
 
 (defun dash--table-carry (lists restore-lists &optional re)
   "Helper for `-table' and `-table-flat'.

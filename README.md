@@ -467,13 +467,18 @@ For a side-effecting variant, see also [`-each-indexed`](#-each-indexed-list-fn)
 
 #### -annotate `(fn list)`
 
-Return a list of cons cells where each cell is `fn` applied to each
-element of `list` paired with the unmodified element of `list`.
+Pair each item in `list` with the result of passing it to `fn`.
+
+Return an alist of (`result` . `item`), where each `item` is the
+corresponding element of `list`, and `result` is the value obtained
+by calling `fn` on `item`.
+
+This function's anaphoric counterpart is `--annotate`.
 
 ```el
-(-annotate '1+ '(1 2 3)) ;; => ((2 . 1) (3 . 2) (4 . 3))
-(-annotate 'length '(("h" "e" "l" "l" "o") ("hello" "world"))) ;; => ((5 "h" "e" "l" "l" "o") (2 "hello" "world"))
-(--annotate (< 1 it) '(0 1 2 3)) ;; => ((nil . 0) (nil . 1) (t . 2) (t . 3))
+(-annotate #'1+ '(1 2 3)) ;; => ((2 . 1) (3 . 2) (4 . 3))
+(-annotate #'length '((f o o) (bar baz))) ;; => ((3 f o o) (2 bar baz))
+(--annotate (> it 1) '(0 1 2 3)) ;; => ((nil . 0) (nil . 1) (t . 2) (t . 3))
 ```
 
 #### -splice `(pred fun list)`

@@ -211,6 +211,8 @@ value rather than consuming a list to produce a single value.
 
 * [`-iterate`](#-iterate-fun-init-n) `(fun init n)`
 * [`-unfold`](#-unfold-fun-seed) `(fun seed)`
+* [`-repeat`](#-repeat-n-x) `(n x)`
+* [`-cycle`](#-cycle-list) `(list)`
 
 ### Predicates
 
@@ -279,7 +281,6 @@ Operations pretending lists are sets.
 Other list functions not fit to be classified elsewhere.
 
 * [`-rotate`](#-rotate-n-list) `(n list)`
-* [`-repeat`](#-repeat-n-x) `(n x)`
 * [`-cons*`](#-cons-rest-args) `(&rest args)`
 * [`-snoc`](#-snoc-list-elem-rest-elements) `(list elem &rest elements)`
 * [`-interpose`](#-interpose-sep-list) `(sep list)`
@@ -290,7 +291,6 @@ Other list functions not fit to be classified elsewhere.
 * [`-zip-lists`](#-zip-lists-rest-lists) `(&rest lists)`
 * [`-zip-fill`](#-zip-fill-fill-value-rest-lists) `(fill-value &rest lists)`
 * [`-unzip`](#-unzip-lists) `(lists)`
-* [`-cycle`](#-cycle-list) `(list)`
 * [`-pad`](#-pad-fill-value-rest-lists) `(fill-value &rest lists)`
 * [`-table`](#-table-fn-rest-lists) `(fn &rest lists)`
 * [`-table-flat`](#-table-flat-fn-rest-lists) `(fn &rest lists)`
@@ -1304,6 +1304,29 @@ the new seed.
 (--unfold (when it (cons it (butlast it))) '(1 2 3 4)) ;; => ((1 2 3 4) (1 2 3) (1 2) (1))
 ```
 
+#### -repeat `(n x)`
+
+Return a new list of length `n` with each element being `x`.
+Return `nil` if `n` is less than 1.
+
+```el
+(-repeat 3 :a) ;; => (:a :a :a)
+(-repeat 1 :a) ;; => (:a)
+(-repeat 0 :a) ;; => ()
+```
+
+#### -cycle `(list)`
+
+Return an infinite circular copy of `list`.
+The returned list cycles through the elements of `list` and repeats
+from the beginning.
+
+```el
+(-take 5 (-cycle '(1 2 3))) ;; => (1 2 3 1 2)
+(-take 7 (-cycle '(1 "and" 3))) ;; => (1 "and" 3 1 "and" 3 1)
+(-zip (-cycle '(1 2 3)) '(1 2)) ;; => ((1 . 1) (2 . 2))
+```
+
 ## Predicates
 
 Reductions of one or more lists to a boolean value.
@@ -1894,17 +1917,6 @@ The time complexity is O(n).
 (-rotate 16 '(1 2 3 4 5 6 7)) ;; => (6 7 1 2 3 4 5)
 ```
 
-#### -repeat `(n x)`
-
-Return a new list of length `n` with each element being `x`.
-Return `nil` if `n` is less than 1.
-
-```el
-(-repeat 3 :a) ;; => (:a :a :a)
-(-repeat 1 :a) ;; => (:a)
-(-repeat 0 :a) ;; => nil
-```
-
 #### -cons* `(&rest args)`
 
 Make a new list from the elements of `args`.
@@ -2052,18 +2064,6 @@ See also: [`-zip`](#-zip-rest-lists)
 (-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g"))) ;; => ((1 2 3) (a b c) ("e" "f" "g"))
 (-unzip '((1 2) (3 4) (5 6) (7 8) (9 10))) ;; => ((1 3 5 7 9) (2 4 6 8 10))
 (-unzip '((1 2) (3 4))) ;; => ((1 . 3) (2 . 4))
-```
-
-#### -cycle `(list)`
-
-Return an infinite circular copy of `list`.
-The returned list cycles through the elements of `list` and repeats
-from the beginning.
-
-```el
-(-take 5 (-cycle '(1 2 3))) ;; => (1 2 3 1 2)
-(-take 7 (-cycle '(1 "and" 3))) ;; => (1 "and" 3 1 "and" 3 1)
-(-zip (-cycle '(1 2 3)) '(1 2)) ;; => ((1 . 1) (2 . 2))
 ```
 
 #### -pad `(fill-value &rest lists)`

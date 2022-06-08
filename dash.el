@@ -3143,7 +3143,7 @@ backward compatibility and is otherwise deprecated."
   "Return a new list of length N with each element being X.
 Return nil if N is less than 1."
   (declare (pure t) (side-effect-free t))
-  (and (natnump n) (make-list n x)))
+  (and (>= n 0) (make-list n x)))
 
 (defun -sum (list)
   "Return the sum of LIST."

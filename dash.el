@@ -1595,16 +1595,14 @@ elements of LIST.  Keys are compared by `equal'."
       (nreverse result))))
 
 (defun -interleave-all (&rest lists)
-  "Return a new list of the first item in each of `lists', then the
-second etc. Continue interleaving all elements of all lists by
-skipping the non-existing elements of short lists."
+  "Return a new list containing an element of each of `LISTS' in turn, including all elements.  "
   (declare (pure t) (side-effect-free t))
   (when lists
     (let (result)
-      (while (--any? (consp it) lists)
-        (while (-none? 'null lists)
+      (while (--some (consp it) lists)
+        (while (--every it lists)
           (--each lists (!cons (car it) result))
-          (setq lists (-map 'cdr lists)))
+          (setq lists (-map #'cdr lists)))
         (setq lists (-filter #'consp lists)))
       (nreverse result))))
 

@@ -1457,6 +1457,14 @@ related predicates."
     (-interleave '(1 2 3) '("a" "b" "c" "d")) => '(1 "a" 2 "b" 3 "c")
     (-interleave) => nil)
 
+  (defexamples -interleave-all
+    (-interleave-all '(1 2 3) '("a" "b")) => '(1 "a" 2 "b" 3)
+    (-interleave-all '(1 2 3) '("a" "b") '("A" "B" "C")) => '(1 "a" "A" 2 "b" "B" 3 "C")
+    (-interleave-all '(1) '("a" "b" "c" "d")) => '(1 "a" "b" "c" "d")
+    (-interleave '(1 2) '("a" "b")) => '(1 "a" 2 "b")
+    (-interleave '(1 2) '("a" "b") '("A" "B")) => '(1 "a" "A" 2 "b" "B")
+    (-interleave-all) => nil)
+
   (defexamples -iota
     (-iota 6) => '(0 1 2 3 4 5)
     (-iota 4 2.5 -2) => '(2.5 0.5 -1.5 -3.5)

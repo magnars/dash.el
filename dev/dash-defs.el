@@ -116,6 +116,29 @@ Based on `describe-function-1'."
   (while (search-forward old nil t)
     (replace-match new t t)))
 
+(defun dash--map-prop (prop val fn)
+  "Call FN on each region which has text PROP `eq' to VAL.
+Search the entire accessible portion of the current buffer.
+FN takes the start and end of the region as arguments, and
+returns either an updated end position (from which to continue
+the search), or nil, defaulting to the original end position."
+  (let ((beg (point-min)))
+    (while (setq beg (text-property-any beg (point-max) prop val))
+      (let ((end (or (next-single-property-change beg prop)
+                     (point-max))))
+        (setq beg (or (funcall fn beg end) end))))))
+
+(defun dash--quote-md ()
+  ""
+  (dash--map-prop 'dash-quote-md t
+                  (lambda (beg end)
+                    (goto-char beg)
+                    (let ((nested (search-forward "`" end 'move)))
+                      (insert (if nested " ``" ?`))
+                      (goto-char beg)
+                      (insert (if nested "`` " ?`))
+                      (+ end (if nested 6 2))))))
+
 (defun dash--github-link (fn)
   "Return a GitHub Flavored Markdown link to FN."
   (or (get fn 'dash-link)
@@ -123,50 +146,52 @@ Based on `describe-function-1'."
              (id (string-remove-prefix "!" (format "%s%s" fn sig)))
              (id (replace-regexp-in-string (rx (+ (not (in alnum ?-))))
                                            "-" id t t))
-             (id (string-remove-suffix "-" id)))
+             (id (string-remove-suffix "-" id))
+             (link (format #("[%s](#%s)" 1 3 (dash-quote-md t)) fn id)))
         ;; Memoize.
-        (put fn 'dash-link (format "[`%s`](#%s)" fn id)))))
+        (put fn 'dash-link link))))
 
 (defun dash--argnames-to-md ()
-  "Downcase and quote arg names in current buffer for Markdown."
-  (let ((beg (point-min)))
-    (while (setq beg (text-property-any beg (point-max)
-                                        'face 'help-argument-name))
-      (goto-char beg)
-      (insert ?`)
-      (goto-char (or (next-single-property-change (point) 'face)
-                     (point-max)))
-      (downcase-region (1+ beg) (point))
-      (insert ?`)
-      (setq beg (point)))))
+  "Downcase and mark arg names in current buffer for Markdown."
+  (dash--map-prop 'face 'help-argument-name
+                  (lambda (beg end)
+                    (downcase-region beg end)
+                    (put-text-property beg end 'dash-quote-md t))))
 
 (defun dash--metavars-to-md ()
-  "Downcase and quote metavariables in current buffer for Markdown."
+  "Downcase and mark metavariables in current buffer for Markdown."
   (goto-char (point-min))
   (while (re-search-forward (rx bow (group (in upper) (* (in upper ?-)) (* num))
                                 (| (group ?\() (: (group (? "th")) eow)))
                             nil t)
     (unless (match-beginning 2)
       (let* ((suf (match-string 3))
-             (var (format "`%s`%s" (downcase (match-string 1)) suf)))
+             (var (downcase (match-string 1)))
+             (var (format #("%s%s" 0 2 (dash-quote-md t)) var suf)))
         (replace-match var t t)))))
 
 (defun dash--hyperlinks-to-md ()
   "Convert hyperlinks in current buffer from Elisp to Markdown."
   (goto-char (point-min))
-  (while (re-search-forward (rx ?` (+? (not (in " `"))) ?\') nil t)
-    (let ((fn (intern (substring (match-string 0) 1 -1))))
-      (replace-match (if (assq fn dash--groups)
-                         (save-match-data (dash--github-link fn))
-                       (format "`%s`" fn))
-                     t t))))
+  (while (re-search-forward (rx ?` (group (+? nonl)) ?\') nil t)
+    (let* ((beg (match-beginning 1))
+           (str (match-string 1))
+           (sym (intern-soft str)))
+      (if (and sym (assq sym dash--groups))
+          (replace-match (save-match-data (dash--github-link sym)) t t)
+        (delete-char -1)
+        (put-text-property beg (point) 'dash-quote-md t)
+        (goto-char beg)
+        (delete-char -1)
+        (forward-char (length str))))))
 
 (defun dash--booleans-to-md ()
-  "Mark up booleans (nil/t) in current buffer as Markdown."
+  "Mark booleans (nil/t) in current buffer for Markdown."
   (goto-char (point-min))
-  (while (re-search-forward (rx bow (| "nil" "t") eow) nil t)
-    (unless (memql (char-before (match-beginning 0)) '(?\' ?`))
-      (replace-match "`\\&`" t))))
+  (while (re-search-forward (rx (| bol (not (in ?\'))) bow
+                                (group (| "nil" "t")) eow)
+                            nil t)
+    (put-text-property (match-beginning 1) (match-end 1) 'dash-quote-md t)))
 
 (defun dash--indent-md-blocks ()
   "Indent example blocks in current buffer for Markdown."
@@ -185,6 +210,7 @@ Based on `describe-function-1'."
     (dash--indent-md-blocks)
     (buffer-string)))
 
+;; FIXME
 (defun dash--docstring-to-texi (doc)
   "Transcribe DOC to Texinfo syntax."
   (with-temp-buffer
@@ -205,10 +231,11 @@ Based on `describe-function-1'."
              (replace-match "@var{\\1}" t))
             ((match-beginning 2)
              ;; `quoted' symbol.
-             (replace-match (if (assq (intern (match-string 2)) dash--groups)
-                                "@code{\\2} (@pxref{\\2})"
-                              "@code{\\2}")
-                            t))
+             (let ((sym (intern-soft (match-string 2))))
+               (replace-match (if (and sym (assq sym dash--groups))
+                                  "@code{\\2} (@pxref{\\2})"
+                                "@code{\\2}")
+                              t)))
             ;; nil/t.
             ((match-beginning 3)
              (unless (= (char-before (match-beginning 3)) ?\')
@@ -329,7 +356,8 @@ ERR non-nil means OBJ is either an error symbol or error object."
     (dash--replace-all "[[ function-list ]]"
                        (mapconcat #'dash--summary-to-md dash--groups "\n"))
     (dash--replace-all "[[ function-docs ]]"
-                       (mapconcat #'dash--group-to-md dash--groups "\n"))))
+                       (mapconcat #'dash--group-to-md dash--groups "\n"))
+    (dash--quote-md)))
 
 (defun dash--make-texi ()
   "Generate Texinfo manual."

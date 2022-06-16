@@ -1305,11 +1305,11 @@ See also: `-remove-at-indices', `-remove'"
   (-remove-at-indices (list n) list))
 
 (defun -remove-at-indices (indices list)
-  "Return a list whose elements are elements from LIST without
-elements selected as `(nth i list)` for all i
-from INDICES.
+  "Return LIST with its elements at INDICES removed.
+That is, for each index I in INDICES, remove the element selected
+as `(nth I LIST)' from LIST.
 
-See also: `-remove-at', `-remove'"
+See also: `-remove-at', `-remove'."
   (declare (pure t) (side-effect-free t))
   (let* ((indices (-sort '< indices))
          (diffs (cons (car indices) (-map '1- (-zip-with '- (cdr indices) indices))))

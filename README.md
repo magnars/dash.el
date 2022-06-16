@@ -491,7 +491,7 @@ is `nil`, leave that `it` as-is.  Otherwise, call `fun` on the same
 empty) list of items to splice in place of `it` in `list`.
 
 This can be useful as an alternative to the `,@` construct in a
-``' structure, in case you need to splice several lists at
+`` ` `` structure, in case you need to splice several lists at
 marked positions (for example with keywords).
 
 This function's anaphoric counterpart is `--splice`.
@@ -939,11 +939,11 @@ See also: [`-remove-at-indices`](#-remove-at-indices-indices-list), [`-remove`](
 
 #### -remove-at-indices `(indices list)`
 
-Return a list whose elements are elements from `list` without
-elements selected as `(nth i list)` for all i
-from `indices`.
+Return `list` with its elements at `indices` removed.
+That is, for each index `i` in `indices`, remove the element selected
+as `(nth i list)` from `list`.
 
-See also: [`-remove-at`](#-remove-at-n-list), [`-remove`](#-remove-pred-list)
+See also: [`-remove-at`](#-remove-at-n-list), [`-remove`](#-remove-pred-list).
 
 ```el
 (-remove-at-indices '(0) '("0" "1" "2" "3" "4" "5")) ;; => ("1" "2" "3" "4" "5")

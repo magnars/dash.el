@@ -122,7 +122,7 @@ This is the anaphoric counterpart to `-each-while'."
          (setq ,i (1+ ,i) ,l (cdr ,l))))))
 
 (defun -each-while (list pred fn)
-  "Call FN on each ITEM in LIST, while (PRED ITEM) is non-nil.
+  "Call FN on each ITEM in LIST, while `(PRED ITEM)' is non-nil.
 Once an ITEM is reached for which PRED returns nil, FN is no
 longer called.  Return nil; this function is intended for side
 effects.
@@ -1305,11 +1305,11 @@ See also: `-remove-at-indices', `-remove'"
   (-remove-at-indices (list n) list))
 
 (defun -remove-at-indices (indices list)
-  "Return a list whose elements are elements from LIST without
-elements selected as `(nth i list)` for all i
-from INDICES.
+  "Return LIST with its elements at INDICES removed.
+That is, for each index I in INDICES, remove the element selected
+as `(nth I LIST)' from LIST.
 
-See also: `-remove-at', `-remove'"
+See also: `-remove-at', `-remove'."
   (declare (pure t) (side-effect-free t))
   (let* ((indices (-sort '< indices))
          (diffs (cons (car indices) (-map '1- (-zip-with '- (cdr indices) indices))))
@@ -2495,17 +2495,17 @@ invalid spec fails with an error.
 
 Thus the patterns are normalized as follows:
 
-   ;; derive all the missing patterns
-   (&plist :foo \\='bar \"baz\") => (&plist :foo foo \\='bar bar \"baz\" baz)
+  ;; derive all the missing patterns
+  (&plist :foo \\='bar \"baz\") => (&plist :foo foo \\='bar bar \"baz\" baz)
 
-   ;; we can specify some but not others
-   (&plist :foo \\='bar explicit-bar) => (&plist :foo foo \\='bar explicit-bar)
+  ;; we can specify some but not others
+  (&plist :foo \\='bar explicit-bar) => (&plist :foo foo \\='bar explicit-bar)
 
-   ;; nothing happens, we store :foo in x
-   (&plist :foo x) => (&plist :foo x)
+  ;; nothing happens, we store :foo in x
+  (&plist :foo x) => (&plist :foo x)
 
-   ;; nothing happens, we match recursively
-   (&plist :foo (a b c)) => (&plist :foo (a b c))
+  ;; nothing happens, we match recursively
+  (&plist :foo (a b c)) => (&plist :foo (a b c))
 
 You can name the source using the syntax SYMBOL &as PATTERN.
 This syntax works with lists (proper or improper), vectors and

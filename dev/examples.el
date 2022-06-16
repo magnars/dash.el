@@ -27,9 +27,10 @@
 
 (require 'dash)
 (require 'dash-defs "dev/dash-defs")
-(require 'ert)
 
 (eval-when-compile
+  (require 'ert)
+
   ;; TODO: Emacs 24.3 first introduced `setf', so remove this when
   ;; support for earlier versions is dropped.
   (unless (fboundp 'setf)
@@ -37,7 +38,7 @@
 
   ;; TODO: Emacs < 24.4 emitted a bogus warning when byte-compiling
   ;; ERT tests, so remove this when support for those versions is
-  ;; dropped.  See  https://bugs.gnu.org/14883.
+  ;; dropped.  See https://bugs.gnu.org/14883.
   (and (< emacs-major-version 25)
        (< emacs-minor-version 4)
        (setq byte-compile-delete-errors t))

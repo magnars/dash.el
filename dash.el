@@ -1595,11 +1595,20 @@ elements of LIST.  Keys are compared by `equal'."
       (nreverse result))))
 
 (defun -interleave-all (&rest lists)
-  "Return a new list containing an element of each of `LISTS' in turn, including all elements.  "
+  "Zip all elements from each of LISTS into a new flat list.
+
+That is, return a list comprising the first item from each of
+LISTS in turn, followed by their second items, etc.
+
+Continue interleaving until all elements from all LISTS are
+included, skipping non-existing elements from shorter LISTS.
+This is like `-interleave', but the interleaving continues until
+all input elements are consumed, instead of stopping after one of
+LISTS becomes empty."
   (declare (pure t) (side-effect-free t))
   (when lists
     (let (result)
-      (while (--some (consp it) lists)
+      (while (--some it lists)
         (while (--every it lists)
           (--each lists (!cons (car it) result))
           (setq lists (-map #'cdr lists)))

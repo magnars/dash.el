@@ -49,6 +49,11 @@
   :group 'lisp
   :prefix "dash-")
 
+;; Clojure style comment macro
+(defmacro -comment (&rest _)
+  "Ignore body, yield nil."
+  nil)
+
 (defmacro !cons (car cdr)
   "Destructive: Set CDR to the cons of CAR and CDR."
   (declare (debug (form symbolp)))

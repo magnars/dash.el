@@ -1,6 +1,6 @@
 name: CI
 on: [push, pull_request]
-
+permissions: {}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,12 +21,15 @@ jobs:
           - '27.1'
           - '27.2'
           - '28.1'
+          - '28.2'
           - 'snapshot'
         include:
           - emacs_version: 'snapshot'
             allow_failure: true
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+      with:
+        persist-credentials: false
     - uses: purcell/setup-emacs@master
       with:
         version: ${{ matrix.emacs_version }}

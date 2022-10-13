@@ -762,7 +762,15 @@ See also: `-flatten'"
     (setq list (apply #'append (mapcar #'-list list))))
   list)
 
-(defalias '-concat #'append)
+(defalias '-concat #'append
+  "Concatenate all the arguments and make the result a list.
+The result is a list whose elements are the elements of all the arguments.
+Each argument may be a list, vector or string.
+
+All arguments except the last argument are copied.  The last argument
+is just used as the tail of the new list.
+
+\(fn &rest SEQUENCES)")
 
 (defalias '-copy 'copy-sequence
   "Create a shallow copy of LIST.

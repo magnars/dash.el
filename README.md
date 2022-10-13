@@ -804,7 +804,9 @@ Its anaphoric counterpart is `--keep`.
 Concatenate all the arguments and make the result a list.
 The result is a list whose elements are the elements of all the arguments.
 Each argument may be a list, vector or string.
-The last argument is not copied, just used as the tail of the new list.
+
+All arguments except the last argument are copied.  The last argument
+is just used as the tail of the new list.
 
 ```el
 (-concat '(1)) ;; => (1)

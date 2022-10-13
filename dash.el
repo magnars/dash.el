@@ -1,6 +1,6 @@
 ;;; dash.el --- A modern list library for Emacs  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2012-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2012-2022 Free Software Foundation, Inc.
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Version: 2.19.1
@@ -536,8 +536,8 @@ This function's anaphoric counterpart is `--remove-first'.
 See also `-map-first', `-remove-item', and `-remove-last'."
   (--remove-first (funcall pred it) list))
 
-(defalias '-reject-first '-remove-first)
-(defalias '--reject-first '--remove-first)
+(defalias '-reject-first #'-remove-first)
+(defalias '--reject-first #'--remove-first)
 
 (defmacro --remove-last (form list)
   "Remove the last item from LIST for which FORM evals to non-nil.
@@ -706,7 +706,7 @@ See also: `-map-last'"
 (defmacro --mapcat (form list)
   "Anaphoric form of `-mapcat'."
   (declare (debug (form form)))
-  `(apply 'append (--map ,form ,list)))
+  `(apply #'append (--map ,form ,list)))
 
 (defun -mapcat (fn list)
   "Return the concatenation of the result of mapping FN over LIST.
@@ -772,7 +772,7 @@ is just used as the tail of the new list.
 
 \(fn &rest SEQUENCES)")
 
-(defalias '-copy 'copy-sequence
+(defalias '-copy #'copy-sequence
   "Create a shallow copy of LIST.
 
 \(fn LIST)")
@@ -1319,7 +1319,7 @@ See also: `-remove-at', `-remove'"
         (!cons (car split) r)
         (setq list (cdr (cadr split)))))
     (!cons list r)
-    (apply '-concat (nreverse r))))
+    (apply #'-concat (nreverse r))))
 
 (defmacro --split-with (pred list)
   "Anaphoric form of `-split-with'."
@@ -1664,27 +1664,36 @@ of lists.
 Alias: `-zip-pair'
 
 See also: `-zip-lists'"
-  (declare (pure t) (side-effect-free t))
-  (when lists
-    (let (results)
-      (while (-none? 'null lists)
-        (setq results (cons (mapcar 'car lists) results))
-        (setq lists (mapcar 'cdr lists)))
-      (setq results (nreverse results))
-      (if (= (length lists) 2)
-          ;; to support backward compatibility, return
-          ;; a cons cell if two lists were provided
-          (--map (cons (car it) (cadr it)) results)
-        results))))
+  (declare (pure t) (side-effect-free t)
+           (compiler-macro
+            (lambda (form)
+              (if (not (= 2 (length lists)))
+                  (cons #'-zip-lists lists)
+                (let ((msg "Use -zip-pair to get a list of pairs"))
+                  (if (fboundp 'macroexp-warn-and-return)
+                      (macroexp-warn-and-return
+                       msg (cons #'-zip-pair lists))
+                    (message msg)
+                    form))))))
+  ;; To support backward compatibility, return
+  ;; cons cells if two lists were provided.
+  (apply (if (= (length lists) 2) #'-zip-pair #'-zip-lists) lists))
 
-(defalias '-zip-pair '-zip)
+(defun -zip-pair (list1 list2)
+  "Zip LIST1 and LIST2 together.
+Make a pair of the head of each list, followed by the
+second elements of each list, and so on.  The returned
+groupings are equal to the length of the shortest input list.
+
+See also: `-zip-lists'"
+  (--map (cons (car it) (cadr it))  (-zip-lists list1 list2)))
 
 (defun -zip-fill (fill-value &rest lists)
   "Zip LISTS, with FILL-VALUE padded onto the shorter lists. The
 lengths of the returned groupings are equal to the length of the
 longest input list."
   (declare (pure t) (side-effect-free t))
-  (apply '-zip (apply '-pad (cons fill-value lists))))
+  (apply #'-zip (apply #'-pad (cons fill-value lists))))
 
 (defun -unzip (lists)
   "Unzip LISTS.
@@ -1700,7 +1709,10 @@ Note in particular that calling this on a list of two lists will
 return a list of cons-cells such that the above identity works.
 
 See also: `-zip'"
-  (apply '-zip lists))
+  ;; FIXME: Huh?  AFAIK `-zip' is not its own inverse.
+  ;; (-unzip (-zip '(1 2 3) '(a b c)))
+  ;; gives me "Wrong type argument: listp, a"
+  (apply #'-zip lists))
 
 (defun -cycle (list)
   "Return an infinite circular copy of LIST.
@@ -2216,7 +2228,7 @@ This method normalizes PATTERN to the format expected by
   (let ((normalized (list (car pattern)))
         (skip nil)
         (fill-placeholder (make-symbol "--dash-fill-placeholder--")))
-    (-each (apply '-zip (-pad fill-placeholder (cdr pattern) (cddr pattern)))
+    (-each (apply #'-zip (-pad fill-placeholder (cdr pattern) (cddr pattern)))
       (lambda (pair)
         (let ((current (car pair))
               (next (cdr pair)))
@@ -2555,7 +2567,7 @@ because we need to support improper list binding."
          ,@body)
     (let* ((varlist (dash--normalize-let-varlist varlist))
            (inputs (--map-indexed (list (make-symbol (format "input%d" it-index)) (cadr it)) varlist))
-           (new-varlist (--map (list (caar it) (cadr it)) (-zip varlist inputs))))
+           (new-varlist (--map (list (caar it) (cadr it)) (-zip-pair varlist inputs))))
       `(let ,inputs
          (-let* ,new-varlist ,@body)))))
 
@@ -3156,7 +3168,7 @@ Return nil if N is less than 1."
 (defun -sum (list)
   "Return the sum of LIST."
   (declare (pure t) (side-effect-free t))
-  (apply '+ list))
+  (apply #'+ list))
 
 (defun -running-sum (list)
   "Return a list with running sums of items in LIST.
@@ -3168,7 +3180,7 @@ LIST must be non-empty."
 (defun -product (list)
   "Return the product of LIST."
   (declare (pure t) (side-effect-free t))
-  (apply '* list))
+  (apply #'* list))
 
 (defun -running-product (list)
   "Return a list with running products of items in LIST.
@@ -3180,12 +3192,12 @@ LIST must be non-empty."
 (defun -max (list)
   "Return the largest value from LIST of numbers or markers."
   (declare (pure t) (side-effect-free t))
-  (apply 'max list))
+  (apply #'max list))
 
 (defun -min (list)
   "Return the smallest value from LIST of numbers or markers."
   (declare (pure t) (side-effect-free t))
-  (apply 'min list))
+  (apply #'min list))
 
 (defun -max-by (comparator list)
   "Take a comparison function COMPARATOR and a LIST and return
@@ -3841,7 +3853,6 @@ Either a string to display in the mode line when
 `dash-fontify-mode' is on, or nil to display
 nothing (the default)."
   :package-version '(dash . "2.18.0")
-  :group 'dash
   :type '(choice (string :tag "Lighter" :value " Dash")
                  (const :tag "Nothing" nil)))
 
@@ -3857,8 +3868,7 @@ which do not dynamically detect macros, Dash-Fontify mode
 additionally fontifies Dash macro calls.
 
 See also `dash-fontify-mode-lighter' and
-`global-dash-fontify-mode'."
-  :group 'dash :lighter dash-fontify-mode-lighter
+`global-dash-fontify-mode'." :lighter dash-fontify-mode-lighter
   (if dash-fontify-mode
       (font-lock-add-keywords nil dash--keywords t)
     (font-lock-remove-keywords nil dash--keywords))
@@ -3879,12 +3889,10 @@ See also `dash-fontify-mode-lighter' and
 
 ;;;###autoload
 (define-globalized-minor-mode global-dash-fontify-mode
-  dash-fontify-mode dash--turn-on-fontify-mode
-  :group 'dash)
+  dash-fontify-mode dash--turn-on-fontify-mode)
 
 (defcustom dash-enable-fontlock nil
   "If non-nil, fontify Dash macro calls and special variables."
-  :group 'dash
   :set (lambda (sym val)
          (set-default sym val)
          (global-dash-fontify-mode (if val 1 0)))

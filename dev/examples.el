@@ -2488,4 +2488,8 @@ or readability."
                    (3 5 4)
                    (3 4 5)))))
 
+(ert-deftest dash-comment ()
+  "Test -comment macro."
+  (should (equal (-comment (+ 1 1)) nil)))
+
 ;;; examples.el ends here

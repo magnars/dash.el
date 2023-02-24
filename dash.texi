@@ -1120,46 +1120,56 @@ See also: @code{-map-when} (@pxref{-map-when})
 
 @anchor{-remove-at}
 @defun -remove-at (n list)
-Return a list with element at Nth position in @var{list} removed.
+Return @var{list} with its element at index @var{n} removed.
+That is, remove any element selected as (nth @var{n} @var{list}) from @var{list}
+and return the result.
 
-See also: @code{-remove-at-indices} (@pxref{-remove-at-indices}), @code{-remove} (@pxref{-remove})
+This is a non-destructive operation: parts of @var{list} (but not
+necessarily all of it) are copied as needed to avoid
+destructively modifying it.
+
+See also: @code{-remove-at-indices} (@pxref{-remove-at-indices}), @code{-remove} (@pxref{-remove}).
 
 @example
 @group
-(-remove-at 0 '("0" "1" "2" "3" "4" "5"))
-    @result{} ("1" "2" "3" "4" "5")
+(-remove-at 0 '(a b c))
+    @result{} (b c)
 @end group
 @group
-(-remove-at 1 '("0" "1" "2" "3" "4" "5"))
-    @result{} ("0" "2" "3" "4" "5")
+(-remove-at 1 '(a b c))
+    @result{} (a c)
 @end group
 @group
-(-remove-at 2 '("0" "1" "2" "3" "4" "5"))
-    @result{} ("0" "1" "3" "4" "5")
+(-remove-at 2 '(a b c))
+    @result{} (a b)
 @end group
 @end example
 @end defun
 
 @anchor{-remove-at-indices}
 @defun -remove-at-indices (indices list)
-Return a list whose elements are elements from @var{list} without
-elements selected as `(nth i list)` for all i
-from @var{indices}.
+Return @var{list} with its elements at @var{indices} removed.
+That is, for each index @var{i} in @var{indices}, remove any element selected
+as (nth @var{i} @var{list}) from @var{list}.
 
-See also: @code{-remove-at} (@pxref{-remove-at}), @code{-remove} (@pxref{-remove})
+This is a non-destructive operation: parts of @var{list} (but not
+necessarily all of it) are copied as needed to avoid
+destructively modifying it.
+
+See also: @code{-remove-at} (@pxref{-remove-at}), @code{-remove} (@pxref{-remove}).
 
 @example
 @group
-(-remove-at-indices '(0) '("0" "1" "2" "3" "4" "5"))
-    @result{} ("1" "2" "3" "4" "5")
+(-remove-at-indices '(0) '(a b c d e))
+    @result{} (b c d e)
 @end group
 @group
-(-remove-at-indices '(0 2 4) '("0" "1" "2" "3" "4" "5"))
-    @result{} ("1" "3" "5")
+(-remove-at-indices '(1 3) '(a b c d e))
+    @result{} (a c e)
 @end group
 @group
-(-remove-at-indices '(0 5) '("0" "1" "2" "3" "4" "5"))
-    @result{} ("1" "2" "3" "4")
+(-remove-at-indices '(4 0 2) '(a b c d e))
+    @result{} (b d)
 @end group
 @end example
 @end defun
@@ -1795,8 +1805,8 @@ from the beginning.
     @result{} (1 "and" 3 1 "and" 3 1)
 @end group
 @group
-(-zip (-cycle '(1 2 3)) '(1 2))
-    @result{} ((1 . 1) (2 . 2))
+(-zip-lists (-cycle '(3)) '(1 2))
+    @result{} ((3 1) (3 2))
 @end group
 @end example
 @end defun
@@ -2923,73 +2933,72 @@ the @var{apl} language.
 
 @anchor{-zip-with}
 @defun -zip-with (fn list1 list2)
-Zip the two lists @var{list1} and @var{list2} using a function @var{fn}.  This
-function is applied pairwise taking as first argument element of
-@var{list1} and as second argument element of @var{list2} at corresponding
-position.
+Zip @var{list1} and @var{list2} into a new list using the function @var{fn}.
+That is, apply @var{fn} pairwise taking as first argument the next
+element of @var{list1} and as second argument the next element of @var{list2}
+at the corresponding position.  The result is as long as the
+shorter list.
 
-The anaphoric form @code{--zip-with} binds the elements from @var{list1} as symbol @code{it},
-and the elements from @var{list2} as symbol @code{other}.
+This function's anaphoric counterpart is @code{--zip-with}.
+
+For other zips, see also @code{-zip-lists} (@pxref{-zip-lists}) and @code{-zip-fill} (@pxref{-zip-fill}).
 
 @example
 @group
-(-zip-with '+ '(1 2 3) '(4 5 6))
-    @result{} (5 7 9)
+(-zip-with #'+ '(1 2 3 4) '(5 6 7))
+    @result{} (6 8 10)
 @end group
 @group
-(-zip-with 'cons '(1 2 3) '(4 5 6))
+(-zip-with #'cons '(1 2 3) '(4 5 6 7))
     @result{} ((1 . 4) (2 . 5) (3 . 6))
 @end group
 @group
-(--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde"))
-    @result{} ("Batman and Robin" "Jekyll and Hyde")
+(--zip-with (format "%s & %s" it other) '(Batman Jekyll) '(Robin Hyde))
+    @result{} ("Batman & Robin" "Jekyll & Hyde")
 @end group
 @end example
 @end defun
 
-@anchor{-zip}
-@defun -zip (&rest lists)
-Zip @var{lists} together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+@anchor{-zip-pair}
+@defun -zip-pair (list1 list2)
+Zip @var{list1} and @var{list2} together.
 
-If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists.
+Make a pair with the head of each list, followed by a pair with
+the second element of each list, and so on.  The number of pairs
+returned is equal to the length of the shorter input list.
 
-Use @code{-zip-lists} (@pxref{-zip-lists}) if you need the return value to always be a list
-of lists.
-
-Alias: @code{-zip-pair}
-
-See also: @code{-zip-lists} (@pxref{-zip-lists})
+See also: @code{-zip-lists} (@pxref{-zip-lists}).
 
 @example
 @group
-(-zip '(1 2 3) '(4 5 6))
+(-zip-pair '(1 2 3 4) '(5 6 7))
+    @result{} ((1 . 5) (2 . 6) (3 . 7))
+@end group
+@group
+(-zip-pair '(1 2 3) '(4 5 6))
     @result{} ((1 . 4) (2 . 5) (3 . 6))
 @end group
 @group
-(-zip '(1 2 3) '(4 5 6 7))
-    @result{} ((1 . 4) (2 . 5) (3 . 6))
-@end group
-@group
-(-zip '(1 2) '(3 4 5) '(6))
-    @result{} ((1 3 6))
+(-zip-pair '(1 2) '(3))
+    @result{} ((1 . 3))
 @end group
 @end example
 @end defun
 
 @anchor{-zip-lists}
 @defun -zip-lists (&rest lists)
-Zip @var{lists} together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+Zip @var{lists} together.
 
-The return value is always list of lists, which is a difference
-from @code{-zip-pair} which returns a cons-cell in case two input
-lists are provided.
+Group the head of each list, followed by the second element of
+each list, and so on.  The number of returned groupings is equal
+to the length of the shortest input list, and the length of each
+grouping is equal to the number of input @var{lists}.
 
-See also: @code{-zip} (@pxref{-zip})
+The return value is always a list of proper lists, in contrast to
+@code{-zip} (@pxref{-zip}) which returns a list of dotted pairs when only two input
+@var{lists} are provided.
+
+See also: @code{-zip-pair} (@pxref{-zip-pair}).
 
 @example
 @group
@@ -3007,16 +3016,119 @@ See also: @code{-zip} (@pxref{-zip})
 @end example
 @end defun
 
-@anchor{-zip-fill}
-@defun -zip-fill (fill-value &rest lists)
-Zip @var{lists}, with @var{fill-value} padded onto the shorter lists. The
-lengths of the returned groupings are equal to the length of the
-longest input list.
+@anchor{-zip-lists-fill}
+@defun -zip-lists-fill (fill-value &rest lists)
+Zip @var{lists} together, padding shorter lists with @var{fill-value}.
+This is like @code{-zip-lists} (@pxref{-zip-lists}) (which see), except it retains all
+elements at positions beyond the end of the shortest list.  The
+number of returned groupings is equal to the length of the
+longest input list, and the length of each grouping is equal to
+the number of input @var{lists}.
 
 @example
 @group
-(-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9))
-    @result{} ((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
+(-zip-lists-fill 0 '(1 2) '(3 4 5) '(6))
+    @result{} ((1 3 6) (2 4 0) (0 5 0))
+@end group
+@group
+(-zip-lists-fill 0 '(1 2) '(3 4) '(5 6))
+    @result{} ((1 3 5) (2 4 6))
+@end group
+@group
+(-zip-lists-fill 0 '(1 2 3) nil)
+    @result{} ((1 0) (2 0) (3 0))
+@end group
+@end example
+@end defun
+
+@anchor{-zip}
+@defun -zip (&rest lists)
+Zip @var{lists} together.
+
+Group the head of each list, followed by the second element of
+each list, and so on.  The number of returned groupings is equal
+to the length of the shortest input list, and the number of items
+in each grouping is equal to the number of input @var{lists}.
+
+If only two @var{lists} are provided as arguments, return the groupings
+as a list of dotted pairs.  Otherwise, return the groupings as a
+list of proper lists.
+
+Since the return value changes form depending on the number of
+arguments, it is generally recommended to use @code{-zip-lists} (@pxref{-zip-lists})
+instead, or @code{-zip-pair} (@pxref{-zip-pair}) if a list of dotted pairs is desired.
+
+See also: @code{-unzip} (@pxref{-unzip}).
+
+@example
+@group
+(-zip '(1 2 3 4) '(5 6 7) '(8 9))
+    @result{} ((1 5 8) (2 6 9))
+@end group
+@group
+(-zip '(1 2 3) '(4 5 6) '(7 8 9))
+    @result{} ((1 4 7) (2 5 8) (3 6 9))
+@end group
+@group
+(-zip '(1 2 3))
+    @result{} ((1) (2) (3))
+@end group
+@end example
+@end defun
+
+@anchor{-zip-fill}
+@defun -zip-fill (fill-value &rest lists)
+Zip @var{lists} together, padding shorter lists with @var{fill-value}.
+This is like @code{-zip} (@pxref{-zip}) (which see), except it retains all elements
+at positions beyond the end of the shortest list.  The number of
+returned groupings is equal to the length of the longest input
+list, and the length of each grouping is equal to the number of
+input @var{lists}.
+
+Since the return value changes form depending on the number of
+arguments, it is generally recommended to use @code{-zip-lists-fill} (@pxref{-zip-lists-fill})
+instead, unless a list of dotted pairs is explicitly desired.
+
+@example
+@group
+(-zip-fill 0 '(1 2 3) '(4 5))
+    @result{} ((1 . 4) (2 . 5) (3 . 0))
+@end group
+@group
+(-zip-fill 0 () '(1 2 3))
+    @result{} ((0 . 1) (0 . 2) (0 . 3))
+@end group
+@group
+(-zip-fill 0 '(1 2) '(3 4) '(5 6))
+    @result{} ((1 3 5) (2 4 6))
+@end group
+@end example
+@end defun
+
+@anchor{-unzip-lists}
+@defun -unzip-lists (lists)
+Unzip @var{lists}.
+
+This works just like @code{-zip-lists} (@pxref{-zip-lists}) (which see), but takes a list
+of lists instead of a variable number of arguments, such that
+
+  (-unzip-lists (-zip-lists @var{args}@dots{}))
+
+is identity (given that the lists comprising @var{args} are of the same
+length).
+
+@example
+@group
+(-unzip-lists (-zip-lists '(1 2) '(3 4) '(5 6)))
+    @result{} ((1 2) (3 4) (5 6))
+@end group
+@group
+(-unzip-lists '((1 2 3) (4 5) (6 7) (8 9)))
+    @result{} ((1 4 6 8) (2 5 7 9))
+@end group
+@group
+(-unzip-lists '((1 2 3) (4 5 6)))
+    @result{} ((1 4) (2 5) (3 6))
 @end group
 @end example
 @end defun
@@ -3025,30 +3137,33 @@ longest input list.
 @defun -unzip (lists)
 Unzip @var{lists}.
 
-This works just like @code{-zip} (@pxref{-zip}) but takes a list of lists instead of
-a variable number of arguments, such that
+This works just like @code{-zip} (@pxref{-zip}) (which see), but takes a list of
+lists instead of a variable number of arguments, such that
 
   (-unzip (-zip @var{l1} @var{l2} @var{l3} @dots{}))
 
-is identity (given that the lists are the same length).
+is identity (given that the lists are of the same length, and
+that @code{-zip} (@pxref{-zip}) is not called with two arguments, because of the
+caveat described in its docstring).
 
-Note in particular that calling this on a list of two lists will
-return a list of cons-cells such that the above identity works.
+Note in particular that calling @code{-unzip} (@pxref{-unzip}) on a list of two lists
+will return a list of dotted pairs.
 
-See also: @code{-zip} (@pxref{-zip})
+Since the return value changes form depending on the number of
+@var{lists}, it is generally recommended to use @code{-unzip-lists} (@pxref{-unzip-lists}) instead.
 
 @example
 @group
-(-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g")))
-    @result{} ((1 2 3) (a b c) ("e" "f" "g"))
+(-unzip (-zip '(1 2) '(3 4) '(5 6)))
+    @result{} ((1 . 2) (3 . 4) (5 . 6))
 @end group
 @group
-(-unzip '((1 2) (3 4) (5 6) (7 8) (9 10)))
-    @result{} ((1 3 5 7 9) (2 4 6 8 10))
+(-unzip '((1 2 3) (4 5 6)))
+    @result{} ((1 . 4) (2 . 5) (3 . 6))
 @end group
 @group
-(-unzip '((1 2) (3 4)))
-    @result{} ((1 . 3) (2 . 4))
+(-unzip '((1 2 3) (4 5) (6 7) (8 9)))
+    @result{} ((1 4 6 8) (2 5 7 9))
 @end group
 @end example
 @end defun
@@ -4792,16 +4907,16 @@ This function satisfies the following laws:
 
 @example
 @group
-(funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3))
+(funcall (-prodfn #'1+ #'1- #'number-to-string) '(1 2 3))
     @result{} (2 1 "3")
 @end group
 @group
-(-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8)))
-    @result{} ((2 1) (4 3) (6 5) (8 7))
+(-map (-prodfn #'1- #'1+) '((1 2) (3 4) (5 6)))
+    @result{} ((0 3) (2 5) (4 7))
 @end group
 @group
-(apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15")))
-    @result{} 18
+(apply #'+ (funcall (-prodfn #'length #'string-to-number) '((t) "5")))
+    @result{} 6
 @end group
 @end example
 @end defun

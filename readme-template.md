@@ -14,7 +14,6 @@ See the end of the file for license conditions.
 ## Contents
 
 * [Change log](#change-log)
-  * [Upcoming breaking change!](#upcoming-breaking-change)
 * [Installation](#installation)
 * [Functions](#functions)
 * [Contribute](#contribute)
@@ -24,18 +23,6 @@ See the end of the file for license conditions.
 ## Change log
 
 See the [`NEWS.md`](NEWS.md) file.
-
-### Upcoming breaking change!
-
-- For backward compatibility reasons, `-zip` when called with two
-  lists returns a list of cons cells, rather than a list of proper
-  lists.  This is a clunky API, and may be changed in a future release
-  to always return a list of proper lists, as `-zip-lists` currently
-  does.
-
-  **N.B.:** Do not rely on the current behavior of `-zip` for two
-  lists.  Instead, use `-zip-pair` for a list of cons cells, and
-  `-zip-lists` for a list of proper lists.
 
 ## Installation
 

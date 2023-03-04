@@ -14,6 +14,9 @@ See the end of the file for license conditions.
   long-discouraged calling convention remains supported, but the
   caller is now referred to the equivalent `-zip-pair` instead (Stefan
   Monnier, #400).
+- Calling `-zip-pair` with less than or more than two arguments is now
+  deprecated, and can be replaced with the equivalent call to
+  `-zip-lists` instead.
 
 #### Fixes
 
@@ -39,6 +42,8 @@ See the end of the file for license conditions.
 - New function `-frequencies` that takes a list and counts how many
   times each distinct element occurs in it (suggested by @ebpa, #209,
   #214, #399).
+- New functions `-zip-lists-fill` and `-unzip-lists` which are better
+  behaved versions of `-zip-fill` and `-unzip`, respectively (#400).
 
 ### From 2.19.0 to 2.19.1
 

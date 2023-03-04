@@ -8,6 +8,13 @@ See the end of the file for license conditions.
 
 ### From 2.19.1 to 2.20.0
 
+#### Deprecations
+
+- Calling `-zip` with two arguments now emits a warning.  This
+  long-discouraged calling convention remains supported, but the
+  caller is now referred to the equivalent `-zip-pair` instead (Stefan
+  Monnier, #400).
+
 #### Fixes
 
 - Fixed a regression from `2.18` in `-take` that caused it to
@@ -132,8 +139,8 @@ https://github.com/magnars/dash.el/wiki/Obsoletion-of-dash-functional.el
 - Sped up `-uniq` by using hash-tables when possible (@cireu, #305).
 - Fixed `-inits` to be non-destructive (@SwiftLawnGnome, #313).
 - Fixed indent rules for `-some->` and family (@wbolster, #321).
-- Added `-zip-lists` which always returns a list of proper lists, even for two
-  input lists (see issue #135).
+- Added `-zip-lists` which always returns a list of proper lists, even
+  for two input lists, in contrast to `-zip` (see issue #135).
 
 ### From 2.15 to 2.16
 

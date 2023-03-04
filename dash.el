@@ -1,6 +1,6 @@
 ;;; dash.el --- A modern list library for Emacs  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2012-2021 Free Software Foundation, Inc.
+;; Copyright (C) 2012-2022 Free Software Foundation, Inc.
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Version: 2.19.1
@@ -536,7 +536,8 @@ This function's anaphoric counterpart is `--remove-first'.
 See also `-map-first', `-remove-item', and `-remove-last'."
   (--remove-first (funcall pred it) list))
 
-(defalias '-reject-first '-remove-first)
+;; TODO: #'-quoting the macro upsets Emacs 24.
+(defalias '-reject-first #'-remove-first)
 (defalias '--reject-first '--remove-first)
 
 (defmacro --remove-last (form list)
@@ -706,7 +707,7 @@ See also: `-map-last'"
 (defmacro --mapcat (form list)
   "Anaphoric form of `-mapcat'."
   (declare (debug (form form)))
-  `(apply 'append (--map ,form ,list)))
+  `(apply #'append (--map ,form ,list)))
 
 (defun -mapcat (fn list)
   "Return the concatenation of the result of mapping FN over LIST.
@@ -772,7 +773,7 @@ is just used as the tail of the new list.
 
 \(fn &rest SEQUENCES)")
 
-(defalias '-copy 'copy-sequence
+(defalias '-copy #'copy-sequence
   "Create a shallow copy of LIST.
 
 \(fn LIST)")
@@ -1298,28 +1299,41 @@ See also: `-map-when'"
   `(-update-at ,n (lambda (it) (ignore it) ,form) ,list))
 
 (defun -remove-at (n list)
-  "Return a list with element at Nth position in LIST removed.
+  "Return LIST with its element at index N removed.
+That is, remove any element selected as (nth N LIST) from LIST
+and return the result.
 
-See also: `-remove-at-indices', `-remove'"
+This is a non-destructive operation: parts of LIST (but not
+necessarily all of it) are copied as needed to avoid
+destructively modifying it.
+
+See also: `-remove-at-indices', `-remove'."
   (declare (pure t) (side-effect-free t))
-  (-remove-at-indices (list n) list))
+  (if (zerop n)
+      (cdr list)
+    (--remove-first (= it-index n) list)))
 
 (defun -remove-at-indices (indices list)
-  "Return a list whose elements are elements from LIST without
-elements selected as `(nth i list)` for all i
-from INDICES.
+  "Return LIST with its elements at INDICES removed.
+That is, for each index I in INDICES, remove any element selected
+as (nth I LIST) from LIST.
 
-See also: `-remove-at', `-remove'"
+This is a non-destructive operation: parts of LIST (but not
+necessarily all of it) are copied as needed to avoid
+destructively modifying it.
+
+See also: `-remove-at', `-remove'."
   (declare (pure t) (side-effect-free t))
-  (let* ((indices (-sort '< indices))
-         (diffs (cons (car indices) (-map '1- (-zip-with '- (cdr indices) indices))))
-         r)
-    (--each diffs
-      (let ((split (-split-at it list)))
-        (!cons (car split) r)
-        (setq list (cdr (cadr split)))))
-    (!cons list r)
-    (apply '-concat (nreverse r))))
+  (setq indices (--drop-while (< it 0) (-sort #'< indices)))
+  (let ((i (pop indices)) res)
+    (--each-while list i
+      (pop list)
+      (if (/= it-index i)
+          (push it res)
+        (while (and indices (= (car indices) i))
+          (pop indices))
+        (setq i (pop indices))))
+    (nconc (nreverse res) list)))
 
 (defmacro --split-with (pred list)
   "Anaphoric form of `-split-with'."
@@ -1603,104 +1617,193 @@ elements of LIST.  Keys are compared by `equal'."
       (nreverse result))))
 
 (defmacro --zip-with (form list1 list2)
-  "Anaphoric form of `-zip-with'.
+  "Zip LIST1 and LIST2 into a new list according to FORM.
+That is, evaluate FORM for each item pair from the two lists, and
+return the list of results.  The result is as long as the shorter
+list.
 
-Each element in turn of LIST1 is bound to `it', and of LIST2 to
-`other', before evaluating FORM."
+Each element of LIST1 and each element of LIST2 in turn are bound
+pairwise to `it' and `other', respectively, and their index
+within the list to `it-index', before evaluating FORM.
+
+This is the anaphoric counterpart to `-zip-with'."
   (declare (debug (form form form)))
   (let ((r (make-symbol "result"))
-        (l1 (make-symbol "list1"))
         (l2 (make-symbol "list2")))
-    `(let ((,r nil)
-           (,l1 ,list1)
-           (,l2 ,list2))
-       (while (and ,l1 ,l2)
-         (let ((it (car ,l1))
-               (other (car ,l2)))
-           (!cons ,form ,r)
-           (!cdr ,l1)
-           (!cdr ,l2)))
+    `(let ((,l2 ,list2) ,r)
+       (--each-while ,list1 ,l2
+         (let ((other (pop ,l2)))
+           (ignore other)
+           (push ,form ,r)))
        (nreverse ,r))))
 
 (defun -zip-with (fn list1 list2)
-  "Zip the two lists LIST1 and LIST2 using a function FN.  This
-function is applied pairwise taking as first argument element of
-LIST1 and as second argument element of LIST2 at corresponding
-position.
+  "Zip LIST1 and LIST2 into a new list using the function FN.
+That is, apply FN pairwise taking as first argument the next
+element of LIST1 and as second argument the next element of LIST2
+at the corresponding position.  The result is as long as the
+shorter list.
 
-The anaphoric form `--zip-with' binds the elements from LIST1 as symbol `it',
-and the elements from LIST2 as symbol `other'."
+This function's anaphoric counterpart is `--zip-with'.
+
+For other zips, see also `-zip-lists' and `-zip-fill'."
   (--zip-with (funcall fn it other) list1 list2))
 
 (defun -zip-lists (&rest lists)
-  "Zip LISTS together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+  "Zip LISTS together.
 
-The return value is always list of lists, which is a difference
-from `-zip-pair' which returns a cons-cell in case two input
-lists are provided.
+Group the head of each list, followed by the second element of
+each list, and so on.  The number of returned groupings is equal
+to the length of the shortest input list, and the length of each
+grouping is equal to the number of input LISTS.
 
-See also: `-zip'"
+The return value is always a list of proper lists, in contrast to
+`-zip' which returns a list of dotted pairs when only two input
+LISTS are provided.
+
+See also: `-zip-pair'."
   (declare (pure t) (side-effect-free t))
   (when lists
     (let (results)
-      (while (-none? 'null lists)
-        (setq results (cons (mapcar 'car lists) results))
-        (setq lists (mapcar 'cdr lists)))
+      (while (--every it lists)
+        (push (mapcar #'car lists) results)
+        (setq lists (mapcar #'cdr lists)))
       (nreverse results))))
 
-(defun -zip (&rest lists)
-  "Zip LISTS together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
-
-If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists.
-
-Use `-zip-lists' if you need the return value to always be a list
-of lists.
-
-Alias: `-zip-pair'
-
-See also: `-zip-lists'"
+(defun -zip-lists-fill (fill-value &rest lists)
+  "Zip LISTS together, padding shorter lists with FILL-VALUE.
+This is like `-zip-lists' (which see), except it retains all
+elements at positions beyond the end of the shortest list.  The
+number of returned groupings is equal to the length of the
+longest input list, and the length of each grouping is equal to
+the number of input LISTS."
   (declare (pure t) (side-effect-free t))
   (when lists
     (let (results)
-      (while (-none? 'null lists)
-        (setq results (cons (mapcar 'car lists) results))
-        (setq lists (mapcar 'cdr lists)))
-      (setq results (nreverse results))
-      (if (= (length lists) 2)
-          ;; to support backward compatibility, return
-          ;; a cons cell if two lists were provided
-          (--map (cons (car it) (cadr it)) results)
-        results))))
+      (while (--some it lists)
+        (push (--map (if it (car it) fill-value) lists) results)
+        (setq lists (mapcar #'cdr lists)))
+      (nreverse results))))
 
-(defalias '-zip-pair '-zip)
+(defun -unzip-lists (lists)
+  "Unzip LISTS.
+
+This works just like `-zip-lists' (which see), but takes a list
+of lists instead of a variable number of arguments, such that
+
+  (-unzip-lists (-zip-lists ARGS...))
+
+is identity (given that the lists comprising ARGS are of the same
+length)."
+  (declare (pure t) (side-effect-free t))
+  (apply #'-zip-lists lists))
+
+(defalias 'dash--length=
+  (if (fboundp 'length=)
+      #'length=
+    (lambda (list length)
+      (cond ((< length 0) nil)
+            ((zerop length) (null list))
+            ((let ((last (nthcdr (1- length) list)))
+               (and last (null (cdr last))))))))
+  "Return non-nil if LIST is of LENGTH.
+This is a compatibility shim for `length=' in Emacs 28.
+\n(fn LIST LENGTH)")
+
+(defun dash--zip-lists-or-pair (_form &rest lists)
+  "Return a form equivalent to applying `-zip' to LISTS.
+This `compiler-macro' warns about discouraged `-zip' usage and
+delegates to `-zip-lists' or `-zip-pair' depending on the number
+of LISTS."
+  (if (not (dash--length= lists 2))
+      (cons #'-zip-lists lists)
+    (let ((pair (cons #'-zip-pair lists))
+          (msg "Use -zip-pair instead of -zip to get a list of pairs"))
+      (if (fboundp 'macroexp-warn-and-return)
+          (macroexp-warn-and-return msg pair)
+        (message msg)
+        pair))))
+
+(defun -zip (&rest lists)
+  "Zip LISTS together.
+
+Group the head of each list, followed by the second element of
+each list, and so on.  The number of returned groupings is equal
+to the length of the shortest input list, and the number of items
+in each grouping is equal to the number of input LISTS.
+
+If only two LISTS are provided as arguments, return the groupings
+as a list of dotted pairs.  Otherwise, return the groupings as a
+list of proper lists.
+
+Since the return value changes form depending on the number of
+arguments, it is generally recommended to use `-zip-lists'
+instead, or `-zip-pair' if a list of dotted pairs is desired.
+
+See also: `-unzip'."
+  (declare (compiler-macro dash--zip-lists-or-pair)
+           (pure t) (side-effect-free t))
+  ;; For backward compatibility, return a list of dotted pairs if two
+  ;; arguments were provided.
+  (apply (if (dash--length= lists 2) #'-zip-pair #'-zip-lists) lists))
+
+(defun -zip-pair (&rest lists)
+  "Zip LIST1 and LIST2 together.
+
+Make a pair with the head of each list, followed by a pair with
+the second element of each list, and so on.  The number of pairs
+returned is equal to the length of the shorter input list.
+
+See also: `-zip-lists'."
+  (declare (advertised-calling-convention (list1 list2) "2.20.0")
+           (pure t) (side-effect-free t))
+  (if (dash--length= lists 2)
+      (--zip-with (cons it other) (car lists) (cadr lists))
+    (apply #'-zip-lists lists)))
 
 (defun -zip-fill (fill-value &rest lists)
-  "Zip LISTS, with FILL-VALUE padded onto the shorter lists. The
-lengths of the returned groupings are equal to the length of the
-longest input list."
+  "Zip LISTS together, padding shorter lists with FILL-VALUE.
+This is like `-zip' (which see), except it retains all elements
+at positions beyond the end of the shortest list.  The number of
+returned groupings is equal to the length of the longest input
+list, and the length of each grouping is equal to the number of
+input LISTS.
+
+Since the return value changes form depending on the number of
+arguments, it is generally recommended to use `-zip-lists-fill'
+instead, unless a list of dotted pairs is explicitly desired."
   (declare (pure t) (side-effect-free t))
-  (apply '-zip (apply '-pad (cons fill-value lists))))
+  (cond ((null lists) ())
+        ((dash--length= lists 2)
+         (let ((list1 (car lists))
+               (list2 (cadr lists))
+               results)
+           (while (or list1 list2)
+             (push (cons (if list1 (pop list1) fill-value)
+                         (if list2 (pop list2) fill-value))
+                   results))
+           (nreverse results)))
+        ((apply #'-zip-lists-fill fill-value lists))))
 
 (defun -unzip (lists)
   "Unzip LISTS.
 
-This works just like `-zip' but takes a list of lists instead of
-a variable number of arguments, such that
+This works just like `-zip' (which see), but takes a list of
+lists instead of a variable number of arguments, such that
 
   (-unzip (-zip L1 L2 L3 ...))
 
-is identity (given that the lists are the same length).
+is identity (given that the lists are of the same length, and
+that `-zip' is not called with two arguments, because of the
+caveat described in its docstring).
 
-Note in particular that calling this on a list of two lists will
-return a list of cons-cells such that the above identity works.
+Note in particular that calling `-unzip' on a list of two lists
+will return a list of dotted pairs.
 
-See also: `-zip'"
-  (apply '-zip lists))
+Since the return value changes form depending on the number of
+LISTS, it is generally recommended to use `-unzip-lists' instead."
+  (declare (pure t) (side-effect-free t))
+  (apply #'-zip lists))
 
 (defun -cycle (list)
   "Return an infinite circular copy of LIST.
@@ -2216,7 +2319,7 @@ This method normalizes PATTERN to the format expected by
   (let ((normalized (list (car pattern)))
         (skip nil)
         (fill-placeholder (make-symbol "--dash-fill-placeholder--")))
-    (-each (apply '-zip (-pad fill-placeholder (cdr pattern) (cddr pattern)))
+    (-each (-zip-fill fill-placeholder (cdr pattern) (cddr pattern))
       (lambda (pair)
         (let ((current (car pair))
               (next (cdr pair)))
@@ -2555,7 +2658,8 @@ because we need to support improper list binding."
          ,@body)
     (let* ((varlist (dash--normalize-let-varlist varlist))
            (inputs (--map-indexed (list (make-symbol (format "input%d" it-index)) (cadr it)) varlist))
-           (new-varlist (--map (list (caar it) (cadr it)) (-zip varlist inputs))))
+           (new-varlist (--zip-with (list (car it) (car other))
+                                    varlist inputs)))
       `(let ,inputs
          (-let* ,new-varlist ,@body)))))
 
@@ -3156,7 +3260,7 @@ Return nil if N is less than 1."
 (defun -sum (list)
   "Return the sum of LIST."
   (declare (pure t) (side-effect-free t))
-  (apply '+ list))
+  (apply #'+ list))
 
 (defun -running-sum (list)
   "Return a list with running sums of items in LIST.
@@ -3168,7 +3272,7 @@ LIST must be non-empty."
 (defun -product (list)
   "Return the product of LIST."
   (declare (pure t) (side-effect-free t))
-  (apply '* list))
+  (apply #'* list))
 
 (defun -running-product (list)
   "Return a list with running products of items in LIST.
@@ -3180,12 +3284,12 @@ LIST must be non-empty."
 (defun -max (list)
   "Return the largest value from LIST of numbers or markers."
   (declare (pure t) (side-effect-free t))
-  (apply 'max list))
+  (apply #'max list))
 
 (defun -min (list)
   "Return the smallest value from LIST of numbers or markers."
   (declare (pure t) (side-effect-free t))
-  (apply 'min list))
+  (apply #'min list))
 
 (defun -max-by (comparator list)
   "Take a comparison function COMPARATOR and a LIST and return
@@ -3730,7 +3834,8 @@ This function satisfies the following laws:
     (-compose (-partial #\\='nth n)
               (-prod f1 f2 ...))
   = (-compose fn (-partial #\\='nth n))"
-  (lambda (x) (-zip-with 'funcall fns x)))
+  (declare (pure t) (side-effect-free t))
+  (lambda (x) (--zip-with (funcall it other) fns x)))
 
 ;;; Font lock
 
@@ -3841,7 +3946,6 @@ Either a string to display in the mode line when
 `dash-fontify-mode' is on, or nil to display
 nothing (the default)."
   :package-version '(dash . "2.18.0")
-  :group 'dash
   :type '(choice (string :tag "Lighter" :value " Dash")
                  (const :tag "Nothing" nil)))
 
@@ -3858,7 +3962,7 @@ additionally fontifies Dash macro calls.
 
 See also `dash-fontify-mode-lighter' and
 `global-dash-fontify-mode'."
-  :group 'dash :lighter dash-fontify-mode-lighter
+  :lighter dash-fontify-mode-lighter
   (if dash-fontify-mode
       (font-lock-add-keywords nil dash--keywords t)
     (font-lock-remove-keywords nil dash--keywords))
@@ -3879,12 +3983,10 @@ See also `dash-fontify-mode-lighter' and
 
 ;;;###autoload
 (define-globalized-minor-mode global-dash-fontify-mode
-  dash-fontify-mode dash--turn-on-fontify-mode
-  :group 'dash)
+  dash-fontify-mode dash--turn-on-fontify-mode)
 
 (defcustom dash-enable-fontlock nil
   "If non-nil, fontify Dash macro calls and special variables."
-  :group 'dash
   :set (lambda (sym val)
          (set-default sym val)
          (global-dash-fontify-mode (if val 1 0)))

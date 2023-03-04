@@ -14,7 +14,6 @@ See the end of the file for license conditions.
 ## Contents
 
 * [Change log](#change-log)
-  * [Upcoming breaking change!](#upcoming-breaking-change)
 * [Installation](#installation)
 * [Functions](#functions)
 * [Contribute](#contribute)
@@ -24,18 +23,6 @@ See the end of the file for license conditions.
 ## Change log
 
 See the [`NEWS.md`](NEWS.md) file.
-
-### Upcoming breaking change!
-
-- For backward compatibility reasons, `-zip` when called with two
-  lists returns a list of cons cells, rather than a list of proper
-  lists.  This is a clunky API, and may be changed in a future release
-  to always return a list of proper lists, as `-zip-lists` currently
-  does.
-
-  **N.B.:** Do not rely on the current behavior of `-zip` for two
-  lists.  Instead, use `-zip-pair` for a list of cons cells, and
-  `-zip-lists` for a list of proper lists.
 
 ## Installation
 
@@ -287,9 +274,12 @@ Other list functions not fit to be classified elsewhere.
 * [`-interleave`](#-interleave-rest-lists) `(&rest lists)`
 * [`-iota`](#-iota-count-optional-start-step) `(count &optional start step)`
 * [`-zip-with`](#-zip-with-fn-list1-list2) `(fn list1 list2)`
-* [`-zip`](#-zip-rest-lists) `(&rest lists)`
+* [`-zip-pair`](#-zip-pair-list1-list2) `(list1 list2)`
 * [`-zip-lists`](#-zip-lists-rest-lists) `(&rest lists)`
+* [`-zip-lists-fill`](#-zip-lists-fill-fill-value-rest-lists) `(fill-value &rest lists)`
+* [`-zip`](#-zip-rest-lists) `(&rest lists)`
 * [`-zip-fill`](#-zip-fill-fill-value-rest-lists) `(fill-value &rest lists)`
+* [`-unzip-lists`](#-unzip-lists-lists) `(lists)`
 * [`-unzip`](#-unzip-lists) `(lists)`
 * [`-pad`](#-pad-fill-value-rest-lists) `(fill-value &rest lists)`
 * [`-table`](#-table-fn-rest-lists) `(fn &rest lists)`
@@ -927,28 +917,38 @@ See also: [`-map-when`](#-map-when-pred-rep-list)
 
 #### -remove-at `(n list)`
 
-Return a list with element at `n`th position in `list` removed.
+Return `list` with its element at index `n` removed.
+That is, remove any element selected as (nth `n` `list`) from `list`
+and return the result.
 
-See also: [`-remove-at-indices`](#-remove-at-indices-indices-list), [`-remove`](#-remove-pred-list)
+This is a non-destructive operation: parts of `list` (but not
+necessarily all of it) are copied as needed to avoid
+destructively modifying it.
+
+See also: [`-remove-at-indices`](#-remove-at-indices-indices-list), [`-remove`](#-remove-pred-list).
 
 ```el
-(-remove-at 0 '("0" "1" "2" "3" "4" "5")) ;; => ("1" "2" "3" "4" "5")
-(-remove-at 1 '("0" "1" "2" "3" "4" "5")) ;; => ("0" "2" "3" "4" "5")
-(-remove-at 2 '("0" "1" "2" "3" "4" "5")) ;; => ("0" "1" "3" "4" "5")
+(-remove-at 0 '(a b c)) ;; => (b c)
+(-remove-at 1 '(a b c)) ;; => (a c)
+(-remove-at 2 '(a b c)) ;; => (a b)
 ```
 
 #### -remove-at-indices `(indices list)`
 
-Return a list whose elements are elements from `list` without
-elements selected as `(nth i list)` for all i
-from `indices`.
+Return `list` with its elements at `indices` removed.
+That is, for each index `i` in `indices`, remove any element selected
+as (nth `i` `list`) from `list`.
 
-See also: [`-remove-at`](#-remove-at-n-list), [`-remove`](#-remove-pred-list)
+This is a non-destructive operation: parts of `list` (but not
+necessarily all of it) are copied as needed to avoid
+destructively modifying it.
+
+See also: [`-remove-at`](#-remove-at-n-list), [`-remove`](#-remove-pred-list).
 
 ```el
-(-remove-at-indices '(0) '("0" "1" "2" "3" "4" "5")) ;; => ("1" "2" "3" "4" "5")
-(-remove-at-indices '(0 2 4) '("0" "1" "2" "3" "4" "5")) ;; => ("1" "3" "5")
-(-remove-at-indices '(0 5) '("0" "1" "2" "3" "4" "5")) ;; => ("1" "2" "3" "4")
+(-remove-at-indices '(0) '(a b c d e)) ;; => (b c d e)
+(-remove-at-indices '(1 3) '(a b c d e)) ;; => (a c e)
+(-remove-at-indices '(4 0 2) '(a b c d e)) ;; => (b d)
 ```
 
 ## Reductions
@@ -1326,7 +1326,7 @@ from the beginning.
 ```el
 (-take 5 (-cycle '(1 2 3))) ;; => (1 2 3 1 2)
 (-take 7 (-cycle '(1 "and" 3))) ;; => (1 "and" 3 1 "and" 3 1)
-(-zip (-cycle '(1 2 3)) '(1 2)) ;; => ((1 . 1) (2 . 2))
+(-zip-lists (-cycle '(3)) '(1 2)) ;; => ((3 1) (3 2))
 ```
 
 ## Predicates
@@ -1982,53 +1982,52 @@ the `apl` language.
 
 #### -zip-with `(fn list1 list2)`
 
-Zip the two lists `list1` and `list2` using a function `fn`.  This
-function is applied pairwise taking as first argument element of
-`list1` and as second argument element of `list2` at corresponding
-position.
+Zip `list1` and `list2` into a new list using the function `fn`.
+That is, apply `fn` pairwise taking as first argument the next
+element of `list1` and as second argument the next element of `list2`
+at the corresponding position.  The result is as long as the
+shorter list.
 
-The anaphoric form `--zip-with` binds the elements from `list1` as symbol `it`,
-and the elements from `list2` as symbol `other`.
+This function's anaphoric counterpart is `--zip-with`.
+
+For other zips, see also [`-zip-lists`](#-zip-lists-rest-lists) and [`-zip-fill`](#-zip-fill-fill-value-rest-lists).
 
 ```el
-(-zip-with '+ '(1 2 3) '(4 5 6)) ;; => (5 7 9)
-(-zip-with 'cons '(1 2 3) '(4 5 6)) ;; => ((1 . 4) (2 . 5) (3 . 6))
-(--zip-with (concat it " and " other) '("Batman" "Jekyll") '("Robin" "Hyde")) ;; => ("Batman and Robin" "Jekyll and Hyde")
+(-zip-with #'+ '(1 2 3 4) '(5 6 7)) ;; => (6 8 10)
+(-zip-with #'cons '(1 2 3) '(4 5 6 7)) ;; => ((1 . 4) (2 . 5) (3 . 6))
+(--zip-with (format "%s & %s" it other) '(Batman Jekyll) '(Robin Hyde)) ;; => ("Batman & Robin" "Jekyll & Hyde")
 ```
 
-#### -zip `(&rest lists)`
+#### -zip-pair `(list1 list2)`
 
-Zip `lists` together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+Zip `list1` and `list2` together.
 
-If two lists are provided as arguments, return the groupings as a list
-of cons cells. Otherwise, return the groupings as a list of lists.
+Make a pair with the head of each list, followed by a pair with
+the second element of each list, and so on.  The number of pairs
+returned is equal to the length of the shorter input list.
 
-Use [`-zip-lists`](#-zip-lists-rest-lists) if you need the return value to always be a list
-of lists.
-
-Alias: `-zip-pair`
-
-See also: [`-zip-lists`](#-zip-lists-rest-lists)
+See also: [`-zip-lists`](#-zip-lists-rest-lists).
 
 ```el
-(-zip '(1 2 3) '(4 5 6)) ;; => ((1 . 4) (2 . 5) (3 . 6))
-(-zip '(1 2 3) '(4 5 6 7)) ;; => ((1 . 4) (2 . 5) (3 . 6))
-(-zip '(1 2) '(3 4 5) '(6)) ;; => ((1 3 6))
+(-zip-pair '(1 2 3 4) '(5 6 7)) ;; => ((1 . 5) (2 . 6) (3 . 7))
+(-zip-pair '(1 2 3) '(4 5 6)) ;; => ((1 . 4) (2 . 5) (3 . 6))
+(-zip-pair '(1 2) '(3)) ;; => ((1 . 3))
 ```
 
 #### -zip-lists `(&rest lists)`
 
-Zip `lists` together.  Group the head of each list, followed by the
-second elements of each list, and so on. The lengths of the returned
-groupings are equal to the length of the shortest input list.
+Zip `lists` together.
 
-The return value is always list of lists, which is a difference
-from `-zip-pair` which returns a cons-cell in case two input
-lists are provided.
+Group the head of each list, followed by the second element of
+each list, and so on.  The number of returned groupings is equal
+to the length of the shortest input list, and the length of each
+grouping is equal to the number of input `lists`.
 
-See also: [`-zip`](#-zip-rest-lists)
+The return value is always a list of proper lists, in contrast to
+[`-zip`](#-zip-rest-lists) which returns a list of dotted pairs when only two input
+`lists` are provided.
+
+See also: [`-zip-pair`](#-zip-pair-list1-list2).
 
 ```el
 (-zip-lists '(1 2 3) '(4 5 6)) ;; => ((1 4) (2 5) (3 6))
@@ -2036,36 +2035,106 @@ See also: [`-zip`](#-zip-rest-lists)
 (-zip-lists '(1 2) '(3 4 5) '(6)) ;; => ((1 3 6))
 ```
 
-#### -zip-fill `(fill-value &rest lists)`
+#### -zip-lists-fill `(fill-value &rest lists)`
 
-Zip `lists`, with `fill-value` padded onto the shorter lists. The
-lengths of the returned groupings are equal to the length of the
-longest input list.
+Zip `lists` together, padding shorter lists with `fill-value`.
+This is like [`-zip-lists`](#-zip-lists-rest-lists) (which see), except it retains all
+elements at positions beyond the end of the shortest list.  The
+number of returned groupings is equal to the length of the
+longest input list, and the length of each grouping is equal to
+the number of input `lists`.
 
 ```el
-(-zip-fill 0 '(1 2 3 4 5) '(6 7 8 9)) ;; => ((1 . 6) (2 . 7) (3 . 8) (4 . 9) (5 . 0))
+(-zip-lists-fill 0 '(1 2) '(3 4 5) '(6)) ;; => ((1 3 6) (2 4 0) (0 5 0))
+(-zip-lists-fill 0 '(1 2) '(3 4) '(5 6)) ;; => ((1 3 5) (2 4 6))
+(-zip-lists-fill 0 '(1 2 3) nil) ;; => ((1 0) (2 0) (3 0))
+```
+
+#### -zip `(&rest lists)`
+
+Zip `lists` together.
+
+Group the head of each list, followed by the second element of
+each list, and so on.  The number of returned groupings is equal
+to the length of the shortest input list, and the number of items
+in each grouping is equal to the number of input `lists`.
+
+If only two `lists` are provided as arguments, return the groupings
+as a list of dotted pairs.  Otherwise, return the groupings as a
+list of proper lists.
+
+Since the return value changes form depending on the number of
+arguments, it is generally recommended to use [`-zip-lists`](#-zip-lists-rest-lists)
+instead, or [`-zip-pair`](#-zip-pair-list1-list2) if a list of dotted pairs is desired.
+
+See also: [`-unzip`](#-unzip-lists).
+
+```el
+(-zip '(1 2 3 4) '(5 6 7) '(8 9)) ;; => ((1 5 8) (2 6 9))
+(-zip '(1 2 3) '(4 5 6) '(7 8 9)) ;; => ((1 4 7) (2 5 8) (3 6 9))
+(-zip '(1 2 3)) ;; => ((1) (2) (3))
+```
+
+#### -zip-fill `(fill-value &rest lists)`
+
+Zip `lists` together, padding shorter lists with `fill-value`.
+This is like [`-zip`](#-zip-rest-lists) (which see), except it retains all elements
+at positions beyond the end of the shortest list.  The number of
+returned groupings is equal to the length of the longest input
+list, and the length of each grouping is equal to the number of
+input `lists`.
+
+Since the return value changes form depending on the number of
+arguments, it is generally recommended to use [`-zip-lists-fill`](#-zip-lists-fill-fill-value-rest-lists)
+instead, unless a list of dotted pairs is explicitly desired.
+
+```el
+(-zip-fill 0 '(1 2 3) '(4 5)) ;; => ((1 . 4) (2 . 5) (3 . 0))
+(-zip-fill 0 () '(1 2 3)) ;; => ((0 . 1) (0 . 2) (0 . 3))
+(-zip-fill 0 '(1 2) '(3 4) '(5 6)) ;; => ((1 3 5) (2 4 6))
+```
+
+#### -unzip-lists `(lists)`
+
+Unzip `lists`.
+
+This works just like [`-zip-lists`](#-zip-lists-rest-lists) (which see), but takes a list
+of lists instead of a variable number of arguments, such that
+
+    (-unzip-lists (-zip-lists `args`...))
+
+is identity (given that the lists comprising `args` are of the same
+length).
+
+```el
+(-unzip-lists (-zip-lists '(1 2) '(3 4) '(5 6))) ;; => ((1 2) (3 4) (5 6))
+(-unzip-lists '((1 2 3) (4 5) (6 7) (8 9))) ;; => ((1 4 6 8) (2 5 7 9))
+(-unzip-lists '((1 2 3) (4 5 6))) ;; => ((1 4) (2 5) (3 6))
 ```
 
 #### -unzip `(lists)`
 
 Unzip `lists`.
 
-This works just like [`-zip`](#-zip-rest-lists) but takes a list of lists instead of
-a variable number of arguments, such that
+This works just like [`-zip`](#-zip-rest-lists) (which see), but takes a list of
+lists instead of a variable number of arguments, such that
 
     (-unzip (-zip `l1` `l2` `l3` ...))
 
-is identity (given that the lists are the same length).
+is identity (given that the lists are of the same length, and
+that [`-zip`](#-zip-rest-lists) is not called with two arguments, because of the
+caveat described in its docstring).
 
-Note in particular that calling this on a list of two lists will
-return a list of cons-cells such that the above identity works.
+Note in particular that calling [`-unzip`](#-unzip-lists) on a list of two lists
+will return a list of dotted pairs.
 
-See also: [`-zip`](#-zip-rest-lists)
+Since the return value changes form depending on the number of
+`lists`, it is generally recommended to use [`-unzip-lists`](#-unzip-lists-lists) instead.
 
 ```el
-(-unzip (-zip '(1 2 3) '(a b c) '("e" "f" "g"))) ;; => ((1 2 3) (a b c) ("e" "f" "g"))
-(-unzip '((1 2) (3 4) (5 6) (7 8) (9 10))) ;; => ((1 3 5 7 9) (2 4 6 8 10))
-(-unzip '((1 2) (3 4))) ;; => ((1 . 3) (2 . 4))
+(-unzip (-zip '(1 2) '(3 4) '(5 6))) ;; => ((1 . 2) (3 . 4) (5 . 6))
+(-unzip '((1 2 3) (4 5 6))) ;; => ((1 . 4) (2 . 5) (3 . 6))
+(-unzip '((1 2 3) (4 5) (6 7) (8 9))) ;; => ((1 4 6 8) (2 5 7 9))
 ```
 
 #### -pad `(fill-value &rest lists)`
@@ -3204,9 +3273,9 @@ This function satisfies the following laws:
     = (-compose fn (-partial #'nth n))
 
 ```el
-(funcall (-prodfn '1+ '1- 'number-to-string) '(1 2 3)) ;; => (2 1 "3")
-(-map (-prodfn '1+ '1-) '((1 2) (3 4) (5 6) (7 8))) ;; => ((2 1) (4 3) (6 5) (8 7))
-(apply '+ (funcall (-prodfn 'length 'string-to-number) '((1 2 3) "15"))) ;; => 18
+(funcall (-prodfn #'1+ #'1- #'number-to-string) '(1 2 3)) ;; => (2 1 "3")
+(-map (-prodfn #'1- #'1+) '((1 2) (3 4) (5 6))) ;; => ((0 3) (2 5) (4 7))
+(apply #'+ (funcall (-prodfn #'length #'string-to-number) '((t) "5"))) ;; => 6
 ```
 
 ## Contribute

@@ -1927,6 +1927,18 @@ related predicates."
     (let ((l '(1 2 3 4 5)))
       (list (-to-head 2 l) l)) => '((3 1 2 4 5) (1 2 3 4 5)))
 
+  (defexamples -shuffle
+    (progn
+      (random "dash1")
+      (-shuffle '(1 2 3 4 5 6 7))) => '(2 7 6 4 5 1 3)
+    (progn
+      (random "dash2")
+      (-shuffle '(1 2 3 4 5 6 7))) => '(1 5 2 4 3 7 6)
+    (let ((l '(1 2 3 4 5 6 7)))
+      (random "dash3")
+      (list (-shuffle '(1 2 3 4 5 6 7)) l)) => '((3 4 1 5 7 6 2) (1 2 3 4 5 6 7))
+    (-shuffle nil) => nil)
+
   (defexamples -list
     (-list 1) => '(1)
     (-list '()) => '()

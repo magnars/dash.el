@@ -3498,6 +3498,29 @@ Return a new list that move the element at Nth to the head of old @var{list}.
 @end example
 @end defun
 
+@anchor{-shuffle}
+@defun -shuffle (list)
+Return a new shuffled @var{list}.
+
+The returned list is shuffled by using Fisher-Yates' Algorithm. See
+https://en.wikipedia.org/wiki/Fisher-Yates_shuffle for more details.
+
+@example
+@group
+(progn (random "dash1") (-shuffle '(1 2 3 4 5 6 7)))
+    @result{} (2 7 6 4 5 1 3)
+@end group
+@group
+(progn (random "dash2") (-shuffle '(1 2 3 4 5 6 7)))
+    @result{} (1 5 2 4 3 7 6)
+@end group
+@group
+(let ((l '(1 2 3 4 5 6 7))) (random "dash3") (list (-shuffle '(1 2 3 4 5 6 7)) l))
+    @result{} ((3 4 1 5 7 6 2) (1 2 3 4 5 6 7))
+@end group
+@end example
+@end defun
+
 @anchor{-list}
 @defun -list (arg)
 Ensure @var{arg} is a list.

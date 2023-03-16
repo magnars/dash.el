@@ -3248,6 +3248,20 @@ if the first element should sort before the second."
          (target (pop rest)))
     (cons target (nconc head rest))))
 
+(defun -shuffle (list)
+  "Return a new shuffled LIST.
+
+The returned list is shuffled by using Fisher-Yates' Algorithm. See
+https://en.wikipedia.org/wiki/Fisher-Yates_shuffle for more details."
+  (declare (pure t) (side-effect-free t))
+  (let* ((len (length list))
+         (random-nums (-map #'random (number-sequence len 1 -1)))
+         result)
+    (--each random-nums
+      (setq list (-to-head it list))
+      (push (pop list) result))
+    (nreverse result)))
+
 (defun -list (&optional arg &rest args)
   "Ensure ARG is a list.
 If ARG is already a list, return it as is (not a copy).

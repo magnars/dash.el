@@ -3478,6 +3478,26 @@ if the first element should sort before the second.
 @end example
 @end defun
 
+@anchor{-to-head}
+@defun -to-head (n list)
+Return a new list that move the element at Nth to the head of old @var{list}.
+
+@example
+@group
+(-to-head 3 '(1 2 3 4 5))
+    @result{} (4 1 2 3 5)
+@end group
+@group
+(-to-head 5 '(1 2 3 4 5))
+    @error{} peculiar error
+@end group
+@group
+(let ((l '(1 2 3 4 5))) (list (-to-head 2 l) l))
+    @result{} ((3 1 2 4 5) (1 2 3 4 5))
+@end group
+@end example
+@end defun
+
 @anchor{-list}
 @defun -list (arg)
 Ensure @var{arg} is a list.

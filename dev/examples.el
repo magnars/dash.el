@@ -1921,6 +1921,12 @@ related predicates."
     (--sort (< it other) '(3 1 2)) => '(1 2 3)
     (let ((l '(3 1 2))) (-sort '> l) l) => '(3 1 2))
 
+  (defexamples -to-head
+    (-to-head 3 '(1 2 3 4 5)) => '(4 1 2 3 5)
+    (-to-head 5 '(1 2 3 4 5)) !!> error
+    (let ((l '(1 2 3 4 5)))
+      (list (-to-head 2 l) l)) => '((3 1 2 4 5) (1 2 3 4 5)))
+
   (defexamples -list
     (-list 1) => '(1)
     (-list '()) => '()

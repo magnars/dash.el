@@ -294,6 +294,7 @@ Other list functions not fit to be classified elsewhere.
 * [`-last-item`](#-last-item-list) `(list)`
 * [`-butlast`](#-butlast-list) `(list)`
 * [`-sort`](#-sort-comparator-list) `(comparator list)`
+* [`-to-head`](#-to-head-n-list) `(n list)`
 * [`-list`](#-list-arg) `(arg)`
 * [`-fix`](#-fix-fn-list) `(fn list)`
 

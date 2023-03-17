@@ -53,6 +53,17 @@
 (defun even? (num) (= 0 (% num 2)))
 (defun square (num) (* num num))
 
+(defun make-xorshift32-rng (seed)
+  (let ((state (list seed))
+        (uint32-max (- (expt 2 32) 1)))
+    (lambda (limit)
+      (let* ((seed (car state))
+             (step1 (logxor seed (logand uint32-max (ash seed 13))))
+             (step2 (logxor step1 (logand uint32-max (ash seed -17))))
+             (final (logxor step2 (logand uint32-max (ash step2 5)))))
+        (setcar state final)
+        (mod final limit)))))
+
 (def-example-group "Maps"
   "Functions in this category take a transforming function, which
 is then applied sequentially to each or selected elements of the
@@ -1928,15 +1939,10 @@ related predicates."
       (list (-to-head 2 l) l)) => '((3 1 2 4 5) (1 2 3 4 5)))
 
   (defexamples -shuffle
-    (progn
-      (random "dash1")
-      (-shuffle '(1 2 3 4 5 6 7))) => '(2 7 6 4 5 1 3)
-    (progn
-      (random "dash2")
-      (-shuffle '(1 2 3 4 5 6 7))) => '(1 5 2 4 3 7 6)
+    (-shuffle '(1 2 3 4 5 6 7) (make-xorshift32-rng #xcafe)) => '(7 6 1 2 3 5 4)
+    (-shuffle '(1 2 3 4 5 6 7) (make-xorshift32-rng #xbeef)) => '(4 3 2 5 6 7 1)
     (let ((l '(1 2 3 4 5 6 7)))
-      (random "dash3")
-      (list (-shuffle '(1 2 3 4 5 6 7)) l)) => '((3 4 1 5 7 6 2) (1 2 3 4 5 6 7))
+      (list (-shuffle '(1 2 3 4 5 6 7) (make-xorshift32-rng #xdead)) l)) => '((3 4 6 5 1 2 7) (1 2 3 4 5 6 7))
     (-shuffle nil) => nil)
 
   (defexamples -list

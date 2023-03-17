@@ -3248,14 +3248,14 @@ if the first element should sort before the second."
          (target (pop rest)))
     (cons target (nconc head rest))))
 
-(defun -shuffle (list)
-  "Return a new shuffled LIST.
+(defun -shuffle (list &optional rng)
+  "Return a new shuffled LIST, shuffling using RNG.
 
 The returned list is shuffled by using Fisher-Yates' Algorithm. See
 https://en.wikipedia.org/wiki/Fisher-Yates_shuffle for more details."
   (declare (pure t) (side-effect-free t))
   (let* ((len (length list))
-         (random-nums (-map #'random (number-sequence len 1 -1)))
+         (random-nums (-map (or rng #'random) (number-sequence len 1 -1)))
          result)
     (--each random-nums
       (setq list (-to-head it list))

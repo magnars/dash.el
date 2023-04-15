@@ -2467,7 +2467,7 @@ replaced with new ones.  This is useful when you need to clone a
 structure such as plist or alist.
 
 ```el
-(let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) ;; => (1 2 3)
+(let* ((a (list (list 1))) (b (-clone a))) (setcar (car a) 2) b) ;; => ((1))
 ```
 
 ## Threading macros

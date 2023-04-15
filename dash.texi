@@ -3714,8 +3714,8 @@ structure such as plist or alist.
 
 @example
 @group
-(let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b)
-    @result{} (1 2 3)
+(let* ((a (list (list 1))) (b (-clone a))) (setcar (car a) 2) b)
+    @result{} ((1))
 @end group
 @end example
 @end defun

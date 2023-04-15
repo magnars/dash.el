@@ -165,7 +165,7 @@ new list."
     ;; Test for destructive modification.
     (let ((l1 (list 1 2 3))
           (l2 (list 4 5 6)))
-      (--splice (= it 2) l2 l1)
+      (ignore (--splice (= it 2) l2 l1))
       (list l1 l2))
     => '((1 2 3) (4 5 6)))
 
@@ -824,10 +824,10 @@ value rather than consuming a list to produce a single value."
     (--iterate nil nil 1) => '(nil)
     (--iterate nil nil 2) => '(nil nil)
     (--iterate (setq it -1) 1 3) => '(1 -1 -1)
-    (let (l) (--iterate (push 1 l) (push 0 l) -1) l) => ()
-    (let (l) (--iterate (push 1 l) (push 0 l) 0) l) => ()
-    (let (l) (--iterate (push 1 l) (push 0 l) 1) l) => '(0)
-    (let (l) (--iterate (push 1 l) (push 0 l) 2) l) => '(1 0))
+    (let (l) (ignore (--iterate (push 1 l) (push 0 l) -1)) l) => ()
+    (let (l) (ignore (--iterate (push 1 l) (push 0 l) 0)) l) => ()
+    (let (l) (ignore (--iterate (push 1 l) (push 0 l) 1)) l) => '(0)
+    (let (l) (ignore (--iterate (push 1 l) (push 0 l) 2)) l) => '(1 0))
 
   (defexamples -unfold
     (-unfold (lambda (x) (unless (= x 0) (cons x (1- x)))) 10) => '(10 9 8 7 6 5 4 3 2 1)
@@ -2013,7 +2013,7 @@ related predicates."
     => "{elisp-mode : {foo : {bar -> booze}, baz -> qux}, c-mode : {foo -> bla, bum -> bam}}")
 
   (defexamples -clone
-    (let* ((a '(1 2 3)) (b (-clone a))) (nreverse a) b) => '(1 2 3)))
+    (let* ((a (list (list 1))) (b (-clone a))) (setcar (car a) 2) b) => '((1))))
 
 (def-example-group "Threading macros"
   "Macros that conditionally combine sequential forms for brevity

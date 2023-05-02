@@ -1173,7 +1173,7 @@ Return all prefixes of `list`.
 
 #### -tails `(list)`
 
-Return all suffixes of `list`
+Return all suffixes of `list`.
 
 ```el
 (-tails '(1 2 3 4)) ;; => ((1 2 3 4) (2 3 4) (3 4) (4) nil)
@@ -2312,8 +2312,8 @@ Return the sorted list.  `list` is `not` modified by side effects.
 if the first element should sort before the second.
 
 ```el
-(-sort '< '(3 1 2)) ;; => (1 2 3)
-(-sort '> '(3 1 2)) ;; => (3 2 1)
+(-sort #'< '(3 1 2)) ;; => (1 2 3)
+(-sort #'> '(3 1 2)) ;; => (3 2 1)
 (--sort (< it other) '(3 1 2)) ;; => (1 2 3)
 ```
 

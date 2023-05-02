@@ -895,9 +895,9 @@ value rather than consuming a list to produce a single value."
     (--every it-index '()) => t
     (--every it-index '(1)) => 0
     (--every it-index '(1 2)) => 1
-    (let ((r 'r)) (-every (lambda (x) (setq r x)) '()) r) => 'r
-    (let ((r 'r)) (-every (lambda (x) (setq r x)) '(nil 1)) r) => nil
-    (let (r) (-every (lambda (x) (setq r x)) '(0 1)) r) => 1
+    (let ((r 'r)) (ignore (-every (lambda (x) (setq r x)) '())) r) => 'r
+    (let ((r 'r)) (ignore (-every (lambda (x) (setq r x)) '(nil 1))) r) => nil
+    (let (r) (ignore (-every (lambda (x) (setq r x)) '(0 1))) r) => 1
     (let (i) (--every (ignore (setq i it-index)) '()) i) => nil
     (let (i) (--every (ignore (setq i it-index)) '(a)) i) => 0
     (let (i) (--every (ignore (setq i it-index)) '(a b)) i) => 0)
@@ -1916,10 +1916,10 @@ related predicates."
     (-butlast nil) => nil)
 
   (defexamples -sort
-    (-sort '< '(3 1 2)) => '(1 2 3)
-    (-sort '> '(3 1 2)) => '(3 2 1)
+    (-sort #'< '(3 1 2)) => '(1 2 3)
+    (-sort #'> '(3 1 2)) => '(3 2 1)
     (--sort (< it other) '(3 1 2)) => '(1 2 3)
-    (let ((l '(3 1 2))) (-sort '> l) l) => '(3 1 2))
+    (let ((l '(3 1 2))) (ignore (-sort #'> l)) l) => '(3 1 2))
 
   (defexamples -list
     (-list 1) => '(1)

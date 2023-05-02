@@ -1534,7 +1534,7 @@ Return all prefixes of @var{list}.
 
 @anchor{-tails}
 @defun -tails (list)
-Return all suffixes of @var{list}
+Return all suffixes of @var{list}.
 
 @example
 @group
@@ -3464,11 +3464,11 @@ if the first element should sort before the second.
 
 @example
 @group
-(-sort '< '(3 1 2))
+(-sort #'< '(3 1 2))
     @result{} (1 2 3)
 @end group
 @group
-(-sort '> '(3 1 2))
+(-sort #'> '(3 1 2))
     @result{} (3 2 1)
 @end group
 @group

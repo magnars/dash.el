@@ -35,6 +35,15 @@ See the end of the file for license conditions.
   (-permutations '(1 1 2)) ; => '((1 1 2) (1 2 1) (2 1 1))
   ```
 
+- Several functions which are documented as returning a fresh, mutable
+  object (such as a copy of one of their arguments) are no longer
+  marked as `pure`.  Pure functions called with constant arguments are
+  evaluated during byte-compilation; the resulting value is an
+  immutable constant, and thus unsafe to modify destructively.  The
+  functions in question are: `-clone`, `-cons*`, `-drop-last`,
+  `-interleave`, `-interpose`, `-iota`, `-non-nil`, `-repeat`,
+  `-slice`, `-snoc`, `-split-at`, `-take`, `-take-last`.
+
 #### New features
 
 - The function `-contains?` now returns the matching tail of the list

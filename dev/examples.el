@@ -1363,7 +1363,7 @@ related predicates."
     (-powerset '()) => '(())
     (-powerset '(x y)) => '((x y) (x) (y) ())
     (-powerset '(x y z)) => '((x y z) (x y) (x z) (x) (y z) (y) (z) ())
-    (let ((p (-powerset '()))) (setcar p t) (-powerset '())) => '(()))
+    (let* ((l (list 1)) (p (-powerset l))) (setcar l 2) p) => '((1) ()))
 
   (defexamples -permutations
     (-permutations '()) => '(())

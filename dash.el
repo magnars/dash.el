@@ -607,7 +607,7 @@ Its anaphoric counterpart is `--keep'."
 
 (defun -non-nil (list)
   "Return a copy of LIST with all nil items removed."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (--filter it list))
 
 (defmacro --map-indexed (form list)
@@ -856,7 +856,7 @@ See also: `-splice', `-insert-at'"
 The last 2 elements of ARGS are used as the final cons of the
 result, so if the final element of ARGS is not a list, the result
 is a dotted list.  With no ARGS, return nil."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (let* ((len (length args))
          (tail (nthcdr (- len 2) args))
          (last (cdr tail)))
@@ -871,7 +871,7 @@ is a dotted list.  With no ARGS, return nil."
 This is like `cons', but operates on the end of list.
 
 If any ELEMENTS are given, append them to the list as well."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (-concat list (list elem) elements))
 
 (defmacro --first (form list)
@@ -1172,7 +1172,7 @@ modulo the length of the list.
 
 If STEP is a number, only each STEPth item in the resulting
 section is returned.  Defaults to 1."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (let ((length (length list))
         (new-list nil))
     ;; to defaults to the end of the list
@@ -1247,7 +1247,7 @@ Return a copy of LIST if it contains N items or fewer.
 Return nil if N is zero or less.
 
 See also: `-take-last'."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (--take-while (< it-index n) list))
 
 (defun -take-last (n list)
@@ -1256,7 +1256,7 @@ Return a copy of LIST if it contains N items or fewer.
 Return nil if N is zero or less.
 
 See also: `-take'."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (copy-sequence (last list n)))
 
 (defalias '-drop #'nthcdr
@@ -1273,7 +1273,7 @@ Return a copy of LIST if N is zero or less.
 Return nil if LIST contains N items or fewer.
 
 See also: `-drop'."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (nbutlast (copy-sequence list) n))
 
 (defun -split-at (n list)
@@ -1283,7 +1283,7 @@ new list of the first N elements of LIST, and DROP is the
 remaining elements of LIST (not a copy).  TAKE and DROP are like
 the results of `-take' and `-drop', respectively, but the split
 is done in a single list traversal."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (let (result)
     (--each-while list (< it-index n)
       (push (pop list) result))
@@ -1641,7 +1641,7 @@ elements of LIST.  Keys are compared by `equal'."
 
 (defun -interpose (sep list)
   "Return a new list of all elements in LIST separated by SEP."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (let (result)
     (when list
       (!cons (car list) result)
@@ -1653,7 +1653,7 @@ elements of LIST.  Keys are compared by `equal'."
 
 (defun -interleave (&rest lists)
   "Return a new list of the first item in each list, then the second etc."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (when lists
     (let (result)
       (while (-none? 'null lists)
@@ -3321,7 +3321,7 @@ backward compatibility and is otherwise deprecated."
 (defun -repeat (n x)
   "Return a new list of length N with each element being X.
 Return nil if N is less than 1."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (and (>= n 0) (make-list n x)))
 
 (defun -sum (list)
@@ -3396,7 +3396,7 @@ Starts from START and adds STEP each time.  The default START is
 zero, the default STEP is 1.
 This function takes its name from the corresponding primitive in
 the APL language."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (unless (natnump count)
     (signal 'wrong-type-argument (list #'natnump count)))
   (or start (setq start 0))
@@ -3628,7 +3628,7 @@ Non-branch nodes are simply copied."
 The new list has the same elements and structure but all cons are
 replaced with new ones.  This is useful when you need to clone a
 structure such as plist or alist."
-  (declare (pure t) (side-effect-free t))
+  (declare (side-effect-free t))
   (-tree-map #'identity list))
 
 ;;; Combinators

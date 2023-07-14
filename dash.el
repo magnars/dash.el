@@ -2919,7 +2919,7 @@ Return nil if `-compare-fn' is not a known test function."
   (declare (side-effect-free error-free))
   ;; In theory this could also recognize values that are custom
   ;; `hash-table-test's, but too often the :test name is different
-  ;; from the equality function, so it doesn't seem worthwile.
+  ;; from the equality function, so it doesn't seem worthwhile.
   (car (memq (or -compare-fn #'equal) '(equal eq eql))))
 
 (defvar dash--short-list-length 32

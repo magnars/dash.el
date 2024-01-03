@@ -1,6 +1,6 @@
 # Dash NEWS -- history of user-visible changes
 
-Copyright (C) 2012-2023 Free Software Foundation, Inc.
+Copyright (C) 2012-2024 Free Software Foundation, Inc.
 
 See the end of the file for license conditions.
 

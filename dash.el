@@ -1,6 +1,6 @@
 ;;; dash.el --- A modern list library for Emacs  -*- lexical-binding: t -*-
 
-;; Copyright (C) 2012-2023 Free Software Foundation, Inc.
+;; Copyright (C) 2012-2024 Free Software Foundation, Inc.
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Version: 2.19.1

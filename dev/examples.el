@@ -1356,8 +1356,8 @@ related predicates."
     => '(a b)
     (let ((dash--short-list-length 0)) (-intersection '(a b) '(b a a)))
     => '(a b)
-    (let ((-compare-fn #'string=)) (-intersection '(a) '("a")) => '(a))
-    (let ((-compare-fn #'string=)) (-intersection '("a") '(a)) => '("a")))
+    (let ((-compare-fn #'string=)) (-intersection '(a) '("a"))) => '(a)
+    (let ((-compare-fn #'string=)) (-intersection '("a") '(a))) => '("a"))
 
   (defexamples -powerset
     (-powerset '()) => '(())

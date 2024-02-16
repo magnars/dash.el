@@ -53,7 +53,8 @@ differences in implementation between systems.  Used in place of
          dash--epsilon)))
 
 (defun dash--example-to-test (example)
-  "Return an ERT assertion form based on EXAMPLE."
+  "Return an ERT assertion form based on EXAMPLE.
+Signal an error if EXAMPLE is malformed."
   (pcase example
     (`(,actual => ,expected) `(should (equal ,actual ,expected)))
     (`(,actual ~> ,expected) `(should (approx= ,actual ,expected)))
@@ -75,13 +76,14 @@ See `dash--groups'."
   "Define a set of EXAMPLES and corresponding ERT tests for FN.
 See `dash--groups'."
   (declare (indent defun))
-  (setq examples (-partition 3 examples))
-  `(progn
-     (push (cons ',fn ',examples) dash--groups)
-     (ert-deftest ,fn ()
-       ;; Emacs 28.1 complains about an empty `let' body if the test
-       ;; body is empty.
-       ,@(or (mapcar #'dash--example-to-test examples) '(nil)))))
+  (let (triples tests)
+    (while (let ((triple (-take 3 examples)))
+             (push (dash--example-to-test triple) tests)
+             (push triple triples)
+             (setq examples (nthcdr 3 examples))))
+    `(progn
+       (push (cons ',fn ',(nreverse triples)) dash--groups)
+       (ert-deftest ,fn () ,@(nreverse tests)))))
 
 ;; Added in Emacs 25.1.
 (defvar text-quoting-style)

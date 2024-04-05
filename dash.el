@@ -3298,6 +3298,8 @@ Return the sorted list.  LIST is NOT modified by side effects.
 COMPARATOR is called with two elements of LIST, and should return non-nil
 if the first element should sort before the second."
   (declare (important-return-value t))
+  ;; Not yet worth changing to (sort list :lessp comparator);
+  ;; still seems as fast or slightly faster.
   (sort (copy-sequence list) comparator))
 
 (defmacro --sort (form list)

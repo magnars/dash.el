@@ -2108,7 +2108,7 @@ last item in second form, etc."
 
 Insert X at the position signified by the symbol `it' in the first
 form.  If there are more forms, insert the first form at the position
-signified by `it' in in second form, etc."
+signified by `it' in the second form, etc."
   (declare (debug (form body)))
   `(-as-> ,x it ,@forms))
 

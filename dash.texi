@@ -3778,7 +3778,7 @@ Starting with the value of @var{x}, thread each expression through @var{forms}.
 
 Insert @var{x} at the position signified by the symbol @code{it} in the first
 form.  If there are more forms, insert the first form at the position
-signified by @code{it} in in second form, etc.
+signified by @code{it} in the second form, etc.
 
 @example
 @group

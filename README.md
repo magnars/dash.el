@@ -2507,7 +2507,7 @@ Starting with the value of `x`, thread each expression through `forms`.
 
 Insert `x` at the position signified by the symbol `it` in the first
 form.  If there are more forms, insert the first form at the position
-signified by `it` in in second form, etc.
+signified by `it` in the second form, etc.
 
 ```el
 (--> "def" (concat "abc" it "ghi")) ;; => "abcdefghi"

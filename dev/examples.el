@@ -2064,6 +2064,14 @@ or readability."
     (-as-> "def" string (concat "abc" string "ghi") upcase) => "ABCDEFGHI"
     (-as-> "def" string (concat "abc" string "ghi") (upcase string)) => "ABCDEFGHI")
 
+  (defexamples ->>as->
+    (->>as-> i 1) => 1
+    (->>as-> i (+ i 1) 1) => 2
+    (->> 1 (->>as-> i (+ i 1))) => 2
+    (->> "def" (->>as-> string (concat "abc" string "ghi"))) => "abcdefghi"
+    (->> "def" (->>as-> string (concat "abc" string "ghi")) upcase) => "ABCDEFGHI"
+    (->> "def" (->>as-> string (concat "abc" string "ghi") (upcase string))) => "ABCDEFGHI")
+
   (defexamples -some->
     (-some-> '(2 3 5)) => '(2 3 5)
     (-some-> 5 square) => 25

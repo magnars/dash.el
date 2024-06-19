@@ -152,6 +152,7 @@ Functions returning a sublist of the original list.
 Functions returning a modified copy of the input list.
 
 * [`-keep`](#-keep-fn-list) `(fn list)`
+* [`-keep-indexed-n`](#-keep-indexed-n-num-fn-list) `(num fn list)`
 * [`-concat`](#-concat-rest-sequences) `(&rest sequences)`
 * [`-flatten`](#-flatten-l) `(l)`
 * [`-flatten-n`](#-flatten-n-num-list) `(num list)`
@@ -787,6 +788,22 @@ Its anaphoric counterpart is `--keep`.
 (-keep #'cdr '((1 2 3) (4 5) (6))) ;; => ((2 3) (5))
 (-keep (lambda (n) (and (> n 3) (* 10 n))) '(1 2 3 4 5 6)) ;; => (40 50 60)
 (--keep (and (> it 3) (* 10 it)) '(1 2 3 4 5 6)) ;; => (40 50 60)
+```
+
+#### -keep-indexed-n `(num fn list)`
+
+Return a new list of at most `num` elements of the non-`nil` results of
+applying `fn` to each item in `list`.
+
+Each element of `list` in turn is bound to `it` and its index within `list`
+to `it-index` before evaluating `form`.
+
+Its anaphoric counterpart is `--keep-indexed-n`.
+
+```el
+(-keep-indexed-n 2 (lambda (i n) (when n `(,i \, n))) '(nil "a" "b" nil)) ;; => ((1 . "a") (2 . "b"))
+(--keep-indexed-n 2 (and (> it 3) it) '(1 2 3 4 2 1 7 8)) ;; => (4 7)
+(--keep-indexed-n 3 (stringp it) '(1 2 "a" nil 3 "b" "c" nil 4)) ;; => (t t t)
 ```
 
 #### -concat `(&rest sequences)`
@@ -3340,6 +3357,7 @@ Assignment")`](https://gnu.org/software/emacs/manual/html_node/emacs/Copyright-A
   `-common-prefix`, `-common-suffix`, and various other improvements.
 - [Paul Pogonyshev](https://github.com/doublep) contributed `-each-r` and
   `-each-r-while`.
+- [Tim Jones](https://github.com/mrtimdog) contributed `-keep-indexed-n`.
 
 Thanks!
 

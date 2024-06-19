@@ -294,6 +294,9 @@ other improvements.
 @item
 @url{https://github.com/doublep, Paul Pogonyshev} contributed
 @code{-each-r} and @code{-each-r-while}.
+@item
+@url{https://github.com/mrtimdog, Tim Jones} contributed
+@code{-keep-indexed-n}.
 @end itemize
 
 Thanks!

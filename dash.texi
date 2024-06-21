@@ -905,6 +905,32 @@ Its anaphoric counterpart is @code{--keep}.
 @end example
 @end defun
 
+@anchor{-keep-indexed-n}
+@defun -keep-indexed-n (num fn list)
+Return a new list of at most @var{num} elements of the non-@code{nil} results of
+applying @var{fn} to each item in @var{list}.
+
+Each element of @var{list} in turn is bound to @code{it} and its index within @var{list}
+to @code{it-index} before evaluating @var{form}.
+
+Its anaphoric counterpart is @code{--keep-indexed-n}.
+
+@example
+@group
+(-keep-indexed-n 2 (lambda (i n) (when n `(,i \, n))) '(nil "a" "b" nil))
+    @result{} ((1 . "a") (2 . "b"))
+@end group
+@group
+(--keep-indexed-n 2 (and (> it 3) it) '(1 2 3 4 2 1 7 8))
+    @result{} (4 7)
+@end group
+@group
+(--keep-indexed-n 3 (stringp it) '(1 2 "a" nil 3 "b" "c" nil 4))
+    @result{} (t t t)
+@end group
+@end example
+@end defun
+
 @anchor{-concat}
 @defun -concat (&rest sequences)
 Concatenate all the arguments and make the result a list.
@@ -5016,6 +5042,9 @@ other improvements.
 @item
 @url{https://github.com/doublep, Paul Pogonyshev} contributed
 @code{-each-r} and @code{-each-r-while}.
+@item
+@url{https://github.com/mrtimdog, Tim Jones} contributed
+@code{-keep-indexed-n}.
 @end itemize
 
 Thanks!

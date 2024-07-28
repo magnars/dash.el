@@ -2370,363 +2370,362 @@ or readability."
     ;; FIXME: Byte-compiler chokes on this in Emacs < 26.
     (eval '(let (a) (-setq a)) t) !!> wrong-number-of-arguments)
 
-  (defexamples pcase-let
-    (pcase-let (((dash [a (b c) d]) [1 (2 3) 4])) (list a b c d)) => '(1 2 3 4)
-    (pcase-let (((dash (a b c . d)) (list 1 2 3 4 5 6))) (list a b c d)) => '(1 2 3 (4 5 6))
-    (pcase-let (((dash (&plist :foo foo :bar bar)) (list :baz 3 :foo 1 :qux 4 :bar 2))) (list foo bar)) => '(1 2)
-    (let ((a (list 1 2 3))
-          (b (list 'a 'b 'c)))
-      (pcase-let (((dash (a . b)) a) ((dash (c . d)) b)) (list a b c d))) => '(1 (2 3) a (b c))
-    (pcase-let (((dash a) "foo") ((dash b) "bar")) (list a b)) => '("foo" "bar")
-    (pcase-let (((dash foo) (list 1 2 3))) foo) => '(1 2 3)
-    (pcase-let (((dash (&plist :foo foo :bar bar)) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
-    (pcase-let (((dash (&plist :foo (a b) :bar c)) (list :foo (list 1 2) :bar 3))) (list a b c)) => '(1 2 3)
-    ;; nil value in plist means subsequent cons matches are nil, because
-    ;; (car nil) => nil
-    (pcase-let (((dash (&plist :foo (a b))) (list :bar 1))) (list a b)) => '(nil nil)
-    (pcase-let (((dash (&plist :foo (&plist :baz baz) :bar bar)) (list :foo (list 1 2 :baz 2 :bar 4) :bar 3))) (list baz bar)) => '(2 3)
-    (pcase-let (((dash (_ (&plist :level level :title title))) (list 'paragraph (list :title "foo" :level 2)))) (list level title)) => '(2 "foo")
-    (pcase-let (((dash (&alist :foo (&plist 'face face 'invisible inv) :bar bar)) (list (cons :bar 2) (cons :foo (list 'face 'foo-face 'invisible t))))) (list bar face inv)) => '(2 foo-face t)
-    (pcase-let (((dash (a (b c) d)) (list 1 (list 2 3) 4 5 6))) (list a b c d)) => '(1 2 3 4)
-    (pcase-let (((dash [a _ c]) [1 2 3 4])) (list a c)) => '(1 3)
-    (pcase-let (((dash [_ _ _ a]) (vector 1 2 3 4))) a) => 4
-    (pcase-let (((dash [a _ _ _ b]) (vector 1 2 3 4 5))) (list a b)) => '(1 5)
-    (pcase-let (((dash [a (b c) d]) [1 (2 3) 4])) (list a b c d)) => '(1 2 3 4)
-    (pcase-let (((dash [a b c]) (string 102 111 98 97 114))) (list a b c)) => '(?f ?o ?b)
-    (pcase-let (((dash [a b c]) "abcdef")) (list a b c)) => '(?a ?b ?c)
-    (pcase-let (((dash [a (b [c]) d]) [1 (2 [3 4]) 5 6])) (list a b c d)) => '(1 2 3 5)
-    (pcase-let (((dash (a b c d)) (list 1 2 3 4 5 6))) (list a b c d)) => '(1 2 3 4)
-    (pcase-let (((dash ([a b])) (list (vector 1 2 3)))) (list a b)) => '(1 2)
-    ;; d is bound to nil. I don't think we want to error in such a case.
-    ;; After all (car nil) => nil
-    (pcase-let (((dash (a b c d)) (list 1 2 3))) (list a b c d)) => '(1 2 3 nil)
-    (pcase-let (((dash [a b c]) [1 2 3 4])) (list a b c)) => '(1 2 3)
-    (pcase-let (((dash [a]) [1 2 3 4])) a) => 1
-    (pcase-let (((dash [a b &rest c]) "abcdef")) (list a b c)) => '(?a ?b "cdef")
-    (pcase-let (((dash [a b &rest c]) [1 2 3 4 5 6])) (list a b c)) => '(1 2 [3 4 5 6])
-    (pcase-let (((dash [a b &rest [c d]]) [1 2 3 4 5 6])) (list a b c d)) => '(1 2 3 4)
-    ;; here we error, because "vectors" are rigid, immutable structures,
-    ;; so we should know how many elements there are
-    (pcase-let (((dash [a b c d]) [1 2 3])) (+ a b c d)) !!> args-out-of-range
-    (pcase-let (((dash (a b . c)) (cons 1 (cons 2 3)))) (list a b c)) => '(1 2 3)
-    (pcase-let (((dash (_ _ . [a b])) (cons 1 (cons 2 (vector 3 4))))) (list a b)) => '(3 4)
-    (pcase-let (((dash (_ _ a b)) (cons 1 (cons 2 (list 3 4))))) (list a b)) => '(3 4)
-    (pcase-let (((dash ([a b] _ _ c)) (list (vector 1 2) 3 4 5))) (list a b c)) => '(1 2 5)
-    ;; final cdr optimization
-    (pcase-let (((dash (((a)))) (list (list (list 1 2) 3) 4))) a) => 1
-    (pcase-let (((dash (((a b) c) d)) (list (list (list 1 2) 3) 4))) (list a b c d)) => '(1 2 3 4)
-    (pcase-let (((dash (((a b) . c) . d)) (list (list (list 1 2) 3) 4))) (list a b c d)) => '(1 2 (3) (4))
-    (pcase-let (((dash (((a b) c))) (list (list (list 1 2) 3) 4))) (list a b c)) => '(1 2 3)
-    (pcase-let (((dash (((a b) . c))) (list (list (list 1 2) 3) 4))) (list a b c)) => '(1 2 (3))
-    ;; cdr-skip optimization
-    (pcase-let (((dash (_ (_ (_ a)))) (list 1 (list 2 (list 3 4))))) a) => 4
-    (pcase-let (((dash (_ (a))) (list 1 (list 2)))) a) => 2
-    (pcase-let (((dash (_ _ _ a)) (list 1 2 3 4 5))) a) => 4
-    (pcase-let (((dash (_ _ _ (a b))) (list 1 2 3 (list 4 5)))) (list a b)) => '(4 5)
-    (pcase-let (((dash (_ a _ b)) (list 1 2 3 4 5))) (list a b)) => '(2 4)
-    (pcase-let (((dash (_ a _ b _ c)) (list 1 2 3 4 5 6))) (list a b c)) => '(2 4 6)
-    (pcase-let (((dash (_ a _ b _ _ _ c)) (list 1 2 3 4 5 6 7 8))) (list a b c)) => '(2 4 8)
-    (pcase-let (((dash (_ a _ _ _ b _ c)) (list 1 2 3 4 5 6 7 8))) (list a b c)) => '(2 6 8)
-    (pcase-let (((dash (_ _ _ a _ _ _ b _ _ _ c)) (list 1 2 3 4 5 6 7 8 9 10 11 12))) (list a b c)) => '(4 8 12)
-    (pcase-let (((dash (_ (a b) _ c)) (list 1 (list 2 3) 4 5))) (list a b c)) => '(2 3 5)
-    (pcase-let (((dash (_ (a b) _ . c)) (list 1 (list 2 3) 4 5))) (list a b c)) => '(2 3 (5))
-    (pcase-let (((dash (_ (a b) _ (c d))) (list 1 (list 2 3) 4 (list 5 6)))) (list a b c d)) => '(2 3 5 6)
-    (pcase-let (((dash (_ (a b) _ _ _ (c d))) (list 1 (list 2 3) 4 5 6 (list 7 8)))) (list a b c d)) => '(2 3 7 8)
-    (pcase-let (((dash (_ (a b) _ c d)) (list 1 (list 2 3) 4 5 6))) (list a b c d)) => '(2 3 5 6)
-    (pcase-let (((dash (_ (a b) _ _ _ [c d])) (list 1 (list 2 3) 4 5 6 (vector 7 8)))) (list a b c d)) => '(2 3 7 8)
-    (pcase-let (((dash (_ [a b] _ _ _ [c d])) (list 1 (vector 2 3) 4 5 6 (vector 7 8)))) (list a b c d)) => '(2 3 7 8)
-    (pcase-let (((dash (_ _ _ . a)) (list 1 2 3 4 5))) a) => '(4 5)
-    (pcase-let (((dash (_ a _ _)) (list 1 2 3 4 5))) a) => 2
-    (pcase-let (((dash (_ . b)) (cons 1 2))) b) => 2
-    (pcase-let (((dash ([a b c d] . e)) (cons (vector 1 2 3 4) 5))) (list a b c d e)) => '(1 2 3 4 5)
-    (pcase-let (((dash ([a b c d] _ . e)) (cons (vector 1 2 3 4) (cons 5 6)))) (list a b c d e)) => '(1 2 3 4 6)
-    ;; late-binding optimization
-    (pcase-let (((dash (((a)))) (list (list (list 1 2) 3) 4))) a) => 1
-    (pcase-let (((dash (((&plist :foo a :bar b)))) (list (list (list :bar 1 :foo 2) 3) 4))) (list a b)) => '(2 1)
-    (pcase-let (((dash (((a b) c) d)) (list (list (list 1 2) 3) 4))) (list a b c d)) => '(1 2 3 4)
-    (pcase-let (((dash (((a b) c) . d)) (list (list (list 1 2) 3) 4))) (list a b c d)) => '(1 2 3 (4))
-    (pcase-let (((dash (((a b) c))) (list (list (list 1 2) 3) 4))) (list a b c)) => '(1 2 3)
-    (pcase-let (((dash (a b c d)) (list 1 2 3 4))) (list a b c d)) => '(1 2 3 4)
-    (pcase-let (((dash (a)) (list 1 2 3 4))) (list a)) => '(1)
-    (pcase-let (((dash (_ a)) (list 1 2 3 4))) (list a)) => '(2)
-    (pcase-let (((dash (_ _ a)) (list 1 2 3 4))) (list a)) => '(3)
-    (pcase-let (((dash (_ _ . a)) (list 1 2 3 4))) a) => '(3 4)
-    (pcase-let (((dash (_ _ [a b])) (list 1 2 (vector 3 4)))) (list a b)) => '(3 4)
-    (pcase-let (((dash (a _ _ b)) (list 1 2 3 4 5 6 7 8))) (list a b)) => '(1 4)
-    (pcase-let (((dash (_ _ a _ _ b)) (list 1 2 3 4 5 6 7 8))) (list a b)) => '(3 6)
-    (pcase-let (((dash (_ _ a _ _ . b)) (list 1 2 3 4 5 6 7 8))) (cons a b)) => '(3 6 7 8)
-    (pcase-let (((dash (_ a _ b)) (list 1 2 3 4))) (list a b)) => '(2 4)
-    (pcase-let (((dash (a b c (d e))) (list 1 2 3 (list 4 5)))) (list a b c d e)) => '(1 2 3 4 5)
-    (pcase-let (((dash (_ _ (_ _ (_ _ a)))) (list 1 2 (list 3 4 (list 5 6 7))))) a) => 7
-    (pcase-let (((dash (_ (_ (_ a)))) (list 1 (list 2 (list 3 4))))) a) => 4
-    (pcase-let (((dash (_ _ &plist :foo a :bar b)) (list 1 2 :bar 2 :foo 1))) (list a b)) => '(1 2)
-    ;; &keys support
-    (pcase-let (((dash (_ _ &keys :foo a :bar b)) (list 1 2 :bar 4 :foo 3))) (list a b)) => '(3 4)
-    (pcase-let (((dash (a _ &keys :foo b :bar c)) (list 1 2 :bar 4 :foo 3))) (list a b c)) => '(1 3 4)
-    (pcase-let (((dash (a _ _ _ &keys :foo b :bar c)) (list 1 2 3 4 :bar 6 :foo 5))) (list a b c)) => '(1 5 6)
-    (pcase-let (((dash (a b &keys :foo c :bar d)) (list 1 2 :bar 4 :foo 3))) (list a b c d)) => '(1 2 3 4)
-    (pcase-let (((dash (a b &keys)) (list 1 2 :bar 4 :foo 3))) (list a b)) => '(1 2)
-    (pcase-let (((dash (&keys :foo a :bar b)) (list 1 2 :bar 4 :foo 3))) (list a b)) => '(3 4)
-    (pcase-let (((dash (a b (c _ _ &keys :foo [d _ (&alist :bar (e &keys :baz f) :qux (&plist :fux g))] :mux h) i)) (list 1 2 (list 3 'skip 'skip :foo (vector 4 'skip (list (cons :bar (list 5 :baz 6)) (cons :qux (list :fux 7)))) :mux 8) 9))) (list a b c d e f g h i)) => '(1 2 3 4 5 6 7 8 9)
-    ;; single-binding optimization for vectors and kv
-    (pcase-let (((dash [_ [_ [_ a]]]) (vector 1 (vector 2 (vector 3 4))))) a) => 4
-    (pcase-let (((dash [a _ _ _]) (vector 1 2 3 4))) a) => 1
-    (pcase-let (((dash [_ _ _ a]) (vector 1 2 3 4))) a) => 4
-    (pcase-let (((dash [_ _ a _]) (vector 1 2 3 4))) a) => 3
-    (pcase-let (((dash [a [_ [_ b]]]) (vector 1 (vector 2 (vector 3 4))))) (list a b)) => '(1 4)
-    (pcase-let (((dash [(a _ b)]) (vector (list 1 2 3 4)))) (list a b)) => '(1 3)
-    (pcase-let (((dash (&plist 'a a)) (list 'a 1 'b 2))) a) => 1
-    (pcase-let (((dash (&plist 'a [a b])) (list 'a [1 2] 'b 3))) (list a b)) => '(1 2)
-    (pcase-let (((dash (&plist 'a [a b] 'c c)) (list 'a [1 2] 'c 3))) (list a b c)) => '(1 2 3)
-    ;; mixing dot and &alist
-    (pcase-let (((dash (x y &alist 'a a 'c c)) (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)))) (list x y a c)) => '(1 2 b d)
-    (pcase-let (((dash (_ _ &alist 'a a 'c c)) (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)))) (list a c)) => '(b d)
-    (pcase-let (((dash (x y &alist 'a a 'c c)) (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)))) (list x y a c)) => '(1 2 b d)
-    (pcase-let (((dash (_ _ &alist 'a a 'c c)) (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)))) (list a c)) => '(b d)
-    (pcase-let (((dash (x y (&alist 'a a 'c c))) (list 1 2 '((a . b) (e . f) (g . h) (c . d))))) (list x y a c)) => '(1 2 b d)
-    (pcase-let (((dash (_ _ (&alist 'a a 'c c))) (list 1 2 '((a . b) (e . f) (g . h) (c . d))))) (list a c)) => '(b d)
-    ;; test bindings with no explicit val
-    (pcase-let (((dash a) nil)) a) => nil
-    (pcase-let (((dash a) nil)) a) => nil
-    (pcase-let (((dash a) nil) ((dash b) nil)) (list a b)) => '(nil nil)
-    (pcase-let (((dash a) nil) ((dash b) nil)) (list a b)) => '(nil nil)
-    ;; auto-derived match forms for kv destructuring
-    ;;; test that we normalize all the supported kv stores
-    (pcase-let (((dash (&plist :foo :bar)) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
-    (pcase-let (((dash (&alist :foo :bar)) (list (cons :foo 1) (cons :bar 2)))) (list foo bar)) => '(1 2)
-    (let ((hash (make-hash-table)))
-      (puthash :foo 1 hash)
-      (puthash :bar 2 hash)
-      (pcase-let (((dash (&hash :foo :bar)) hash)) (list foo bar))) => '(1 2)
-    (pcase-let (((dash (&hash :foo (&hash? :bar))) (make-hash-table))) bar) => nil
-    ;; Ensure `hash?' expander evaluates its arg only once
-    (let* ((ht (make-hash-table :test #'equal))
-           (fn (lambda (ht) (push 3 (gethash 'a ht)) ht)))
-      (puthash 'a nil ht)
-      (pcase-let (((dash (&hash? 'a)) (funcall fn ht))) a)) => '(3)
-    (pcase-let (((dash (_ &keys :foo :bar)) (list 'ignored :foo 1 :bar 2))) (list foo bar)) => '(1 2)
-    ;;; go over all the variations of match-form derivation
-    (pcase-let (((dash (&plist :foo foo :bar)) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
-    (pcase-let (((dash (&plist :foo foo :bar bar)) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
-    (pcase-let (((dash (&plist :foo x :bar y)) (list :foo 1 :bar 2))) (list x y)) => '(1 2)
-    (pcase-let (((dash (&plist :foo (x) :bar [y])) (list :foo (list 1) :bar (vector 2)))) (list x y)) => '(1 2)
-    (pcase-let (((dash (&plist 'foo 'bar)) (list 'foo 1 'bar 2))) (list foo bar)) => '(1 2)
-    (pcase-let (((dash (&plist 'foo foo 'bar)) (list 'foo 1 'bar 2))) (list foo bar)) => '(1 2)
-    (pcase-let (((dash (&plist 'foo foo 'bar bar)) (list 'foo 1 'bar 2))) (list foo bar)) => '(1 2)
-    (pcase-let (((dash (&plist 'foo x 'bar y)) (list 'foo 1 'bar 2))) (list x y)) => '(1 2)
-    (pcase-let (((dash (&alist "foo" "bar")) (list (cons "foo" 1) (cons "bar" 2)))) (list foo bar)) => '(1 2)
-    (pcase-let (((dash (&alist "foo" x "bar")) (list (cons "foo" 1) (cons "bar" 2)))) (list x bar)) => '(1 2)
-    (pcase-let (((dash (&alist "foo" x "bar" y)) (list (cons "foo" 1) (cons "bar" 2)))) (list x y)) => '(1 2)
-    (pcase-let (((dash (&alist :a 'b "c")) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
-    (pcase-let (((dash (&alist 'b :a "c")) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
-    (pcase-let (((dash (&alist 'b "c" :a)) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
-    (pcase-let (((dash (&alist "c" 'b :a)) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
-    (pcase-let (((dash (&alist "c" :a 'b)) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
-    (pcase-let (((dash (&alist :a "c" 'b)) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
-    ;; FIXME: Byte-compiler chokes on these in Emacs < 26, which were
-    ;;        for `-let'.
-    (eval '(pcase-let (((dash (&plist 'foo 1)) (list 'foo 'bar))) (list foo))) !!> error
-    (eval '(pcase-let (((dash (&plist foo :bar)) (list :foo :bar))) (list foo))) !!> error
-    ;; test the &as form
-    (pcase-let (((dash (items &as first . rest)) (list 1 2 3))) (list first rest items)) => '(1 (2 3) (1 2 3))
-    (pcase-let (((dash (all &as [vect &as a b] bar)) (list [1 2] 3))) (list a b bar vect all)) => '(1 2 3 [1 2] ([1 2] 3))
-    (pcase-let (((dash (all &as (list &as a b) bar)) (list (list 1 2) 3))) (list a b bar list all)) => '(1 2 3 (1 2) ((1 2) 3))
-    (pcase-let (((dash (x &as [a b])) (list (vector 1 2 3)))) (list a b x)) => '(1 2 ([1 2 3]))
-    (pcase-let (((dash (result &as [_ a] [_ b])) (list [1 2] [3 4]))) (list a b result)) => '(2 4 ([1 2] [3 4]))
-    (pcase-let (((dash (result &as [fst &as _ a] [snd &as _ b])) (list [1 2] [3 4]))) (list a b fst snd result)) => '(2 4 [1 2] [3 4] ([1 2] [3 4]))
-    (pcase-let (((dash [x &as a b &rest r]) (vector 1 2 3))) (list a b r x)) => '(1 2 [3] [1 2 3])
-    (pcase-let (((dash [x &as a]) (vector 1 2 3))) (list a x)) => '(1 [1 2 3])
-    (pcase-let (((dash [x &as _ _ a]) (vector 1 2 3))) (list a x)) => '(3 [1 2 3])
-    (pcase-let (((dash [x &as _ _ a]) (vector 1 2 (list 3 4)))) (list a x)) => '((3 4) [1 2 (3 4)])
-    (pcase-let (((dash [x &as _ _ (a b)]) (vector 1 2 (list 3 4)))) (list a b x)) => '(3 4 [1 2 (3 4)])
-    (pcase-let (((dash (b &as beg . end)) (cons 1 2))) (list beg end b)) => '(1 2 (1 . 2))
-    (pcase-let (((dash (plist &as &plist :a a :b b)) (list :a 1 :b 2))) (list a b plist)) => '(1 2 (:a 1 :b 2))
-    (pcase-let (((dash (alist &as &alist :a a :b b)) (list (cons :a 1) (cons :b 2)))) (list a b alist)) => '(1 2 ((:a . 1) (:b . 2)))
-    (pcase-let (((dash (list &as _ _ _ a _ _ _ b _ _ _ c)) (list 1 2 3 4 5 6 7 8 9 10 11 12))) (list a b c list)) => '(4 8 12 (1 2 3 4 5 6 7 8 9 10 11 12))
-    (pcase-let (((dash (x &as a b)) (list 1 2)) ((dash (y &as c d)) (list 3 4))) (list a b c d x y))
-    => '(1 2 3 4 (1 2) (3 4))
-    (pcase-let (((dash (&hash-or-plist :key)) (--doto (make-hash-table) (puthash :key "value" it)))) key)
-    => "value"
-    (pcase-let (((dash (&hash-or-plist :key)) '(:key "value"))) key)
-    => "value")
+  (when (fboundp 'pcase-defmacro)
+    (defexamples pcase-let
+      (pcase-let (((dash [a (b c) d]) [1 (2 3) 4])) (list a b c d)) => '(1 2 3 4)
+      (pcase-let (((dash (a b c . d)) (list 1 2 3 4 5 6))) (list a b c d)) => '(1 2 3 (4 5 6))
+      (pcase-let (((dash (&plist :foo foo :bar bar)) (list :baz 3 :foo 1 :qux 4 :bar 2))) (list foo bar)) => '(1 2)
+      (let ((a (list 1 2 3))
+            (b (list 'a 'b 'c)))
+        (pcase-let (((dash (a . b)) a) ((dash (c . d)) b)) (list a b c d))) => '(1 (2 3) a (b c))
+      (pcase-let (((dash a) "foo") ((dash b) "bar")) (list a b)) => '("foo" "bar")
+      (pcase-let (((dash foo) (list 1 2 3))) foo) => '(1 2 3)
+      (pcase-let (((dash (&plist :foo foo :bar bar)) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
+      (pcase-let (((dash (&plist :foo (a b) :bar c)) (list :foo (list 1 2) :bar 3))) (list a b c)) => '(1 2 3)
+      ;; nil value in plist means subsequent cons matches are nil, because
+      ;; (car nil) => nil
+      (pcase-let (((dash (&plist :foo (a b))) (list :bar 1))) (list a b)) => '(nil nil)
+      (pcase-let (((dash (&plist :foo (&plist :baz baz) :bar bar)) (list :foo (list 1 2 :baz 2 :bar 4) :bar 3))) (list baz bar)) => '(2 3)
+      (pcase-let (((dash (_ (&plist :level level :title title))) (list 'paragraph (list :title "foo" :level 2)))) (list level title)) => '(2 "foo")
+      (pcase-let (((dash (&alist :foo (&plist 'face face 'invisible inv) :bar bar)) (list (cons :bar 2) (cons :foo (list 'face 'foo-face 'invisible t))))) (list bar face inv)) => '(2 foo-face t)
+      (pcase-let (((dash (a (b c) d)) (list 1 (list 2 3) 4 5 6))) (list a b c d)) => '(1 2 3 4)
+      (pcase-let (((dash [a _ c]) [1 2 3 4])) (list a c)) => '(1 3)
+      (pcase-let (((dash [_ _ _ a]) (vector 1 2 3 4))) a) => 4
+      (pcase-let (((dash [a _ _ _ b]) (vector 1 2 3 4 5))) (list a b)) => '(1 5)
+      (pcase-let (((dash [a (b c) d]) [1 (2 3) 4])) (list a b c d)) => '(1 2 3 4)
+      (pcase-let (((dash [a b c]) (string 102 111 98 97 114))) (list a b c)) => '(?f ?o ?b)
+      (pcase-let (((dash [a b c]) "abcdef")) (list a b c)) => '(?a ?b ?c)
+      (pcase-let (((dash [a (b [c]) d]) [1 (2 [3 4]) 5 6])) (list a b c d)) => '(1 2 3 5)
+      (pcase-let (((dash (a b c d)) (list 1 2 3 4 5 6))) (list a b c d)) => '(1 2 3 4)
+      (pcase-let (((dash ([a b])) (list (vector 1 2 3)))) (list a b)) => '(1 2)
+      ;; d is bound to nil. I don't think we want to error in such a case.
+      ;; After all (car nil) => nil
+      (pcase-let (((dash (a b c d)) (list 1 2 3))) (list a b c d)) => '(1 2 3 nil)
+      (pcase-let (((dash [a b c]) [1 2 3 4])) (list a b c)) => '(1 2 3)
+      (pcase-let (((dash [a]) [1 2 3 4])) a) => 1
+      (pcase-let (((dash [a b &rest c]) "abcdef")) (list a b c)) => '(?a ?b "cdef")
+      (pcase-let (((dash [a b &rest c]) [1 2 3 4 5 6])) (list a b c)) => '(1 2 [3 4 5 6])
+      (pcase-let (((dash [a b &rest [c d]]) [1 2 3 4 5 6])) (list a b c d)) => '(1 2 3 4)
+      ;; here we error, because "vectors" are rigid, immutable structures,
+      ;; so we should know how many elements there are
+      (pcase-let (((dash [a b c d]) [1 2 3])) (+ a b c d)) !!> args-out-of-range
+      (pcase-let (((dash (a b . c)) (cons 1 (cons 2 3)))) (list a b c)) => '(1 2 3)
+      (pcase-let (((dash (_ _ . [a b])) (cons 1 (cons 2 (vector 3 4))))) (list a b)) => '(3 4)
+      (pcase-let (((dash (_ _ a b)) (cons 1 (cons 2 (list 3 4))))) (list a b)) => '(3 4)
+      (pcase-let (((dash ([a b] _ _ c)) (list (vector 1 2) 3 4 5))) (list a b c)) => '(1 2 5)
+      ;; final cdr optimization
+      (pcase-let (((dash (((a)))) (list (list (list 1 2) 3) 4))) a) => 1
+      (pcase-let (((dash (((a b) c) d)) (list (list (list 1 2) 3) 4))) (list a b c d)) => '(1 2 3 4)
+      (pcase-let (((dash (((a b) . c) . d)) (list (list (list 1 2) 3) 4))) (list a b c d)) => '(1 2 (3) (4))
+      (pcase-let (((dash (((a b) c))) (list (list (list 1 2) 3) 4))) (list a b c)) => '(1 2 3)
+      (pcase-let (((dash (((a b) . c))) (list (list (list 1 2) 3) 4))) (list a b c)) => '(1 2 (3))
+      ;; cdr-skip optimization
+      (pcase-let (((dash (_ (_ (_ a)))) (list 1 (list 2 (list 3 4))))) a) => 4
+      (pcase-let (((dash (_ (a))) (list 1 (list 2)))) a) => 2
+      (pcase-let (((dash (_ _ _ a)) (list 1 2 3 4 5))) a) => 4
+      (pcase-let (((dash (_ _ _ (a b))) (list 1 2 3 (list 4 5)))) (list a b)) => '(4 5)
+      (pcase-let (((dash (_ a _ b)) (list 1 2 3 4 5))) (list a b)) => '(2 4)
+      (pcase-let (((dash (_ a _ b _ c)) (list 1 2 3 4 5 6))) (list a b c)) => '(2 4 6)
+      (pcase-let (((dash (_ a _ b _ _ _ c)) (list 1 2 3 4 5 6 7 8))) (list a b c)) => '(2 4 8)
+      (pcase-let (((dash (_ a _ _ _ b _ c)) (list 1 2 3 4 5 6 7 8))) (list a b c)) => '(2 6 8)
+      (pcase-let (((dash (_ _ _ a _ _ _ b _ _ _ c)) (list 1 2 3 4 5 6 7 8 9 10 11 12))) (list a b c)) => '(4 8 12)
+      (pcase-let (((dash (_ (a b) _ c)) (list 1 (list 2 3) 4 5))) (list a b c)) => '(2 3 5)
+      (pcase-let (((dash (_ (a b) _ . c)) (list 1 (list 2 3) 4 5))) (list a b c)) => '(2 3 (5))
+      (pcase-let (((dash (_ (a b) _ (c d))) (list 1 (list 2 3) 4 (list 5 6)))) (list a b c d)) => '(2 3 5 6)
+      (pcase-let (((dash (_ (a b) _ _ _ (c d))) (list 1 (list 2 3) 4 5 6 (list 7 8)))) (list a b c d)) => '(2 3 7 8)
+      (pcase-let (((dash (_ (a b) _ c d)) (list 1 (list 2 3) 4 5 6))) (list a b c d)) => '(2 3 5 6)
+      (pcase-let (((dash (_ (a b) _ _ _ [c d])) (list 1 (list 2 3) 4 5 6 (vector 7 8)))) (list a b c d)) => '(2 3 7 8)
+      (pcase-let (((dash (_ [a b] _ _ _ [c d])) (list 1 (vector 2 3) 4 5 6 (vector 7 8)))) (list a b c d)) => '(2 3 7 8)
+      (pcase-let (((dash (_ _ _ . a)) (list 1 2 3 4 5))) a) => '(4 5)
+      (pcase-let (((dash (_ a _ _)) (list 1 2 3 4 5))) a) => 2
+      (pcase-let (((dash (_ . b)) (cons 1 2))) b) => 2
+      (pcase-let (((dash ([a b c d] . e)) (cons (vector 1 2 3 4) 5))) (list a b c d e)) => '(1 2 3 4 5)
+      (pcase-let (((dash ([a b c d] _ . e)) (cons (vector 1 2 3 4) (cons 5 6)))) (list a b c d e)) => '(1 2 3 4 6)
+      ;; late-binding optimization
+      (pcase-let (((dash (((a)))) (list (list (list 1 2) 3) 4))) a) => 1
+      (pcase-let (((dash (((&plist :foo a :bar b)))) (list (list (list :bar 1 :foo 2) 3) 4))) (list a b)) => '(2 1)
+      (pcase-let (((dash (((a b) c) d)) (list (list (list 1 2) 3) 4))) (list a b c d)) => '(1 2 3 4)
+      (pcase-let (((dash (((a b) c) . d)) (list (list (list 1 2) 3) 4))) (list a b c d)) => '(1 2 3 (4))
+      (pcase-let (((dash (((a b) c))) (list (list (list 1 2) 3) 4))) (list a b c)) => '(1 2 3)
+      (pcase-let (((dash (a b c d)) (list 1 2 3 4))) (list a b c d)) => '(1 2 3 4)
+      (pcase-let (((dash (a)) (list 1 2 3 4))) (list a)) => '(1)
+      (pcase-let (((dash (_ a)) (list 1 2 3 4))) (list a)) => '(2)
+      (pcase-let (((dash (_ _ a)) (list 1 2 3 4))) (list a)) => '(3)
+      (pcase-let (((dash (_ _ . a)) (list 1 2 3 4))) a) => '(3 4)
+      (pcase-let (((dash (_ _ [a b])) (list 1 2 (vector 3 4)))) (list a b)) => '(3 4)
+      (pcase-let (((dash (a _ _ b)) (list 1 2 3 4 5 6 7 8))) (list a b)) => '(1 4)
+      (pcase-let (((dash (_ _ a _ _ b)) (list 1 2 3 4 5 6 7 8))) (list a b)) => '(3 6)
+      (pcase-let (((dash (_ _ a _ _ . b)) (list 1 2 3 4 5 6 7 8))) (cons a b)) => '(3 6 7 8)
+      (pcase-let (((dash (_ a _ b)) (list 1 2 3 4))) (list a b)) => '(2 4)
+      (pcase-let (((dash (a b c (d e))) (list 1 2 3 (list 4 5)))) (list a b c d e)) => '(1 2 3 4 5)
+      (pcase-let (((dash (_ _ (_ _ (_ _ a)))) (list 1 2 (list 3 4 (list 5 6 7))))) a) => 7
+      (pcase-let (((dash (_ (_ (_ a)))) (list 1 (list 2 (list 3 4))))) a) => 4
+      (pcase-let (((dash (_ _ &plist :foo a :bar b)) (list 1 2 :bar 2 :foo 1))) (list a b)) => '(1 2)
+      ;; &keys support
+      (pcase-let (((dash (_ _ &keys :foo a :bar b)) (list 1 2 :bar 4 :foo 3))) (list a b)) => '(3 4)
+      (pcase-let (((dash (a _ &keys :foo b :bar c)) (list 1 2 :bar 4 :foo 3))) (list a b c)) => '(1 3 4)
+      (pcase-let (((dash (a _ _ _ &keys :foo b :bar c)) (list 1 2 3 4 :bar 6 :foo 5))) (list a b c)) => '(1 5 6)
+      (pcase-let (((dash (a b &keys :foo c :bar d)) (list 1 2 :bar 4 :foo 3))) (list a b c d)) => '(1 2 3 4)
+      (pcase-let (((dash (a b &keys)) (list 1 2 :bar 4 :foo 3))) (list a b)) => '(1 2)
+      (pcase-let (((dash (&keys :foo a :bar b)) (list 1 2 :bar 4 :foo 3))) (list a b)) => '(3 4)
+      (pcase-let (((dash (a b (c _ _ &keys :foo [d _ (&alist :bar (e &keys :baz f) :qux (&plist :fux g))] :mux h) i)) (list 1 2 (list 3 'skip 'skip :foo (vector 4 'skip (list (cons :bar (list 5 :baz 6)) (cons :qux (list :fux 7)))) :mux 8) 9))) (list a b c d e f g h i)) => '(1 2 3 4 5 6 7 8 9)
+      ;; single-binding optimization for vectors and kv
+      (pcase-let (((dash [_ [_ [_ a]]]) (vector 1 (vector 2 (vector 3 4))))) a) => 4
+      (pcase-let (((dash [a _ _ _]) (vector 1 2 3 4))) a) => 1
+      (pcase-let (((dash [_ _ _ a]) (vector 1 2 3 4))) a) => 4
+      (pcase-let (((dash [_ _ a _]) (vector 1 2 3 4))) a) => 3
+      (pcase-let (((dash [a [_ [_ b]]]) (vector 1 (vector 2 (vector 3 4))))) (list a b)) => '(1 4)
+      (pcase-let (((dash [(a _ b)]) (vector (list 1 2 3 4)))) (list a b)) => '(1 3)
+      (pcase-let (((dash (&plist 'a a)) (list 'a 1 'b 2))) a) => 1
+      (pcase-let (((dash (&plist 'a [a b])) (list 'a [1 2] 'b 3))) (list a b)) => '(1 2)
+      (pcase-let (((dash (&plist 'a [a b] 'c c)) (list 'a [1 2] 'c 3))) (list a b c)) => '(1 2 3)
+      ;; mixing dot and &alist
+      (pcase-let (((dash (x y &alist 'a a 'c c)) (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)))) (list x y a c)) => '(1 2 b d)
+      (pcase-let (((dash (_ _ &alist 'a a 'c c)) (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)))) (list a c)) => '(b d)
+      (pcase-let (((dash (x y &alist 'a a 'c c)) (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)))) (list x y a c)) => '(1 2 b d)
+      (pcase-let (((dash (_ _ &alist 'a a 'c c)) (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)))) (list a c)) => '(b d)
+      (pcase-let (((dash (x y (&alist 'a a 'c c))) (list 1 2 '((a . b) (e . f) (g . h) (c . d))))) (list x y a c)) => '(1 2 b d)
+      (pcase-let (((dash (_ _ (&alist 'a a 'c c))) (list 1 2 '((a . b) (e . f) (g . h) (c . d))))) (list a c)) => '(b d)
+      ;; test bindings with no explicit val
+      (pcase-let (((dash a) nil)) a) => nil
+      (pcase-let (((dash a) nil)) a) => nil
+      (pcase-let (((dash a) nil) ((dash b) nil)) (list a b)) => '(nil nil)
+      (pcase-let (((dash a) nil) ((dash b) nil)) (list a b)) => '(nil nil)
+      ;; auto-derived match forms for kv destructuring
+      ;;; test that we normalize all the supported kv stores
+      (pcase-let (((dash (&plist :foo :bar)) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
+      (pcase-let (((dash (&alist :foo :bar)) (list (cons :foo 1) (cons :bar 2)))) (list foo bar)) => '(1 2)
+      (let ((hash (make-hash-table)))
+        (puthash :foo 1 hash)
+        (puthash :bar 2 hash)
+        (pcase-let (((dash (&hash :foo :bar)) hash)) (list foo bar))) => '(1 2)
+      (pcase-let (((dash (&hash :foo (&hash? :bar))) (make-hash-table))) bar) => nil
+      ;; Ensure `hash?' expander evaluates its arg only once
+      (let* ((ht (make-hash-table :test #'equal))
+             (fn (lambda (ht) (push 3 (gethash 'a ht)) ht)))
+        (puthash 'a nil ht)
+        (pcase-let (((dash (&hash? 'a)) (funcall fn ht))) a)) => '(3)
+      (pcase-let (((dash (_ &keys :foo :bar)) (list 'ignored :foo 1 :bar 2))) (list foo bar)) => '(1 2)
+      ;;; go over all the variations of match-form derivation
+      (pcase-let (((dash (&plist :foo foo :bar)) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
+      (pcase-let (((dash (&plist :foo foo :bar bar)) (list :foo 1 :bar 2))) (list foo bar)) => '(1 2)
+      (pcase-let (((dash (&plist :foo x :bar y)) (list :foo 1 :bar 2))) (list x y)) => '(1 2)
+      (pcase-let (((dash (&plist :foo (x) :bar [y])) (list :foo (list 1) :bar (vector 2)))) (list x y)) => '(1 2)
+      (pcase-let (((dash (&plist 'foo 'bar)) (list 'foo 1 'bar 2))) (list foo bar)) => '(1 2)
+      (pcase-let (((dash (&plist 'foo foo 'bar)) (list 'foo 1 'bar 2))) (list foo bar)) => '(1 2)
+      (pcase-let (((dash (&plist 'foo foo 'bar bar)) (list 'foo 1 'bar 2))) (list foo bar)) => '(1 2)
+      (pcase-let (((dash (&plist 'foo x 'bar y)) (list 'foo 1 'bar 2))) (list x y)) => '(1 2)
+      (pcase-let (((dash (&alist "foo" "bar")) (list (cons "foo" 1) (cons "bar" 2)))) (list foo bar)) => '(1 2)
+      (pcase-let (((dash (&alist "foo" x "bar")) (list (cons "foo" 1) (cons "bar" 2)))) (list x bar)) => '(1 2)
+      (pcase-let (((dash (&alist "foo" x "bar" y)) (list (cons "foo" 1) (cons "bar" 2)))) (list x y)) => '(1 2)
+      (pcase-let (((dash (&alist :a 'b "c")) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
+      (pcase-let (((dash (&alist 'b :a "c")) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
+      (pcase-let (((dash (&alist 'b "c" :a)) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
+      (pcase-let (((dash (&alist "c" 'b :a)) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
+      (pcase-let (((dash (&alist "c" :a 'b)) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
+      (pcase-let (((dash (&alist :a "c" 'b)) (list (cons :a 1) (cons 'b 2) (cons "c" 3)))) (list a b c)) => '(1 2 3)
+      ;; FIXME: Byte-compiler chokes on these in Emacs < 26, which were
+      ;;        for `-let'.
+      (eval '(pcase-let (((dash (&plist 'foo 1)) (list 'foo 'bar))) (list foo))) !!> error
+      (eval '(pcase-let (((dash (&plist foo :bar)) (list :foo :bar))) (list foo))) !!> error
+      ;; test the &as form
+      (pcase-let (((dash (items &as first . rest)) (list 1 2 3))) (list first rest items)) => '(1 (2 3) (1 2 3))
+      (pcase-let (((dash (all &as [vect &as a b] bar)) (list [1 2] 3))) (list a b bar vect all)) => '(1 2 3 [1 2] ([1 2] 3))
+      (pcase-let (((dash (all &as (list &as a b) bar)) (list (list 1 2) 3))) (list a b bar list all)) => '(1 2 3 (1 2) ((1 2) 3))
+      (pcase-let (((dash (x &as [a b])) (list (vector 1 2 3)))) (list a b x)) => '(1 2 ([1 2 3]))
+      (pcase-let (((dash (result &as [_ a] [_ b])) (list [1 2] [3 4]))) (list a b result)) => '(2 4 ([1 2] [3 4]))
+      (pcase-let (((dash (result &as [fst &as _ a] [snd &as _ b])) (list [1 2] [3 4]))) (list a b fst snd result)) => '(2 4 [1 2] [3 4] ([1 2] [3 4]))
+      (pcase-let (((dash [x &as a b &rest r]) (vector 1 2 3))) (list a b r x)) => '(1 2 [3] [1 2 3])
+      (pcase-let (((dash [x &as a]) (vector 1 2 3))) (list a x)) => '(1 [1 2 3])
+      (pcase-let (((dash [x &as _ _ a]) (vector 1 2 3))) (list a x)) => '(3 [1 2 3])
+      (pcase-let (((dash [x &as _ _ a]) (vector 1 2 (list 3 4)))) (list a x)) => '((3 4) [1 2 (3 4)])
+      (pcase-let (((dash [x &as _ _ (a b)]) (vector 1 2 (list 3 4)))) (list a b x)) => '(3 4 [1 2 (3 4)])
+      (pcase-let (((dash (b &as beg . end)) (cons 1 2))) (list beg end b)) => '(1 2 (1 . 2))
+      (pcase-let (((dash (plist &as &plist :a a :b b)) (list :a 1 :b 2))) (list a b plist)) => '(1 2 (:a 1 :b 2))
+      (pcase-let (((dash (alist &as &alist :a a :b b)) (list (cons :a 1) (cons :b 2)))) (list a b alist)) => '(1 2 ((:a . 1) (:b . 2)))
+      (pcase-let (((dash (list &as _ _ _ a _ _ _ b _ _ _ c)) (list 1 2 3 4 5 6 7 8 9 10 11 12))) (list a b c list)) => '(4 8 12 (1 2 3 4 5 6 7 8 9 10 11 12))
+      (pcase-let (((dash (x &as a b)) (list 1 2)) ((dash (y &as c d)) (list 3 4))) (list a b c d x y))
+      => '(1 2 3 4 (1 2) (3 4))
+      (pcase-let (((dash (&hash-or-plist :key)) (--doto (make-hash-table) (puthash :key "value" it)))) key)
+      => "value"
+      (pcase-let (((dash (&hash-or-plist :key)) '(:key "value"))) key)
+      => "value")
 
-  (defexamples pcase
-    (pcase [1 (2 3) 4] ((dash [a (b c) d]) (progn (list a b c d)))) => '(1 2 3 4)
-    (pcase (list 1 2 3 4 5 6) ((dash (a b c . d)) (progn (list a b c d)))) => '(1 2 3 (4 5 6))
-    (pcase (list :baz 3 :foo 1 :qux 4 :bar 2) ((dash (&plist :foo foo :bar bar)) (progn (list foo bar)))) => '(1 2)
-    (pcase "foo" ((dash a) (pcase "bar" ((dash b) (progn (list a b)))))) => '("foo" "bar")
-    (pcase (list 1 2 3) ((dash foo) (progn foo))) => '(1 2 3)
-    (pcase (list :foo 1 :bar 2) ((dash (&plist :foo foo :bar bar)) (progn (list foo bar)))) => '(1 2)
-    (pcase (list :foo (list 1 2) :bar 3) ((dash (&plist :foo (a b) :bar c)) (progn (list a b c)))) => '(1 2 3)
-    ;; nil value in plist means subsequent cons matches are nil, because
-    ;; (car nil) => nil
-    (pcase (list :bar 1) ((dash (&plist :foo (a b))) (progn (list a b)))) => '(nil nil)
-    (pcase (list :foo (list 1 2 :baz 2 :bar 4) :bar 3) ((dash (&plist :foo (&plist :baz baz) :bar bar)) (progn (list baz bar)))) => '(2 3)
-    (pcase (list 'paragraph (list :title "foo" :level 2)) ((dash (_ (&plist :level level :title title))) (progn (list level title)))) => '(2 "foo")
-    (pcase (list (cons :bar 2) (cons :foo (list 'face 'foo-face 'invisible t))) ((dash (&alist :foo (&plist 'face face 'invisible inv) :bar bar)) (progn (list bar face inv)))) => '(2 foo-face t)
-    (pcase (list 1 (list 2 3) 4 5 6) ((dash (a (b c) d)) (progn (list a b c d)))) => '(1 2 3 4)
-    (pcase [1 2 3 4] ((dash [a _ c]) (progn (list a c)))) => '(1 3)
-    (pcase (vector 1 2 3 4) ((dash [_ _ _ a]) (progn a))) => 4
-    (pcase (vector 1 2 3 4 5) ((dash [a _ _ _ b]) (progn (list a b)))) => '(1 5)
-    (pcase [1 (2 3) 4] ((dash [a (b c) d]) (progn (list a b c d)))) => '(1 2 3 4)
-    (pcase (string 102 111 98 97 114) ((dash [a b c]) (progn (list a b c)))) => '(?f ?o ?b)
-    (pcase "abcdef" ((dash [a b c]) (progn (list a b c)))) => '(?a ?b ?c)
-    (pcase [1 (2 [3 4]) 5 6] ((dash [a (b [c]) d]) (progn (list a b c d)))) => '(1 2 3 5)
-    (pcase (list 1 2 3 4 5 6) ((dash (a b c d)) (progn (list a b c d)))) => '(1 2 3 4)
-    (pcase (list (vector 1 2 3)) ((dash ([a b])) (progn (list a b)))) => '(1 2)
-    ;; d is bound to nil. I don't think we want to error in such a case.
-    ;; After all (car nil) => nil
-    (pcase (list 1 2 3) ((dash (a b c d)) (progn (list a b c d)))) => '(1 2 3 nil)
-    (pcase [1 2 3 4] ((dash [a b c]) (progn (list a b c)))) => '(1 2 3)
-    (pcase [1 2 3 4] ((dash [a]) (progn a))) => 1
-    (pcase "abcdef" ((dash [a b &rest c]) (progn (list a b c)))) => '(?a ?b "cdef")
-    (pcase [1 2 3 4 5 6] ((dash [a b &rest c]) (progn (list a b c)))) => '(1 2 [3 4 5 6])
-    (pcase [1 2 3 4 5 6] ((dash [a b &rest [c d]]) (progn (list a b c d)))) => '(1 2 3 4)
-    ;; here we error, because "vectors" are rigid, immutable structures,
-    ;; so we should know how many elements there are
-    (pcase [1 2 3] ((dash [a b c d]) (progn (+ a b c d)))) !!> args-out-of-range
-    (pcase (cons 1 (cons 2 3)) ((dash (a b . c)) (progn (list a b c)))) => '(1 2 3)
-    (pcase (cons 1 (cons 2 (vector 3 4))) ((dash (_ _ . [a b])) (progn (list a b)))) => '(3 4)
-    (pcase (cons 1 (cons 2 (list 3 4))) ((dash (_ _ a b)) (progn (list a b)))) => '(3 4)
-    (pcase (list (vector 1 2) 3 4 5) ((dash ([a b] _ _ c)) (progn (list a b c)))) => '(1 2 5)
-    ;; final cdr optimization
-    (pcase (list (list (list 1 2) 3) 4) ((dash (((a)))) (progn a))) => 1
-    (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c) d)) (progn (list a b c d)))) => '(1 2 3 4)
-    (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) . c) . d)) (progn (list a b c d)))) => '(1 2 (3) (4))
-    (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c))) (progn (list a b c)))) => '(1 2 3)
-    (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) . c))) (progn (list a b c)))) => '(1 2 (3))
-    ;; cdr-skip optimization
-    (pcase (list 1 (list 2 (list 3 4))) ((dash (_ (_ (_ a)))) (progn a))) => 4
-    (pcase (list 1 (list 2)) ((dash (_ (a))) (progn a))) => 2
-    (pcase (list 1 2 3 4 5) ((dash (_ _ _ a)) (progn a))) => 4
-    (pcase (list 1 2 3 (list 4 5)) ((dash (_ _ _ (a b))) (progn (list a b)))) => '(4 5)
-    (pcase (list 1 2 3 4 5) ((dash (_ a _ b)) (progn (list a b)))) => '(2 4)
-    (pcase (list 1 2 3 4 5 6) ((dash (_ a _ b _ c)) (progn (list a b c)))) => '(2 4 6)
-    (pcase (list 1 2 3 4 5 6 7 8) ((dash (_ a _ b _ _ _ c)) (progn (list a b c)))) => '(2 4 8)
-    (pcase (list 1 2 3 4 5 6 7 8) ((dash (_ a _ _ _ b _ c)) (progn (list a b c)))) => '(2 6 8)
-    (pcase (list 1 2 3 4 5 6 7 8 9 10 11 12) ((dash (_ _ _ a _ _ _ b _ _ _ c)) (progn (list a b c)))) => '(4 8 12)
-    (pcase (list 1 (list 2 3) 4 5) ((dash (_ (a b) _ c)) (progn (list a b c)))) => '(2 3 5)
-    (pcase (list 1 (list 2 3) 4 5) ((dash (_ (a b) _ . c)) (progn (list a b c)))) => '(2 3 (5))
-    (pcase (list 1 (list 2 3) 4 (list 5 6)) ((dash (_ (a b) _ (c d))) (progn (list a b c d)))) => '(2 3 5 6)
-    (pcase (list 1 (list 2 3) 4 5 6 (list 7 8)) ((dash (_ (a b) _ _ _ (c d))) (progn (list a b c d)))) => '(2 3 7 8)
-    (pcase (list 1 (list 2 3) 4 5 6) ((dash (_ (a b) _ c d)) (progn (list a b c d)))) => '(2 3 5 6)
-    (pcase (list 1 (list 2 3) 4 5 6 (vector 7 8)) ((dash (_ (a b) _ _ _ [c d])) (progn (list a b c d)))) => '(2 3 7 8)
-    (pcase (list 1 (vector 2 3) 4 5 6 (vector 7 8)) ((dash (_ [a b] _ _ _ [c d])) (progn (list a b c d)))) => '(2 3 7 8)
-    (pcase (list 1 2 3 4 5) ((dash (_ _ _ . a)) (progn a))) => '(4 5)
-    (pcase (list 1 2 3 4 5) ((dash (_ a _ _)) (progn a))) => 2
-    (pcase (cons 1 2) ((dash (_ . b)) (progn b))) => 2
-    (pcase (cons (vector 1 2 3 4) 5) ((dash ([a b c d] . e)) (progn (list a b c d e)))) => '(1 2 3 4 5)
-    (pcase (cons (vector 1 2 3 4) (cons 5 6)) ((dash ([a b c d] _ . e)) (progn (list a b c d e)))) => '(1 2 3 4 6)
-    ;; late-binding optimization
-    (pcase (list (list (list 1 2) 3) 4) ((dash (((a)))) (progn a))) => 1
-    (pcase (list (list (list :bar 1 :foo 2) 3) 4) ((dash (((&plist :foo a :bar b)))) (progn (list a b)))) => '(2 1)
-    (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c) d)) (progn (list a b c d)))) => '(1 2 3 4)
-    (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c) . d)) (progn (list a b c d)))) => '(1 2 3 (4))
-    (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c))) (progn (list a b c)))) => '(1 2 3)
-    (pcase (list 1 2 3 4) ((dash (a b c d)) (progn (list a b c d)))) => '(1 2 3 4)
-    (pcase (list 1 2 3 4) ((dash (a)) (progn (list a)))) => '(1)
-    (pcase (list 1 2 3 4) ((dash (_ a)) (progn (list a)))) => '(2)
-    (pcase (list 1 2 3 4) ((dash (_ _ a)) (progn (list a)))) => '(3)
-    (pcase (list 1 2 3 4) ((dash (_ _ . a)) (progn a))) => '(3 4)
-    (pcase (list 1 2 (vector 3 4)) ((dash (_ _ [a b])) (progn (list a b)))) => '(3 4)
-    (pcase (list 1 2 3 4 5 6 7 8) ((dash (a _ _ b)) (progn (list a b)))) => '(1 4)
-    (pcase (list 1 2 3 4 5 6 7 8) ((dash (_ _ a _ _ b)) (progn (list a b)))) => '(3 6)
-    (pcase (list 1 2 3 4 5 6 7 8) ((dash (_ _ a _ _ . b)) (progn (cons a b)))) => '(3 6 7 8)
-    (pcase (list 1 2 3 4) ((dash (_ a _ b)) (progn (list a b)))) => '(2 4)
-    (pcase (list 1 2 3 (list 4 5)) ((dash (a b c (d e))) (progn (list a b c d e)))) => '(1 2 3 4 5)
-    (pcase (list 1 2 (list 3 4 (list 5 6 7))) ((dash (_ _ (_ _ (_ _ a)))) (progn a))) => 7
-    (pcase (list 1 (list 2 (list 3 4))) ((dash (_ (_ (_ a)))) (progn a))) => 4
-    (pcase (list 1 2 :bar 2 :foo 1) ((dash (_ _ &plist :foo a :bar b)) (progn (list a b)))) => '(1 2)
-    ;; &keys support
-    (pcase (list 1 2 :bar 4 :foo 3) ((dash (_ _ &keys :foo a :bar b)) (progn (list a b)))) => '(3 4)
-    (pcase (list 1 2 :bar 4 :foo 3) ((dash (a _ &keys :foo b :bar c)) (progn (list a b c)))) => '(1 3 4)
-    (pcase (list 1 2 3 4 :bar 6 :foo 5) ((dash (a _ _ _ &keys :foo b :bar c)) (progn (list a b c)))) => '(1 5 6)
-    (pcase (list 1 2 :bar 4 :foo 3) ((dash (a b &keys :foo c :bar d)) (progn (list a b c d)))) => '(1 2 3 4)
-    (pcase (list 1 2 :bar 4 :foo 3) ((dash (a b &keys)) (progn (list a b)))) => '(1 2)
-    (pcase (list 1 2 :bar 4 :foo 3) ((dash (&keys :foo a :bar b)) (progn (list a b)))) => '(3 4)
-    (pcase (list 1 2 (list 3 'skip 'skip :foo (vector 4 'skip (list (cons :bar (list 5 :baz 6)) (cons :qux (list :fux 7)))) :mux 8) 9) ((dash (a b (c _ _ &keys :foo [d _ (&alist :bar (e &keys :baz f) :qux (&plist :fux g))] :mux h) i)) (progn (list a b c d e f g h i)))) => '(1 2 3 4 5 6 7 8 9)
-    ;; single-binding optimization for vectors and kv
-    (pcase (vector 1 (vector 2 (vector 3 4))) ((dash [_ [_ [_ a]]]) (progn a))) => 4
-    (pcase (vector 1 2 3 4) ((dash [a _ _ _]) (progn a))) => 1
-    (pcase (vector 1 2 3 4) ((dash [_ _ _ a]) (progn a))) => 4
-    (pcase (vector 1 2 3 4) ((dash [_ _ a _]) (progn a))) => 3
-    (pcase (vector 1 (vector 2 (vector 3 4))) ((dash [a [_ [_ b]]]) (progn (list a b)))) => '(1 4)
-    (pcase (vector (list 1 2 3 4)) ((dash [(a _ b)]) (progn (list a b)))) => '(1 3)
-    (pcase (list 'a 1 'b 2) ((dash (&plist 'a a)) (progn a))) => 1
-    (pcase (list 'a [1 2] 'b 3) ((dash (&plist 'a [a b])) (progn (list a b)))) => '(1 2)
-    (pcase (list 'a [1 2] 'c 3) ((dash (&plist 'a [a b] 'c c)) (progn (list a b c)))) => '(1 2 3)
-    ;; mixing dot and &alist
-    (pcase (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)) ((dash (x y &alist 'a a 'c c)) (progn (list x y a c)))) => '(1 2 b d)
-    (pcase (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)) ((dash (_ _ &alist 'a a 'c c)) (progn (list a c)))) => '(b d)
-    (pcase (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)) ((dash (x y &alist 'a a 'c c)) (progn (list x y a c)))) => '(1 2 b d)
-    (pcase (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)) ((dash (_ _ &alist 'a a 'c c)) (progn (list a c)))) => '(b d)
-    (pcase (list 1 2 '((a . b) (e . f) (g . h) (c . d))) ((dash (x y (&alist 'a a 'c c))) (progn (list x y a c)))) => '(1 2 b d)
-    (pcase (list 1 2 '((a . b) (e . f) (g . h) (c . d))) ((dash (_ _ (&alist 'a a 'c c))) (progn (list a c)))) => '(b d)
-    ;; test bindings with no explicit val
-    (pcase nil ((dash a) (progn a))) => nil
-    (pcase nil ((dash a) (progn a))) => nil
-    (pcase nil ((dash a) (pcase nil ((dash b) (progn (list a b)))))) => '(nil nil)
-    (pcase nil ((dash a) (pcase nil ((dash b) (progn (list a b)))))) => '(nil nil)
-    ;; auto-derived match forms for kv destructuring
-    ;;; test that we normalize all the supported kv stores
-    (pcase (list :foo 1 :bar 2) ((dash (&plist :foo :bar)) (progn (list foo bar)))) => '(1 2)
-    (pcase (list (cons :foo 1) (cons :bar 2)) ((dash (&alist :foo :bar)) (progn (list foo bar)))) => '(1 2)
-    (let ((hash (make-hash-table)))
-      (puthash :foo 1 hash)
-      (puthash :bar 2 hash)
-      (pcase hash ((dash (&hash :foo :bar)) (progn (list foo bar))))) => '(1 2)
-    (pcase (make-hash-table) ((dash (&hash :foo (&hash? :bar))) (progn bar))) => nil
-    ;; Ensure `hash?' expander evaluates its arg only once
-    (let* ((ht (make-hash-table :test #'equal))
-           (fn (lambda (ht) (push 3 (gethash 'a ht)) ht)))
-      (puthash 'a nil ht)
-      (pcase (funcall fn ht) ((dash (&hash? 'a)) (progn a)))) => '(3)
-    (pcase (list 'ignored :foo 1 :bar 2) ((dash (_ &keys :foo :bar)) (progn (list foo bar)))) => '(1 2)
-    ;;; go over all the variations of match-form derivation
-    (pcase (list :foo 1 :bar 2) ((dash (&plist :foo foo :bar)) (progn (list foo bar)))) => '(1 2)
-    (pcase (list :foo 1 :bar 2) ((dash (&plist :foo foo :bar bar)) (progn (list foo bar)))) => '(1 2)
-    (pcase (list :foo 1 :bar 2) ((dash (&plist :foo x :bar y)) (progn (list x y)))) => '(1 2)
-    (pcase (list :foo (list 1) :bar (vector 2)) ((dash (&plist :foo (x) :bar [y])) (progn (list x y)))) => '(1 2)
-    (pcase (list 'foo 1 'bar 2) ((dash (&plist 'foo 'bar)) (progn (list foo bar)))) => '(1 2)
-    (pcase (list 'foo 1 'bar 2) ((dash (&plist 'foo foo 'bar)) (progn (list foo bar)))) => '(1 2)
-    (pcase (list 'foo 1 'bar 2) ((dash (&plist 'foo foo 'bar bar)) (progn (list foo bar)))) => '(1 2)
-    (pcase (list 'foo 1 'bar 2) ((dash (&plist 'foo x 'bar y)) (progn (list x y)))) => '(1 2)
-    (pcase (list (cons "foo" 1) (cons "bar" 2)) ((dash (&alist "foo" "bar")) (progn (list foo bar)))) => '(1 2)
-    (pcase (list (cons "foo" 1) (cons "bar" 2)) ((dash (&alist "foo" x "bar")) (progn (list x bar)))) => '(1 2)
-    (pcase (list (cons "foo" 1) (cons "bar" 2)) ((dash (&alist "foo" x "bar" y)) (progn (list x y)))) => '(1 2)
-    (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist :a 'b "c")) (progn (list a b c)))) => '(1 2 3)
-    (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist 'b :a "c")) (progn (list a b c)))) => '(1 2 3)
-    (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist 'b "c" :a)) (progn (list a b c)))) => '(1 2 3)
-    (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist "c" 'b :a)) (progn (list a b c)))) => '(1 2 3)
-    (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist "c" :a 'b)) (progn (list a b c)))) => '(1 2 3)
-    (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist :a "c" 'b)) (progn (list a b c)))) => '(1 2 3)
-    ;; FIXME: Byte-compiler chokes on these in Emacs < 26.
-    (eval '(pcase (list 'foo 'bar) ((dash (&plist 'foo 1)) (progn (list foo))))) !!> error
-    (eval '(pcase (list :foo :bar) ((dash (&plist foo :bar)) (progn (list foo)))) t) !!> error
-    ;; test the &as form
-    (pcase (list 1 2 3) ((dash (items &as first . rest)) (progn (list first rest items)))) => '(1 (2 3) (1 2 3))
-    (pcase (list [1 2] 3) ((dash (all &as [vect &as a b] bar)) (progn (list a b bar vect all)))) => '(1 2 3 [1 2] ([1 2] 3))
-    (pcase (list (list 1 2) 3) ((dash (all &as (list &as a b) bar)) (progn (list a b bar list all)))) => '(1 2 3 (1 2) ((1 2) 3))
-    (pcase (list (vector 1 2 3)) ((dash (x &as [a b])) (progn (list a b x)))) => '(1 2 ([1 2 3]))
-    (pcase (list [1 2] [3 4]) ((dash (result &as [_ a] [_ b])) (progn (list a b result)))) => '(2 4 ([1 2] [3 4]))
-    (pcase (list [1 2] [3 4]) ((dash (result &as [fst &as _ a] [snd &as _ b])) (progn (list a b fst snd result)))) => '(2 4 [1 2] [3 4] ([1 2] [3 4]))
-    (pcase (vector 1 2 3) ((dash [x &as a b &rest r]) (progn (list a b r x)))) => '(1 2 [3] [1 2 3])
-    (pcase (vector 1 2 3) ((dash [x &as a]) (progn (list a x)))) => '(1 [1 2 3])
-    (pcase (vector 1 2 3) ((dash [x &as _ _ a]) (progn (list a x)))) => '(3 [1 2 3])
-    (pcase (vector 1 2 (list 3 4)) ((dash [x &as _ _ a]) (progn (list a x)))) => '((3 4) [1 2 (3 4)])
-    (pcase (vector 1 2 (list 3 4)) ((dash [x &as _ _ (a b)]) (progn (list a b x)))) => '(3 4 [1 2 (3 4)])
-    (pcase (cons 1 2) ((dash (b &as beg . end)) (progn (list beg end b)))) => '(1 2 (1 . 2))
-    (pcase (list :a 1 :b 2) ((dash (plist &as &plist :a a :b b)) (progn (list a b plist)))) => '(1 2 (:a 1 :b 2))
-    (pcase (list (cons :a 1) (cons :b 2)) ((dash (alist &as &alist :a a :b b)) (progn (list a b alist)))) => '(1 2 ((:a . 1) (:b . 2)))
-    (pcase (list 1 2 3 4 5 6 7 8 9 10 11 12) ((dash (list &as _ _ _ a _ _ _ b _ _ _ c)) (progn (list a b c list)))) => '(4 8 12 (1 2 3 4 5 6 7 8 9 10 11 12))
-    (pcase (list 1 2) ((dash (x &as a b)) (pcase (list 3 4) ((dash (y &as c d)) (progn (list a b c d x y))))))
-    => '(1 2 3 4 (1 2) (3 4))
-    (pcase (--doto (make-hash-table) (puthash :key "value" it)) ((dash (&hash-or-plist :key)) (progn key)))
-    => "value"
-    (pcase '(:key "value") ((dash (&hash-or-plist :key)) (progn key)))
-    => "value")
-
-  )
+    (defexamples pcase
+      (pcase [1 (2 3) 4] ((dash [a (b c) d]) (progn (list a b c d)))) => '(1 2 3 4)
+      (pcase (list 1 2 3 4 5 6) ((dash (a b c . d)) (progn (list a b c d)))) => '(1 2 3 (4 5 6))
+      (pcase (list :baz 3 :foo 1 :qux 4 :bar 2) ((dash (&plist :foo foo :bar bar)) (progn (list foo bar)))) => '(1 2)
+      (pcase "foo" ((dash a) (pcase "bar" ((dash b) (progn (list a b)))))) => '("foo" "bar")
+      (pcase (list 1 2 3) ((dash foo) (progn foo))) => '(1 2 3)
+      (pcase (list :foo 1 :bar 2) ((dash (&plist :foo foo :bar bar)) (progn (list foo bar)))) => '(1 2)
+      (pcase (list :foo (list 1 2) :bar 3) ((dash (&plist :foo (a b) :bar c)) (progn (list a b c)))) => '(1 2 3)
+      ;; nil value in plist means subsequent cons matches are nil, because
+      ;; (car nil) => nil
+      (pcase (list :bar 1) ((dash (&plist :foo (a b))) (progn (list a b)))) => '(nil nil)
+      (pcase (list :foo (list 1 2 :baz 2 :bar 4) :bar 3) ((dash (&plist :foo (&plist :baz baz) :bar bar)) (progn (list baz bar)))) => '(2 3)
+      (pcase (list 'paragraph (list :title "foo" :level 2)) ((dash (_ (&plist :level level :title title))) (progn (list level title)))) => '(2 "foo")
+      (pcase (list (cons :bar 2) (cons :foo (list 'face 'foo-face 'invisible t))) ((dash (&alist :foo (&plist 'face face 'invisible inv) :bar bar)) (progn (list bar face inv)))) => '(2 foo-face t)
+      (pcase (list 1 (list 2 3) 4 5 6) ((dash (a (b c) d)) (progn (list a b c d)))) => '(1 2 3 4)
+      (pcase [1 2 3 4] ((dash [a _ c]) (progn (list a c)))) => '(1 3)
+      (pcase (vector 1 2 3 4) ((dash [_ _ _ a]) (progn a))) => 4
+      (pcase (vector 1 2 3 4 5) ((dash [a _ _ _ b]) (progn (list a b)))) => '(1 5)
+      (pcase [1 (2 3) 4] ((dash [a (b c) d]) (progn (list a b c d)))) => '(1 2 3 4)
+      (pcase (string 102 111 98 97 114) ((dash [a b c]) (progn (list a b c)))) => '(?f ?o ?b)
+      (pcase "abcdef" ((dash [a b c]) (progn (list a b c)))) => '(?a ?b ?c)
+      (pcase [1 (2 [3 4]) 5 6] ((dash [a (b [c]) d]) (progn (list a b c d)))) => '(1 2 3 5)
+      (pcase (list 1 2 3 4 5 6) ((dash (a b c d)) (progn (list a b c d)))) => '(1 2 3 4)
+      (pcase (list (vector 1 2 3)) ((dash ([a b])) (progn (list a b)))) => '(1 2)
+      ;; d is bound to nil. I don't think we want to error in such a case.
+      ;; After all (car nil) => nil
+      (pcase (list 1 2 3) ((dash (a b c d)) (progn (list a b c d)))) => '(1 2 3 nil)
+      (pcase [1 2 3 4] ((dash [a b c]) (progn (list a b c)))) => '(1 2 3)
+      (pcase [1 2 3 4] ((dash [a]) (progn a))) => 1
+      (pcase "abcdef" ((dash [a b &rest c]) (progn (list a b c)))) => '(?a ?b "cdef")
+      (pcase [1 2 3 4 5 6] ((dash [a b &rest c]) (progn (list a b c)))) => '(1 2 [3 4 5 6])
+      (pcase [1 2 3 4 5 6] ((dash [a b &rest [c d]]) (progn (list a b c d)))) => '(1 2 3 4)
+      ;; here we error, because "vectors" are rigid, immutable structures,
+      ;; so we should know how many elements there are
+      (pcase [1 2 3] ((dash [a b c d]) (progn (+ a b c d)))) !!> args-out-of-range
+      (pcase (cons 1 (cons 2 3)) ((dash (a b . c)) (progn (list a b c)))) => '(1 2 3)
+      (pcase (cons 1 (cons 2 (vector 3 4))) ((dash (_ _ . [a b])) (progn (list a b)))) => '(3 4)
+      (pcase (cons 1 (cons 2 (list 3 4))) ((dash (_ _ a b)) (progn (list a b)))) => '(3 4)
+      (pcase (list (vector 1 2) 3 4 5) ((dash ([a b] _ _ c)) (progn (list a b c)))) => '(1 2 5)
+      ;; final cdr optimization
+      (pcase (list (list (list 1 2) 3) 4) ((dash (((a)))) (progn a))) => 1
+      (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c) d)) (progn (list a b c d)))) => '(1 2 3 4)
+      (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) . c) . d)) (progn (list a b c d)))) => '(1 2 (3) (4))
+      (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c))) (progn (list a b c)))) => '(1 2 3)
+      (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) . c))) (progn (list a b c)))) => '(1 2 (3))
+      ;; cdr-skip optimization
+      (pcase (list 1 (list 2 (list 3 4))) ((dash (_ (_ (_ a)))) (progn a))) => 4
+      (pcase (list 1 (list 2)) ((dash (_ (a))) (progn a))) => 2
+      (pcase (list 1 2 3 4 5) ((dash (_ _ _ a)) (progn a))) => 4
+      (pcase (list 1 2 3 (list 4 5)) ((dash (_ _ _ (a b))) (progn (list a b)))) => '(4 5)
+      (pcase (list 1 2 3 4 5) ((dash (_ a _ b)) (progn (list a b)))) => '(2 4)
+      (pcase (list 1 2 3 4 5 6) ((dash (_ a _ b _ c)) (progn (list a b c)))) => '(2 4 6)
+      (pcase (list 1 2 3 4 5 6 7 8) ((dash (_ a _ b _ _ _ c)) (progn (list a b c)))) => '(2 4 8)
+      (pcase (list 1 2 3 4 5 6 7 8) ((dash (_ a _ _ _ b _ c)) (progn (list a b c)))) => '(2 6 8)
+      (pcase (list 1 2 3 4 5 6 7 8 9 10 11 12) ((dash (_ _ _ a _ _ _ b _ _ _ c)) (progn (list a b c)))) => '(4 8 12)
+      (pcase (list 1 (list 2 3) 4 5) ((dash (_ (a b) _ c)) (progn (list a b c)))) => '(2 3 5)
+      (pcase (list 1 (list 2 3) 4 5) ((dash (_ (a b) _ . c)) (progn (list a b c)))) => '(2 3 (5))
+      (pcase (list 1 (list 2 3) 4 (list 5 6)) ((dash (_ (a b) _ (c d))) (progn (list a b c d)))) => '(2 3 5 6)
+      (pcase (list 1 (list 2 3) 4 5 6 (list 7 8)) ((dash (_ (a b) _ _ _ (c d))) (progn (list a b c d)))) => '(2 3 7 8)
+      (pcase (list 1 (list 2 3) 4 5 6) ((dash (_ (a b) _ c d)) (progn (list a b c d)))) => '(2 3 5 6)
+      (pcase (list 1 (list 2 3) 4 5 6 (vector 7 8)) ((dash (_ (a b) _ _ _ [c d])) (progn (list a b c d)))) => '(2 3 7 8)
+      (pcase (list 1 (vector 2 3) 4 5 6 (vector 7 8)) ((dash (_ [a b] _ _ _ [c d])) (progn (list a b c d)))) => '(2 3 7 8)
+      (pcase (list 1 2 3 4 5) ((dash (_ _ _ . a)) (progn a))) => '(4 5)
+      (pcase (list 1 2 3 4 5) ((dash (_ a _ _)) (progn a))) => 2
+      (pcase (cons 1 2) ((dash (_ . b)) (progn b))) => 2
+      (pcase (cons (vector 1 2 3 4) 5) ((dash ([a b c d] . e)) (progn (list a b c d e)))) => '(1 2 3 4 5)
+      (pcase (cons (vector 1 2 3 4) (cons 5 6)) ((dash ([a b c d] _ . e)) (progn (list a b c d e)))) => '(1 2 3 4 6)
+      ;; late-binding optimization
+      (pcase (list (list (list 1 2) 3) 4) ((dash (((a)))) (progn a))) => 1
+      (pcase (list (list (list :bar 1 :foo 2) 3) 4) ((dash (((&plist :foo a :bar b)))) (progn (list a b)))) => '(2 1)
+      (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c) d)) (progn (list a b c d)))) => '(1 2 3 4)
+      (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c) . d)) (progn (list a b c d)))) => '(1 2 3 (4))
+      (pcase (list (list (list 1 2) 3) 4) ((dash (((a b) c))) (progn (list a b c)))) => '(1 2 3)
+      (pcase (list 1 2 3 4) ((dash (a b c d)) (progn (list a b c d)))) => '(1 2 3 4)
+      (pcase (list 1 2 3 4) ((dash (a)) (progn (list a)))) => '(1)
+      (pcase (list 1 2 3 4) ((dash (_ a)) (progn (list a)))) => '(2)
+      (pcase (list 1 2 3 4) ((dash (_ _ a)) (progn (list a)))) => '(3)
+      (pcase (list 1 2 3 4) ((dash (_ _ . a)) (progn a))) => '(3 4)
+      (pcase (list 1 2 (vector 3 4)) ((dash (_ _ [a b])) (progn (list a b)))) => '(3 4)
+      (pcase (list 1 2 3 4 5 6 7 8) ((dash (a _ _ b)) (progn (list a b)))) => '(1 4)
+      (pcase (list 1 2 3 4 5 6 7 8) ((dash (_ _ a _ _ b)) (progn (list a b)))) => '(3 6)
+      (pcase (list 1 2 3 4 5 6 7 8) ((dash (_ _ a _ _ . b)) (progn (cons a b)))) => '(3 6 7 8)
+      (pcase (list 1 2 3 4) ((dash (_ a _ b)) (progn (list a b)))) => '(2 4)
+      (pcase (list 1 2 3 (list 4 5)) ((dash (a b c (d e))) (progn (list a b c d e)))) => '(1 2 3 4 5)
+      (pcase (list 1 2 (list 3 4 (list 5 6 7))) ((dash (_ _ (_ _ (_ _ a)))) (progn a))) => 7
+      (pcase (list 1 (list 2 (list 3 4))) ((dash (_ (_ (_ a)))) (progn a))) => 4
+      (pcase (list 1 2 :bar 2 :foo 1) ((dash (_ _ &plist :foo a :bar b)) (progn (list a b)))) => '(1 2)
+      ;; &keys support
+      (pcase (list 1 2 :bar 4 :foo 3) ((dash (_ _ &keys :foo a :bar b)) (progn (list a b)))) => '(3 4)
+      (pcase (list 1 2 :bar 4 :foo 3) ((dash (a _ &keys :foo b :bar c)) (progn (list a b c)))) => '(1 3 4)
+      (pcase (list 1 2 3 4 :bar 6 :foo 5) ((dash (a _ _ _ &keys :foo b :bar c)) (progn (list a b c)))) => '(1 5 6)
+      (pcase (list 1 2 :bar 4 :foo 3) ((dash (a b &keys :foo c :bar d)) (progn (list a b c d)))) => '(1 2 3 4)
+      (pcase (list 1 2 :bar 4 :foo 3) ((dash (a b &keys)) (progn (list a b)))) => '(1 2)
+      (pcase (list 1 2 :bar 4 :foo 3) ((dash (&keys :foo a :bar b)) (progn (list a b)))) => '(3 4)
+      (pcase (list 1 2 (list 3 'skip 'skip :foo (vector 4 'skip (list (cons :bar (list 5 :baz 6)) (cons :qux (list :fux 7)))) :mux 8) 9) ((dash (a b (c _ _ &keys :foo [d _ (&alist :bar (e &keys :baz f) :qux (&plist :fux g))] :mux h) i)) (progn (list a b c d e f g h i)))) => '(1 2 3 4 5 6 7 8 9)
+      ;; single-binding optimization for vectors and kv
+      (pcase (vector 1 (vector 2 (vector 3 4))) ((dash [_ [_ [_ a]]]) (progn a))) => 4
+      (pcase (vector 1 2 3 4) ((dash [a _ _ _]) (progn a))) => 1
+      (pcase (vector 1 2 3 4) ((dash [_ _ _ a]) (progn a))) => 4
+      (pcase (vector 1 2 3 4) ((dash [_ _ a _]) (progn a))) => 3
+      (pcase (vector 1 (vector 2 (vector 3 4))) ((dash [a [_ [_ b]]]) (progn (list a b)))) => '(1 4)
+      (pcase (vector (list 1 2 3 4)) ((dash [(a _ b)]) (progn (list a b)))) => '(1 3)
+      (pcase (list 'a 1 'b 2) ((dash (&plist 'a a)) (progn a))) => 1
+      (pcase (list 'a [1 2] 'b 3) ((dash (&plist 'a [a b])) (progn (list a b)))) => '(1 2)
+      (pcase (list 'a [1 2] 'c 3) ((dash (&plist 'a [a b] 'c c)) (progn (list a b c)))) => '(1 2 3)
+      ;; mixing dot and &alist
+      (pcase (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)) ((dash (x y &alist 'a a 'c c)) (progn (list x y a c)))) => '(1 2 b d)
+      (pcase (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)) ((dash (_ _ &alist 'a a 'c c)) (progn (list a c)))) => '(b d)
+      (pcase (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)) ((dash (x y &alist 'a a 'c c)) (progn (list x y a c)))) => '(1 2 b d)
+      (pcase (list 1 2 '(a . b) '(e . f) '(g . h) '(c . d)) ((dash (_ _ &alist 'a a 'c c)) (progn (list a c)))) => '(b d)
+      (pcase (list 1 2 '((a . b) (e . f) (g . h) (c . d))) ((dash (x y (&alist 'a a 'c c))) (progn (list x y a c)))) => '(1 2 b d)
+      (pcase (list 1 2 '((a . b) (e . f) (g . h) (c . d))) ((dash (_ _ (&alist 'a a 'c c))) (progn (list a c)))) => '(b d)
+      ;; test bindings with no explicit val
+      (pcase nil ((dash a) (progn a))) => nil
+      (pcase nil ((dash a) (progn a))) => nil
+      (pcase nil ((dash a) (pcase nil ((dash b) (progn (list a b)))))) => '(nil nil)
+      (pcase nil ((dash a) (pcase nil ((dash b) (progn (list a b)))))) => '(nil nil)
+      ;; auto-derived match forms for kv destructuring
+      ;;; test that we normalize all the supported kv stores
+      (pcase (list :foo 1 :bar 2) ((dash (&plist :foo :bar)) (progn (list foo bar)))) => '(1 2)
+      (pcase (list (cons :foo 1) (cons :bar 2)) ((dash (&alist :foo :bar)) (progn (list foo bar)))) => '(1 2)
+      (let ((hash (make-hash-table)))
+        (puthash :foo 1 hash)
+        (puthash :bar 2 hash)
+        (pcase hash ((dash (&hash :foo :bar)) (progn (list foo bar))))) => '(1 2)
+      (pcase (make-hash-table) ((dash (&hash :foo (&hash? :bar))) (progn bar))) => nil
+      ;; Ensure `hash?' expander evaluates its arg only once
+      (let* ((ht (make-hash-table :test #'equal))
+             (fn (lambda (ht) (push 3 (gethash 'a ht)) ht)))
+        (puthash 'a nil ht)
+        (pcase (funcall fn ht) ((dash (&hash? 'a)) (progn a)))) => '(3)
+      (pcase (list 'ignored :foo 1 :bar 2) ((dash (_ &keys :foo :bar)) (progn (list foo bar)))) => '(1 2)
+      ;;; go over all the variations of match-form derivation
+      (pcase (list :foo 1 :bar 2) ((dash (&plist :foo foo :bar)) (progn (list foo bar)))) => '(1 2)
+      (pcase (list :foo 1 :bar 2) ((dash (&plist :foo foo :bar bar)) (progn (list foo bar)))) => '(1 2)
+      (pcase (list :foo 1 :bar 2) ((dash (&plist :foo x :bar y)) (progn (list x y)))) => '(1 2)
+      (pcase (list :foo (list 1) :bar (vector 2)) ((dash (&plist :foo (x) :bar [y])) (progn (list x y)))) => '(1 2)
+      (pcase (list 'foo 1 'bar 2) ((dash (&plist 'foo 'bar)) (progn (list foo bar)))) => '(1 2)
+      (pcase (list 'foo 1 'bar 2) ((dash (&plist 'foo foo 'bar)) (progn (list foo bar)))) => '(1 2)
+      (pcase (list 'foo 1 'bar 2) ((dash (&plist 'foo foo 'bar bar)) (progn (list foo bar)))) => '(1 2)
+      (pcase (list 'foo 1 'bar 2) ((dash (&plist 'foo x 'bar y)) (progn (list x y)))) => '(1 2)
+      (pcase (list (cons "foo" 1) (cons "bar" 2)) ((dash (&alist "foo" "bar")) (progn (list foo bar)))) => '(1 2)
+      (pcase (list (cons "foo" 1) (cons "bar" 2)) ((dash (&alist "foo" x "bar")) (progn (list x bar)))) => '(1 2)
+      (pcase (list (cons "foo" 1) (cons "bar" 2)) ((dash (&alist "foo" x "bar" y)) (progn (list x y)))) => '(1 2)
+      (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist :a 'b "c")) (progn (list a b c)))) => '(1 2 3)
+      (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist 'b :a "c")) (progn (list a b c)))) => '(1 2 3)
+      (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist 'b "c" :a)) (progn (list a b c)))) => '(1 2 3)
+      (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist "c" 'b :a)) (progn (list a b c)))) => '(1 2 3)
+      (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist "c" :a 'b)) (progn (list a b c)))) => '(1 2 3)
+      (pcase (list (cons :a 1) (cons 'b 2) (cons "c" 3)) ((dash (&alist :a "c" 'b)) (progn (list a b c)))) => '(1 2 3)
+      ;; FIXME: Byte-compiler chokes on these in Emacs < 26.
+      (eval '(pcase (list 'foo 'bar) ((dash (&plist 'foo 1)) (progn (list foo))))) !!> error
+      (eval '(pcase (list :foo :bar) ((dash (&plist foo :bar)) (progn (list foo)))) t) !!> error
+      ;; test the &as form
+      (pcase (list 1 2 3) ((dash (items &as first . rest)) (progn (list first rest items)))) => '(1 (2 3) (1 2 3))
+      (pcase (list [1 2] 3) ((dash (all &as [vect &as a b] bar)) (progn (list a b bar vect all)))) => '(1 2 3 [1 2] ([1 2] 3))
+      (pcase (list (list 1 2) 3) ((dash (all &as (list &as a b) bar)) (progn (list a b bar list all)))) => '(1 2 3 (1 2) ((1 2) 3))
+      (pcase (list (vector 1 2 3)) ((dash (x &as [a b])) (progn (list a b x)))) => '(1 2 ([1 2 3]))
+      (pcase (list [1 2] [3 4]) ((dash (result &as [_ a] [_ b])) (progn (list a b result)))) => '(2 4 ([1 2] [3 4]))
+      (pcase (list [1 2] [3 4]) ((dash (result &as [fst &as _ a] [snd &as _ b])) (progn (list a b fst snd result)))) => '(2 4 [1 2] [3 4] ([1 2] [3 4]))
+      (pcase (vector 1 2 3) ((dash [x &as a b &rest r]) (progn (list a b r x)))) => '(1 2 [3] [1 2 3])
+      (pcase (vector 1 2 3) ((dash [x &as a]) (progn (list a x)))) => '(1 [1 2 3])
+      (pcase (vector 1 2 3) ((dash [x &as _ _ a]) (progn (list a x)))) => '(3 [1 2 3])
+      (pcase (vector 1 2 (list 3 4)) ((dash [x &as _ _ a]) (progn (list a x)))) => '((3 4) [1 2 (3 4)])
+      (pcase (vector 1 2 (list 3 4)) ((dash [x &as _ _ (a b)]) (progn (list a b x)))) => '(3 4 [1 2 (3 4)])
+      (pcase (cons 1 2) ((dash (b &as beg . end)) (progn (list beg end b)))) => '(1 2 (1 . 2))
+      (pcase (list :a 1 :b 2) ((dash (plist &as &plist :a a :b b)) (progn (list a b plist)))) => '(1 2 (:a 1 :b 2))
+      (pcase (list (cons :a 1) (cons :b 2)) ((dash (alist &as &alist :a a :b b)) (progn (list a b alist)))) => '(1 2 ((:a . 1) (:b . 2)))
+      (pcase (list 1 2 3 4 5 6 7 8 9 10 11 12) ((dash (list &as _ _ _ a _ _ _ b _ _ _ c)) (progn (list a b c list)))) => '(4 8 12 (1 2 3 4 5 6 7 8 9 10 11 12))
+      (pcase (list 1 2) ((dash (x &as a b)) (pcase (list 3 4) ((dash (y &as c d)) (progn (list a b c d x y))))))
+      => '(1 2 3 4 (1 2) (3 4))
+      (pcase (--doto (make-hash-table) (puthash :key "value" it)) ((dash (&hash-or-plist :key)) (progn key)))
+      => "value"
+      (pcase '(:key "value") ((dash (&hash-or-plist :key)) (progn key)))
+      => "value")))
 
 (def-example-group "Side effects"
   "Functions iterating over lists for side effect only."

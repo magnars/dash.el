@@ -37,6 +37,10 @@
       (unless (assq prop defun-declarations-alist)
         (push (list prop #'ignore) defun-declarations-alist)))))
 
+(if (fboundp 'gensym)
+    (defalias 'pcase-dash--gensym 'gensym)
+  (defalias 'pcase-dash--gensym 'dash--match-make-source-symbol))
+
 (defun dash--elem-pattern (elem)
   "Return a pattern for ELEM, which may be further destructured."
   (declare (important-return-value t)
@@ -64,7 +68,7 @@
           (dash ,(substring vect 2))))
    (t
     (let ((res)
-          (tag (gensym)))
+          (tag (pcase-dash--gensym)))
       (catch tag
         (dotimes (idx (length vect))
           (let ((it (aref vect idx)))
@@ -133,7 +137,7 @@
       (setq getter (lambda (key) `(pcase--flip plist-get ,key))
             test #'listp))
      ((eq type '&alist)
-      (setq getter (let ((sym (gensym)))
+      (setq getter (let ((sym (pcase-dash--gensym)))
                      (lambda (key)
                        `(lambda (,sym) (cdr (assoc ,key ,sym)))))
             test #'listp)))
@@ -172,20 +176,22 @@ matched expression to be long enough to bind all sub-patterns."
             (app car-safe (dash ,first))
             (app cdr-safe (dash ,rest)))))))
 
-(pcase-defmacro dash (pat)
-  "Destructure EXP according to PAT like in `-let'."
-  (declare (important-return-value t)
-           (side-effect-free t))
-  (cond
-   ((symbolp pat)
-    (dash--elem-pattern pat))
-   ((arrayp pat)
-    (dash--vect-pattern pat))
-   ((memq (car-safe pat) '(&plist &alist &hash &hash? &hash-or-plist))
-    (dash--keyvar-pattern pat))
-   ((listp pat)
-    (dash--list-pattern pat))
-   (t (error "Invalid Dash pattern: %s" pat))))
+(if (fboundp 'pcase-defmacro)
+    (pcase-defmacro dash (pat)
+      "Destructure EXP according to PAT like in `-let'."
+      (declare (important-return-value t)
+               (side-effect-free t))
+      (cond
+       ((symbolp pat)
+        (dash--elem-pattern pat))
+       ((arrayp pat)
+        (dash--vect-pattern pat))
+       ((memq (car-safe pat) '(&plist &alist &hash &hash? &hash-or-plist))
+        (dash--keyvar-pattern pat))
+       ((listp pat)
+        (dash--list-pattern pat))
+       (t (error "Invalid Dash pattern: %s" pat))))
+  (warn "`dash-pcase' does not support Emacs versions less than 25.1"))
 
 (provide 'dash-pcase)
 ;;; dash-pcase.el ends here

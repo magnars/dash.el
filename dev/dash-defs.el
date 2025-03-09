@@ -19,6 +19,7 @@
 
 (require 'dash)
 (require 'ert)
+(require 'find-func)
 ;; Added in Emacs 24.4; wrap in `eval-when-compile' when support is dropped.
 (require 'subr-x nil t)
 (declare-function string-remove-prefix "subr-x" (prefix string))
@@ -72,6 +73,14 @@ See `dash--groups'."
      (push (cons ,name ,doc) dash--groups)
      ,@examples))
 
+(defvar dash--find-example-regexp
+  ;; Could use `rx' directly in Emacs 27+
+  ;; (or not rely on `find-function-space-re').
+  (let ((re `(: "(defexamples" (regexp ,find-function-space-re)
+                symbol-start (regexp "%s") symbol-end)))
+    (rx-to-string re t))
+  "Regexp matching `defexamples' for `find-function-regexp-alist'.")
+
 (defmacro defexamples (fn &rest examples)
   "Define a set of EXAMPLES and corresponding ERT tests for FN.
 See `dash--groups'."
@@ -83,6 +92,10 @@ See `dash--groups'."
              (setq examples (nthcdr 3 examples))))
     `(progn
        (push (cons ',fn ',(nreverse triples)) dash--groups)
+       (when (fboundp 'find-function-update-type-alist)
+         ;; Help `ert-describe-test' locate examples in Emacs 31+.
+         (find-function-update-type-alist
+          ',fn 'ert--test 'dash--find-example-regexp))
        (ert-deftest ,fn () ,@(nreverse tests)))))
 
 ;; Added in Emacs 25.1.

@@ -3953,13 +3953,13 @@ This function satisfies the following laws:
   `(;; TODO: Do not fontify the following automatic variables
     ;; globally; detect and limit to their local anaphoric scope.
     (,(rx symbol-start (| "acc" "it" "it-index" "other") symbol-end)
-     0 font-lock-variable-name-face)
+     . 'font-lock-variable-name-face)
     ;; Macros in dev/examples.el.  Based on `lisp-mode-symbol-regexp'.
     (,(rx ?\( (group (| "defexamples" "def-example-group")) symbol-end
           (+ (in "\t "))
           (group (* (| (syntax word) (syntax symbol) (: ?\\ nonl)))))
-     (1 font-lock-keyword-face)
-     (2 font-lock-function-name-face))
+     (1 'font-lock-keyword-face)
+     (2 'font-lock-function-name-face))
     ;; Symbols in dev/examples.el.
     ,(rx symbol-start (| "=>" "~>" "!!>") symbol-end)
     ;; Elisp macro fontification was static prior to Emacs 25.

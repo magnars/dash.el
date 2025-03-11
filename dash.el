@@ -30,6 +30,15 @@
 ;;; Code:
 
 (eval-when-compile
+  (unless (fboundp 'static-if)
+    (defmacro static-if (condition then-form &rest else-forms)
+      "Expand to THEN-FORM or ELSE-FORMS based on compile-time CONDITION.
+Polyfill for Emacs 30 `static-if'."
+      (declare (debug (sexp sexp &rest sexp)) (indent 2))
+      (if (eval condition lexical-binding)
+          then-form
+        (cons 'progn else-forms))))
+
   ;; TODO: Emacs 24.3 first introduced `gv', so remove this and all
   ;; calls to `defsetf' when support for earlier versions is dropped.
   (unless (fboundp 'gv-define-setter)
@@ -1036,13 +1045,9 @@ See also: `-first-item', etc."
   (declare (pure t) (side-effect-free t))
   (car (last list)))
 
-;; Use `with-no-warnings' to suppress unbound `-last-item' or
-;; undefined `gv--defsetter' warnings arising from both
-;; `gv-define-setter' and `defsetf' in certain Emacs versions.
-(with-no-warnings
-  (if (fboundp 'gv-define-setter)
-      (gv-define-setter -last-item (val x) `(setcar (last ,x) ,val))
-    (defsetf -last-item (x) (val) `(setcar (last ,x) ,val))))
+(static-if (fboundp 'gv-define-setter)
+    (gv-define-setter -last-item (val x) `(setcar (last ,x) ,val))
+  (defsetf -last-item (x) (val) `(setcar (last ,x) ,val)))
 
 (defun -butlast (list)
   "Return a list of all items in list except for the last."
@@ -2901,16 +2906,14 @@ example:
   (let ((cmp -compare-fn))
     (cond ((memq cmp '(nil equal)) #'assoc)
           ((eq cmp #'eq) #'assq)
-          ;; Since Emacs 26, `assoc' accepts a custom `testfn'.
-          ;; Version testing would be simpler here, but feature
-          ;; testing gets more brownie points, I guess.
-          ((condition-case nil
-               (with-no-warnings (assoc nil () #'eql))
-             (wrong-number-of-arguments t))
-           (lambda (key alist)
-             (--first (and (consp it) (funcall cmp (car it) key)) alist)))
-          ((with-no-warnings
-             (lambda (key alist)
+          ((lambda (key alist)
+             ;; Since Emacs 26, `assoc' accepts a custom `testfn'.
+             ;; Version testing would be simpler here, but feature
+             ;; testing gets more brownie points, I guess.
+             (static-if (condition-case nil
+                            (assoc nil () #'eql)
+                          (wrong-number-of-arguments t))
+                 (--first (and (consp it) (funcall cmp (car it) key)) alist)
                (assoc key alist cmp)))))))
 
 (defun dash--hash-test-fn ()
@@ -3801,11 +3804,9 @@ See also: `-orfn' and `-not'."
   ;; Open-code for speed.
   (cond ((cdr preds) (lambda (&rest args) (--every (apply it args) preds)))
         (preds (car preds))
-        ;; As a `pure' function, this runtime check may generate
-        ;; backward-incompatible bytecode for `(-andfn)' at compile-time,
-        ;; but I doubt that's a problem in practice (famous last words).
-        ((fboundp 'always) #'always)
-        ((lambda (&rest _) t))))
+        ((static-if (fboundp 'always)
+             #'always
+           (lambda (&rest _) t)))))
 
 (defun -iteratefn (fn n)
   "Return a function FN composed N times with itself.
@@ -4067,15 +4068,14 @@ See also `dash-fontify-mode-lighter' and
   (if dash-fontify-mode
       (font-lock-add-keywords nil dash--keywords t)
     (font-lock-remove-keywords nil dash--keywords))
-  (cond ((fboundp 'font-lock-flush) ;; Added in Emacs 25.
-         (font-lock-flush))
-        ;; `font-lock-fontify-buffer' unconditionally enables
-        ;; `font-lock-mode' and is marked `interactive-only' in later
-        ;; Emacs versions which have `font-lock-flush', so we guard
-        ;; and pacify as needed, respectively.
-        (font-lock-mode
-         (with-no-warnings
-           (font-lock-fontify-buffer)))))
+  (static-if (fboundp 'font-lock-flush)
+      ;; Added in Emacs 25.
+      (font-lock-flush)
+    (when font-lock-mode
+      ;; Unconditionally enables `font-lock-mode' and is marked
+      ;; `interactive-only' in later Emacs versions which have
+      ;; `font-lock-flush'.
+      (font-lock-fontify-buffer))))
 
 (defun dash--turn-on-fontify-mode ()
   "Enable `dash-fontify-mode' if in an Emacs Lisp buffer."

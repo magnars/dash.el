@@ -4285,6 +4285,190 @@ multiple assignments it does not cause unexpected side effects.
 @end example
 @end defmac
 
+@anchor{pcase-let}
+@defmac pcase-let (bindings &rest body)
+Like @code{let}, but supports destructuring @var{bindings} using @code{pcase} (@pxref{pcase}) patterns.
+@var{body} should be a list of expressions, and @var{bindings} should be a list of
+bindings of the form (@var{pattern} @var{exp}).
+All EXPs are evaluated first, and then used to perform destructuring
+bindings by matching each @var{exp} against its respective @var{pattern}.  Then
+@var{body} is evaluated with those bindings in effect.
+
+Each @var{exp} should match its respective @var{pattern} (i.e. be of structure
+compatible to @var{pattern}); a mismatch may signal an error or may go
+undetected, binding variables to arbitrary values, such as @code{nil}.
+
+@example
+@group
+(pcase-let (((dash [a (b c) d]) [1 (2 3) 4])) (list a b c d))
+    @result{} (1 2 3 4)
+@end group
+@group
+(pcase-let (((dash (a b c . d)) (list 1 2 3 4 5 6))) (list a b c d))
+    @result{} (1 2 3 (4 5 6))
+@end group
+@group
+(pcase-let (((dash (&plist :foo foo :bar bar)) (list :baz 3 :foo 1 :qux 4 :bar 2))) (list foo bar))
+    @result{} (1 2)
+@end group
+@end example
+@end defmac
+
+@anchor{pcase}
+@defmac pcase (exp &rest cases)
+Evaluate @var{exp} to get @var{expval}; try passing control to one of @var{cases}.
+@var{cases} is a list of elements of the form (@var{pattern} @var{code}@dots{}).
+For the first @var{case} whose @var{pattern} "matches" @var{expval},
+evaluate its @var{code}@dots{}, and return the value of the last form.
+If no @var{case} has a @var{pattern} that matches, return @code{nil}.
+
+Each @var{pattern} expands, in essence, to a predicate to call
+on @var{expval}.  When the return value of that call is non-@code{nil},
+@var{pattern} matches.  @var{pattern} can take one of the forms:
+
+  _                matches anything.
+  '@var{val}             matches if @var{expval} is @code{equal} to @var{val}.
+  @var{keyword}          shorthand for '@var{keyword}
+  @var{integer}          shorthand for '@var{integer}
+  @var{string}           shorthand for '@var{string}
+  @var{symbol}           matches anything and binds it to @var{symbol}.
+                   If a @var{symbol} is used twice in the same pattern
+                   the second occurrence becomes an @code{eq}uality test.
+  (pred @var{fun})       matches if @var{fun} called on @var{expval} returns non-@code{nil}.
+  (pred (not @var{fun})) matches if @var{fun} called on @var{expval} returns @code{nil}.
+  (app @var{fun} @var{pat})    matches if @var{fun} called on @var{expval} matches @var{pat}.
+  (guard @var{boolexp})  matches if @var{boolexp} evaluates to non-@code{nil}.
+  (and @var{pat}@dots{})     matches if all the patterns match.
+  (or @var{pat}@dots{})      matches if any of the patterns matches.
+
+@var{fun} in @code{pred} and @code{app} can take one of the forms:
+  @var{symbol}  or  (lambda @var{args} @var{body})
+     call it with one argument
+  (@var{f} @var{arg1} .. ARGn)
+     call @var{f} with @var{arg1}..ARGn and @var{expval} as n+1'th argument
+
+@var{fun}, @var{boolexp}, and subsequent @var{pat} can refer to variables
+bound earlier in the pattern by a @var{symbol} pattern.
+
+Additional patterns can be defined using @code{pcase-defmacro}.
+
+See Info node `(elisp) Pattern-Matching Conditional' in the
+Emacs Lisp manual for more information and examples.
+
+-- `@var{qpat}
+
+Backquote-style pcase patterns: `@var{qpat}
+@var{qpat} can take the following forms:
+  (@var{qpat1} . @var{qpat2})       matches if @var{qpat1} matches the car and @var{qpat2} the cdr.
+  [@var{qpat1} @var{qpat2}..QPATn]  matches a vector of length n and @var{qpat1}..QPATn match
+                           its 0..(n-1)th elements, respectively.
+  ,@var{pat}                  matches if the @code{pcase} (@pxref{pcase}) pattern @var{pat} matches.
+  @var{symbol}                matches if @var{expval} is @code{equal} to @var{symbol}.
+  @var{keyword}               likewise for @var{keyword}.
+  @var{number}                likewise for @var{number}.
+  @var{string}                likewise for @var{string}.
+
+The list or vector @var{qpat} is a template.  The predicate formed
+by a backquote-style pattern is a combination of those
+formed by any sub-patterns, wrapped in a top-level condition:
+@var{expval} must be "congruent" with the template.  For example:
+
+  `(technical ,forum)
+
+The predicate is the logical-@var{and} of:
+ - Is @var{expval} a list of two elements?
+ - Is the first element the symbol @code{technical}?
+ - True!  (The second element can be anything, and for the sake
+   of the body forms, its value is bound to the symbol @code{forum}.)
+
+-- (rx &rest @var{regexps})
+
+@var{a} pattern that matches strings against @code{rx} @var{regexps} in sexp form.
+@var{regexps} are interpreted as in @code{rx}.  The pattern matches any
+string that is a match for @var{regexps}, as if by @code{string-match}.
+
+In addition to the usual @code{rx} syntax, @var{regexps} can contain the
+following constructs:
+
+  (let @var{ref} @var{rx}@dots{})  binds the symbol @var{ref} to a submatch that matches
+                   the regular expressions @var{rx}.  @var{ref} is bound in
+                   @var{code} to the string of the submatch or @code{nil}, but
+                   can also be used in @code{backref}.
+  (backref @var{ref})    matches whatever the submatch @var{ref} matched.
+                   @var{ref} can be a number, as usual, or a name
+                   introduced by a previous (let @var{ref} @dots{})
+                   construct.
+
+-- (dash @var{pat})
+
+Destructure @var{exp} according to @var{pat} like in @code{-let} (@pxref{-let}).
+
+-- (let @var{pat} @var{expr})
+
+Matches if @var{expr} matches @var{pat}.
+
+-- (map &rest @var{args})
+
+Build a @code{pcase} (@pxref{pcase}) pattern matching map elements.
+
+@var{args} is a list of elements to be matched in the map.
+
+Each element of @var{args} can be of the form (@var{key} @var{pat}), in which case @var{key} is
+evaluated and searched for in the map.  The match fails if for any @var{key}
+found in the map, the corresponding @var{pat} doesn't match the value
+associated with the @var{key}.
+
+Each element can also be a @var{symbol}, which is an abbreviation of
+a (@var{key} @var{pat}) tuple of the form ('@var{symbol} @var{symbol}).  When @var{symbol}
+is a keyword, it is an abbreviation of the form (:@var{symbol} @var{symbol}),
+useful for binding plist values.
+
+Keys in @var{args} not found in the map are ignored, and the match doesn't
+fail.
+
+-- (seq &rest @var{patterns})
+
+Build a @code{pcase} (@pxref{pcase}) pattern that matches elements of @var{sequence}.
+
+The @code{pcase} (@pxref{pcase}) pattern will match each element of @var{patterns} against the
+corresponding element of @var{sequence}.
+
+Extra elements of the sequence are ignored if fewer @var{patterns} are
+given, and the match does not fail.
+
+-- (radix-tree-leaf @var{vpat})
+
+Pattern which matches a radix-tree leaf.
+The pattern @var{vpat} is matched against the leaf's carried value.
+
+-- (cl-struct @var{type} &rest @var{fields})
+
+Pcase patterns that match cl-struct @var{expval} of type @var{type}.
+Elements of @var{fields} can be of the form (@var{name} @var{pat}) in which case the
+contents of field @var{name} is matched against @var{pat}, or they can be of
+the form @var{name} which is a shorthand for (@var{name} @var{name}).
+
+-- (cl-type @var{type})
+
+Pcase pattern that matches objects of @var{type}.
+@var{type} is a type descriptor as accepted by @code{cl-typep}, which see.
+
+@example
+@group
+(pcase [1 (2 3) 4] ((dash [a (b c) d]) (progn (list a b c d))))
+    @result{} (1 2 3 4)
+@end group
+@group
+(pcase (list 1 2 3 4 5 6) ((dash (a b c . d)) (progn (list a b c d))))
+    @result{} (1 2 3 (4 5 6))
+@end group
+@group
+(pcase (list :baz 3 :foo 1 :qux 4 :bar 2) ((dash (&plist :foo foo :bar bar)) (progn (list foo bar))))
+    @result{} (1 2)
+@end group
+@end example
+@end defmac
+
 @node Side effects
 @section Side effects
 

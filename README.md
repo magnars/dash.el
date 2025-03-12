@@ -520,6 +520,7 @@ Thus function `fn` should return a list.
 #### -copy `(list)`
 
 Create a shallow copy of `list`.
+The elements of `list` are not copied; they are shared with the original.
 
 ```el
 (-copy '(1 2 3)) ;; => (1 2 3)
@@ -791,12 +792,17 @@ Its anaphoric counterpart is `--keep`.
 
 #### -concat `(&rest sequences)`
 
-Concatenate all the arguments and make the result a list.
+Concatenate all `sequences` and make the result a list.
 The result is a list whose elements are the elements of all the arguments.
 Each argument may be a list, vector or string.
 
 All arguments except the last argument are copied.  The last argument
-is just used as the tail of the new list.
+is just used as the tail of the new list.  If the last argument is not
+a list, this results in a dotted list.
+
+As an exception, if all the arguments except the last are `nil`, and the
+last argument is not a list, the return value is that last argument
+unaltered, not a list.
 
 ```el
 (-concat '(1)) ;; => (1)

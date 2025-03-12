@@ -1246,6 +1246,17 @@ For another variant, see also `-take-while'."
   (declare (important-return-value t))
   (--drop-while (funcall pred it) list))
 
+;; Added in Emacs 29.
+(static-if (fboundp 'take)
+    (defun dash--take (n list)
+      "Return the first N elements of LIST.
+Like `take', but ensure result is fresh."
+      (let ((prefix (take n list)))
+        (if (eq prefix list)
+            ;; If same list is returned, make a copy.
+            (copy-sequence prefix)
+          prefix))))
+
 (defun -take (n list)
   "Return a copy of the first N items in LIST.
 Return a copy of LIST if it contains N items or fewer.
@@ -1253,7 +1264,9 @@ Return nil if N is zero or less.
 
 See also: `-take-last'."
   (declare (side-effect-free t))
-  (--take-while (< it-index n) list))
+  (static-if (fboundp 'dash--take)
+      (dash--take n list)
+    (--take-while (< it-index n) list)))
 
 (defun -take-last (n list)
   "Return a copy of the last N items of LIST in order.
@@ -1279,7 +1292,9 @@ Return nil if LIST contains N items or fewer.
 
 See also: `-drop'."
   (declare (side-effect-free t))
-  (nbutlast (copy-sequence list) n))
+  (static-if (fboundp 'dash--take)
+      (dash--take (- (length list) n) list)
+    (nbutlast (copy-sequence list) n)))
 
 (defun -split-at (n list)
   "Split LIST into two sublists after the Nth element.
@@ -3301,9 +3316,10 @@ Return the sorted list.  LIST is NOT modified by side effects.
 COMPARATOR is called with two elements of LIST, and should return non-nil
 if the first element should sort before the second."
   (declare (important-return-value t))
-  ;; Not yet worth changing to (sort list :lessp comparator);
-  ;; still seems as fast or slightly faster.
-  (sort (copy-sequence list) comparator))
+  (static-if (condition-case nil (sort []) (wrong-number-of-arguments))
+      ;; Since Emacs 30.
+      (sort list :lessp comparator)
+    (sort (copy-sequence list) comparator)))
 
 (defmacro --sort (form list)
   "Anaphoric form of `-sort'."

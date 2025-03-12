@@ -3332,6 +3332,30 @@ if the first element should sort before the second."
   (declare (debug (def-form form)))
   `(-sort (lambda (it other) (ignore it other) ,form) ,list))
 
+(defun -to-head (n list)
+  "Return a new list that move the element at Nth to the head of old LIST."
+  (declare (pure t) (side-effect-free t))
+  (if (> n (1- (length list)))
+      (error "Index %d out of the range of list %S" n list))
+  (let* ((head (-take n list))
+         (rest (-drop n list))
+         (target (pop rest)))
+    (cons target (nconc head rest))))
+
+(defun -shuffle (list &optional rng)
+  "Return a new shuffled LIST, shuffling using RNG.
+
+The returned list is shuffled by using Fisher-Yates' Algorithm. See
+https://en.wikipedia.org/wiki/Fisher-Yates_shuffle for more details."
+  (declare (pure t) (side-effect-free t))
+  (let* ((len (length list))
+         (random-nums (-map (or rng #'random) (number-sequence len 1 -1)))
+         result)
+    (--each random-nums
+      (setq list (-to-head it list))
+      (push (pop list) result))
+    (nreverse result)))
+
 (defun -list (&optional arg &rest args)
   "Ensure ARG is a list.
 If ARG is already a list, return it as is (not a copy).

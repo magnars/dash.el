@@ -51,8 +51,9 @@ See the end of the file for license conditions.
 - New function `-frequencies` that takes a list and counts how many
   times each distinct element occurs in it (suggested by @ebpa, #209,
   #214, #399).
-- New functions `-zip-lists-fill` and `-unzip-lists` which are better
-  behaved versions of `-zip-fill` and `-unzip`, respectively (#400).
+- New functions `-zip-lists-fill` and `-unzip-lists` which are
+  better-behaved versions of `-zip-fill` and `-unzip`, respectively
+  (#400).
 
 ### From 2.19.0 to 2.19.1
 

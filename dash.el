@@ -4,7 +4,7 @@
 
 ;; Author: Magnar Sveen <magnars@gmail.com>
 ;; Maintainer: Basil L. Contovounesios <basil@contovou.net>
-;; Version: 2.19.1
+;; Version: 2.20.0
 ;; Package-Requires: ((emacs "24"))
 ;; Keywords: extensions, lisp
 ;; URL: https://github.com/magnars/dash.el

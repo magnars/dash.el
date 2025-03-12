@@ -43,7 +43,7 @@ Libraries")`](https://gnu.org/software/emacs/manual/html_node/emacs/Lisp-Librari
 
 Add something like this to the library's headers:
 
-    ;; Package-Requires: ((dash "2.19.1"))
+    ;; Package-Requires: ((dash "2.20.0"))
 
 See [`(info "(elisp) Library
 Headers")`](https://gnu.org/software/emacs/manual/html_node/elisp/Library-Headers.html).

@@ -615,6 +615,49 @@ Its anaphoric counterpart is `--keep'."
   (declare (important-return-value t))
   (--keep (funcall fn it) list))
 
+(defmacro --keep-indexed-n (num form list)
+  "Return a new list of at most NUM elements of the non-nil results of
+evaluating FORM for each item in LIST.
+
+Each element of LIST in turn is bound to `it' and its index within LIST
+to `it-index' before evaluating FORM.
+
+This is the anaphoric counterpart to `-keep-indexed-n'."
+  (declare (debug (form form)))
+  (let ((l (make-symbol "list"))
+        (n (make-symbol "num"))
+        (i (make-symbol "i"))
+        (elt (make-symbol "elt"))
+        (r (make-symbol "result"))
+        (m (make-symbol "mapped")))
+    `(let ((,l ,list)
+           (,n ,num)
+           (,i 0)
+           (,r nil)
+           ,m)
+       (while (and (> ,n 0) ,l)
+         (let* ((,elt (car-safe ,l))
+                (it ,elt)
+                (it-index ,i))
+           (ignore it it-index)
+           (when-let (,m ,form)
+             (push ,m ,r)
+             (setq ,n (1- ,n))))
+         (setq ,i (1+ ,i)
+               ,l (cdr ,l)))
+       (nreverse ,r))))
+
+(defun -keep-indexed-n (num fn list)
+  "Return a new list of at most NUM elements of the non-nil results of
+applying FN to each item in LIST.
+
+Each element of LIST in turn is bound to `it' and its index within LIST
+to `it-index' before evaluating FORM.
+
+Its anaphoric counterpart is `--keep-indexed-n'."
+  (declare (important-return-value t))
+  (--keep-indexed-n num (funcall fn it-index it) list))
+
 (defun -non-nil (list)
   "Return a copy of LIST with all nil items removed."
   (declare (side-effect-free t))
@@ -3997,6 +4040,7 @@ This function satisfies the following laws:
                       "--if-let"
                       "--iterate"
                       "--keep"
+                      "--keep-indexed-n"
                       "--last"
                       "--map"
                       "--map-first"

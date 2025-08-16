@@ -319,6 +319,7 @@ or readability.
 * [`->>`](#--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [`-->`](#---x-rest-forms) `(x &rest forms)`
 * [`-as->`](#-as--value-variable-rest-forms) `(value variable &rest forms)`
+* [`->>as->`](#->>as->variable-rest-forms-value) `(value forms ... value)`
 * [`-some->`](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [`-some->>`](#-some--x-optional-form-rest-more) `(x &optional form &rest more)`
 * [`-some-->`](#-some---expr-rest-forms) `(expr &rest forms)`
@@ -2532,6 +2533,17 @@ In the first form, bind `variable` to `value`.  In the second form, bind
 (-as-> 3 my-var (1+ my-var) (list my-var) (mapcar (lambda (ele) (* 2 ele)) my-var)) ;; => (8)
 (-as-> 3 my-var 1+) ;; => 4
 (-as-> 3 my-var) ;; => 3
+```
+
+#### ->>as-> (variable forms ... value)
+Ending with VALUE, thread VARIABLE through all the other FORMS.
+Variant of `-as->` but intended for use with `->>`.
+
+```el
+(->>as-> i (+ i 1) 1) ;; => 2
+;; ^ unintuitive on its own.
+(->> 1 (->>as-> i (+ i 1))) ;; => 2
+(->> "def" (->>as-> string (concat "abc" string "ghi"))) ;; => "abcdefghi"
 ```
 
 #### -some-> `(x &optional form &rest more)`

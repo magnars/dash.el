@@ -2153,6 +2153,19 @@ VARIABLE to the result of the first form, and so forth."
               ,variable
               ,@(cdr forms)))))
 
+(defmacro ->>as-> (variable &rest forms)
+  "Ending with VALUE, thread VARIABLE through all the other FORMS.
+Variant of `-as->' but intended for use with `->>'.
+
+\(fn VARIABLE FORMS ... VALUE)"
+  (if (null forms)
+      (error "No Value nor Forms given!")
+    (let ((val (car (last forms)))
+          (args (-butlast forms)))
+      (if (null args)
+          `,val
+        `(-as-> ,val ,variable ,@args)))))
+
 (defmacro -some-> (x &optional form &rest more)
   "When expr is non-nil, thread it through the first form (via `->'),
 and when that result is non-nil, through the next form, etc."

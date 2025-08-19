@@ -96,6 +96,22 @@ For access to the current element's index in LIST, see
   (declare (indent 1))
   (ignore (mapc fn list)))
 
+(defmacro -dolist (varlist &rest body)
+  "Loop over a list.
+
+Evaluate BODY with MATCH-FORM bound to each car from LIST, in turn.
+
+MATCH-FORM destructuring is done according to the rules of `-let'.
+
+See also: `dolist', `-each'.
+
+\(fn (MATCH-FORM LIST) BODY...)"
+  (declare (indent 1))
+  (let ((source (make-symbol "--dash-source--")))
+    `(dolist (,source ,(cadr varlist))
+       (-let ,(list (list (car varlist) source))
+         ,@body))))
+
 (defalias '--each-indexed '--each)
 
 (defun -each-indexed (list fn)

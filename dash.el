@@ -2282,9 +2282,9 @@ All returned symbols are guaranteed to be unique."
      ;; when we only have one pattern in the list, we don't have to
      ;; create a temporary binding (--dash-source--) for the source
      ;; and just use the input directly
-     ((and (consp m)
-           (not (cdr m)))
-      (dash--match (car m) (dash--match-cons-get-car n source)))
+     ((and (consp match-form)
+           (null (cdr match-form)))
+      (dash--match (car match-form) (dash--match-cons-get-car n source)))
      ;; handle other special types
      ((> n 0)
       (dash--match m (dash--match-cons-get-cdr n source)))

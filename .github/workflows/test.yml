@@ -27,6 +27,7 @@ jobs:
           - '29.3'
           - '29.4'
           - '30.1'
+          - '30.2'
           - 'release-snapshot'
           - 'snapshot'
         include:

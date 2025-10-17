@@ -294,6 +294,8 @@ Other list functions not fit to be classified elsewhere.
 * [`-last-item`](#-last-item-list) `(list)`
 * [`-butlast`](#-butlast-list) `(list)`
 * [`-sort`](#-sort-comparator-list) `(comparator list)`
+* [`-to-head`](#-to-head-n-list) `(n list)`
+* [`-shuffle`](#-shuffle-list) `(list)`
 * [`-list`](#-list-arg) `(arg)`
 * [`-fix`](#-fix-fn-list) `(fn list)`
 
@@ -2321,6 +2323,29 @@ if the first element should sort before the second.
 (-sort #'< '(3 1 2)) ;; => (1 2 3)
 (-sort #'> '(3 1 2)) ;; => (3 2 1)
 (--sort (< it other) '(3 1 2)) ;; => (1 2 3)
+```
+
+#### -to-head `(n list)`
+
+Return a new list that move the element at `n`th to the head of old `list`.
+
+```el
+(-to-head 3 '(1 2 3 4 5)) ;; => (4 1 2 3 5)
+(-to-head 5 '(1 2 3 4 5)) ;; peculiar error
+(let ((l '(1 2 3 4 5))) (list (-to-head 2 l) l)) ;; => ((3 1 2 4 5) (1 2 3 4 5))
+```
+
+#### -shuffle `(list)`
+
+Return a new shuffled `list`.
+
+The returned list is shuffled by using Fisher-Yates' Algorithm. See
+https://en.wikipedia.org/wiki/Fisher-Yates_shuffle for more details.
+
+```el
+(progn (random "dash1") (-shuffle '(1 2 3 4 5 6 7))) ;; => (2 7 6 4 5 1 3)
+(progn (random "dash2") (-shuffle '(1 2 3 4 5 6 7))) ;; => (1 5 2 4 3 7 6)
+(let ((l '(1 2 3 4 5 6 7))) (random "dash3") (list (-shuffle '(1 2 3 4 5 6 7)) l)) ;; => ((3 4 1 5 7 6 2) (1 2 3 4 5 6 7))
 ```
 
 #### -list `(arg)`

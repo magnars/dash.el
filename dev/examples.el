@@ -407,6 +407,11 @@ new list."
     (--keep t '()) => '()
     (-keep #'identity '()) => '())
 
+  (defexamples -keep-indexed-n
+    (-keep-indexed-n 2 (lambda (i n) (when n `(,i . ,n))) '(nil "a" "b" nil)) => '((1 . "a") (2 . "b"))
+    (--keep-indexed-n 2 (and (> it 3) it) '(1 2 3 4 2 1 7 8)) => '(4 7)
+    (--keep-indexed-n 3 (stringp it) '(1 2 "a" nil 3 "b" "c" nil 4)) => '(t t t))
+
   (defexamples -concat
     (-concat '(1)) => '(1)
     (-concat '(1) '(2)) => '(1 2)

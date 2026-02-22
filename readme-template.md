@@ -172,6 +172,7 @@ Assignment")`](https://gnu.org/software/emacs/manual/html_node/emacs/Copyright-A
   `-common-prefix`, `-common-suffix`, and various other improvements.
 - [Paul Pogonyshev](https://github.com/doublep) contributed `-each-r` and
   `-each-r-while`.
+- [Tim Jones](https://github.com/mrtimdog) contributed `-keep-indexed-n`.
 
 Thanks!
 

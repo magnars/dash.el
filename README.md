@@ -336,6 +336,8 @@ Macros that combine `let` and `let*` with destructuring and flow control.
 * [`-let*`](#-let-varlist-rest-body) `(varlist &rest body)`
 * [`-lambda`](#-lambda-match-form-rest-body) `(match-form &rest body)`
 * [`-setq`](#-setq-match-form-val) `([match-form val] ...)`
+* [`pcase-let`](#pcase-let-bindings-rest-body) `(bindings &rest body)`
+* [`pcase`](#pcase-exp-rest-cases) `(exp &rest cases)`
 
 ### Side effects
 
@@ -2877,6 +2879,170 @@ multiple assignments it does not cause unexpected side effects.
 (let (a) (-setq a 1) a) ;; => 1
 (let (a b) (-setq (a b) (list 1 2)) (list a b)) ;; => (1 2)
 (let (c) (-setq (&plist :c c) (list :c "c")) c) ;; => "c"
+```
+
+#### pcase-let `(bindings &rest body)`
+
+Like `let`, but supports destructuring `bindings` using [`pcase`](#pcase-exp-rest-cases) patterns.
+`body` should be a list of expressions, and `bindings` should be a list of
+bindings of the form (`pattern` `exp`).
+All EXPs are evaluated first, and then used to perform destructuring
+bindings by matching each `exp` against its respective `pattern`.  Then
+`body` is evaluated with those bindings in effect.
+
+Each `exp` should match its respective `pattern` (i.e. be of structure
+compatible to `pattern`); a mismatch may signal an error or may go
+undetected, binding variables to arbitrary values, such as `nil`.
+
+```el
+(pcase-let (((dash [a (b c) d]) [1 (2 3) 4])) (list a b c d)) ;; => (1 2 3 4)
+(pcase-let (((dash (a b c . d)) (list 1 2 3 4 5 6))) (list a b c d)) ;; => (1 2 3 (4 5 6))
+(pcase-let (((dash (&plist :foo foo :bar bar)) (list :baz 3 :foo 1 :qux 4 :bar 2))) (list foo bar)) ;; => (1 2)
+```
+
+#### pcase `(exp &rest cases)`
+
+Evaluate `exp` to get `expval`; try passing control to one of `cases`.
+`cases` is a list of elements of the form (`pattern` `code`...).
+For the first `case` whose `pattern` "matches" `expval`,
+evaluate its `code`..., and return the value of the last form.
+If no `case` has a `pattern` that matches, return `nil`.
+
+Each `pattern` expands, in essence, to a predicate to call
+on `expval`.  When the return value of that call is non-`nil`,
+`pattern` matches.  `pattern` can take one of the forms:
+
+    _                matches anything.
+    '`val`             matches if `expval` is `equal` to `val`.
+    `keyword`          shorthand for '`keyword`
+    `integer`          shorthand for '`integer`
+    `string`           shorthand for '`string`
+    `symbol`           matches anything and binds it to `symbol`.
+                     If a `symbol` is used twice in the same pattern
+                     the second occurrence becomes an `eq`uality test.
+    (pred `fun`)       matches if `fun` called on `expval` returns non-`nil`.
+    (pred (not `fun`)) matches if `fun` called on `expval` returns `nil`.
+    (app `fun` `pat`)    matches if `fun` called on `expval` matches `pat`.
+    (guard `boolexp`)  matches if `boolexp` evaluates to non-`nil`.
+    (and `pat`...)     matches if all the patterns match.
+    (or `pat`...)      matches if any of the patterns matches.
+
+`fun` in `pred` and `app` can take one of the forms:
+    `symbol`  or  (lambda `args` `body`)
+       call it with one argument
+    (`f` `arg1` .. ARGn)
+       call `f` with `arg1`..ARGn and `expval` as n+1'th argument
+
+`fun`, `boolexp`, and subsequent `pat` can refer to variables
+bound earlier in the pattern by a `symbol` pattern.
+
+Additional patterns can be defined using `pcase-defmacro`.
+
+See Info node `(elisp) Pattern-Matching Conditional' in the
+Emacs Lisp manual for more information and examples.
+
+-- ``qpat`
+
+Backquote-style pcase patterns: ``qpat`
+`qpat` can take the following forms:
+    (`qpat1` . `qpat2`)       matches if `qpat1` matches the car and `qpat2` the cdr.
+    [`qpat1` `qpat2`..QPATn]  matches a vector of length n and `qpat1`..QPATn match
+                             its 0..(n-1)th elements, respectively.
+    ,`pat`                  matches if the [`pcase`](#pcase-exp-rest-cases) pattern `pat` matches.
+    `symbol`                matches if `expval` is `equal` to `symbol`.
+    `keyword`               likewise for `keyword`.
+    `number`                likewise for `number`.
+    `string`                likewise for `string`.
+
+The list or vector `qpat` is a template.  The predicate formed
+by a backquote-style pattern is a combination of those
+formed by any sub-patterns, wrapped in a top-level condition:
+`expval` must be "congruent" with the template.  For example:
+
+    `(technical ,forum)
+
+The predicate is the logical-`and` of:
+ - Is `expval` a list of two elements?
+ - Is the first element the symbol `technical`?
+ - True!  (The second element can be anything, and for the sake
+     of the body forms, its value is bound to the symbol `forum`.)
+
+-- (rx &rest `regexps`)
+
+`a` pattern that matches strings against `rx` `regexps` in sexp form.
+`regexps` are interpreted as in `rx`.  The pattern matches any
+string that is a match for `regexps`, as if by `string-match`.
+
+In addition to the usual `rx` syntax, `regexps` can contain the
+following constructs:
+
+    (let `ref` `rx`...)  binds the symbol `ref` to a submatch that matches
+                     the regular expressions `rx`.  `ref` is bound in
+                     `code` to the string of the submatch or `nil`, but
+                     can also be used in `backref`.
+    (backref `ref`)    matches whatever the submatch `ref` matched.
+                     `ref` can be a number, as usual, or a name
+                     introduced by a previous (let `ref` ...)
+                     construct.
+
+-- (dash `pat`)
+
+Destructure `exp` according to `pat` like in [`-let`](#-let-varlist-rest-body).
+
+-- (let `pat` `expr`)
+
+Matches if `expr` matches `pat`.
+
+-- (map &rest `args`)
+
+Build a [`pcase`](#pcase-exp-rest-cases) pattern matching map elements.
+
+`args` is a list of elements to be matched in the map.
+
+Each element of `args` can be of the form (`key` `pat`), in which case `key` is
+evaluated and searched for in the map.  The match fails if for any `key`
+found in the map, the corresponding `pat` doesn't match the value
+associated with the `key`.
+
+Each element can also be a `symbol`, which is an abbreviation of
+a (`key` `pat`) tuple of the form ('`symbol` `symbol`).  When `symbol`
+is a keyword, it is an abbreviation of the form (:`symbol` `symbol`),
+useful for binding plist values.
+
+Keys in `args` not found in the map are ignored, and the match doesn't
+fail.
+
+-- (seq &rest `patterns`)
+
+Build a [`pcase`](#pcase-exp-rest-cases) pattern that matches elements of `sequence`.
+
+The [`pcase`](#pcase-exp-rest-cases) pattern will match each element of `patterns` against the
+corresponding element of `sequence`.
+
+Extra elements of the sequence are ignored if fewer `patterns` are
+given, and the match does not fail.
+
+-- (radix-tree-leaf `vpat`)
+
+Pattern which matches a radix-tree leaf.
+The pattern `vpat` is matched against the leaf's carried value.
+
+-- (cl-struct `type` &rest `fields`)
+
+Pcase patterns that match cl-struct `expval` of type `type`.
+Elements of `fields` can be of the form (`name` `pat`) in which case the
+contents of field `name` is matched against `pat`, or they can be of
+the form `name` which is a shorthand for (`name` `name`).
+
+-- (cl-type `type`)
+
+Pcase pattern that matches objects of `type`.
+`type` is a type descriptor as accepted by `cl-typep`, which see.
+
+```el
+(pcase [1 (2 3) 4] ((dash [a (b c) d]) (progn (list a b c d)))) ;; => (1 2 3 4)
+(pcase (list 1 2 3 4 5 6) ((dash (a b c . d)) (progn (list a b c d)))) ;; => (1 2 3 (4 5 6))
+(pcase (list :baz 3 :foo 1 :qux 4 :bar 2) ((dash (&plist :foo foo :bar bar)) (progn (list foo bar)))) ;; => (1 2)
 ```
 
 ## Side effects

@@ -2118,7 +2118,9 @@ or readability."
   (defexamples -if-let*
     (-if-let* ((x 5) (y 3) (z 7)) (+ x y z) "foo") => 15
     (-if-let* ((x 5) (y nil) (z 7)) (+ x y z) "foo") => "foo"
-    (-if-let* (((_ _ x) '(nil nil 7))) x) => 7)
+    (-if-let* (((_ _ x) '(nil nil 7))) x) => 7
+    (-if-let* ((a 1) (b nil) (c (1+ a))) c c) => nil
+    (-if-let* ((a 1) (b t) (c (1+ a))) c c) => 2)
 
   (defexamples -let
     (-let (([a (b c) d] [1 (2 3) 4])) (list a b c d)) => '(1 2 3 4)

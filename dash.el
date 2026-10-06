@@ -2853,14 +2853,21 @@ sequentially, and evaluation stops after the first nil VAL is
 encountered."
   (declare (debug ((&rest (sexp form)) form body))
            (indent 2))
-  (->> vars-vals
-       (--mapcat (dash--match (car it) (cadr it)))
-       (--reduce-r-from
-        (let ((var (car it))
-              (val (cadr it)))
-          `(let ((,var ,val))
-             (if ,var ,acc ,@else)))
-        then)))
+  (let ((bindings (->> vars-vals
+                       (--mapcat (dash--match (car it) (cadr it)))
+                       (--reduce-from
+                        (let ((var (car it))
+                              (prev-var (car-safe (car-safe (last acc))))
+                              (val (cadr it)))
+                          `(,@acc
+                            (,var ,(if prev-var
+                                       `(and ,prev-var ,val)
+                                     val))))
+                        nil))))
+    `(let* ,bindings
+       (if ,(car-safe (car-safe (last bindings)))
+           ,then
+         ,@else))))
 
 (defmacro -if-let (var-val then &rest else)
   "If VAL evaluates to non-nil, bind it to VAR and do THEN,
